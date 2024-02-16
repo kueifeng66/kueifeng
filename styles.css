@@ -6,6 +6,10 @@ body {
   height: 100vh;
   margin: 0;
   overflow: hidden; 
+  background-image: url('tower.png');
+  background-size: cover; 
+  background-position: center; 
+  background-repeat: no-repeat; 
 }
 * {
   margin: 0;
@@ -33,6 +37,7 @@ body {
   text-align: center;
   position: relative;
   cursor: pointer;
+  
 }
 .today {
   
@@ -159,3 +164,5 @@ label:active .circle  {
   width: 48px;
   height: 40px;
 }
+
+
