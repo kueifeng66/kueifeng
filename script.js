@@ -247,7 +247,7 @@ function change() {
 
     let siteFooters = document.querySelectorAll('.site-footer');
     siteFooters.forEach(siteFooter =>{
-      siteFooter.style.color='';
+      siteFooters.style.color='';
     });
   }
 }
