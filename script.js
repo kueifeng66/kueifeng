@@ -226,14 +226,7 @@ function change() {
     });
     // Select the element with id 'header' and change its color to white
     let header = document.getElementById('header');
-    header.style.color = 'white';  
-    // last visit and its time
-    let siteFooters = document.querySelectorAll('.site-footer');
-    siteFooters.forEach(siteFooter =>{
-      siteFooter.style.color='white';
-    });
-
-    
+    header.style.color = 'white';   
   } else {
     body.classList.remove("dark");
     // Reset the color of '.day' elements to their default
@@ -244,11 +237,6 @@ function change() {
     // Reset the color of 'header' element to its default
     let header = document.getElementById('header');
     header.style.color = ''; // This will remove the inline 'color' style, allowing the CSS rule to take effect
-
-    let siteFooters = document.querySelectorAll('.site-footer');
-    siteFooters.forEach(siteFooter =>{
-      siteFooter.style.color='';
-    });
   }
 }
 
