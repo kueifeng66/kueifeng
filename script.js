@@ -196,7 +196,7 @@ function showTooltip(date) {
   document.addEventListener("mousemove", function(event){
   let x = event.clientX;
   let y = event.clientY;
-    tooltip.style.left = x  + 25 + 'px';
+    tooltip.style.left = x  + 28 + 'px';
     tooltip.style.top = y  + 'px';
   }) 
     tooltip.textContent = dutySchedule[date] || "None";
