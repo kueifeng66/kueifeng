@@ -211,6 +211,9 @@ function hideTooltip() {
 function change() {
   if (btn.checked) {
     body.classList.add("dark");
+    body.style.backgroundImage = "url('TIAC.png')";
+   
+    
     // Select all elements with the class '.day' and change their color to white
     let days = document.querySelectorAll('.day');
     days.forEach(day => {
@@ -229,6 +232,8 @@ function change() {
     header.style.color = 'white';   
   } else {
     body.classList.remove("dark");
+    body.style.backgroundImage = "url('tower.png')";
+
     // Reset the color of '.day' elements to their default
     let days = document.querySelectorAll('.day');
     days.forEach(day => {
