@@ -191,16 +191,23 @@ function createCalendar(year, month) {
     });
   }
 }
-// Function to show tooltip with duty information
+
 function showTooltip(date) {
   document.addEventListener("mousemove", function(event){
-  let x = event.clientX;
-  let y = event.clientY;
-    tooltip.style.left = x  + 28 + 'px';
-    tooltip.style.top = y  + 'px';
-  }) 
-    tooltip.textContent = dutySchedule[date] || "None";
-    tooltip.style.display = 'block';
+    let x = event.clientX;
+    let y = event.clientY;
+
+    // Check if the day is Saturday or Sunday (0 for Saturday, 6 for Sunday)
+    const isWeekend = Zellercongruence(new Date(date).getDate(), new Date(date).getMonth() + 1, new Date(date).getFullYear()) === 0 || 
+                       Zellercongruence(new Date(date).getDate(), new Date(date).getMonth() + 1, new Date(date).getFullYear()) === 6;
+
+    // Adjust tooltip position based on the day
+    tooltip.style.left = isWeekend ? x - 480 + 'px' : x + 30 + 'px';
+    tooltip.style.top = y + 'px';
+  });
+
+  tooltip.textContent = dutySchedule[date] || "None";
+  tooltip.style.display = 'block';
 }
 
 // Function to hide tooltip
@@ -212,8 +219,6 @@ function change() {
   if (btn.checked) {
     body.classList.add("dark");
     body.style.backgroundImage = "url('TIAC.png')";
-   
-    
     // Select all elements with the class '.day' and change their color to white
     let days = document.querySelectorAll('.day');
     days.forEach(day => {
