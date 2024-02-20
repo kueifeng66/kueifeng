@@ -80,6 +80,12 @@ body {
   background-color: #ffff99;
 }
 
+body.dark {
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
 .dark {
   background: #121212;
 }
