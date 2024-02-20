@@ -94,7 +94,7 @@ body {
 }
 
 label {
-  width:80px;
+  width: 85px;
   height: 40px;
   border-radius: 200px;
   background: #f3f3f3;
@@ -139,7 +139,7 @@ svg {
 }
 input:checked + .display {
   background: #121212;
-  width: 80px;
+  width: 75px;
   height: 40px;
 }
 input:checked + .display label {
