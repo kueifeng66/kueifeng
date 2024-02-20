@@ -70,26 +70,25 @@ body {
   transition: 0.1s ease-in-out; /* Add transition for smooth appearance */
 }
 
-/* Optional: Add some styling when tooltip is hovered */
 #tooltip:hover {
   background-color: rgba(51, 51, 51, 1);
 }
-
 .day:hover {
   cursor: pointer;
   background-color: #ffff99;
 }
-
 body.dark {
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
 }
-
 .dark {
   background: #121212;
-}
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
 
+}
 .display {
   width: 100px;
   height: 40px;
@@ -98,20 +97,53 @@ body.dark {
   justify-content: center;
   align-items: center;
 }
+label:before {
+  content: "";
+  background: linear-gradient(90deg,#FFD600,transparent,transparent,#FFD600);
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  background-size: 400%;
+  z-index:-1;
+  filter: blur(8px);
+  width: calc(100% + 4px);
+  height: calc(100% + 4px); 
+  animation: glowing-button 20s linear infinite;
+  transition: opacity 0.3s ease-in-out;
+  border-radius: 10px;
+  z-index:-1;
+}
+@keyframes glowing-button {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 400% 0;
+  }
+}
+label:after {
+  z-index: -1;
+  content: "";
+  position: absolute;
+  width: 50%;
+  height: 5%;
+  left: 0;
+  top: 0;
+  border-radius: 10px;
+}
 
 label {
-  width: 85px;
+  width:85px;
   height: 40px;
   border-radius: 200px;
-  background: #f3f3f3;
   box-shadow: 20px 20px 40px rgba(0, 0, 0, 0.2) inset;
   cursor: pointer;
   position: relative;
+
 }
 input {
   display: none;
 }
-
 .circle {
   width: 38px;
     height: 38px;
@@ -127,7 +159,6 @@ input {
     align-items: center;
     justify-content: center;
     overflow: hidden;
-  
 }
 svg {
   width: 30px;
@@ -145,7 +176,7 @@ svg {
 }
 input:checked + .display {
   background: #121212;
-  width: 75px;
+  width: 80px;
   height: 40px;
 }
 input:checked + .display label {
@@ -171,5 +202,3 @@ label:active .circle  {
   width: 48px;
   height: 40px;
 }
-
-
