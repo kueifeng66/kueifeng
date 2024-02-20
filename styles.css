@@ -139,7 +139,7 @@ svg {
 }
 input:checked + .display {
   background: #121212;
-  width:70px;
+  width: 60px;
   height: 40px;
 }
 input:checked + .display label {
