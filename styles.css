@@ -66,11 +66,10 @@ body {
   display: none;
   z-index: 10;
   border-radius: 12px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Add box shadow for a subtle lift */
-  transition: 0.1s ease-in-out; /* Add transition for smooth appearance */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); 
+  transition: 0.1s ease-in-out; 
 }
 
-/* Optional: Add some styling when tooltip is hovered */
 #tooltip:hover {
   background-color: rgba(51, 51, 51, 1);
 }
@@ -103,7 +102,7 @@ body.dark {
 }
 label:before {
   content: "";
-  background: linear-gradient(110deg,red, orange,yellow, #FFD600,green,blue, purple);
+  background: linear-gradient(110deg, red, orange, yellow, #FFD600, green, blue, purple);
   position: absolute;
   top: 0px;
   left: 0px;
@@ -112,7 +111,7 @@ label:before {
   filter: blur(8px);
   width: calc(100% + 4px);
   height: calc(100% + 4px); 
-  animation: glowing-button 15s linear infinite;
+  animation: glowing-button 22s linear infinite;
   transition: opacity 0.3s ease-in-out;
   border-radius: 50px;
   z-index:-10;
