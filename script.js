@@ -1,6 +1,7 @@
 const calendar = document.getElementById('calendar');
 const tooltip = document.getElementById('tooltip');
 const btn = document.querySelector("#check");
+const footer = document.getElementById('scrollingText');
 const body = document.body;
 
 const dutySchedule = {
@@ -238,6 +239,9 @@ function change() {
     // Select the element with id 'header' and change its color to white
     let header = document.getElementById('header');
     header.style.color = 'white';   
+
+    footer.style.color = 'blue';
+
   } else {
     body.classList.remove("dark");
     body.style.backgroundImage = "url('tower.png')";
@@ -250,6 +254,9 @@ function change() {
     // Reset the color of 'header' element to its default
     let header = document.getElementById('header');
     header.style.color = ''; // This will remove the inline 'color' style, allowing the CSS rule to take effect
+  
+    footer.style.color = 'black';
+
   }
 }
 function scroll(info) {
@@ -260,17 +267,30 @@ function scroll(info) {
   window.setTimeout("scroll(info);", interval);
 
 }
+function scroll2(info) {
+  len2=info2.length;
+  var marquee = document.getElementById("scrollingText");
+    marquee.innerHTML = info2.substring(0, len2);
+  
+  
+  window.setTimeout("scroll2(info2);", interval2);
 
+}
 var now = new Date();
 var year = now.getFullYear();
 var month = (now.getMonth() + 1); // January (0-based index)
 var day = now.getDate();
 const date2 = `${year}-${month}-${day}`;
 var info=dutySchedule[date2];
+var info2=`${year}年${month}月${day}日` + "→→→ "+ dutySchedule[date2];
 var len;
+var len2;
 var sin=0;
+var sin2=0;
 var interval=200;
+var interval2=10000;
 scroll(info)
+scroll2(info)
 
 btn.addEventListener('change', change);
 createCalendar(year, month);
