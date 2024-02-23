@@ -197,7 +197,6 @@ function showTooltip(date) {
     let x = event.clientX;
     let y = event.clientY;
 
-  
     const isWeekend = Zellercongruence(new Date(date).getDate(), new Date(date).getMonth() + 1, new Date(date).getFullYear()) === 0 || 
                        Zellercongruence(new Date(date).getDate(), new Date(date).getMonth() + 1, new Date(date).getFullYear()) === 6;
     if (isWeekend) {
@@ -205,7 +204,8 @@ function showTooltip(date) {
     }else {
       tooltip.style.left = x + 30 + 'px';
     }
-   
+    // Adjust tooltip position based on the day
+    //tooltip.style.left = isWeekend ? x - 480 + 'px' : x + 30 + 'px';
     tooltip.style.top = y + 'px';
   });
 
@@ -222,7 +222,7 @@ function change() {
   if (btn.checked) {
     body.classList.add("dark");
     body.style.backgroundImage = "url('TIAC.png')";
-  
+    // Select all elements with the class '.day' and change their color to white
     let days = document.querySelectorAll('.day');
     days.forEach(day => {
       day.style.color = 'white';
@@ -235,26 +235,42 @@ function change() {
     weekendDays.forEach(day => {
       day.style.color = 'red';
     });
-   
+    // Select the element with id 'header' and change its color to white
     let header = document.getElementById('header');
     header.style.color = 'white';   
   } else {
     body.classList.remove("dark");
     body.style.backgroundImage = "url('tower.png')";
 
-    
+    // Reset the color of '.day' elements to their default
     let days = document.querySelectorAll('.day');
     days.forEach(day => {
       day.style.color = ''; // This will remove the inline 'color' style, allowing the CSS rule to take effect
     });
-    
+    // Reset the color of 'header' element to its default
     let header = document.getElementById('header');
     header.style.color = ''; // This will remove the inline 'color' style, allowing the CSS rule to take effect
   }
+}
+function scroll(info) {
+  len=info.length;
+  document.title=info.substring(0+sin, info.length);
+  sin++;
+  if(sin>=len) sin=0;
+  window.setTimeout("scroll(info);", interval);
+
 }
 
 var now = new Date();
 var year = now.getFullYear();
 var month = (now.getMonth() + 1); // January (0-based index)
+var day = now.getDate();
+const date2 = `${year}-${month}-${day}`;
+var info=dutySchedule[date2];
+var len;
+var sin=0;
+var interval=200;
+scroll(info)
+
 btn.addEventListener('change', change);
 createCalendar(year, month);
