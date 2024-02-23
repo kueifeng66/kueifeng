@@ -259,32 +259,22 @@ function change() {
 
   }
 }
+
 function scroll(info) {
   len=info.length;
-  document.title=info.substring(0+sin, info.length);
-  sin++;
-  if(sin>=len) sin=0;
-  window.setTimeout("scroll(info);", interval);
-}
-function scroll2(info2) {
-  len2=info2.length;
   var marquee = document.getElementById("scrollingText");
-  marquee.innerHTML = info2.substring(0, len2);
+    marquee.innerHTML = info.substring(0, len);
 }
 var now = new Date();
 var year = now.getFullYear();
 var month = (now.getMonth() + 1); // January (0-based index)
 var day = now.getDate();
+
 const date2 = `${year}-${month}-${day}`;
-var info=dutySchedule[date2];
-var info2=`${year}年${month}月${day}日` + "→→→ "+ dutySchedule[date2];
+var info=`${year}年${month}月${day}日` + "→→→ "+ dutySchedule[date2];
 var len;
-var len2;
-var sin=0;
-var interval=200;
 
 scroll(info)
-scroll2(info2)
 
 btn.addEventListener('change', change);
 createCalendar(year, month);
