@@ -265,16 +265,11 @@ function scroll(info) {
   sin++;
   if(sin>=len) sin=0;
   window.setTimeout("scroll(info);", interval);
-
 }
-function scroll2(info) {
+function scroll2(info2) {
   len2=info2.length;
   var marquee = document.getElementById("scrollingText");
-    marquee.innerHTML = info2.substring(0, len2);
-  
-  
-  window.setTimeout("scroll2(info2);", interval2);
-
+  marquee.innerHTML = info2.substring(0, len2);
 }
 var now = new Date();
 var year = now.getFullYear();
@@ -286,11 +281,10 @@ var info2=`${year}年${month}月${day}日` + "→→→ "+ dutySchedule[date2];
 var len;
 var len2;
 var sin=0;
-var sin2=0;
 var interval=200;
-var interval2=10000;
+
 scroll(info)
-scroll2(info)
+scroll2(info2)
 
 btn.addEventListener('change', change);
 createCalendar(year, month);
