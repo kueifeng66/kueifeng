@@ -103,7 +103,7 @@ body.dark {
 }
 label:before {
   content: "";
-  background: linear-gradient(110deg,red, orange,yellow, #FFD600,green,blue, purple);
+  background: linear-gradient(90deg,#fff,transparent,transparent,#fff);
   position: absolute;
   top: 0px;
   left: 0px;
