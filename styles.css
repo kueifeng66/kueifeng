@@ -243,7 +243,7 @@ footer {
   font-weight: bold;
   font-size: 14px;
   overflow: auto;
-  height: 35px; /* Set the height for one visible item overflow-y: auto;*/
+  height: 50px; /* Set the height for one visible item overflow-y: auto;*/
 }
 
 .picker-item {
