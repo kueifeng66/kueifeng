@@ -47,11 +47,8 @@ body {
   background-color: lightgreen;
 }
 .selected {
-
   background-color: turquoise;
-
 }
-
 .weekday {
   border: 1px solid #ccc;
   background-color: lightgrey;
@@ -66,7 +63,6 @@ body {
   font-weight: bold;
   text-align: center;
 }
-
 #tooltip {
   position: absolute;
   background-color: rgba(51, 51, 51, 0.75);
@@ -232,8 +228,6 @@ footer {
   color: black;
 }
 
-
-
 .picker-container {
   width: 100px;
   background-color: #fff;
@@ -241,18 +235,13 @@ footer {
   overflow: hidden;
   border-radius: 12px;
   text-align: center;
-  
 }
-
-
 
 .picker-body {
   padding: 10px;
- 
   background-color: lightgrey;
   font-weight: bold;
   font-size: 14px;
-  
   overflow: auto;
   height: 35px; /* Set the height for one visible item overflow-y: auto;*/
 }
