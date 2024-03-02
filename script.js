@@ -236,6 +236,96 @@ function scroll(info) {
     marquee.innerHTML = info.substring(0, len);
 }
 
+const names = [
+  "柯正和",
+  "張日曜",
+  "孫景泰",
+  "秦桔萬",
+  "邱冠霖",
+  "詹文欽",
+  "黃榮國",
+  "范振宇",
+  "唐茂",
+  "許敦智",
+  "王瑞發",
+  "彭偉慎",
+  "陳建中",
+  "劉暐丞",
+  "林森發",
+  "黃煜森",
+  "劉錦郎",
+  "余金原",
+  "林厚運",
+  "張哲維",
+  "黃經洲",
+  "洪柜峰",
+  "林宏儒",
+  "呂明峯",
+  "周育稔",
+  "許世勳",
+  "羅應順",
+  "方振彬",
+];
+const namePicker = document.getElementById("namePicker");
+let currentIndex = 0;
+
+const selectedClassName = 'selected';
+
+function highlightSelectedName(selectedName) {
+  const days = document.querySelectorAll('.day');
+  days.forEach(dayElement => {
+    const date = `${year}-${month}-${dayElement.textContent}`;
+    const namesForDay = (dutySchedule[date] || '').split(' ');
+    if (namesForDay.includes(selectedName)) {
+      dayElement.classList.add(selectedClassName);
+    } else {
+      dayElement.classList.remove(selectedClassName);
+    }
+  });
+}
+
+// Populate the name picker with the list of names
+names.forEach((name, index) => {
+  const item = document.createElement("div");
+  item.className = "picker-item";
+  item.textContent = name;
+
+  // Add click event listener to handle name selection
+  item.addEventListener("click", () => {
+    const selectedName = name;
+    highlightSelectedName(selectedName);
+  });
+
+  namePicker.appendChild(item);
+});
+
+function clearSelectedClass() {
+  const days = document.querySelectorAll('.day');
+  days.forEach(dayElement => {
+    dayElement.classList.remove(selectedClassName);
+  });
+}
+
+// Handle scroll events to change the selected name
+namePicker.addEventListener("scroll", () => {
+  const itemHeight = namePicker.querySelector(".picker-item").offsetHeight;
+  currentIndex = Math.floor(namePicker.scrollTop / itemHeight);
+  updateSelection();
+  clearSelectedClass();
+  highlightSelectedName(selectedName);
+});
+
+function updateSelection() {
+  const items = document.querySelectorAll(".picker-item");
+  items.forEach((item, index) => {
+    if (index === currentIndex) {
+      item.style.backgroundColor = "#f2f2f2";
+    } else {
+      item.style.backgroundColor = "";
+    }
+  });
+}
+
 const dutyScheduleFile = 'rawdata.txt';
 
 function readDutySchedule() {
