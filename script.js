@@ -4,6 +4,13 @@ const btn = document.querySelector("#check");
 const footer = document.getElementById('scrollingText');
 const body = document.body;
 
+const now = new Date();
+const year = now.getFullYear();
+var month = (now.getMonth() + 1);
+//const month = 3;
+const day = now.getDate();
+
+
 const dutySchedule = {
   "2024-3-1": "S: 詹文欽 A: 方振彬 N: 唐茂 C: 張日曜 R: 張哲維 T: 呂明峰",
     "2024-3-2": "S: 林森發 A: 許敦智 N: 劉暐丞 C: 孫景泰 R: 黃煜森 T: 洪柜峰",
@@ -83,7 +90,7 @@ function Zellercongruence(day, month, year)
                 break;
         }
 }
-
+// Function to create calendar days
 function createCalendar(year, month) {
   const daysInMonth = new Date(year, month, 0).getDate();
   const weekdays = ['一', '二', '三', '四', '五', '六', '日'];
@@ -173,7 +180,7 @@ function createCalendar(year, month) {
 
     dayElement.addEventListener('mouseover', () => {
       if (btn.checked) {
-        dayElement.style.color = 'blue';
+        dayElement.style.color = 'blue'; // Change the color when button is checked and mouse is over
       }
       if (Zellercongruence(day, month, year) === 0 || Zellercongruence(day, month, year) === 6) {
         dayElement.style.color = 'red';
@@ -307,7 +314,6 @@ let currentIndex = 0;
 const selectedClassName = 'selected';
 
 function highlightSelectedName(selectedName) {
-  const year = now.getFullYear();
   const days = document.querySelectorAll('.day');
   days.forEach(dayElement => {
     const date = `${year}-${month}-${dayElement.textContent}`;
@@ -362,14 +368,8 @@ function updateSelection() {
   });
 }
 
-    const now = new Date();
-    const year = now.getFullYear();
-    var month = (now.getMonth() + 1);
-    //const month = 3;
-    const day = now.getDate();
-    const date2 = `${year}-${month}-${day}`;
-    const info = `${year}年${month}月${day}日` + " →→→ " + dutySchedule[date2];
-    scroll(info);
-    btn.addEventListener('change', change);
-    createCalendar(year, month);
-
+const date2 = `${year}-${month}-${day}`;
+const info = `${year}年${month}月${day}日` + " →→→ " + dutySchedule[date2];
+scroll(info);
+btn.addEventListener('change', change);
+createCalendar(year, month);
