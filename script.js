@@ -334,6 +334,7 @@ names.forEach((name, index) => {
 
   // Add click event listener to handle name selection
   item.addEventListener("click", () => {
+    updateSelection();
     const selectedName = name;
     highlightSelectedName(selectedName);
   });
@@ -359,12 +360,8 @@ namePicker.addEventListener("scroll", () => {
 
 function updateSelection() {
   const items = document.querySelectorAll(".picker-item");
-  items.forEach((item, index) => {
-    if (index === currentIndex) {
-      item.style.backgroundColor = "#f2f2f2";
-    } else {
+  items.forEach((item) => {
       item.style.backgroundColor = "";
-    }
   });
 }
 
