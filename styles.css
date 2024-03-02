@@ -27,6 +27,10 @@ body {
 
 #header {
   font-weight: bold;
+  padding: 5px;
+  background-color: #3498db;
+  color: #fff;
+  font-size:14px;
   
 }
 
@@ -41,6 +45,11 @@ body {
 }
 .today {
   background-color: lightgreen;
+}
+.selected {
+
+  background-color: turquoise;
+
 }
 
 .weekday {
@@ -60,7 +69,7 @@ body {
 
 #tooltip {
   position: absolute;
-  background-color: rgba(51, 51, 51, 0.8);;
+  background-color: rgba(51, 51, 51, 0.75);
   color: white;
   padding: 10px;
   display: none;
@@ -103,6 +112,7 @@ body.dark {
 }
 label:before {
   content: "";
+  /*background: linear-gradient(110deg,red, orange,yellow, #FFD600,green,blue, purple);*/
   background: linear-gradient(90deg,#fff,transparent,transparent,#fff);
   position: absolute;
   top: 0px;
@@ -220,4 +230,38 @@ footer {
   padding: 8px;
   text-align: center;
   color: black;
+}
+
+
+
+.picker-container {
+  width: 100px;
+  background-color: #fff;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  border-radius: 12px;
+  text-align: center;
+  
+}
+
+
+
+.picker-body {
+  padding: 10px;
+ 
+  background-color: lightgrey;
+  font-weight: bold;
+  font-size: 14px;
+  
+  overflow: auto;
+  height: 35px; /* Set the height for one visible item overflow-y: auto;*/
+}
+
+.picker-item {
+  margin-bottom: 10px;
+  transition: background-color 0.3s ease;
+}
+
+.picker-item:hover {
+  background-color: #f2f2f2;
 }
