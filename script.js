@@ -12,7 +12,7 @@ const day = now.getDate();
 
 
 const dutySchedule = {
-    "2024-3-1": "S: 詹文欽 A: 方振彬 N: 唐茂 C: 張日曜 R: 張哲維 T: 呂明峯",
+  "2024-3-1": "S: 詹文欽 A: 方振彬 N: 唐茂 C: 張日曜 R: 張哲維 T: 呂明峯",
     "2024-3-2": "S: 林森發 A: 許敦智 N: 劉暐丞 C: 孫景泰 R: 黃煜森 T: 洪柜峰",
     "2024-3-3": "S: 范振宇 A: 許世勳 N: 彭偉慎 C: 邱冠霖 R: 林厚運 T: 方振彬",
     "2024-3-4": "S: 黃經洲 A: 黃煜森 N: 王瑞發 C: 秦桔萬 R: 張哲維 T: 周育稔",
@@ -277,7 +277,6 @@ function scroll(info) {
     marquee.innerHTML = info.substring(0, len);
 }
 
-
 const names = [
   "柯正和",
   "張日曜",
@@ -331,11 +330,12 @@ names.forEach((name, index) => {
   const item = document.createElement("div");
   item.className = "picker-item";
   item.textContent = name;
-
+  
   // Add click event listener to handle name selection
   item.addEventListener("click", () => {
     updateSelection();
     const selectedName = name;
+    item.style.backgroundColor = "#f2f2f2";
     highlightSelectedName(selectedName);
   });
 
@@ -364,6 +364,7 @@ function updateSelection() {
       item.style.backgroundColor = "";
   });
 }
+
 
 const date2 = `${year}-${month}-${day}`;
 const info = `${year}年${month}月${day}日` + " →→→ " + dutySchedule[date2];
