@@ -307,6 +307,7 @@ let currentIndex = 0;
 const selectedClassName = 'selected';
 
 function highlightSelectedName(selectedName) {
+  const year = now.getFullYear();
   const days = document.querySelectorAll('.day');
   days.forEach(dayElement => {
     const date = `${year}-${month}-${dayElement.textContent}`;
