@@ -357,6 +357,7 @@ namePicker.addEventListener("scroll", () => {
   updateSelection();
   clearSelectedClass();
   highlightSelectedName(selectedName);
+  vibrateOnScroll();
 });
 
 function updateSelection() {
@@ -366,6 +367,12 @@ function updateSelection() {
   });
 }
 
+
+function vibrateOnScroll() {
+  if (navigator.vibrate) {
+    navigator.vibrate(100);
+  }
+}
 
 const date2 = `${year}-${month}-${day}`;
 const info = `${year}年${month}月${day}日` + " →→→ " + dutySchedule[date2];
