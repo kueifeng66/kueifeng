@@ -331,11 +331,10 @@ names.forEach((name, index) => {
   const item = document.createElement("div");
   item.className = "picker-item";
   item.textContent = name;
-  
+  const selectedName = name;
   // Add click event listener to handle name selection
   item.addEventListener("click", () => {
     updateSelection();
-    const selectedName = name;
     item.style.backgroundColor = "#f2f2f2";
     highlightSelectedName(selectedName);
   });
@@ -350,16 +349,6 @@ function clearSelectedClass() {
   });
 }
 
-// Handle scroll events to change the selected name
-namePicker.addEventListener("scroll", () => {
-  const itemHeight = namePicker.querySelector(".picker-item").offsetHeight;
-  currentIndex = Math.floor(namePicker.scrollTop / itemHeight);
-  updateSelection();
-  clearSelectedClass();
-  highlightSelectedName(selectedName);
-  vibrateOnScroll();
-});
-
 function updateSelection() {
   const items = document.querySelectorAll(".picker-item");
   items.forEach((item) => {
@@ -367,12 +356,14 @@ function updateSelection() {
   });
 }
 
-
-function vibrateOnScroll() {
-  if (navigator.vibrate) {
-    navigator.vibrate(100);
-  }
-}
+// Handle scroll events to change the selected name
+namePicker.addEventListener("scroll", () => {
+  const itemHeight = namePicker.querySelector(".picker-item").offsetHeight;
+  currentIndex = Math.floor(namePicker.scrollTop / itemHeight);
+  updateSelection();
+  clearSelectedClass();
+  highlightSelectedName(selectedName);
+});
 
 const date2 = `${year}-${month}-${day}`;
 const info = `${year}年${month}月${day}日` + " →→→ " + dutySchedule[date2];
