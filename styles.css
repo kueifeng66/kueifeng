@@ -26,6 +26,7 @@ body {
 }
 
 #header {
+  border: 1px solid #ccc;
   font-weight: bold;
   padding: 5px;
   background-color: #3498db;
@@ -51,7 +52,8 @@ body {
 }
 .weekday {
   border: 1px solid #ccc;
-  background-color: lightgrey;
+  background-color: #3498db;
+  color: #fff;
   padding: 10px;
   font-weight: bold;
   position: relative;
