@@ -359,7 +359,7 @@ function highlightSelectedName(selectedName) {
 }
 
 // Populate the name picker with the list of names
-names.forEach((name, index) => {
+names.forEach((name) => {
   const item = document.createElement("div");
   item.className = "picker-item";
   item.textContent = name;
@@ -389,12 +389,13 @@ function updateSelection() {
 }
 
 // Handle scroll events to change the selected name
-namePicker.addEventListener("scroll", () => {
+namePicker.addEventListener("wheel", () => {
   const itemHeight = namePicker.querySelector(".picker-item").offsetHeight;
   currentIndex = Math.floor(namePicker.scrollTop / itemHeight);
   updateSelection();
   clearSelectedClass();
   highlightSelectedName(selectedName);
+  navigator.vibrate(100);
 });
 
 const date2 = `${year}-${month}-${day}`;
