@@ -122,7 +122,7 @@ label:before {
   height: calc(100% + 4px); 
   animation: glowing-button 15s linear infinite;
   transition: opacity 0.3s ease-in-out;
-  border-radius: 50px;
+  border-radius: 250px;
   z-index:-10;
 }
 @keyframes glowing-button {
