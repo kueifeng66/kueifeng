@@ -389,13 +389,12 @@ function updateSelection() {
 }
 
 // Handle scroll events to change the selected name
-namePicker.addEventListener("wheel", () => {
+namePicker.addEventListener("scroll", () => {
   const itemHeight = namePicker.querySelector(".picker-item").offsetHeight;
   currentIndex = Math.floor(namePicker.scrollTop / itemHeight);
   updateSelection();
   clearSelectedClass();
   highlightSelectedName(selectedName);
-  navigator.vibrate(100);
 });
 
 const date2 = `${year}-${month}-${day}`;
