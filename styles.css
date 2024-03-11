@@ -116,7 +116,6 @@ label:before {
   top: 0px;
   left: 0px;
   background-size:200%;
-  z-index:-1;
   filter: blur(8px);
   width: calc(100% + 4px);
   height: calc(100% + 4px); 
@@ -134,7 +133,7 @@ label:before {
   }
 }
 label:after {
-  z-index: -1;
+  z-index: -10;
   content: "";
   position: absolute;
   width: 50%;
