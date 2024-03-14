@@ -304,11 +304,24 @@ function change() {
   }
 }
 
+
 function scroll(info) {
-  info = info.replace(/ (?<!S) ([A-Z])/g, ',  $1'); // Replace space followed by uppercase letter with comma and space
-  len = info.length;
+  var result = ''; 
+  var isSpaceBeforeUppercase = false; 
+  for (var i = 0; i < info.length; i++) {
+    var currentChar = info[i];
+    var nextChar = info[i + 1];
+    
+    if (currentChar === ' ' && (nextChar.match(/[A-R]/) || nextChar.match(/[T-Z]/))) {
+      result += '、 '; 
+      isSpaceBeforeUppercase = true; 
+    } else {
+      result += currentChar; 
+      isSpaceBeforeUppercase = false; 
+    }
+  }
   var marquee = document.getElementById("scrollingText");
-  marquee.innerHTML = '<p>' + info.substring(0, len) + '</p>';
+  marquee.innerHTML = '<p>' + result + '</p>'; 
 }
 
 
