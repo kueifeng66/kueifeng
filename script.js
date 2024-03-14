@@ -363,10 +363,10 @@ function highlightSelectedName(selectedName) {
 
 // Populate the name picker with the list of names
 names.forEach((name) => {
+  const selectedName = name;
   const item = document.createElement("div");
   item.className = "picker-item";
   item.textContent = name;
-  const selectedName = name;
   // Add click event listener to handle name selection
   item.addEventListener("click", () => {
     updateSelection();
