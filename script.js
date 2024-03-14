@@ -309,7 +309,7 @@ function scroll(info) {
   info = info.replace(/ (?<!S) ([A-Z])/g, '、 $1'); // Replace space followed by uppercase letter with comma and space
   len = info.length;
   var marquee = document.getElementById("scrollingText");
-  marquee.innerHTML = info.substring(0, len);
+  marquee.innerHTML = '<p>' + info.substring(0, len) + '</p>';
 }
 
 
