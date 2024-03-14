@@ -313,7 +313,7 @@ function scroll(info) {
     var nextChar = info[i + 1];
     
     if (currentChar === ' ' && (nextChar.match(/[A-R]/) || nextChar.match(/[T-Z]/))) {
-      result += '、 '; 
+      result += '  '; 
       isSpaceBeforeUppercase = true; 
     } else {
       result += currentChar; 
