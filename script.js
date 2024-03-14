@@ -246,9 +246,9 @@ function showTooltip(date) {
     const isWeekend = Zellercongruence(new Date(date).getDate(), new Date(date).getMonth() + 1, new Date(date).getFullYear()) === 0 || 
                        Zellercongruence(new Date(date).getDate(), new Date(date).getMonth() + 1, new Date(date).getFullYear()) === 6;
     if (isWeekend) {
-      tooltip.style.left = x - 480 + 'px';
+      tooltip.style.left = x - 460 + 'px';
     }else {
-      tooltip.style.left = x + 30 + 'px';
+      tooltip.style.left = x + 25 + 'px';
     }
     // Adjust tooltip position based on the day
     //tooltip.style.left = isWeekend ? x - 480 + 'px' : x + 30 + 'px';
