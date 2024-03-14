@@ -7,7 +7,6 @@ const body = document.body;
 const now = new Date();
 const year = now.getFullYear();
 var month = (now.getMonth() + 1);
-//const month = 3;
 const day = now.getDate();
 
 
