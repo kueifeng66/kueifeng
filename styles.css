@@ -259,3 +259,30 @@ footer {
 .picker-item:hover {
   background-color: #f2f2f2;
 }
+
+
+
+
+
+
+#scrollingText {
+  white-space: nowrap; /* Prevents the text from wrapping */
+  overflow: hidden; /* Hides the overflow text */
+}
+
+#scrollingText p {
+  display: inline-block; /* Makes the text inline but allows it to be treated as a block element */
+  margin-right: 100%; /* Moves the text off-screen initially */
+  animation: marquee 15s linear infinite; /* Define the animation */
+}
+
+/* Define the animation */
+@keyframes marquee {
+  from {
+    margin-left: 100%; /* Start off-screen to the right */
+  }
+  to {
+    margin-left: -100%; /* Move to the left, displaying the text */
+  }
+}
+
