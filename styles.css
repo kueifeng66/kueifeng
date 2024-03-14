@@ -218,6 +218,7 @@ label:active .circle  {
 }
 
 footer {
+  align-items: flex-start;
   position: fixed;
   font-weight: bold;
   bottom: 0;
