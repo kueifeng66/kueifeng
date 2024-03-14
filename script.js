@@ -305,11 +305,8 @@ function change() {
 }
 
 function scroll(info) {
-  console.log("Initial value of 'info':", info);
   info = info.replace(/ (?<!S) ([A-Z])/g, ',  $1'); // Replace space followed by uppercase letter with comma and space
-  console.log("Modified value of 'info':", info);
   len = info.length;
-  console.log("Length of 'info':", len); // Log the length of 'info'
   var marquee = document.getElementById("scrollingText");
   marquee.innerHTML = '<p>' + info.substring(0, len) + '</p>';
 }
