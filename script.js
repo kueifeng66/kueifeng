@@ -396,7 +396,6 @@ namePicker.addEventListener("scroll", () => {
   currentIndex = Math.floor(namePicker.scrollTop / itemHeight);
   updateSelection();
   clearSelectedClass();
-  highlightSelectedName(selectedName);
 });
 
 const date2 = `${year}-${month}-${day}`;
