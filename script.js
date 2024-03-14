@@ -306,10 +306,12 @@ function change() {
 }
 
 function scroll(info) {
-  len=info.length;
+  info = info.replace(/ (?<!S) ([A-Z])/g, '、 $1'); // Replace space followed by uppercase letter with comma and space
+  len = info.length;
   var marquee = document.getElementById("scrollingText");
-    marquee.innerHTML = info.substring(0, len);
+  marquee.innerHTML = info.substring(0, len);
 }
+
 
 const names = [
   "柯正和",
