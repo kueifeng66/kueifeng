@@ -273,16 +273,16 @@ footer {
 #scrollingText p {
   display: inline-block; /* Makes the text inline but allows it to be treated as a block element */
   margin-right: 100%; /* Moves the text off-screen initially */
-  animation: marquee 15s linear infinite; /* Define the animation */
+  animation: marquee 20s linear infinite; /* Define the animation */
 }
 
 /* Define the animation */
 @keyframes marquee {
   from {
-    margin-left: 100%; /* Start off-screen to the right */
+    margin-right: 100%; /* Start off-screen to the right */
   }
   to {
-    margin-left: -100%; /* Move to the left, displaying the text */
+    margin-left: 0%; /* Move to the left, displaying the text */
   }
 }
 
