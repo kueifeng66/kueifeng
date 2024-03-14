@@ -28,6 +28,7 @@ body {
 #header {
   border: 1px solid #ccc;
   font-weight: bold;
+  text-align: center;
   padding: 2px;
   background-color: #3498db;
   color: #fff;
