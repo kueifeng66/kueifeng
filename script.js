@@ -226,7 +226,7 @@ function createCalendar(year, month) {
         dayElement.style.color = 'white'; // Reset the color when button is checked and mouse is out
         let today = document.querySelectorAll('.today');
         today.forEach(today => {
-        today.style.color = 'blue';
+        today.style.color = 'MediumBlue';
         });
         if (Zellercongruence(day, month, year) === 0 || Zellercongruence(day, month, year) === 6) {
           dayElement.style.color = 'red';
@@ -275,7 +275,7 @@ function change() {
     });
     let today = document.querySelectorAll('.today');
     today.forEach(today => {
-      today.style.color = 'blue';
+      today.style.color = 'MediumBlue';
     });
     let weekendDays = document.querySelectorAll('.weekend');
     weekendDays.forEach(day => {
@@ -285,7 +285,7 @@ function change() {
     let header = document.getElementById('header');
     header.style.color = 'white';   
 
-    footer.style.color = 'blue';
+    footer.style.color = 'MediumBlue';
 
   } else {
     body.classList.remove("dark");
