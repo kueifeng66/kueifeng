@@ -214,7 +214,7 @@ function createCalendar(year, month) {
 
     dayElement.addEventListener('mouseover', () => {
       if (btn.checked) {
-        dayElement.style.color = 'blue'; // Change the color when button is checked and mouse is over
+        dayElement.style.color = 'MediumBlue'; // Change the color when button is checked and mouse is over
       }
       if (Zellercongruence(day, month, year) === 0 || Zellercongruence(day, month, year) === 6) {
         dayElement.style.color = 'red';
