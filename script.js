@@ -384,7 +384,7 @@ names.forEach((name) => {
   // Add click event listener to handle name selection
   item.addEventListener("click", () => {
     updateSelection();
-    item.style.backgroundColor = "#f2f2f2";
+    item.style.backgroundColor = "turquoise";
     highlightSelectedName(selectedName);
   });
 
