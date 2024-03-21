@@ -314,7 +314,7 @@ function scroll(info) {
     var currentChar = info[i];
     var nextChar = info[i + 1];
     
-    if (currentChar === ' ' && (nextChar.match(/[A-R]/) || nextChar.match(/[T-Z]/))) {
+    if (currentChar === ' ' && (nextChar.match(/[A-Z]/))) {
       result += '&nbsp;&nbsp;&nbsp'; 
       isSpaceBeforeUppercase = true; 
     } else {
