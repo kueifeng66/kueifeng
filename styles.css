@@ -258,12 +258,8 @@ footer {
 
 .picker-item:hover {
   background-color: #f2f2f2;
+  transform: scale(1.5);
 }
-
-
-
-
-
 
 #scrollingText {
   white-space: nowrap; /* Prevents the text from wrapping */
