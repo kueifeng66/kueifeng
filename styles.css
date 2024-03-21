@@ -261,10 +261,11 @@ footer {
 .picker-item:hover {
   background-color: #f2f2f2;
   transform: scale(1.5);
+  overflow: hidden;
 }
 
 #namePicker {
-  overflow-x: hidden;
+  overflow: hidden;
 }
 
 #scrollingText {
