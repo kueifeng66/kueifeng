@@ -420,6 +420,9 @@ function updateScale() {
     const distanceToCenter = Math.abs(containerCenterY - itemCenterY);
     if (distanceToCenter < containerRect.height / 5) { // Adjust this threshold as needed
       item.style.transform = 'scale(1.5)';
+      updateSelection();
+      item.style.backgroundColor = "turquoise";
+      highlightSelectedName(item.textContent);
     } else {
       item.style.transform = 'scale(1)';
     }
