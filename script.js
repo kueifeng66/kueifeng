@@ -329,6 +329,7 @@ function scroll(info) {
 
 
 const names = [
+  "．．．",
   "柯正和",
   "張日曜",
   "孫景泰",
@@ -357,6 +358,7 @@ const names = [
   "許世勳",
   "羅應順",
   "方振彬",
+  "．．．",
 ];
 const namePicker = document.getElementById("namePicker");
 let currentIndex = 0;
@@ -406,12 +408,32 @@ function updateSelection() {
   });
 }
 
+function updateScale() {
+  const container = document.getElementById('namePicker');
+  const items = document.querySelectorAll('.picker-item');
+  const containerRect = container.getBoundingClientRect();
+  const containerCenterY = containerRect.top + containerRect.height / 2;
+  
+  items.forEach((item) => {
+    const itemRect = item.getBoundingClientRect();
+    const itemCenterY = itemRect.top + itemRect.height / 2;
+    const distanceToCenter = Math.abs(containerCenterY - itemCenterY);
+    if (distanceToCenter < containerRect.height / 5) { // Adjust this threshold as needed
+      item.style.transform = 'scale(1.5)';
+    } else {
+      item.style.transform = 'scale(1)';
+    }
+  });
+  
+}
+
 // Handle scroll events to change the selected name
 namePicker.addEventListener("scroll", () => {
   const itemHeight = namePicker.querySelector(".picker-item").offsetHeight;
   currentIndex = Math.floor(namePicker.scrollTop / itemHeight);
   updateSelection();
   clearSelectedClass();
+  updateScale();
 });
 
 const date2 = `${year}-${month}-${day}`;
