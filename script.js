@@ -330,6 +330,8 @@ function scroll(info) {
 
 const names = [
   "．．．",
+  "．．．",
+  "．．．",
   "柯正和",
   "張日曜",
   "孫景泰",
@@ -358,6 +360,7 @@ const names = [
   "許世勳",
   "羅應順",
   "方振彬",
+  "．．．",
   "．．．",
 ];
 const namePicker = document.getElementById("namePicker");
@@ -418,7 +421,7 @@ function updateScale() {
     const itemRect = item.getBoundingClientRect();
     const itemCenterY = itemRect.top + itemRect.height / 2;
     const distanceToCenter = Math.abs(containerCenterY - itemCenterY);
-    if (distanceToCenter < containerRect.height / 5) { // Adjust this threshold as needed
+    if (distanceToCenter < containerRect.height / 6) { // Adjust this threshold as needed
       item.style.transform = 'scale(1.5)';
       updateSelection();
       item.style.backgroundColor = "turquoise";
