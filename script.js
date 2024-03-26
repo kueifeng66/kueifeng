@@ -76,7 +76,7 @@ const dutySchedule = {
 
 };
 
-const holidy = {
+const holiday = {
   "2024-3-1": "【廿一】",
   "2024-3-2": "【廿二】【放假日】",
   "2024-3-3": "【廿三】【放假日】",
@@ -448,6 +448,11 @@ names.forEach((name) => {
   // Add click event listener to handle name selection
   item.addEventListener("click", () => {
     updateSelection();
+    const items = document.querySelectorAll('.picker-item');
+    items.forEach((item) => {
+      item.style.transform = 'scale(1)';
+    });
+    item.style.transform = 'scale(1.5)';
     item.style.backgroundColor = "turquoise";
     highlightSelectedName(selectedName);
   });
@@ -501,7 +506,7 @@ namePicker.addEventListener("scroll", () => {
 });
 
 const date2 = `${year}-${month}-${day}`;
-const info = `${year}年${month}月${day}日` + holidy[date2] + " →→→ " + dutySchedule[date2];
+const info = `${year}年${month}月${day}日` + holiday[date2] + " →→→ " + dutySchedule[date2];
 scroll(info);
 btn.addEventListener('change', change);
 createCalendar(year, month);
