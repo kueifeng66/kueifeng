@@ -479,7 +479,7 @@ function updateScale() {
     const itemRect = item.getBoundingClientRect();
     const itemCenterY = itemRect.top + itemRect.height / 2;
     const distanceToCenter = Math.abs(containerCenterY - itemCenterY);
-    if (distanceToCenter < containerRect.height / 6) { // Adjust this threshold as needed
+    if (distanceToCenter < containerRect.height / 10) { // Adjust this threshold as needed
       item.style.transform = 'scale(1.5)';
       updateSelection();
       item.style.backgroundColor = "turquoise";
