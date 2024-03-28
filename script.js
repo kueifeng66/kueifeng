@@ -348,6 +348,8 @@ function hideTooltip() {
 
 function change() {
   if (btn.checked) {
+    updateSelection();
+    clearSelectedClass();
     let previousToday = document.querySelectorAll('.today');
     previousToday.forEach(today => {
     today.classList.remove('today');
@@ -395,6 +397,8 @@ function change() {
     
 
   } else {
+    updateSelection();
+    clearSelectedClass();
     var year_now = now.getFullYear();
     var month_now = (now.getMonth() + 1); // Months are zero-based
     var day_now = now.getDate();
