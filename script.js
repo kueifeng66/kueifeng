@@ -196,9 +196,9 @@ function addEventListeners(dayElement, btn, day, month, year, date) {
     if (btn.checked) {
       dayElement.style.color = 'MediumBlue'; // Change the color when button is checked and mouse is over
     }
-    if (Zellercongruence(day, month, year) === 0 || Zellercongruence(day, month, year) === 6) {
-      dayElement.style.color = 'red';
-    }
+    //if (Zellercongruence(day, month, year) === 0 || Zellercongruence(day, month, year) === 6) {
+     // dayElement.style.color = 'red';
+    //}
     showTooltip(date);      
   });
 
@@ -352,7 +352,7 @@ function change() {
     clearSelectedClass();
     let previousToday = document.querySelectorAll('.today');
     previousToday.forEach(today => {
-    today.classList.remove('today');
+      today.classList.remove('today');
     });
 
     body.classList.add("dark");
@@ -376,26 +376,23 @@ function change() {
 
     footer.style.color = 'MediumBlue';
 
-    month = (now.getMonth() + 1) +1;
+    month = (now.getMonth() + 1) + 1;
     if (month > 12) {
       month = 1;
       year++;
     }
     var daysInNextMonth = new Date(year, month, 0).getDate();
-    days.forEach((day) => {
+    days.forEach((day, index) => {
       day.textContent = "";
+      if (index >= Zellercongruence(1, month, year) - 1 && index < daysInNextMonth + Zellercongruence(1, month, year) - 1) {
+        const date = `${year}-${month}-${index - Zellercongruence(1, month, year) + 2}`;
+        day.textContent = index - Zellercongruence(1, month, year) + 2;
+        addEventListeners(day, btn, index - Zellercongruence(1, month, year) + 2, month, year, date);
+      }
     });
-    index = Zellercongruence(1, month, year);
-    for (let i = 0; i < index-1; i++) {
-      days[i].textContent = "";
-    }
-    for (let i = index-1; i < daysInNextMonth; i++ ){
-      days[i].textContent = i - index + 2;
-    }
+
     const headerCell = document.querySelector('.header-cell');
     headerCell.textContent = `${year}  年 ${month}月  `;
-    
-
   } else {
     updateSelection();
     clearSelectedClass();
@@ -421,8 +418,13 @@ function change() {
       year--;
     }
     var daysInCurrentMonth = new Date(year, month, 0).getDate();
-    days.forEach((day) => {
+    days.forEach((day, index) => {
       day.textContent = "";
+      if (index >= Zellercongruence(1, month, year) - 1 && index < daysInCurrentMonth + Zellercongruence(1, month, year) - 1) {
+        const date = `${year}-${month}-${index - Zellercongruence(1, month, year) + 2}`;
+        day.textContent = index - Zellercongruence(1, month, year) + 2;
+        addEventListeners(day, btn, index - Zellercongruence(1, month, year) + 2, month, year, date);
+      }
       
     });
     index = Zellercongruence(1, month, year);
@@ -439,6 +441,7 @@ function change() {
     headerCell.textContent = `${year}  年 ${month}月  `;
   }
 }
+
 
 
 function scroll(info) {
