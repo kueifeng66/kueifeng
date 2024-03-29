@@ -417,9 +417,16 @@ function change() {
     const headerCell = document.querySelector('.header-cell');
     headerCell.textContent = `${year}  年 ${month}月  `;    
   }
+  //below is to highlight the name previously selected in the change function
   highlightSelectedName(temp_name);
-}
-
+  const items = document.querySelectorAll('.picker-item');
+  items.forEach((item) => {
+    if (temp_name === item.textContent){
+      item.style.transform = 'scale(1.5)';
+      item.style.backgroundColor = "turquoise";
+    }
+  });
+} //change function ends here
 
 function scroll(info) {
   var result = ''; 
