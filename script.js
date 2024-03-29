@@ -419,7 +419,7 @@ function change() {
   highlightSelectedName(temp_name);
   const items = document.querySelectorAll('.picker-item');
   items.forEach((item) => {
-    if (temp_name === item.textContent){
+    if (temp_name === item.textContent && temp_name != "．．．"){
       item.style.transform = 'scale(1.5)';
       item.style.backgroundColor = "turquoise";
     }
