@@ -375,7 +375,7 @@ function change() {
       }
     });
     const headerCell = document.querySelector('.header-cell');
-    headerCell.textContent = `${year}年   ${month}月`;
+    headerCell.textContent = `${year} 年   ${month}月`;
   } else {
     updateSelection();
     clearSelectedClass();
