@@ -383,9 +383,6 @@ function change() {
     updateSelection();
     clearSelectedClass();
     
-    var year_now = now.getFullYear();
-    var month_now = (now.getMonth() + 1); // Months are zero-based
-    var day_now = now.getDate();
     body.classList.remove("dark");
     body.style.backgroundImage = "url('tower.png')";
 
