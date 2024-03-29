@@ -75,9 +75,6 @@ const dutySchedule = {
 "2024-4-29": "S: 范振宇 A: 張哲維 N: 許敦智 C: 邱冠霖 R: 黃煜森 T: 呂明峰",
 "2024-4-30": "S: 林森發 A: 彭偉慎 N: 劉暐丞 C: 秦桔萬 R: 劉錦郎 T: 方振彬",
 
-
-
-
 };
 
 const holiday ={
@@ -228,7 +225,7 @@ function createCalendar(year, month) {
 
   const headerCell = document.createElement('div');
   headerCell.classList.add('header-cell');
-  headerCell.textContent = `${year_now}  年 ${month}月  `;
+  headerCell.textContent = `${year_now} 年 ${month} 月  `;
   header.appendChild(headerCell); 
 
   const date = `${year}-${month}-${day}`;
@@ -378,7 +375,7 @@ function change() {
       }
     });
     const headerCell = document.querySelector('.header-cell');
-    headerCell.textContent = `${year}  年 ${month}月  `;
+    headerCell.textContent = `${year} 年 ${month} 月  `;
   } else {
     updateSelection();
     clearSelectedClass();
@@ -416,7 +413,7 @@ function change() {
     });
     
     const headerCell = document.querySelector('.header-cell');
-    headerCell.textContent = `${year}  年 ${month}月  `;    
+    headerCell.textContent = `${year} 年 ${month} 月  `;    
   }
   //below is to highlight the name previously selected in the change function
   highlightSelectedName(temp_name);
