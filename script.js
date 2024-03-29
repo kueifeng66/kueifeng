@@ -243,14 +243,13 @@ function createCalendar(year, month) {
     dayOfWeek = Zellercongruence(1, month, year);
     
     if (dayOfWeek === 1) {
-      addEventListeners(dayElement, btn, day, month, year, date);
+      //addEventListeners(dayElement, btn, day, month, year, 999);
     } else if (dayOfWeek === 2) {
       for (let i = 0; i < 1; i++) {
         const dayElement = document.createElement('div');
         dayElement.classList.add('day');
         dayElement.textContent = "";
         calendar.appendChild(dayElement);
-        addEventListeners(dayElement, btn, day, month, year, date);
       }
     } else if (dayOfWeek === 3) {
       for (let i = 0; i < 2; i++) {
@@ -258,7 +257,6 @@ function createCalendar(year, month) {
         dayElement.classList.add('day');
         dayElement.textContent = "";
         calendar.appendChild(dayElement);
-        addEventListeners(dayElement, btn, day, month, year, date);
       }
     } else if (dayOfWeek === 4) {
       for (let i = 0; i < 3; i++) {
@@ -266,7 +264,6 @@ function createCalendar(year, month) {
         dayElement.classList.add('day');
         dayElement.textContent = "";
         calendar.appendChild(dayElement);
-        addEventListeners(dayElement, btn, day, month, year, date);
       }
     } else if (dayOfWeek === 5) {
       for (let i = 0; i < 4; i++) {
@@ -274,7 +271,6 @@ function createCalendar(year, month) {
         dayElement.classList.add('day');
         dayElement.textContent = "";
         calendar.appendChild(dayElement);
-        addEventListeners(dayElement, btn, day, month, year, date);
       }
     } else if (dayOfWeek === 6) {
       for (let i = 0; i < 5; i++) {
@@ -282,7 +278,6 @@ function createCalendar(year, month) {
         dayElement.classList.add('day');
         dayElement.textContent = "";
         calendar.appendChild(dayElement);
-        addEventListeners(dayElement, btn, day, month, year, date);
       }
     } else {
       for (let i = 0; i < 6; i++) {
@@ -290,7 +285,6 @@ function createCalendar(year, month) {
         dayElement.classList.add('day');
         dayElement.textContent = "";
         calendar.appendChild(dayElement);
-        addEventListeners(dayElement, btn, day, month, year, date);
       }
     }
 
@@ -377,6 +371,8 @@ function change() {
         const date = `${year}-${month}-${index - Zellercongruence(1, month, year) + 2}`;
         day.textContent = index - Zellercongruence(1, month, year) + 2;
         addEventListeners(day, btn, index - Zellercongruence(1, month, year) + 2, month, year, date);
+      }else{
+        addEventListeners(day, btn, index - Zellercongruence(1, month, year) + 2, month, year, 999);
       }
     });
     const headerCell = document.querySelector('.header-cell');
@@ -412,6 +408,8 @@ function change() {
         const date = `${year}-${month}-${index - Zellercongruence(1, month, year) + 2}`;
         day.textContent = index - Zellercongruence(1, month, year) + 2;
         addEventListeners(day, btn, index - Zellercongruence(1, month, year) + 2, month, year, date);
+      }else {
+        addEventListeners(day, btn, index - Zellercongruence(1, month, year) + 2, month, year, 999);
       }
     });
     const headerCell = document.querySelector('.header-cell');
@@ -447,8 +445,6 @@ function scroll(info) {
   var marquee = document.getElementById("scrollingText");
   marquee.innerHTML = '<p>' + result + '</p>'; 
 }
-
-
 
 const names = [
   "．．．",
@@ -539,7 +535,6 @@ function updateSelection() {
   });
 }
 
-
 function updateScale() {
   const container = document.getElementById('namePicker');
   const items = document.querySelectorAll('.picker-item');
@@ -562,11 +557,6 @@ function updateScale() {
   });  
 }
 
-
-
-
-
-
 namePicker.addEventListener("scroll", () => {
   const itemHeight = namePicker.querySelector(".picker-item").offsetHeight;
   currentIndex = Math.floor(namePicker.scrollTop / itemHeight);
@@ -575,12 +565,9 @@ namePicker.addEventListener("scroll", () => {
   updateScale();
 });
 
-
 const date2 = `${year}-${month}-${day}`;
 const info = `${year}年${month}月${day}日` + holiday[date2] + " →→→ " + dutySchedule[date2];
 scroll(info);
 btn.addEventListener('change', change);
-
-
 createCalendar(year, month);
 
