@@ -243,7 +243,7 @@ function createCalendar(year, month) {
     dayOfWeek = Zellercongruence(1, month, year);
     
     if (dayOfWeek === 1) {
-      //addEventListeners(dayElement, btn, day, month, year, 999);
+
     } else if (dayOfWeek === 2) {
       for (let i = 0; i < 1; i++) {
         const dayElement = document.createElement('div');
@@ -330,6 +330,8 @@ function hideTooltip() {
 }
 
 function change() {
+
+  var day_now = now.getDate();
   if (btn.checked) {
     updateSelection();
     clearSelectedClass();
@@ -411,7 +413,11 @@ function change() {
       }else {
         addEventListeners(day, btn, index - Zellercongruence(1, month, year) + 2, month, year, 999);
       }
+      if (index - Zellercongruence(1, month, year) + 2 === day_now) {
+        day.classList.add('today');
+      }
     });
+    
     const headerCell = document.querySelector('.header-cell');
     headerCell.textContent = `${year}  年 ${month}月  `;    
   }
@@ -535,6 +541,7 @@ function updateSelection() {
   });
 }
 
+
 function updateScale() {
   const container = document.getElementById('namePicker');
   const items = document.querySelectorAll('.picker-item');
@@ -557,6 +564,11 @@ function updateScale() {
   });  
 }
 
+
+
+
+
+
 namePicker.addEventListener("scroll", () => {
   const itemHeight = namePicker.querySelector(".picker-item").offsetHeight;
   currentIndex = Math.floor(namePicker.scrollTop / itemHeight);
@@ -565,9 +577,12 @@ namePicker.addEventListener("scroll", () => {
   updateScale();
 });
 
+
 const date2 = `${year}-${month}-${day}`;
 const info = `${year}年${month}月${day}日` + holiday[date2] + " →→→ " + dutySchedule[date2];
 scroll(info);
 btn.addEventListener('change', change);
+
+
 createCalendar(year, month);
 
