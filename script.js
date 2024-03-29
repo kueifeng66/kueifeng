@@ -6,10 +6,10 @@ const header = document.getElementById('header');
 const body = document.body;
 
 const now = new Date();
-const year = now.getFullYear();
+var year = now.getFullYear();
 var month = (now.getMonth() + 1);
-//const month = 4;
-const day = now.getDate();
+var day = now.getDate();
+var temp_name;
 
 
 const dutySchedule = {
@@ -196,9 +196,6 @@ function addEventListeners(dayElement, btn, day, month, year, date) {
     if (btn.checked) {
       dayElement.style.color = 'MediumBlue'; // Change the color when button is checked and mouse is over
     }
-    //if (Zellercongruence(day, month, year) === 0 || Zellercongruence(day, month, year) === 6) {
-     // dayElement.style.color = 'red';
-    //}
     showTooltip(date);      
   });
 
@@ -231,7 +228,6 @@ function createCalendar(year, month) {
 
   const headerCell = document.createElement('div');
   headerCell.classList.add('header-cell');
-  //headerCell.textContent = `${year_now}  年 ${month_now}月  `;
   headerCell.textContent = `${year_now}  年 ${month}月  `;
   header.appendChild(headerCell); 
 
@@ -308,16 +304,12 @@ function createCalendar(year, month) {
     if (Zellercongruence(day, month, year) === 0 || Zellercongruence(day, month, year) === 6) {
       dayElement.classList.add('weekend');
     }
-
     if (year === year_now && month === month_now && day === day_now) {
       dayElement.classList.add('today');
     }
-
-    addEventListeners(dayElement, btn, day, month, year, date);
-    
+    addEventListeners(dayElement, btn, day, month, year, date);    
   }
   
-
 }
 
 function showTooltip(date) {
@@ -332,8 +324,6 @@ function showTooltip(date) {
     }else {
       tooltip.style.left = x + 25 + 'px';
     }
-    // Adjust tooltip position based on the day
-    //tooltip.style.left = isWeekend ? x - 480 + 'px' : x + 30 + 'px';
     tooltip.style.top = y + 'px';
   });
 
@@ -341,7 +331,6 @@ function showTooltip(date) {
   tooltip.style.display = 'block';
 }
 
-// Function to hide tooltip
 function hideTooltip() {
   tooltip.style.display = 'none';
 }
@@ -350,6 +339,7 @@ function change() {
   if (btn.checked) {
     updateSelection();
     clearSelectedClass();
+    
     let previousToday = document.querySelectorAll('.today');
     previousToday.forEach(today => {
       today.classList.remove('today');
@@ -357,7 +347,7 @@ function change() {
 
     body.classList.add("dark");
     body.style.backgroundImage = "url('TIAC.png')";
-    // Select all elements with the class '.day' and change their color to white
+    
     let days = document.querySelectorAll('.day');
     days.forEach(day => {
       day.style.color = 'white';
@@ -370,10 +360,9 @@ function change() {
     weekendDays.forEach(day => {
       day.style.color = 'red';
     });
-    // Select the element with id 'header' and change its color to white
+    
     let header = document.getElementById('header');
     header.style.color = 'white';   
-
     footer.style.color = 'MediumBlue';
 
     month = (now.getMonth() + 1) + 1;
@@ -390,12 +379,12 @@ function change() {
         addEventListeners(day, btn, index - Zellercongruence(1, month, year) + 2, month, year, date);
       }
     });
-
     const headerCell = document.querySelector('.header-cell');
     headerCell.textContent = `${year}  年 ${month}月  `;
   } else {
     updateSelection();
     clearSelectedClass();
+    
     var year_now = now.getFullYear();
     var month_now = (now.getMonth() + 1); // Months are zero-based
     var day_now = now.getDate();
@@ -410,9 +399,8 @@ function change() {
     // Reset the color of 'header' element to its default
     let header = document.getElementById('header');
     header.style.color = ''; // This will remove the inline 'color' style, allowing the CSS rule to take effect
-  
     footer.style.color = 'black';
-
+    
     month = (now.getMonth() + 1);
     if (month === 12) {
       year--;
@@ -425,23 +413,12 @@ function change() {
         day.textContent = index - Zellercongruence(1, month, year) + 2;
         addEventListeners(day, btn, index - Zellercongruence(1, month, year) + 2, month, year, date);
       }
-      
     });
-    index = Zellercongruence(1, month, year);
-    for (let i = 0; i < index-1; i++) {
-      days[i].textContent = "";
-    }
-    for (let i = index-1; i < daysInCurrentMonth+index-1; i++ ){
-      days[i].textContent = i - index + 2;
-      if (day_now === i - index + 2){
-        days[i].classList.add('today');
-      }
-    }
     const headerCell = document.querySelector('.header-cell');
-    headerCell.textContent = `${year}  年 ${month}月  `;
+    headerCell.textContent = `${year}  年 ${month}月  `;    
   }
+  highlightSelectedName(temp_name);
 }
-
 
 
 function scroll(info) {
@@ -528,25 +505,18 @@ names.forEach((name) => {
  
  // Add click event listener to handle name selection
  item.addEventListener("click", () => {
-  updateSelection();
-  const items = document.querySelectorAll('.picker-item');
-  items.forEach((item) => {
-    item.style.transform = 'scale(1)';
+    updateSelection();
+    const items = document.querySelectorAll('.picker-item');
+    items.forEach((item) => {
+      item.style.transform = 'scale(1)';
+    });
+    item.style.transform = 'scale(1.5)';
+    item.style.backgroundColor = "turquoise";
+    temp_name=selectedName;
+    highlightSelectedName(selectedName);
   });
-  item.style.transform = 'scale(1.5)';
-  item.style.backgroundColor = "turquoise";
-  highlightSelectedName(selectedName);
-
-});
-
-
   namePicker.appendChild(item);
 });
-
-
-
-
-
 
 function clearSelectedClass() {
   const days = document.querySelectorAll('.day');
@@ -573,17 +543,21 @@ function updateScale() {
     const itemRect = item.getBoundingClientRect();
     const itemCenterY = itemRect.top + itemRect.height / 2;
     const distanceToCenter = Math.abs(containerCenterY - itemCenterY);
-    if (distanceToCenter < containerRect.height / 10 ) { // Adjust this threshold as needed
-      item.style.transform = 'scale(1.5)';
-      updateSelection();
-      item.style.backgroundColor = "turquoise";
-      highlightSelectedName(item.textContent);
-    } else {
-      item.style.transform = 'scale(1)';
-    }
-  });
-  
+      if (distanceToCenter < containerRect.height / 10 ) { // Adjust this threshold as needed
+        item.style.transform = 'scale(1.5)';
+        updateSelection();
+        item.style.backgroundColor = "turquoise";
+        temp_name=item.textContent;
+        highlightSelectedName(item.textContent);
+      } else {
+        item.style.transform = 'scale(1)';
+      }
+  });  
 }
+
+
+
+
 
 
 namePicker.addEventListener("scroll", () => {
@@ -599,5 +573,7 @@ const date2 = `${year}-${month}-${day}`;
 const info = `${year}年${month}月${day}日` + holiday[date2] + " →→→ " + dutySchedule[date2];
 scroll(info);
 btn.addEventListener('change', change);
+
+
 createCalendar(year, month);
 
