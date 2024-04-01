@@ -253,7 +253,7 @@ footer {
 }
 
 .picker-container {
-  width: 2.5em;
+  width: 3em;
   background-color: #ccc;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   overflow: hidden;
