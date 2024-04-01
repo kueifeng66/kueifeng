@@ -37,7 +37,7 @@ body {
 }
 
 .day {
-  width: 2.4em;
+  width: 2.5em;
   height: 2.6em;
   border: 1px solid #ccc;
   padding: 10px;
@@ -48,7 +48,7 @@ body {
 }
 
 .today {
-  width: 2.4em;
+  width: 2.5em;
   height: 2.6em;
   background-color: lightgreen;
   border:3px solid #FFD600;
@@ -62,8 +62,8 @@ body {
 
 
 .weekday {
-  width: 2.4em;
-  height: 2.4em;
+  width: 2.5em;
+  height: 2.5em;
   border: 1px solid #ccc;
   background-color: #3498db;
   color: #fff;
@@ -252,7 +252,7 @@ footer {
 }
 
 .picker-container {
-  width: 75px;;
+  width: 70px;;
   background-color: #ccc;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   overflow: hidden;
