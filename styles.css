@@ -155,7 +155,6 @@ label:after {
   z-index: -1;
   content: "";
   position: absolute;
-  /* width: 50%; */
   width: 100%;
   height: 50%;
   left: 0;
@@ -253,7 +252,7 @@ footer {
 }
 
 .picker-container {
-  width: 80px;;
+  width: 75px;;
   background-color: #ccc;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   overflow: hidden;
