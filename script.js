@@ -51,17 +51,17 @@ const dutySchedule = {
 "2024-4-5": "S: 詹文欽 A: 洪柜峰 N: 許敦智 C: 邱冠霖 R: 張哲維 T: 羅應順",
 "2024-4-6": "S: 范振宇 A: 林宏儒 N: 唐茂 C: 張日曜 R: 劉錦郎 T: 呂明峰",
 "2024-4-7": "S: 林森發 A: 王瑞發 N: 劉暐丞 C: 秦桔萬 R: 林厚運 T: 方振彬",
-"2024-4-8": "S: 黃榮國 A: 張哲維 N: 陳建中 C: 孫景泰 R: 余金原 T: 羅應順",
+"2024-4-8": "S: 黃榮國 A: 黃煜森 N: 陳建中 C: 孫景泰 R: 余金原 T: 羅應順",
 "2024-4-9": "S: 柯正和 A: 劉暐丞 N: 王瑞發 C: 邱冠霖 R: 劉錦郎 T: 洪柜峰",
 "2024-4-10": "S: 黃經洲 A: 張哲維 N: 彭偉慎 C: 張日曜 R: 黃煜森 T: 林宏儒",
 "2024-4-11": "S: 林森發 A: 孫景泰 N: 范振宇 C: 秦桔萬 R: 林厚運 T: 方振彬",
 "2024-4-12": "S: 詹文欽 A: 陳建中 N: 劉暐丞 C: 邱冠霖 R: 劉錦郎 T: 洪柜峰",
 "2024-4-13": "S: 黃榮國 A: 林宏儒 N: 王瑞發 C: 柯正和 R: 黃煜森 T: 羅應順",
 "2024-4-14": "S: 黃經洲 A: 唐茂 N: 陳建中 C: 秦桔萬 R: 林厚運 T: 呂明峰",
-"2024-4-15": "S: 范振宇 A: 劉錦郎 N: 彭偉慎 C: 張日曜 R: 余金原 T: 方振彬",
+"2024-4-15": "S: 范振宇 A: 劉錦郎 N: 彭偉慎 C: 張日曜 R: 余金原 T: 許世勳",
 "2024-4-16": "S: 柯正和 A: 羅應順 N: 許敦智 C: 孫景泰 R: 黃煜森 T: 林宏儒",
 "2024-4-17": "S: 林森發 A: 唐茂 N: 彭偉慎 C: 邱冠霖 R: 劉錦郎 T: 許世勳",
-"2024-4-18": "S: 黃榮國 A: 林厚運 N: 王瑞發 C: 張日曜 R: 黃煜森 T: 呂明峰",
+"2024-4-18": "S: 黃榮國 A: 林厚運 N: 王瑞發 C: 張日曜 R: 張哲維 T: 呂明峰",
 "2024-4-19": "S: 柯正和 A: 唐茂 N: 許敦智 C: 孫景泰 R: 劉錦郎 T: 許世勳",
 "2024-4-20": "S: 詹文欽 A: 林森發 N: 范振宇 C: 秦桔萬 R: 林厚運 T: 黃經洲",
 "2024-4-21": "S: 黃榮國 A: 許世勳 N: 許敦智 C: 張日曜 R: 余金原 T: 洪柜峰",
@@ -73,7 +73,7 @@ const dutySchedule = {
 "2024-4-27": "S: 柯正和 A: 彭偉慎 N: 陳建中 C: 張日曜 R: 張哲維 T: 許世勳",
 "2024-4-28": "S: 黃榮國 A: 洪柜峰 N: 唐茂 C: 孫景泰 R: 余金原 T: 羅應順",
 "2024-4-29": "S: 范振宇 A: 張哲維 N: 許敦智 C: 邱冠霖 R: 黃煜森 T: 呂明峰",
-"2024-4-30": "S: 林森發 A: 彭偉慎 N: 劉暐丞 C: 秦桔萬 R: 劉錦郎 T: 許世勳",
+"2024-4-30": "S: 林森發 A: 彭偉慎 N: 劉暐丞 C: 秦桔萬 R: 劉錦郎 T: 方振彬",
 
 };
 
@@ -216,17 +216,42 @@ function addEventListeners(dayElement, btn, day, month, year, date) {
 function createCalendar(year, month) {
   const daysInMonth = new Date(year, month, 0).getDate();
   const weekdays = ['一', '二', '三', '四', '五', '六', '日'];
-   
+  var counter = 0;
+  var counterN = 0;
   var now = new Date();
   var year_now = now.getFullYear();
   var month_now = (now.getMonth() + 1); // Months are zero-based
   var day_now = now.getDate();
- 
-
+  var yearN;
+  var nextMonth = (now.getMonth() + 1) + 1;
+    if (nextMonth > 12) {
+      nextMonth = 1;
+      yearN = year + 1;
+    }
+  yearN=year;
+  const daysInMonthN = new Date(yearN, nextMonth, 0).getDate();
+  dayOfWeekN = Zellercongruence(1, nextMonth, yearN);
+  if (dayOfWeekN === 1) {
+    counterN=0;
+  } else if (dayOfWeekN === 2) {
+    counterN=1;
+  } else if (dayOfWeekN === 3) {
+    counterN=2;
+  } else if (dayOfWeekN === 4) {
+    counterN=3;
+  } else if (dayOfWeekN === 5) {
+    counterN=4;
+  } else if (dayOfWeekN === 6) {
+    counterN=5;
+  } else {
+    counterN=6;
+  }
   const headerCell = document.createElement('div');
   headerCell.classList.add('header-cell');
-  headerCell.textContent = `${year_now}年  ${month}月  `;
+  headerCell.textContent = `${year_now} 年 ${month} 月  `;
   header.appendChild(headerCell); 
+
+  
 
   const date = `${year}-${month}-${day}`;
   
@@ -240,44 +265,50 @@ function createCalendar(year, month) {
     dayOfWeek = Zellercongruence(1, month, year);
     
     if (dayOfWeek === 1) {
-
+      counter=0;
     } else if (dayOfWeek === 2) {
-      for (let i = 0; i < 1; i++) {
+      counter=1;
+      for (let i = 0; i < counter; i++) {
         const dayElement = document.createElement('div');
         dayElement.classList.add('day');
         dayElement.textContent = "";
         calendar.appendChild(dayElement);
       }
     } else if (dayOfWeek === 3) {
-      for (let i = 0; i < 2; i++) {
+      counter=2;
+      for (let i = 0; i < counter; i++) {
         const dayElement = document.createElement('div');
         dayElement.classList.add('day');
         dayElement.textContent = "";
         calendar.appendChild(dayElement);
       }
     } else if (dayOfWeek === 4) {
-      for (let i = 0; i < 3; i++) {
+      counter=3;
+      for (let i = 0; i < counter; i++) {
         const dayElement = document.createElement('div');
         dayElement.classList.add('day');
         dayElement.textContent = "";
         calendar.appendChild(dayElement);
       }
     } else if (dayOfWeek === 5) {
-      for (let i = 0; i < 4; i++) {
+      counter=4;
+      for (let i = 0; i < counter; i++) {
         const dayElement = document.createElement('div');
         dayElement.classList.add('day');
         dayElement.textContent = "";
         calendar.appendChild(dayElement);
       }
     } else if (dayOfWeek === 6) {
-      for (let i = 0; i < 5; i++) {
+      counter=5;
+      for (let i = 0; i < counter; i++) {
         const dayElement = document.createElement('div');
         dayElement.classList.add('day');
         dayElement.textContent = "";
         calendar.appendChild(dayElement);
       }
     } else {
-      for (let i = 0; i < 6; i++) {
+      counter=6;
+      for (let i = 0; i < counter; i++) {
         const dayElement = document.createElement('div');
         dayElement.classList.add('day');
         dayElement.textContent = "";
@@ -302,12 +333,13 @@ function createCalendar(year, month) {
   }
 
   //below is created for the next month. If the days of next month exceeds this month
-  for (let i = 0; i < 5; i++) {
+  for (let i = 0; i < (daysInMonthN + counterN - daysInMonth - counter) ; i++) {
     const dayElement = document.createElement('div');
     dayElement.classList.add('day');
     dayElement.textContent = "";
     calendar.appendChild(dayElement);
   }
+
 
 }
 
@@ -366,6 +398,8 @@ function change() {
     header.style.color = 'white';   
     footer.style.color = 'MediumBlue';
 
+   
+
     month = (now.getMonth() + 1) + 1;
     if (month > 12) {
       month = 1;
@@ -383,11 +417,11 @@ function change() {
       }
     });
     const headerCell = document.querySelector('.header-cell');
-    headerCell.textContent = `${year} 年   ${month}月`;
+    headerCell.textContent = `${year} 年   ${month} 月  `;
   } else {
     updateSelection();
     clearSelectedClass();
-    
+
     body.classList.remove("dark");
     body.style.backgroundImage = "url('tower.png')";
 
@@ -421,7 +455,7 @@ function change() {
     });
     
     const headerCell = document.querySelector('.header-cell');
-    headerCell.textContent = `${year}年  ${month}月`;    
+    headerCell.textContent = `${year} 年 ${month} 月  `;    
   }
   //below is to highlight the name previously selected in the change function
   highlightSelectedName(temp_name);
@@ -493,18 +527,19 @@ const namePicker = document.getElementById("namePicker");
 let currentIndex = 0;
 
 const selectedClassName = 'selected';
-
+const selectedClassName2 = 'selected2';
 function highlightSelectedName(selectedName) {
   const days = document.querySelectorAll('.day');
-  days.forEach(dayElement => {
-    const date = `${year}-${month}-${dayElement.textContent}`;
-    const namesForDay = (dutySchedule[date] || '').split(' ');
-    if (namesForDay.includes(selectedName)) {
-      dayElement.classList.add(selectedClassName);
-    } else {
-      dayElement.classList.remove(selectedClassName);
-    }
-  });
+    days.forEach(dayElement => {
+      const date = `${year}-${month}-${dayElement.textContent}`;
+      const namesForDay = (dutySchedule[date] || '').split(' ');
+      if (namesForDay.includes(selectedName)) {
+        dayElement.classList.add(selectedClassName);
+      } else {
+        dayElement.classList.remove(selectedClassName);
+      }
+    });
+  
 }
 
 // Populate the name picker with the list of names
