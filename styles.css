@@ -37,8 +37,8 @@ body {
 }
 
 .day {
-  width: 3em;
-  height: 3em;
+  width: 2.5em;
+  height: 2.5em;
   border: 1px solid #ccc;
   padding: 10px;
   font-weight: bold;
@@ -48,8 +48,8 @@ body {
 }
 
 .today {
-  width: 3em;
-  height: 3em;
+  width: 2.5em;
+  height: 2.5em;
   background-color: lightgreen;
   border:3px solid #FFD600;
   
@@ -62,8 +62,8 @@ body {
 
 
 .weekday {
-  width: 3em;
-  height: 3em;
+  width: 2.5em;
+  height: 2em;
   border: 1px solid #ccc;
   background-color: #3498db;
   color: #fff;
@@ -75,8 +75,8 @@ body {
   z-index: 10;
 }
 .weekend {
-  width: 3em;
-  height: 3em;
+  width: 2.5em;
+  height: 2.5em;
   color: red; 
   font-weight: bold;
   text-align: center;
@@ -245,7 +245,7 @@ footer {
   bottom: 0;
   left: 0;
   width: 100%;
-  background-color: rgba(144,238,144,0.7);
+  background-color: rgba(144,238,144,0.6);
   box-shadow: 10px 10px 30px green inset; /* Adjust the background color as needed */
   padding: 8px;
   text-align: center;
@@ -253,7 +253,7 @@ footer {
 }
 
 .picker-container {
-  width: 102px;
+  width: 2.5em;
   background-color: #ccc;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   overflow: hidden;
@@ -267,7 +267,7 @@ footer {
   font-weight: bold;
   font-size: 14px;
   overflow: auto;
-  height: 140px;
+  height: 150px;
 }
 
 .picker-item {
