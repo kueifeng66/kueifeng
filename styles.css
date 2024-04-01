@@ -37,8 +37,8 @@ body {
 }
 
 .day {
-  width: 2.5em;
-  height: 2.5em;
+  width: 2.4em;
+  height: 2.6em;
   border: 1px solid #ccc;
   padding: 10px;
   font-weight: bold;
@@ -48,8 +48,8 @@ body {
 }
 
 .today {
-  width: 2.5em;
-  height: 2.5em;
+  width: 2.4em;
+  height: 2.6em;
   background-color: lightgreen;
   border:3px solid #FFD600;
   
@@ -62,8 +62,8 @@ body {
 
 
 .weekday {
-  width: 2.5em;
-  height: 2em;
+  width: 2.4em;
+  height: 2.4em;
   border: 1px solid #ccc;
   background-color: #3498db;
   color: #fff;
@@ -75,8 +75,8 @@ body {
   z-index: 10;
 }
 .weekend {
-  width: 2.5em;
-  height: 2.5em;
+  width: 2.4em;
+  height: 2.6em;
   color: red; 
   font-weight: bold;
   text-align: center;
