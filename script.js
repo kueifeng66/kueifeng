@@ -300,7 +300,15 @@ function createCalendar(year, month) {
     }
     addEventListeners(dayElement, btn, day, month, year, date);    
   }
-  
+
+  //below is created for the next month. If the days of next month exceeds this month
+  for (let i = 0; i < 5; i++) {
+    const dayElement = document.createElement('div');
+    dayElement.classList.add('day');
+    dayElement.textContent = "";
+    calendar.appendChild(dayElement);
+  }
+
 }
 
 function showTooltip(date) {
