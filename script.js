@@ -131,7 +131,7 @@ function Zellercongruence(day, month, year)
 function addEventListeners(dayElement, btn, day, month, year, date) {
   dayElement.addEventListener('mouseover', () => {
     if (btn.checked) {
-      dayElement.style.color = 'MediumBlue'; // Change the color when button is checked and mouse is over
+      dayElement.style.color = 'purple'; // Change the color when button is checked and mouse is over
     }
     showTooltip(date);      
   });
@@ -144,7 +144,7 @@ function addEventListeners(dayElement, btn, day, month, year, date) {
         today.style.color = 'MediumBlue';
       });
       if (Zellercongruence(day, month, year) === 0 || Zellercongruence(day, month, year) === 6) {
-        dayElement.style.color = 'red';
+        dayElement.style.color = 'yellow';
       }
     }
     hideTooltip();
@@ -188,7 +188,7 @@ function createCalendar(year, month) {
   }
   const headerCell = document.createElement('div');
   headerCell.classList.add('header-cell');
-  headerCell.textContent = `${year} 年     ${month} 月  `;
+  headerCell.textContent = `${year} 年  ${month} 月  `;
   header.appendChild(headerCell); 
 
   
@@ -331,7 +331,7 @@ function change() {
     });
     let weekendDays = document.querySelectorAll('.weekend');
     weekendDays.forEach(day => {
-      day.style.color = 'magenta';
+      day.style.color = 'yellow';
     });
     
     let header = document.getElementById('header');
@@ -467,7 +467,7 @@ const namePicker = document.getElementById("namePicker");
 let currentIndex = 0;
 
 const selectedClassName = 'selected';
-const selectedClassName2 = 'selected2';
+
 function highlightSelectedName(selectedName) {
   const days = document.querySelectorAll('.day');
     days.forEach(dayElement => {
@@ -541,11 +541,6 @@ function updateScale() {
   });  
 }
 
-
-
-
-
-
 namePicker.addEventListener("scroll", () => {
   const itemHeight = namePicker.querySelector(".picker-item").offsetHeight;
   currentIndex = Math.floor(namePicker.scrollTop / itemHeight);
@@ -562,4 +557,3 @@ btn.addEventListener('change', change);
 
 
 createCalendar(year, month);
-
