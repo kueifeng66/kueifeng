@@ -252,6 +252,7 @@ footer {
 }
 
 .picker-container {
+  border: 1px solid #ffffff;
   width: 70px;
   background-color: #ccc;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
