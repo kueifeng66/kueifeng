@@ -53,6 +53,7 @@ body {
   height: 2.6em;
   /* background-color: lightgreen; */
   border:3px solid magenta;
+  
 }
 
 .selected  {
@@ -119,7 +120,7 @@ body.dark {
 
 .display {
  
-  width: 70px;
+  width: 100px;
   height: 40px;
   border-radius: 200px;
   display: flex;
@@ -163,13 +164,14 @@ label:after {
 }
 
 label {
-  width:70px;
+  width:100px;
   height: 42px;
   border-radius: 200px;
   box-shadow: 20px 20px 40px rgba(0, 0, 0, 0.2) inset;
   background:lightgrey;
   cursor: pointer;
   position: relative;
+  
 }
 input {
   display: none;
@@ -209,7 +211,7 @@ svg {
 }
 input:checked + .display {
   background: #121212;
-  width: 70px;
+  width: 100px;
   height: 40px;
 }
 input:checked + .display label {
@@ -254,12 +256,12 @@ footer {
 
 .picker-container {
   border: 1px solid #ffffff;
-  width: 80px;
-  margin: 0.5px;
+  width: 100px;
+  margin: 3px;
   background-color: #ccc;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   overflow: hidden;
-  border-radius: 12px;
+  border-radius: 20px;
   text-align: center;
 }
 
@@ -269,7 +271,7 @@ footer {
   padding: 1px;
   background-color: lightgrey;
   font-weight: bold;
-  font-size: 14px;
+  font-size: 18px;
   overflow: auto;
   height: 150px;
 }
