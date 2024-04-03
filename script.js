@@ -331,7 +331,7 @@ function change() {
     });
     let weekendDays = document.querySelectorAll('.weekend');
     weekendDays.forEach(day => {
-      day.style.color = 'red';
+      day.style.color = 'magenta';
     });
     
     let header = document.getElementById('header');
