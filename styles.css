@@ -37,8 +37,8 @@ body {
 }
 
 .day {
-  width: 2.5em;
-  height: 2.6em;
+  width: 2.6em;
+  height: 2.7em;
   border: 1px solid #ccc;
   padding: 10px;
   font-weight: bold;
@@ -49,8 +49,8 @@ body {
 }
 
 .today {
-  width: 2.5em;
-  height: 2.6em;
+  width: 2.6em;
+  height: 2.7em;
   /* background-color: lightgreen; */
   border:3px solid magenta;
   
@@ -63,12 +63,12 @@ body {
 
 
 .weekday {
-  width: 2.5em;
-  height: 2.5em;
+  width: 2.6em;
+  height: 2.6em;
   border: 1px solid #ccc;
   background-color: #3498db;
   color: #fff;
-  padding: 10px;
+  padding: 8px;
   font-weight: bold;
   position: relative;
   cursor: pointer;
@@ -76,8 +76,8 @@ body {
   z-index: 10;
 }
 .weekend {
-  width: 2.5em;
-  height: 2.6em;
+  width: 2.6em;
+  height: 2.7em;
   color: red;
   font-weight: bold;
   text-align: center;
@@ -171,7 +171,6 @@ label {
   background:lightgrey;
   cursor: pointer;
   position: relative;
-  
 }
 input {
   display: none;
@@ -193,7 +192,6 @@ input {
     align-items: center;
     justify-content: center;
     overflow: hidden;
-  
 }
 svg {
   width: 30px;
