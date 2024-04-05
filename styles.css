@@ -282,7 +282,7 @@ footer {
   margin-bottom: 10px;
   /*transition: background-color 0.3s ease;*/
   transition: transform 0.3s ease;
-
+  margin: 3px;
 }
 
 .picker-item:hover {
