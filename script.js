@@ -284,12 +284,8 @@ function createCalendar(year, month) {
 }
 
 function showTooltip(date) {
-  document.addEventListener("mousemove", function(event){
-    let x = event.clientX;
-    let y = event.clientY;
-    tooltip.style.left = x - 120 + 'px';
-    tooltip.style.top = y + 'px';
-  });
+  tooltip.style.left = 350 + 'px';
+  tooltip.style.top = 235 + 'px';
   tooltip.textContent = dutySchedule[date] || "None";
   tooltip.style.display = 'block';
 }
