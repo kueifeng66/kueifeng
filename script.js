@@ -1,559 +1,318 @@
-const calendar = document.getElementById('calendar');
-const tooltip = document.getElementById('tooltip');
-const btn = document.querySelector("#check");
-const footer = document.getElementById('scrollingText');
-const header = document.getElementById('header');
-const body = document.body;
-
-const now = new Date();
-var year = now.getFullYear();
-var month = (now.getMonth() + 1);
-var day = now.getDate();
-var temp_name;
-
-
-const dutySchedule = {
-"2024-4-1": "S: 范振宇 A: 黃煜森 N: 彭偉慎 C: 張日曜 R: 張哲維 T: 方振彬",
-"2024-4-2": "S: 柯正和 A: 許敦智 N: 劉暐丞 C: 邱冠霖 R: 林厚運 T: 羅應順",
-"2024-4-3": "S: 詹文欽 A: 呂明峰 N: 陳建中 C: 秦桔萬 R: 黃煜森 T: 林宏儒",
-"2024-4-4": "S: 黃經洲 A: 劉暐丞 N: 彭偉慎 C: 孫景泰 R: 余金原 T: 方振彬",
-"2024-4-5": "S: 詹文欽 A: 洪柜峰 N: 許敦智 C: 邱冠霖 R: 張哲維 T: 羅應順",
-"2024-4-6": "S: 范振宇 A: 林宏儒 N: 唐茂 C: 張日曜 R: 劉錦郎 T: 呂明峰",
-"2024-4-7": "S: 林森發 A: 王瑞發 N: 劉暐丞 C: 秦桔萬 R: 林厚運 T: 方振彬",
-"2024-4-8": "S: 黃榮國 A: 張哲維 N: 陳建中 C: 孫景泰 R: 余金原 T: 羅應順",
-"2024-4-9": "S: 林森發 A: 劉暐丞 N: 王瑞發 C: 邱冠霖 R: 劉錦郎 T: 洪柜峰",
-"2024-4-10": "S: 黃經洲 A: 張哲維 N: 彭偉慎 C: 張日曜 R: 林厚運 T: 林宏儒",
-"2024-4-11": "S: 柯正和 A: 孫景泰 N: 范振宇 C: 秦桔萬 R: 黃煜森 T: 方振彬",
-"2024-4-12": "S: 詹文欽 A: 陳建中 N: 劉暐丞 C: 邱冠霖 R: 劉錦郎 T: 洪柜峰",
-"2024-4-13": "S: 黃榮國 A: 林宏儒 N: 王瑞發 C: 柯正和 R: 黃煜森 T: 羅應順",
-"2024-4-14": "S: 黃經洲 A: 唐茂 N: 陳建中 C: 秦桔萬 R: 林厚運 T: 呂明峰",
-"2024-4-15": "S: 范振宇 A: 劉錦郎 N: 彭偉慎 C: 張日曜 R: 余金原 T: 方振彬",
-"2024-4-16": "S: 柯正和 A: 羅應順 N: 許敦智 C: 孫景泰 R: 黃煜森 T: 林宏儒",
-"2024-4-17": "S: 林森發 A: 唐茂 N: 彭偉慎 C: 邱冠霖 R: 劉錦郎 T: 許世勳",
-"2024-4-18": "S: 黃榮國 A: 林厚運 N: 王瑞發 C: 張日曜 R: 黃煜森 T: 呂明峰",
-"2024-4-19": "S: 柯正和 A: 唐茂 N: 許敦智 C: 孫景泰 R: 劉錦郎 T: 許世勳",
-"2024-4-20": "S: 詹文欽 A: 林森發 N: 范振宇 C: 秦桔萬 R: 林厚運 T: 黃經洲",
-"2024-4-21": "S: 黃榮國 A: 許世勳 N: 許敦智 C: 張日曜 R: 余金原 T: 洪柜峰",
-"2024-4-22": "S: 黃經洲 A: 王瑞發 N: 唐茂 C: 孫景泰 R: 劉錦郎 T: 方振彬",
-"2024-4-23": "S: 林森發 A: 柯正和 N: 陳建中 C: 邱冠霖 R: 余金原 T: 林宏儒",
-"2024-4-24": "S: 黃榮國 A: 許世勳 N: 王瑞發 C: 秦桔萬 R: 張哲維 T: 洪柜峰",
-"2024-4-25": "S: 范振宇 A: 彭偉慎 N: 許敦智 C: 孫景泰 R: 林厚運 T: 黃經洲",
-"2024-4-26": "S: 林森發 A: 方振彬 N: 王瑞發 C: 邱冠霖 R: 黃煜森 T: 呂明峰",
-"2024-4-27": "S: 柯正和 A: 彭偉慎 N: 陳建中 C: 張日曜 R: 張哲維 T: 許世勳",
-"2024-4-28": "S: 黃榮國 A: 洪柜峰 N: 唐茂 C: 孫景泰 R: 余金原 T: 羅應順",
-"2024-4-29": "S: 范振宇 A: 張哲維 N: 許敦智 C: 邱冠霖 R: 黃煜森 T: 呂明峰",
-"2024-4-30": "S: 林森發 A: 余金原 N: 劉暐丞 C: 秦桔萬 R: 劉錦郎 T: 許世勳",
-
-};
-
-const holiday ={
-  
-"2024-4-1": "【廿三】",
-"2024-4-2": "【廿四】",
-"2024-4-3": "【廿五】",
-"2024-4-4": "【清明兒童節】【放假日】",
-"2024-4-5": "【廿七】【放假日】",
-"2024-4-6": "【廿八】【放假日】",
-"2024-4-7": "【廿九】【放假日】",
-"2024-4-8": "【三十】",
-"2024-4-9": "【三月小】",
-"2024-4-10": "【初二】",
-"2024-4-11": "【初三】",
-"2024-4-12": "【初四】",
-"2024-4-13": "【初五】【放假日】",
-"2024-4-14": "【初六】【放假日】",
-"2024-4-15": "【初七】",
-"2024-4-16": "【初八】",
-"2024-4-17": "【初九】",
-"2024-4-18": "【初十】",
-"2024-4-19": "【穀雨】",
-"2024-4-20": "【十二】【放假日】",
-"2024-4-21": "【十三】【放假日】",
-"2024-4-22": "【十四】",
-"2024-4-23": "【十五】",
-"2024-4-24": "【十六】",
-"2024-4-25": "【十七】",
-"2024-4-26": "【十八】",
-"2024-4-27": "【十九】【放假日】",
-"2024-4-28": "【二十】【放假日】",
-"2024-4-29": "【廿一】",
-"2024-4-30": "【廿二】",
-
-
-
-};
-
-
-function Zellercongruence(day, month, year)
-{
-        if (month == 1)
-        {
-            month = 13;
-            year--;
-        }
-        if (month == 2)
-        {
-            month = 14;
-            year--;
-        }
-        let q = day;
-        let m = month;
-        let k = year % 100;
-        let j = parseInt(year / 100, 10);
-        let h = q + parseInt(13 * (m + 1) / 5, 10) + k + parseInt(k / 4, 10) + parseInt(j / 4, 10) + 5 * j;
-        h = h % 7;
-        switch (h)
-        {
-            case 0: 
-              return 6;
-              break;           
-            case 1: 
-                return 0;
-                break;    
-            case 2: 
-                return 1;
-                break;    
-            case 3: 
-                return 2;
-                break; 
-            case 4: 
-                return 3;
-                break;  
-            case 5: 
-                return 4;
-                break;
-            case 6: 
-                return 5;
-                break;
-        }
+body {
+  font-family:  Arial, Helvetica, sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  margin: 0;
+  overflow: hidden; 
+  background-image: url('tower.png');
+  background-size: cover; 
+  background-position: center; 
+  background-repeat: no-repeat; 
 }
-
-function addEventListeners(dayElement, btn, day, month, year, date) {
-  dayElement.addEventListener('mouseover', () => {
-    if (btn.checked) {
-      dayElement.style.color = 'purple'; // Change the color when button is checked and mouse is over
-    }
-    showTooltip(date);      
-  });
-
-  dayElement.addEventListener('mouseout', () => {
-    if (btn.checked) {
-      dayElement.style.color = 'white'; // Reset the color when button is checked and mouse is out
-      let today = document.querySelectorAll('.today');
-      today.forEach(today => {
-        today.style.color = 'MediumBlue';
-      });
-      if (Zellercongruence(day, month, year) === 0 || Zellercongruence(day, month, year) === 6) {
-        dayElement.style.color = 'yellow';
-      }
-    }
-    hideTooltip();
-  });
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  transition: 0.1s;
 }
 
 
-// Function to create calendar days
-function createCalendar(year, month) {
-  const daysInMonth = new Date(year, month, 0).getDate();
-  const weekdays = ['一', '二', '三', '四', '五', '六', '日'];
-  var counter = 0;
-  var counterN = 0;
-  var now = new Date();
-  var year_now = now.getFullYear();
-  var month_now = (now.getMonth() + 1); // Months are zero-based
-  var day_now = now.getDate();
-  var yearN;
-  var nextMonth = (now.getMonth() + 1) + 1;
-    if (nextMonth > 12) {
-      nextMonth = 1;
-      yearN = year + 1;
-    }
-  yearN=year;
-  const daysInMonthN = new Date(yearN, nextMonth, 0).getDate();
-  dayOfWeekN = Zellercongruence(1, nextMonth, yearN);
-  if (dayOfWeekN === 1) {
-    counterN=0;
-  } else if (dayOfWeekN === 2) {
-    counterN=1;
-  } else if (dayOfWeekN === 3) {
-    counterN=2;
-  } else if (dayOfWeekN === 4) {
-    counterN=3;
-  } else if (dayOfWeekN === 5) {
-    counterN=4;
-  } else if (dayOfWeekN === 6) {
-    counterN=5;
-  } else {
-    counterN=6;
-  }
-  const headerCell = document.createElement('div');
-  headerCell.classList.add('header-cell');
-  headerCell.textContent = ` ${year} 年　${month} 月  `;
-  header.appendChild(headerCell); 
-
-  
-
-  const date = `${year}-${month}-${day}`;
-  
-  for (let i=0; i < 7; i++){
-    const weekdayElement = document.createElement('div');
-    weekdayElement.classList.add('weekday');
-    weekdayElement.textContent = weekdays[i];
-    calendar.appendChild(weekdayElement);
-  }
-
-    dayOfWeek = Zellercongruence(1, month, year);
-    
-    if (dayOfWeek === 1) {
-      counter=0;
-    } else if (dayOfWeek === 2) {
-      counter=1;
-      for (let i = 0; i < counter; i++) {
-        const dayElement = document.createElement('div');
-        dayElement.classList.add('day');
-        dayElement.textContent = "";
-        calendar.appendChild(dayElement);
-      }
-    } else if (dayOfWeek === 3) {
-      counter=2;
-      for (let i = 0; i < counter; i++) {
-        const dayElement = document.createElement('div');
-        dayElement.classList.add('day');
-        dayElement.textContent = "";
-        calendar.appendChild(dayElement);
-      }
-    } else if (dayOfWeek === 4) {
-      counter=3;
-      for (let i = 0; i < counter; i++) {
-        const dayElement = document.createElement('div');
-        dayElement.classList.add('day');
-        dayElement.textContent = "";
-        calendar.appendChild(dayElement);
-      }
-    } else if (dayOfWeek === 5) {
-      counter=4;
-      for (let i = 0; i < counter; i++) {
-        const dayElement = document.createElement('div');
-        dayElement.classList.add('day');
-        dayElement.textContent = "";
-        calendar.appendChild(dayElement);
-      }
-    } else if (dayOfWeek === 6) {
-      counter=5;
-      for (let i = 0; i < counter; i++) {
-        const dayElement = document.createElement('div');
-        dayElement.classList.add('day');
-        dayElement.textContent = "";
-        calendar.appendChild(dayElement);
-      }
-    } else {
-      counter=6;
-      for (let i = 0; i < counter; i++) {
-        const dayElement = document.createElement('div');
-        dayElement.classList.add('day');
-        dayElement.textContent = "";
-        calendar.appendChild(dayElement);
-      }
-    }
-
-  for (let day = 1; day <= daysInMonth; day++) {
-    const date = `${year}-${month}-${day}`;
-    const dayElement = document.createElement('div');
-    dayElement.classList.add('day');
-    dayElement.textContent = day;
-    calendar.appendChild(dayElement);
-
-    if (Zellercongruence(day, month, year) === 0 || Zellercongruence(day, month, year) === 6) {
-      dayElement.classList.add('weekend');
-    }
-    if (year === year_now && month === month_now && day === day_now) {
-      dayElement.classList.add('today');
-    }
-    addEventListeners(dayElement, btn, day, month, year, date);    
-  }
-
-  //below is created for the next month. If the days of next month exceeds this month
-  for (let i = 0; i < (daysInMonthN + counterN - daysInMonth - counter) ; i++) {
-    const dayElement = document.createElement('div');
-    dayElement.classList.add('day');
-    dayElement.textContent = "";
-    calendar.appendChild(dayElement);
-  }
-
-
+#calendar {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 1px;
 }
 
-function showTooltip(date) {
-  document.addEventListener("mousemove", function(event){
-    let x = event.clientX;
-    let y = event.clientY;
-
-    const isWeekend = Zellercongruence(new Date(date).getDate(), new Date(date).getMonth() + 1, new Date(date).getFullYear()) === 0 || 
-                       Zellercongruence(new Date(date).getDate(), new Date(date).getMonth() + 1, new Date(date).getFullYear()) === 6;
-    if (isWeekend) {
-      tooltip.style.left = x - 450 + 'px';
-    }else {
-      tooltip.style.left = x + 25 + 'px';
-    }
-    tooltip.style.top = y + 'px';
-  });
-
-  tooltip.textContent = dutySchedule[date] || "None";
-  tooltip.style.display = 'block';
+#header {
+  border: 1px solid #ccc;
+  font-weight: bold;
+  padding: 5px;
+  background-color: #3498db;
+  text-align: center;
+  color: #fff;
+  font-size:18px;
+  border-radius: 10px;
 }
 
-function hideTooltip() {
-  tooltip.style.display = 'none';
+.day {
+  width: 2.6em;
+  height: 2.7em;
+  border: 1px solid #ffffff;
+  padding: 10px;
+  font-weight: bold;
+  text-align: center;
+  position: relative;
+  cursor: pointer;
+  color:#0040c2;
 }
 
-function change() {
-
-  var day_now = now.getDate();
-  if (btn.checked) {
-    updateSelection();
-    clearSelectedClass();
-    
-    let previousToday = document.querySelectorAll('.today');
-    previousToday.forEach(today => {
-      today.classList.remove('today');
-    });
-
-    body.classList.add("dark");
-    body.style.backgroundImage = "url('TIAC.png')";
-    
-    let days = document.querySelectorAll('.day');
-    days.forEach(day => {
-      day.style.color = 'white';
-    });
-    let today = document.querySelectorAll('.today');
-    today.forEach(today => {
-      today.style.color = 'MediumBlue';
-    });
-    let weekendDays = document.querySelectorAll('.weekend');
-    weekendDays.forEach(day => {
-      day.style.color = 'yellow';
-    });
-    
-    let header = document.getElementById('header');
-    header.style.color = 'white';   
-    footer.style.color = 'MediumBlue';
-
-   
-
-    month = (now.getMonth() + 1) + 1;
-    if (month > 12) {
-      month = 1;
-      year++;
-    }
-    var daysInNextMonth = new Date(year, month, 0).getDate();
-    days.forEach((day, index) => {
-      day.textContent = "";
-      if (index >= Zellercongruence(1, month, year) - 1 && index < daysInNextMonth + Zellercongruence(1, month, year) - 1) {
-        const date = `${year}-${month}-${index - Zellercongruence(1, month, year) + 2}`;
-        day.textContent = index - Zellercongruence(1, month, year) + 2;
-        addEventListeners(day, btn, index - Zellercongruence(1, month, year) + 2, month, year, date);
-      }else{
-        addEventListeners(day, btn, index - Zellercongruence(1, month, year) + 2, month, year, 999);
-      }
-    });
-    const headerCell = document.querySelector('.header-cell');
-    headerCell.textContent = ` ${year} 年　${month} 月  `;
-  } else {
-    updateSelection();
-    clearSelectedClass();
-
-    body.classList.remove("dark");
-    body.style.backgroundImage = "url('tower.png')";
-
-    // Reset the color of '.day' elements to their default
-    let days = document.querySelectorAll('.day');
-    days.forEach(day => {
-      day.style.color = ''; // This will remove the inline 'color' style, allowing the CSS rule to take effect
-    });
-    // Reset the color of 'header' element to its default
-    let header = document.getElementById('header');
-    header.style.color = ''; // This will remove the inline 'color' style, allowing the CSS rule to take effect
-    footer.style.color = 'black';
-    
-    month = (now.getMonth() + 1);
-    if (month === 12) {
-      year--;
-    }
-    var daysInCurrentMonth = new Date(year, month, 0).getDate();
-    days.forEach((day, index) => {
-      day.textContent = "";
-      if (index >= Zellercongruence(1, month, year) - 1 && index < daysInCurrentMonth + Zellercongruence(1, month, year) - 1) {
-        const date = `${year}-${month}-${index - Zellercongruence(1, month, year) + 2}`;
-        day.textContent = index - Zellercongruence(1, month, year) + 2;
-        addEventListeners(day, btn, index - Zellercongruence(1, month, year) + 2, month, year, date);
-      }else {
-        addEventListeners(day, btn, index - Zellercongruence(1, month, year) + 2, month, year, 999);
-      }
-      if (index - Zellercongruence(1, month, year) + 2 === day_now) {
-        day.classList.add('today');
-      }
-    });
-    
-    const headerCell = document.querySelector('.header-cell');
-    headerCell.textContent = ` ${year} 年　${month} 月  `;   
-  }
-  //below is to highlight the name previously selected in the change function
-  highlightSelectedName(temp_name);
-  const items = document.querySelectorAll('.picker-item');
-  items.forEach((item) => {
-    if (temp_name === item.textContent && temp_name != "．．．"){
-      item.style.transform = 'scale(1.5)';
-      item.style.backgroundColor = "turquoise";
-    }
-  });
-} //change function ends here
-
-function scroll(info) {
-  var result = ''; 
-  var isSpaceBeforeUppercase = false; 
-  
-  for (var i = 0; i < info.length; i++) {
-    var currentChar = info[i];
-    var nextChar = info[i + 1];
-    
-    if (currentChar === ' ' && (nextChar.match(/[A-Z]/) )) {
-      result += '&nbsp;&nbsp;&nbsp'; 
-      isSpaceBeforeUppercase = true; 
-    } else {
-      result += currentChar; 
-      isSpaceBeforeUppercase = false; 
-    }
-  }
-  var marquee = document.getElementById("scrollingText");
-  marquee.innerHTML = '<p>' + result + '</p>'; 
-}
-
-const names = [
-  "．．．",
-  "．．．",
-  "．．．",
-  "柯正和",
-  "張日曜",
-  "孫景泰",
-  "秦桔萬",
-  "邱冠霖",
-  "詹文欽",
-  "黃榮國",
-  "范振宇",
-  "唐茂",
-  "許敦智",
-  "王瑞發",
-  "彭偉慎",
-  "陳建中",
-  "劉暐丞",
-  "林森發",
-  "黃煜森",
-  "劉錦郎",
-  "余金原",
-  "林厚運",
-  "張哲維",
-  "黃經洲",
-  "洪柜峰",
-  "林宏儒",
-  "呂明峰",
-  "周育稔",
-  "許世勳",
-  "羅應順",
-  "方振彬",
-  "．．．",
-  "．．．",
-];
-const namePicker = document.getElementById("namePicker");
-let currentIndex = 0;
-
-const selectedClassName = 'selected';
-
-function highlightSelectedName(selectedName) {
-  const days = document.querySelectorAll('.day');
-    days.forEach(dayElement => {
-      const date = `${year}-${month}-${dayElement.textContent}`;
-      const namesForDay = (dutySchedule[date] || '').split(' ');
-      if (namesForDay.includes(selectedName)) {
-        dayElement.classList.add(selectedClassName);
-      } else {
-        dayElement.classList.remove(selectedClassName);
-      }
-    });
+.today {
+  width: 2.6em;
+  height: 2.7em;
+  /* background-color: lightgreen; */
+  border:3px solid magenta;
   
 }
 
-// Populate the name picker with the list of names
-names.forEach((name) => {
-  const selectedName = name;
-  const item = document.createElement("div");
-  item.className = "picker-item";
-  item.textContent = name;
+.selected  {
+  background-color: turquoise;
+}
+
+
+
+.weekday {
+  width: 2.6em;
+  height: 2.7em;
+  border: 1px solid #ffffff;
+  background-color: #3498db;
+  color: #fff;
+  padding: 8px;
+  font-weight: bold;
+  position: relative;
+  cursor: pointer;
+  text-align: center;
+  z-index: 10;
+}
+.weekend {
+  width: 2.6em;
+  height: 2.7em;
+  color: red;
+  font-weight: bold;
+  text-align: center;
+}
+
+#tooltip {
+  position: absolute;
+  background-color: rgba(51, 51, 51, 0.75); 
+  color: white;
+  padding: 10px;
+  display: none;
+  z-index: 10;
+  border-radius: 12px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Add box shadow for a subtle lift */
+  transition: 0.1s ease-in-out; /* Add transition for smooth appearance */
+}
+
+/* Optional: Add some styling when tooltip is hovered */
+#tooltip:hover {
+  background-color: rgba(51, 51, 51, 1);
+}
+
+.day:hover {
+  cursor: pointer;
+  background-color: #ffff99;
+}
+
+body.dark {
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.dark {
+  background: #121212;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.display {
  
- // Add click event listener to handle name selection
- item.addEventListener("click", () => {
-    updateSelection();
-    const items = document.querySelectorAll('.picker-item');
-    items.forEach((item) => {
-      item.style.transform = 'scale(1)';
-    });
-    item.style.transform = 'scale(1.5)';
-    item.style.backgroundColor = "turquoise";
-    temp_name=selectedName;
-    highlightSelectedName(selectedName);
-  });
-  namePicker.appendChild(item);
-});
-
-function clearSelectedClass() {
-  const days = document.querySelectorAll('.day');
-  days.forEach(dayElement => {
-    dayElement.classList.remove(selectedClassName);
-  });
+  width: 100px;
+  height: 40px;
+  border-radius: 200px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
-
-function updateSelection() {
-  const items = document.querySelectorAll(".picker-item");
-  items.forEach((item) => {
-      item.style.backgroundColor = "";
-  });
-}
-
-
-function updateScale() {
-  const container = document.getElementById('namePicker');
-  const items = document.querySelectorAll('.picker-item');
-  const containerRect = container.getBoundingClientRect();
-  const containerCenterY = containerRect.top + containerRect.height / 2;
+label:before {
+  content: "";
+  /*background: linear-gradient(110deg,red, orange,yellow, #FFD600,green,blue, purple);*/
+  background: linear-gradient(90deg,#fff,transparent,transparent,#fff);
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  background-size:200%;
   
-  items.forEach((item) => {
-    const itemRect = item.getBoundingClientRect();
-    const itemCenterY = itemRect.top + itemRect.height / 2;
-    const distanceToCenter = Math.abs(containerCenterY - itemCenterY);
-      if (distanceToCenter < containerRect.height / 10 ) { // Adjust this threshold as needed
-        item.style.transform = 'scale(1.5)';
-        updateSelection();
-        item.style.backgroundColor = "turquoise";
-        temp_name=item.textContent;
-        highlightSelectedName(item.textContent);
-      } else {
-        item.style.transform = 'scale(1)';
-      }
-  });  
+  filter: blur(8px);
+  width: calc(100% + 4px);
+  height: calc(100% + 4px); 
+  animation: glowing-button 15s linear infinite;
+  transition: opacity 0.3s ease-in-out;
+  border-radius: 200px;
+  z-index:-10;
+}
+@keyframes glowing-button {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 400% 0;
+  }
+}
+label:after {
+  z-index: -1;
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 50%;
+  left: 0;
+  top: 0;
+  border-radius: 200px;
 }
 
-namePicker.addEventListener("scroll", () => {
-  const itemHeight = namePicker.querySelector(".picker-item").offsetHeight;
-  currentIndex = Math.floor(namePicker.scrollTop / itemHeight);
-  updateSelection();
-  clearSelectedClass();
-  updateScale();
-});
+label {
+  width:100px;
+  height: 42px;
+  border-radius: 200px;
+  box-shadow: 20px 20px 40px rgba(0, 0, 0, 0.2) inset;
+  background:lightgrey;
+  cursor: pointer;
+  position: relative;
+}
+input {
+  display: none;
+  border-radius: 200px;
+}
 
+.circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 30px;
+    background: white;
+    box-shadow: 20px 20px 40px rgba(0, 0, 0, 0.01),
+    -10px -10px 30px rgba(0, 0, 0, 0.01) inset;
+    position: absolute;
+    top: 50%;
+    left: -2.2%;
+    transform: translate(3%, -50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+svg {
+  width: 30px;
+  position: absolute;
+}
+.sun {
+  color: #FFD600;
+  margin-top: 0%;
+  opacity: 1;
+}
+.moon {
+  margin-top: -180%;
+  color: white;
+  opacity: 1;
+}
+input:checked + .display {
+  background: #121212;
+  width: 100px;
+  height: 40px;
+}
+input:checked + .display label {
+  background: #2ecc71;
+  box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.5) inset;
+}
+.indicator {
+color:gray;
+font-size: 10pt;
+}
+input:checked + .display label .circle {
+  left: 100%;
+  transform: translate(-104.8%, -50%);
+  background: #121212;
+  box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5),
+  -1px -1px 10px rgba(0, 0, 0, 0.5) inset;
+}
+input:checked + .display label .circle .sun {
+  margin-top: 50%;
+  opacity: 0;
+}
+input:checked + .display label .circle .moon {
+  margin-top: 0%;
+  opacity: 1;
+}
+label:active .circle  {
+  width: 48px;
+  height: 40px;
+}
 
-const date2 = `${year}-${month}-${day}`;
-const info = `${year}年${month}月${day}日` + holiday[date2] + " →→→ " + dutySchedule[date2];
-scroll(info);
-btn.addEventListener('change', change);
+footer {
+  height: 30px;
+  align-items: flex-start;
+  position: fixed;
+  font-weight: bold;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: rgba(144,238,144,0.4);
+  box-shadow: 10px 10px 30px green inset; /* Adjust the background color as needed */
+  padding: 8px;
+  text-align: center;
+  color: black;
+  z-index: -1;
+}
 
+.picker-container {
+  border: 1px solid #ffffff;
+  width: 100px;
+  margin: 3px;
+  background-color: #ccc;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  border-radius: 20px;
+  text-align: center;
+}
 
-createCalendar(year, month);
+.picker-body {
+  /* border: 1px double #ffffff; */
+  border-radius: 5px;
+  padding: 1px;
+  background-color: lightgrey;
+  font-weight: bold;
+  font-size: 18px;
+  overflow: auto;
+  height: 150px;
+}
+
+.picker-item {
+  margin-bottom: 10px;
+  /*transition: background-color 0.3s ease;*/
+  transition: transform 0.3s ease;
+
+}
+
+.picker-item:hover {
+  background-color: #f2f2f2;
+  transform: scale(1.5);
+  overflow-x: hidden;
+}
+
+#namePicker {
+  overflow-x: hidden;
+}
+
+#scrollingText {
+  white-space: nowrap; /* Prevents the text from wrapping */
+  overflow: hidden; /* Hides the overflow text */
+}
+
+#scrollingText p {
+  display: inline-block; /* Makes the text inline but allows it to be treated as a block element */
+  margin-right: 100%; /* Moves the text off-screen initially */
+  animation: marquee 20s linear infinite; /* Define the animation */
+}
+
+/* Define the animation */
+@keyframes marquee {
+  from {
+    margin-right: 100%; /* Start off-screen to the right */
+  }
+  to {
+    margin-left: 0%; /* Move to the left, displaying the text */
+  }
+}
+
