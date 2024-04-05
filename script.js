@@ -284,28 +284,19 @@ function createCalendar(year, month) {
 }
 
 function showTooltip(date) {
-  function handleMove(event) {
-    let x, y;
-    if (event.type === 'mousemove') {
-      x = event.clientX;
-      y = event.clientY;
-    } else {
-      x = event.touches[0].clientX;
-      y = event.touches[0].clientY;
-    }
+  document.addEventListener("mousemove", function(event){
+    let x = event.clientX;
+    let y = event.clientY;
 
     const isWeekend = Zellercongruence(new Date(date).getDate(), new Date(date).getMonth() + 1, new Date(date).getFullYear()) === 0 || 
                        Zellercongruence(new Date(date).getDate(), new Date(date).getMonth() + 1, new Date(date).getFullYear()) === 6;
     if (isWeekend) {
-      tooltip.style.left = x - 450 + 'px';
-    } else {
+      tooltip.style.left = x - 120 + 'px';
+    }else {
       tooltip.style.left = x + 25 + 'px';
     }
     tooltip.style.top = y + 'px';
-  }
-
-  document.addEventListener('mousemove', handleMove);
-  document.addEventListener('touchstart', handleMove);
+  });
 
   tooltip.textContent = dutySchedule[date] || "None";
   tooltip.style.display = 'block';
