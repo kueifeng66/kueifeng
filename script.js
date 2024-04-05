@@ -13,7 +13,6 @@ var temp_name;
 
 
 const dutySchedule = {
-
 "2024-4-1": "S: 范振宇 A: 黃煜森 N: 彭偉慎 C: 張日曜 R: 張哲維 T: 方振彬",
 "2024-4-2": "S: 柯正和 A: 許敦智 N: 劉暐丞 C: 邱冠霖 R: 林厚運 T: 羅應順",
 "2024-4-3": "S: 詹文欽 A: 呂明峰 N: 陳建中 C: 秦桔萬 R: 黃煜森 T: 林宏儒",
@@ -79,6 +78,7 @@ const holiday ={
 "2024-4-28": "【二十】【放假日】",
 "2024-4-29": "【廿一】",
 "2024-4-30": "【廿二】",
+
 
 
 };
@@ -151,6 +151,8 @@ function addEventListeners(dayElement, btn, day, month, year, date) {
   });
 }
 
+
+// Function to create calendar days
 function createCalendar(year, month) {
   const daysInMonth = new Date(year, month, 0).getDate();
   const weekdays = ['一', '二', '三', '四', '五', '六', '日'];
@@ -281,8 +283,11 @@ function createCalendar(year, month) {
 }
 
 function showTooltip(date) {
-  tooltip.style.left = 350 + 'px';
-  tooltip.style.top = 235 + 'px';
+  const calendarRect = calendar.getBoundingClientRect(); 
+  
+  tooltip.style.left = `${calendarRect.left-102}px`;
+  tooltip.style.top = `${calendarRect.top+106}px`;
+
   tooltip.textContent = dutySchedule[date] || "None";
   tooltip.style.display = 'block';
 }
@@ -292,7 +297,6 @@ function hideTooltip() {
 }
 
 function change() {
-
   var day_now = now.getDate();
   if (btn.checked) {
     updateSelection();
@@ -448,7 +452,6 @@ const names = [
   "．．．",
   "．．．",
 ];
-
 const namePicker = document.getElementById("namePicker");
 let currentIndex = 0;
 
@@ -468,6 +471,7 @@ function highlightSelectedName(selectedName) {
   
 }
 
+// Populate the name picker with the list of names
 names.forEach((name) => {
   const selectedName = name;
   const item = document.createElement("div");
@@ -503,6 +507,7 @@ function updateSelection() {
   });
 }
 
+
 function updateScale() {
   const container = document.getElementById('namePicker');
   const items = document.querySelectorAll('.picker-item');
@@ -533,9 +538,11 @@ namePicker.addEventListener("scroll", () => {
   updateScale();
 });
 
+
 const date2 = `${year}-${month}-${day}`;
 const info = `${year}年${month}月${day}日` + holiday[date2] + " →→→ " + dutySchedule[date2];
 scroll(info);
 btn.addEventListener('change', change);
+
 
 createCalendar(year, month);
