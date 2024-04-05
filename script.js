@@ -287,17 +287,9 @@ function showTooltip(date) {
   document.addEventListener("mousemove", function(event){
     let x = event.clientX;
     let y = event.clientY;
-
-    const isWeekend = Zellercongruence(new Date(date).getDate(), new Date(date).getMonth() + 1, new Date(date).getFullYear()) === 0 || 
-                       Zellercongruence(new Date(date).getDate(), new Date(date).getMonth() + 1, new Date(date).getFullYear()) === 6;
-    if (isWeekend) {
-      tooltip.style.left = x - 120 + 'px';
-    }else {
-      tooltip.style.left = x - 120 + 'px';
-    }
+    tooltip.style.left = x - 120 + 'px';
     tooltip.style.top = y + 'px';
   });
-
   tooltip.textContent = dutySchedule[date] || "None";
   tooltip.style.display = 'block';
 }
