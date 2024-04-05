@@ -289,7 +289,7 @@ function showTooltip(date) {
     if (event.type === 'mousemove') {
       x = event.clientX;
       y = event.clientY;
-    } else if (event.type === 'touchmove') {
+    } else {
       x = event.touches[0].clientX;
       y = event.touches[0].clientY;
     }
@@ -304,8 +304,8 @@ function showTooltip(date) {
     tooltip.style.top = y + 'px';
   }
 
-  document.addEventListener("mousemove", handleMove);
-  document.addEventListener("touchmove", handleMove);
+  document.addEventListener('mousemove', handleMove);
+  document.addEventListener('touchstart', handleMove);
 
   tooltip.textContent = dutySchedule[date] || "None";
   tooltip.style.display = 'block';
