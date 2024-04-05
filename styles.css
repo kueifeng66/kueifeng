@@ -39,7 +39,7 @@ body {
 .day {
   width: 2.6em;
   height: 2.7em;
-  border: 1px solid #ccc;
+  border: 1px solid #ffffff;
   padding: 10px;
   font-weight: bold;
   text-align: center;
@@ -65,7 +65,7 @@ body {
 .weekday {
   width: 2.6em;
   height: 2.7em;
-  border: 1px solid #ccc;
+  border: 1px solid #ffffff;
   background-color: #3498db;
   color: #fff;
   padding: 8px;
