@@ -188,7 +188,7 @@ function createCalendar(year, month) {
   }
   const headerCell = document.createElement('div');
   headerCell.classList.add('header-cell');
-  headerCell.textContent = `${year} 年　${month} 月  `;
+  headerCell.textContent = ` ${year} 年　${month} 月  `;
   header.appendChild(headerCell); 
 
   
@@ -357,7 +357,7 @@ function change() {
       }
     });
     const headerCell = document.querySelector('.header-cell');
-    headerCell.textContent = `${year} 年　${month} 月  `;
+    headerCell.textContent = ` ${year} 年　${month} 月  `;
   } else {
     updateSelection();
     clearSelectedClass();
@@ -395,7 +395,7 @@ function change() {
     });
     
     const headerCell = document.querySelector('.header-cell');
-    headerCell.textContent = `${year} 年　${month} 月  `;   
+    headerCell.textContent = ` ${year} 年　${month} 月  `;   
   }
   //below is to highlight the name previously selected in the change function
   highlightSelectedName(temp_name);
