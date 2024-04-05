@@ -293,7 +293,7 @@ function showTooltip(date) {
     if (isWeekend) {
       tooltip.style.left = x - 120 + 'px';
     }else {
-      tooltip.style.left = x + 25 + 'px';
+      tooltip.style.left = x - 120 + 'px';
     }
     tooltip.style.top = y + 'px';
   });
