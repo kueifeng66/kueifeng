@@ -150,7 +150,11 @@ function addEventListeners(dayElement, btn, day, month, year, date) {
     hideTooltip();
   });
 }
-
+function addEventListener_toHideToolTip(headerCell) {
+  headerCell.addEventListener('mouseover', () => {
+    hideTooltip();      
+  });
+}
 
 // Function to create calendar days
 function createCalendar(year, month) {
@@ -189,8 +193,8 @@ function createCalendar(year, month) {
   const headerCell = document.createElement('div');
   headerCell.classList.add('header-cell');
   headerCell.textContent = ` ${year} 年　${month} 月  `;
-  header.appendChild(headerCell); 
-
+  header.appendChild(headerCell);
+  addEventListener_toHideToolTip(headerCell);
   
 
   const date = `${year}-${month}-${day}`;
