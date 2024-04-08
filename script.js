@@ -488,8 +488,10 @@ names.forEach((name) => {
     const items = document.querySelectorAll('.picker-item');
     items.forEach((item) => {
       item.style.transform = 'scale(1)';
+      item.style.color = 'gray';
     });
     item.style.transform = 'scale(1.5)';
+    item.style.color = '';
     item.style.backgroundColor = "turquoise";
     temp_name=selectedName;
     highlightSelectedName(selectedName);
@@ -526,10 +528,12 @@ function updateScale() {
         item.style.transform = 'scale(1.5)';
         updateSelection();
         item.style.backgroundColor = "turquoise";
+        item.style.color = '';
         temp_name=item.textContent;
         highlightSelectedName(item.textContent);
       } else {
         item.style.transform = 'scale(1)';
+        item.style.color = 'gray';
       }
   });  
 }
