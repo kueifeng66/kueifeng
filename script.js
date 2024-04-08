@@ -351,6 +351,7 @@ function change() {
     });
     const headerCell = document.querySelector('.header-cell');
     headerCell.textContent = ` ${year} 年　${month} 月  `;
+    highlightAdditionalHoliday();
   } else {
     updateSelection();
     clearSelectedClass();
@@ -399,6 +400,7 @@ function change() {
       item.style.backgroundColor = "turquoise";
     }
   });
+  highlightAdditionalHoliday();
 } //change function ends here
 
 function scroll(info) {
@@ -481,8 +483,6 @@ function highlightAdditionalHoliday() {
     // console.log('namesForHoliday:', namesForHoliday);
     if (namesForHoliday.some(name => name.includes('放假日'))) {
       dayElement.style.color = 'red';
-    } else {
-      dayElement.style.color = '';
     }
   });
 }
