@@ -46,7 +46,7 @@ const dutySchedule = {
 
 };
 
-const holiday ={
+const holiday = {
   
 "2024-4-1": "【廿三】",
 "2024-4-2": "【廿四】",
@@ -471,8 +471,20 @@ function highlightSelectedName(selectedName) {
       } else {
         dayElement.classList.remove(selectedClassName);
       }
-    });
-  
+    }); 
+}
+function highlightAdditionalHoliday() {
+  const days = document.querySelectorAll('.day');
+  days.forEach(dayElement => {
+    const date = `${year}-${month}-${dayElement.textContent}`;
+    const namesForHoliday = (holiday[date] || '').split(' ');
+    // console.log('namesForHoliday:', namesForHoliday);
+    if (namesForHoliday.some(name => name.includes('放假日'))) {
+      dayElement.style.color = 'red';
+    } else {
+      dayElement.style.color = '';
+    }
+  });
 }
 
 // Populate the name picker with the list of names
@@ -545,6 +557,7 @@ namePicker.addEventListener("scroll", () => {
   updateSelection();
   clearSelectedClass();
   updateScale();
+  
 });
 
 
@@ -553,5 +566,5 @@ const info = `${year}年${month}月${day}日` + holiday[date2] + " →→→ " +
 scroll(info);
 btn.addEventListener('change', change);
 
-
 createCalendar(year, month);
+highlightAdditionalHoliday();//this must be done finally.
