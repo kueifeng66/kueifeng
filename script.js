@@ -481,6 +481,7 @@ names.forEach((name) => {
   const item = document.createElement("div");
   item.className = "picker-item";
   item.textContent = name;
+  item.style.color = "gray";
  
  // Add click event listener to handle name selection
  item.addEventListener("click", () => {
