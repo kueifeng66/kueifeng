@@ -323,10 +323,13 @@ function showTooltip(date) {
 
   tooltip.textContent = dutySchedule[date] || "None";
   tooltip.style.display = 'block';
+
+  document.title = holiday[date] || "None";
 }
 
 function hideTooltip() {
   tooltip.style.display = 'none';
+  document.title = 'On Duty Calendar';
 }
 
 function change() {
