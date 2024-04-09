@@ -55,14 +55,11 @@ body {
   font-weight: bold;
   /* background-color: lightgreen; */
   border:3px solid magenta;
-  
 }
 
 .selected  {
   background-color: turquoise;
 }
-
-
 
 .weekday {
   width: 2.6em;
@@ -87,8 +84,10 @@ body {
 }
 
 #tooltip {
+
   width:100px;
   height:150px;
+  text-align: center;
   font-weight: bold;
   position: absolute;
   background-color: rgba(51, 51, 51, 0.75); 
@@ -96,8 +95,8 @@ body {
   padding: 10px;
   display: none;
   z-index: 10;
-  border-radius: 12px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Add box shadow for a subtle lift */
+  border-radius: 20px;
+  box-shadow: 5px 5px 5px  rgba(0, 0, 0, 0.5); /* Add box shadow for a subtle lift */
   transition: 0.1s ease-in-out; /* Add transition for smooth appearance */
 }
 
@@ -324,4 +323,3 @@ footer {
     margin-left: 0%; /* Move to the left, displaying the text */
   }
 }
-
