@@ -11,6 +11,12 @@ body {
   background-position: center; 
   background-repeat: no-repeat; 
 }
+
+@media screen and (max-width:400px) {
+  body{
+    display:inline-flex;
+  }
+}
 * {
   margin: 0;
   padding: 0;
