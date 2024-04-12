@@ -12,18 +12,12 @@ body {
   background-repeat: no-repeat; 
 }
 
-@media screen and (max-width:400px) {
-  body{
-    display:inline-flex;
-  }
-}
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
   transition: 0.1s;
 }
-
 
 #calendar {
   display: grid;
@@ -328,4 +322,25 @@ footer {
   to {
     margin-left: 0%; /* Move to the left, displaying the text */
   }
+}
+
+
+@media screen and (max-width:400px) {
+  body{
+    display:inline-flex;
+  }
+  .day {
+    width: 2em;
+    height: 2.7em;
+  }
+  .weekday {
+    width: 2em;
+    height: 2.7em;
+  }
+  .weekend {
+    width: 2em;
+    height: 2.7em;
+  }
+
+
 }
