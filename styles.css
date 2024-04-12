@@ -330,15 +330,15 @@ footer {
     display:inline-flex;
   }
   .day {
-    width: 2em;
+    width: 1.85em;
     height: 2.7em;
   }
   .weekday {
-    width: 2em;
+    width: 1.85em;
     height: 2.7em;
   }
   .weekend {
-    width: 2em;
+    width: 1.85em;
     height: 2.7em;
   }
 
