@@ -325,22 +325,21 @@ footer {
 }
 
 
-@media screen and (max-width:400px) {
+@media screen and (max-width:368px) {
   body{
     display:inline-flex;
   }
   .day {
-    width: 1.85em;
+    width: 1.9em;
     height: 2.7em;
   }
   .weekday {
-    width: 1.85em;
+    width: 1.9em;
     height: 2.7em;
   }
   .weekend {
-    width: 1.85em;
+    width: 1.9em;
     height: 2.7em;
   }
-
 
 }
