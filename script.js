@@ -4,6 +4,7 @@ const btn = document.querySelector("#check");
 const footer = document.getElementById('scrollingText');
 const header = document.getElementById('header');
 const body = document.body;
+let clickCount = 0;
 
 const now = new Date();
 var year = now.getFullYear();
@@ -164,7 +165,7 @@ function addEventListeners(dayElement, btn, day, month, year, date) {
       dayElement.style.color = 'purple'; // Change the color when button is checked and mouse is over
     }
     showTooltip(date); 
-    // showTooltip2(date);     
+         
   });
 
   dayElement.addEventListener('mouseout', () => {
@@ -626,7 +627,7 @@ namePicker.addEventListener("scroll", () => {
 
 
 const date2 = `${year}-${month}-${day}`;
-const info = `${year}年${month}月${day}日` + holiday[date2] + " ☛☛☛ " + dutySchedule[date2];
+const info = `${year}年${month}月${day}日` + holiday[date2] + " →→→ " + dutySchedule[date2];
 scroll(info);
 btn.addEventListener('change', change);
 
