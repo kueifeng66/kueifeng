@@ -610,7 +610,7 @@ namePicker.addEventListener("scroll", () => {
 
 
 const date2 = `${year}-${month}-${day}`;
-const info = `${year}年${month}月${day}日` + holiday[date2] + " →→→ " + dutySchedule[date2];
+const info = `${year}年${month}月${day}日` + holiday[date2] + " ☛☛☛ " + dutySchedule[date2];
 scroll(info);
 btn.addEventListener('change', change);
 
