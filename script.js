@@ -198,6 +198,9 @@ function addEventListener_toHideToolTipandShowToday(headerCell) {
         today.style.backgroundColor = '#ffff99';
       });
       showTooltip(formattedDate);
+      if (btn.checked){
+        hideTooltip();
+      }
     }
     clickCount++;
   });
@@ -354,10 +357,17 @@ function hideTooltip() {
 }
 
 function change() {
+
   var day_now = now.getDate();
   if (btn.checked) {
     updateSelection();
     clearSelectedClass();
+    hideTooltip();
+
+    let todays = document.querySelectorAll('.today');
+      todays.forEach(today => {
+        today.style.backgroundColor = '';
+      });
     
     let previousToday = document.querySelectorAll('.today');
     previousToday.forEach(today => {
@@ -371,10 +381,7 @@ function change() {
     days.forEach(day => {
       day.style.color = 'white';
     });
-    let today = document.querySelectorAll('.today');
-    today.forEach(today => {
-      today.style.color = 'MediumBlue';
-    });
+    
     let weekendDays = document.querySelectorAll('.weekend');
     weekendDays.forEach(day => {
       day.style.color = 'yellow';
