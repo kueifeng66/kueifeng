@@ -181,10 +181,26 @@ function addEventListeners(dayElement, btn, day, month, year, date) {
     hideTooltip();
   });
 }
-function addEventListener_toHideToolTip(headerCell) {
-  headerCell.addEventListener('mouseover', () => {
-    hideTooltip();      
+function addEventListener_toHideToolTipandShowToday(headerCell) {
+  headerCell.addEventListener('click', () => {
+    const formattedDate = `${year}-${month}-${day}`
+    if (clickCount % 2 === 0) {
+      hideTooltip();
+      let todays = document.querySelectorAll('.today');
+      todays.forEach(today => {
+        today.style.backgroundColor = '';
+      });
+      // Perform actions for hiding tooltip
+    } else {
+      let todays = document.querySelectorAll('.today');
+      todays.forEach(today => {
+        today.style.backgroundColor = '#ffff99';
+      });
+      showTooltip(formattedDate);
+    }
+    clickCount++;
   });
+  
 }
 
 // Function to create calendar days
@@ -225,7 +241,7 @@ function createCalendar(year, month) {
   headerCell.classList.add('header-cell');
   headerCell.textContent = ` ${year} 年　${month} 月  `;
   header.appendChild(headerCell);
-  addEventListener_toHideToolTip(headerCell);
+  addEventListener_toHideToolTipandShowToday(headerCell);
   
 
   const date = `${year}-${month}-${day}`;
