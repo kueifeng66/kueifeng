@@ -161,6 +161,11 @@ function Zellercongruence(day, month, year)
 
 function addEventListeners(dayElement, btn, day, month, year, date) {
   dayElement.addEventListener('mouseover', () => {
+    let todays = document.querySelectorAll('.today');
+      todays.forEach(today => {
+        today.style.backgroundColor = '';
+      });
+      
     if (btn.checked) {
       dayElement.style.color = 'purple'; // Change the color when button is checked and mouse is over
     }
