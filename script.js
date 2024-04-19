@@ -4,7 +4,7 @@ const btn = document.querySelector("#check");
 const footer = document.getElementById('scrollingText');
 const header = document.getElementById('header');
 const body = document.body;
-let clickCount = 0;
+let clickCount = 1;
 
 const now = new Date();
 var year = now.getFullYear();
