@@ -744,7 +744,7 @@ function fetchWeather() {
         document.body.style.backgroundPosition= 'center';
       }
       const date2 = `${year}-${month}-${day}`;
-      let info = `${year}年${month}月${day}日`+ (holiday[date2] || '') + `溫度:${temperatureCelsius}°C, 濕度:${humidity}% , ${weatherCondition} ☛☛☛ `+ " " + (dutySchedule[date2] || '');
+      let info = `${year}年${month}月${day}日`+ (holiday[date2] || '') + `桃園機場 溫度:${temperatureCelsius}°C, 濕度:${humidity}% , ${weatherCondition} ☛☛☛ `+ " " + (dutySchedule[date2] || '');
       scroll(info);
       // Log temperature and humidity
 
