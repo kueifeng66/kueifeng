@@ -725,9 +725,11 @@ function fetchWeather() {
     .then(response => response.json())
     .then(data => {
        let temperatureKelvin = data.main.temp; // Temperature in Kelvin
-       let temperatureCelsius = (temperatureKelvin - 273.15).toFixed(2);
+       let temperatureCelsius = (temperatureKelvin - 273.15).toFixed(1);
        let ch_weather ='';
        let visibility = data.visibility/1000;
+       let windSpeed = (data.wind.speed*1.943844).toFixed(2);; // Wind Speed in meters per second
+       let windDirection = data.wind.deg; // Wind Direction in degrees
        
        humidity = data.main.humidity; // Humidity in percentage
        weatherCondition = data.weather[0].main;
@@ -760,7 +762,7 @@ function fetchWeather() {
         ch_weather='晴天';
       }
       const date2 = `${year}-${month}-${day}`;
-      let info = `${year}年${month}月${day}日`+ (holiday[date2] || '') + `桃園機場 溫度:${temperatureCelsius}°C, 濕度:${humidity}% , 能見度:${visibility}km, ${ch_weather}(${weatherCondition}) ☛☛☛ `+ " " + (dutySchedule[date2] || '');
+      let info = `${year}年${month}月${day}日`+ (holiday[date2] || '') + `桃園機場 溫度:${temperatureCelsius}°C, 濕度:${humidity}% , 能見度:${visibility}km, 風速:${windSpeed}Kt, 風向:${windDirection}°, ${ch_weather}(${weatherCondition}) ☛☛☛ `+ " " + (dutySchedule[date2] || '');
       scroll(info);
       // Log temperature and humidity
 
