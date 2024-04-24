@@ -533,7 +533,7 @@ function change() {
 
 function scroll(info) {
   var result = ''; 
-  var isSpaceBeforeUppercase = false; 
+  // var isSpaceBeforeUppercase = false; 
   
   for (var i = 0; i < info.length; i++) {
     var currentChar = info[i];
@@ -541,10 +541,12 @@ function scroll(info) {
     
     if (currentChar === ' ' && (nextChar.match(/[A-Z]/) )) {
       result += '&nbsp;&nbsp;&nbsp'; 
-      isSpaceBeforeUppercase = true; 
-    } else {
+      // isSpaceBeforeUppercase = true; 
+    } else if (currentChar === ' '){
+      result += '&nbsp';
+    }else {
       result += currentChar; 
-      isSpaceBeforeUppercase = false; 
+      // isSpaceBeforeUppercase = false; 
     }
   }
   var marquee = document.getElementById("scrollingText");
@@ -560,6 +562,7 @@ const names = [
   "范振宇",
   "唐__茂",
   "許敦智",
+  "王金誠",
   "王瑞發",
   "彭偉慎",
   "陳建中",
@@ -728,8 +731,8 @@ function fetchWeather() {
        let temperatureCelsius = (temperatureKelvin - 273.15).toFixed(1);
        let ch_weather ='';
        let visibility = data.visibility/1000;
-       let windSpeed = (data.wind.speed*1.943844).toFixed(2);; // Wind Speed in meters per second
-       let windDirection = data.wind.deg; // Wind Direction in degrees
+      //  let windSpeed = (data.wind.speed*1.943844).toFixed(2);; // Wind Speed in meters per second
+      //  let windDirection = data.wind.deg; // Wind Direction in degrees
        
        humidity = data.main.humidity; // Humidity in percentage
        weatherCondition = data.weather[0].main;
@@ -762,7 +765,7 @@ function fetchWeather() {
         ch_weather='晴天';
       }
       const date2 = `${year}-${month}-${day}`;
-      let info = `${year}年${month}月${day}日`+ (holiday[date2] || '') + `桃園機場 溫度:${temperatureCelsius}°C, 濕度:${humidity}% , 能見度:${visibility}km, 風速:${windSpeed}Kt, 風向:${windDirection}°, ${ch_weather}(${weatherCondition}) ☛☛☛ `+ " " + (dutySchedule[date2] || '');
+      let info = `${year}年${month}月${day}日`+ (holiday[date2] || '') + `桃園機場 ☛☛☛ 溫度:${temperatureCelsius}°C  濕度:${humidity}%   能見度:${visibility}km  ${ch_weather}(${weatherCondition}) ☛☛☛`+ " " + (dutySchedule[date2] || '');
       scroll(info);
       // Log temperature and humidity
 
