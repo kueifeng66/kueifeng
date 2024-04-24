@@ -75,7 +75,8 @@ const dutySchedule = {
 "2024-5-29": "S: 范振宇 A: 林宏儒 N: 唐__茂 C: 張日曜 R: 劉錦郎 T: 方振彬",
 "2024-5-30": "S: 柯正和 A: 林厚運 N: 陳建中 C: 秦桔萬 R: 黃煜森 T: 呂明峰",
 "2024-5-31": "S: 黃榮國 A: 王瑞發 N: 彭偉慎 C: 邱冠霖 R: 張哲維 T: 羅應順",
-  
+
+
 
 };
 
@@ -172,7 +173,6 @@ const holiday = {
 "2024-6-28": "【廿三】",
 "2024-6-29": "【廿四】【放假日】",
 "2024-6-30": "【廿五】【放假日】",
-
 
 };
 
@@ -517,6 +517,7 @@ function change() {
     
     const headerCell = document.querySelector('.header-cell');
     headerCell.textContent = ` ${year} 年　${month} 月  `;   
+    fetchWeather();
   }
   //below is to highlight the name previously selected in the change function
   highlightSelectedName(temp_name);
@@ -559,7 +560,6 @@ const names = [
   "范振宇",
   "唐__茂",
   "許敦智",
-  "王金誠",
   "王瑞發",
   "彭偉慎",
   "陳建中",
@@ -701,9 +701,59 @@ namePicker.addEventListener("scroll", () => {
 });
 
 
-const date2 = `${year}-${month}-${day}`;
-const info = `${year}年${month}月${day}日` + holiday[date2] + " ☛☛☛ " + dutySchedule[date2];
-scroll(info);
+
+
+// Replace 'YOUR_API_KEY' with your actual API key
+const apiKey = '35af5c01f0d331eb99f5a42b0259c663';
+const latitude = 25.07639; // Example latitude (New York City)
+const longitude = 121.22389; // Example longitude (New York City)
+
+
+// Function to fetch weather data from the API
+function fetchWeather() {
+  fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${apiKey}`)
+    .then(response => response.json())
+    .then(data => {
+       let temperatureKelvin = data.main.temp; // Temperature in Kelvin
+       let temperatureCelsius = (temperatureKelvin - 273.15).toFixed(2);
+       
+       humidity = data.main.humidity; // Humidity in percentage
+       weatherCondition = data.weather[0].main;
+
+      // Adjust background based on weather condition
+      if (weatherCondition ==='Rain') {
+        document.body.style.background = 'url(rain.png)';
+        document.body.style.backgroundSize= 'cover';
+        document.body.style.backgroundPosition= 'center';
+        
+
+      } else if (weatherCondition === 'Clouds' && humidity > 80) {
+        document.body.style.background = 'url(clouds.png)';
+        document.body.style.backgroundSize= 'cover';
+        document.body.style.backgroundPosition= 'center';
+        
+      } else {
+        // Default background for other weather conditions
+        document.body.style.background = 'url(tower.png)';
+        document.body.style.backgroundSize= 'cover';
+        document.body.style.backgroundPosition= 'center';
+      }
+      const date2 = `${year}-${month}-${day}`;
+      let info = `${year}年${month}月${day}日`+ (holiday[date2] || '') + `溫度:${temperatureCelsius}°C, 濕度:${humidity}% , ${weatherCondition} ☛☛☛ `+ " " + (dutySchedule[date2] || '');
+      scroll(info);
+      // Log temperature and humidity
+
+    })
+    .catch(error => console.error('Error fetching weather:', error));
+}
+
+
+// Call fetchWeather function initially
+fetchWeather();
+
+// Call fetchWeather function periodically (e.g., every 10 minutes)
+setInterval(fetchWeather, 600000); // 600000 milliseconds = 10 minutes
+
 btn.addEventListener('change', change);
 
 createCalendar(year, month);
