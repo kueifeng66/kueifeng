@@ -728,7 +728,12 @@ function fetchWeather() {
         
 
       } else if (weatherCondition === 'Clouds' && humidity > 80) {
-        document.body.style.background = 'url(clouds.png)';
+        document.body.style.background = 'url(drizzle.png)';
+        document.body.style.backgroundSize= 'cover';
+        document.body.style.backgroundPosition= 'center';
+        
+      } else if (weatherCondition === 'Drizzle') {
+        document.body.style.background = 'url(drizzle.png)';
         document.body.style.backgroundSize= 'cover';
         document.body.style.backgroundPosition= 'center';
         
@@ -753,6 +758,8 @@ fetchWeather();
 
 // Call fetchWeather function periodically (e.g., every 10 minutes)
 setInterval(fetchWeather, 600000); // 600000 milliseconds = 10 minutes
+
+
 
 btn.addEventListener('change', change);
 
