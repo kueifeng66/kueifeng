@@ -701,12 +701,10 @@ namePicker.addEventListener("scroll", () => {
 });
 
 
-
-
-// Replace 'YOUR_API_KEY' with your actual API key
 const apiKey = '35af5c01f0d331eb99f5a42b0259c663';
-const latitude = 25.07639; // Example latitude (New York City)
-const longitude = 121.22389; // Example longitude (New York City)
+const latitude = 25.07639;
+const longitude = 121.22389;
+
 
 
 // Function to fetch weather data from the API
@@ -716,6 +714,7 @@ function fetchWeather() {
     .then(data => {
        let temperatureKelvin = data.main.temp; // Temperature in Kelvin
        let temperatureCelsius = (temperatureKelvin - 273.15).toFixed(2);
+       let ch_weather = '';
        
        humidity = data.main.humidity; // Humidity in percentage
        weatherCondition = data.weather[0].main;
@@ -725,26 +724,30 @@ function fetchWeather() {
         document.body.style.background = 'url(rain.png)';
         document.body.style.backgroundSize= 'cover';
         document.body.style.backgroundPosition= 'center';
+        ch_weather='雨天';
         
 
       } else if (weatherCondition === 'Clouds' && humidity > 80) {
         document.body.style.background = 'url(clouds.png)';
         document.body.style.backgroundSize= 'cover';
         document.body.style.backgroundPosition= 'center';
+        ch_weather='陰天';
         
       } else if (weatherCondition === 'Drizzle') {
         document.body.style.background = 'url(drizzle.png)';
         document.body.style.backgroundSize= 'cover';
         document.body.style.backgroundPosition= 'center';
+        ch_weather='毛毛雨';
         
       } else {
         // Default background for other weather conditions
         document.body.style.background = 'url(tower.png)';
         document.body.style.backgroundSize= 'cover';
         document.body.style.backgroundPosition= 'center';
+        ch_weather='晴天';
       }
       const date2 = `${year}-${month}-${day}`;
-      let info = `${year}年${month}月${day}日`+ (holiday[date2] || '') + `桃園機場 溫度:${temperatureCelsius}°C, 濕度:${humidity}% , ${weatherCondition} ☛☛☛ `+ " " + (dutySchedule[date2] || '');
+      let info = `${year}年${month}月${day}日`+ (holiday[date2] || '') + `桃園機場 溫度:${temperatureCelsius}°C, 濕度:${humidity}% , ${ch_weather}(${weatherCondition}) ☛☛☛ `+ " " + (dutySchedule[date2] || '');
       scroll(info);
       // Log temperature and humidity
 
@@ -760,8 +763,6 @@ fetchWeather();
 setInterval(fetchWeather, 600000); // 600000 milliseconds = 10 minutes
 
 
-
 btn.addEventListener('change', change);
-
 createCalendar(year, month);
 highlightAdditionalHoliday(); //this must be done finally.
