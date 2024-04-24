@@ -728,7 +728,7 @@ function fetchWeather() {
         
 
       } else if (weatherCondition === 'Clouds' && humidity > 80) {
-        document.body.style.background = 'url(drizzle.png)';
+        document.body.style.background = 'url(clouds.png)';
         document.body.style.backgroundSize= 'cover';
         document.body.style.backgroundPosition= 'center';
         
