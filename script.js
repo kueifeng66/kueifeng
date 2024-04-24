@@ -705,8 +705,20 @@ const apiKey = '35af5c01f0d331eb99f5a42b0259c663';
 const latitude = 25.07639;
 const longitude = 121.22389;
 
-
-
+// Clear: Indicates clear sky conditions.
+// Clouds: Indicates cloudy weather.
+// Rain: Indicates rainy weather.
+// Drizzle: Indicates light rain.
+// Thunderstorm: Indicates thunderstorm activity.
+// Snow: Indicates snowy weather.
+// Mist: Indicates misty or foggy conditions.
+// Smoke: Indicates smoky conditions.
+// Haze: Indicates hazy conditions.
+// Dust: Indicates dusty or sandy conditions.
+// Fog: Indicates foggy conditions.
+// Sand: Indicates sandstorm conditions.
+// Ash: Indicates volcanic ash in the air.
+// Squall: Indicates sudden violent winds.
 // Function to fetch weather data from the API
 function fetchWeather() {
   fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${apiKey}`)
@@ -714,7 +726,8 @@ function fetchWeather() {
     .then(data => {
        let temperatureKelvin = data.main.temp; // Temperature in Kelvin
        let temperatureCelsius = (temperatureKelvin - 273.15).toFixed(2);
-       let ch_weather = '';
+       let ch_weather ='';
+       let visibility = data.visibility/1000;
        
        humidity = data.main.humidity; // Humidity in percentage
        weatherCondition = data.weather[0].main;
@@ -747,7 +760,7 @@ function fetchWeather() {
         ch_weather='晴天';
       }
       const date2 = `${year}-${month}-${day}`;
-      let info = `${year}年${month}月${day}日`+ (holiday[date2] || '') + `桃園機場 溫度:${temperatureCelsius}°C, 濕度:${humidity}% , ${ch_weather}(${weatherCondition}) ☛☛☛ `+ " " + (dutySchedule[date2] || '');
+      let info = `${year}年${month}月${day}日`+ (holiday[date2] || '') + `桃園機場 溫度:${temperatureCelsius}°C, 濕度:${humidity}% , 能見度:${visibility}km, ${ch_weather}(${weatherCondition}) ☛☛☛ `+ " " + (dutySchedule[date2] || '');
       scroll(info);
       // Log temperature and humidity
 
