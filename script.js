@@ -731,7 +731,7 @@ function fetchWeather() {
        let temperatureKelvin = data.main.temp; // Temperature in Kelvin
        let temperatureCelsius = (temperatureKelvin - 273.15).toFixed(1);
        let ch_weather ='';
-       let visibility = data.visibility/1000;
+       let visibility = (data.visibility/1000).toFixed(1);
        let windSpeed = (data.wind.speed*1.943844).toFixed(2);; // Wind Speed in meters per second
       //  let windDirection = data.wind.deg; // Wind Direction in degrees
        
