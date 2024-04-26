@@ -722,6 +722,7 @@ const longitude = 121.22389;
 // Sand: Indicates sandstorm conditions.
 // Ash: Indicates volcanic ash in the air.
 // Squall: Indicates sudden violent winds.
+//Tornado
 // Function to fetch weather data from the API
 function fetchWeather() {
   fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${apiKey}`)
@@ -731,12 +732,12 @@ function fetchWeather() {
        let temperatureCelsius = (temperatureKelvin - 273.15).toFixed(1);
        let ch_weather ='';
        let visibility = data.visibility/1000;
-      //  let windSpeed = (data.wind.speed*1.943844).toFixed(2);; // Wind Speed in meters per second
+       let windSpeed = (data.wind.speed*1.943844).toFixed(2);; // Wind Speed in meters per second
       //  let windDirection = data.wind.deg; // Wind Direction in degrees
        
        humidity = data.main.humidity; // Humidity in percentage
        weatherCondition = data.weather[0].main;
-
+       
       // Adjust background based on weather condition
       if (weatherCondition ==='Rain') {
         document.body.style.background = 'url(rain.png)';
@@ -744,7 +745,6 @@ function fetchWeather() {
         document.body.style.backgroundPosition= 'center';
         ch_weather='雨天';
         
-
       } else if (weatherCondition === 'Clouds' && humidity > 80) {
         document.body.style.background = 'url(clouds.png)';
         document.body.style.backgroundSize= 'cover';
@@ -757,12 +757,31 @@ function fetchWeather() {
         document.body.style.backgroundPosition= 'center';
         ch_weather='毛毛雨';
         
-      } else {
+      } else if (weatherCondition === 'Thunderstorm') {
+        document.body.style.background = 'url(thunderstorm.png)';
+        document.body.style.backgroundSize= 'cover';
+        document.body.style.backgroundPosition= 'center';
+        ch_weather='雷雨';
+        
+      } else if (weatherCondition === 'Squall') {
+        document.body.style.background = 'url(squall.png)';
+        document.body.style.backgroundSize= 'cover';
+        document.body.style.backgroundPosition= 'center';
+        ch_weather='狂風暴雨';
+        
+      }  else {
         // Default background for other weather conditions
         document.body.style.background = 'url(tower.png)';
         document.body.style.backgroundSize= 'cover';
         document.body.style.backgroundPosition= 'center';
         ch_weather='晴天';
+      }
+      if(windSpeed > 63) {
+        document.body.style.background = 'url(typhoon.png)';
+        document.body.style.backgroundSize= 'cover';
+        document.body.style.backgroundPosition= 'center';
+        ch_weather='颱風天';
+        
       }
       const date2 = `${year}-${month}-${day}`;
       let info = `${year}年${month}月${day}日`+ (holiday[date2] || '') + `桃園機場 ☛☛☛ 溫度:${temperatureCelsius}°C  濕度:${humidity}%   能見度:${visibility}km  ${ch_weather}(${weatherCondition}) ☛☛☛`+ " " + (dutySchedule[date2] || '');
