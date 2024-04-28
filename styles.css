@@ -60,6 +60,9 @@ body {
 .selected  {
   background-color: turquoise;
 }
+.selected2  {
+  background-color: #009D94;
+}
 
 .weekday {
   width: 2.6em;
