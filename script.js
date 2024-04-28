@@ -593,19 +593,59 @@ const namePicker = document.getElementById("namePicker");
 let currentIndex = 0;
 
 const selectedClassName = 'selected';
+const selectedClassName2 = 'selected2';
 
 function highlightSelectedName(selectedName) {
   const days = document.querySelectorAll('.day');
-    days.forEach(dayElement => {
-      const date = `${year}-${month}-${dayElement.textContent}`;
-      const namesForDay = (dutySchedule[date] || '').split(' ');
-      if (namesForDay.includes(selectedName)) {
-        dayElement.classList.add(selectedClassName);
+  days.forEach(dayElement => {
+    const date = `${year}-${month}-${dayElement.textContent}`;
+    const scheduleForDay = dutySchedule[date] || '';
+    
+    // Split the schedule for the day into parts based on spaces
+    const scheduleParts = scheduleForDay.split(' ');
+
+    // Initialize two arrays to store names for each category
+    const namesForSelectedClassName = [];
+    const namesForSelectedClassName2 = [];
+
+    // Initialize a flag to indicate whether to start categorizing into selectedClassName2
+    let shouldCategorizeToClassName2 = false;
+
+    // Loop through each part of the schedule
+    scheduleParts.forEach(part => {
+      // Check if the part starts with "S:" or "A:"
+      if (part.startsWith('S:') || part.startsWith('A:')) {
+        // Set the flag to true to start categorizing into selectedClassName2
+        shouldCategorizeToClassName2 = true;
+      } else if (shouldCategorizeToClassName2) {
+        // If shouldCategorizeToClassName2 is true, categorize the part to selectedClassName2
+        const name = part.trim();
+        namesForSelectedClassName2.push(name);
+        shouldCategorizeToClassName2 = false;
       } else {
-        dayElement.classList.remove(selectedClassName);
+        // If shouldCategorizeToClassName2 is false, categorize the part to selectedClassName
+        const name = part.trim();
+        namesForSelectedClassName.push(name);
       }
-    }); 
+    });
+
+    // Check if selectedName is in either category and apply appropriate class
+    if (namesForSelectedClassName2.includes(selectedName)) {
+      dayElement.classList.add(selectedClassName2);
+    } else {
+      dayElement.classList.remove(selectedClassName2);
+    }
+
+    if (namesForSelectedClassName.includes(selectedName)) {
+      dayElement.classList.add(selectedClassName);
+    } else {
+      dayElement.classList.remove(selectedClassName);
+    }
+
+  });
 }
+
+
 function highlightAdditionalHoliday() {
   const days = document.querySelectorAll('.day');
   days.forEach(dayElement => {
@@ -629,6 +669,15 @@ function highlightAdditionalHoliday() {
      
   });
 }
+// function AddLunar() {
+//   const days = document.querySelectorAll('.day');
+//   days.forEach(dayElement => {
+//     const date = `${year}-${month}-${dayElement.textContent}`;
+//     const lunarName = (holiday[date] || '').split(' ');
+//     // console.log('namesForHoliday:', namesForHoliday);
+//     dayElement.textContent += lunarName;
+//   });
+// }
 
 // Populate the name picker with the list of names
 names.forEach((name) => {
@@ -802,4 +851,5 @@ setInterval(fetchWeather, 600000); // 600000 milliseconds = 10 minutes
 
 btn.addEventListener('change', change);
 createCalendar(year, month);
+// AddLunar();
 highlightAdditionalHoliday(); //this must be done finally.
