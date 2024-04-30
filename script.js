@@ -594,6 +594,7 @@ let currentIndex = 0;
 
 const selectedClassName = 'selected';
 const selectedClassName2 = 'selected2';
+const selectedClassName3 = 'selected3';
 
 function highlightSelectedName(selectedName) {
   const days = document.querySelectorAll('.day');
@@ -607,21 +608,29 @@ function highlightSelectedName(selectedName) {
     // Initialize two arrays to store names for each category
     const namesForSelectedClassName = [];
     const namesForSelectedClassName2 = [];
+    const namesForSelectedClassName3 = [];
 
     // Initialize a flag to indicate whether to start categorizing into selectedClassName2
     let shouldCategorizeToClassName2 = false;
-
+    let shouldCategorizeToClassName3 = false;
     // Loop through each part of the schedule
     scheduleParts.forEach(part => {
       // Check if the part starts with "S:" or "A:"
-      if (part.startsWith('S:') || part.startsWith('A:')) {
+      if (part.startsWith('S:')) {
         // Set the flag to true to start categorizing into selectedClassName2
+        shouldCategorizeToClassName3 = true;
+      } else if (part.startsWith('A:')) {
         shouldCategorizeToClassName2 = true;
       } else if (shouldCategorizeToClassName2) {
         // If shouldCategorizeToClassName2 is true, categorize the part to selectedClassName2
         const name = part.trim();
         namesForSelectedClassName2.push(name);
         shouldCategorizeToClassName2 = false;
+      } else if (shouldCategorizeToClassName3) {
+        // If shouldCategorizeToClassName2 is true, categorize the part to selectedClassName2
+        const name = part.trim();
+        namesForSelectedClassName3.push(name);
+        shouldCategorizeToClassName3 = false;
       } else {
         // If shouldCategorizeToClassName2 is false, categorize the part to selectedClassName
         const name = part.trim();
@@ -630,6 +639,13 @@ function highlightSelectedName(selectedName) {
     });
 
     // Check if selectedName is in either category and apply appropriate class
+
+    if (namesForSelectedClassName3.includes(selectedName)) {
+      dayElement.classList.add(selectedClassName3);
+    } else {
+      dayElement.classList.remove(selectedClassName3);
+    }
+
     if (namesForSelectedClassName2.includes(selectedName)) {
       dayElement.classList.add(selectedClassName2);
     } else {
