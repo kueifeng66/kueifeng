@@ -424,8 +424,7 @@ function hideTooltip() {
 }
 
 function change() {
-  
-  vibrate(200);
+
   var day_now = now.getDate();
   if (btn.checked) {
     updateSelection();
@@ -481,7 +480,6 @@ function change() {
     headerCell.textContent = ` ${year} 年　${month} 月  `;
     highlightAdditionalHoliday();
   } else {
-    vibrate(200);
     updateSelection();
     clearSelectedClass();
 
@@ -521,13 +519,6 @@ function change() {
     headerCell.textContent = ` ${year} 年　${month} 月  `;   
     fetchWeather();
   }
-
-  function vibrate(duration) {
-    if (navigator.vibrate) {
-      navigator.vibrate(duration);
-    }
-  }
-
   //below is to highlight the name previously selected in the change function
   highlightSelectedName(temp_name);
   const items = document.querySelectorAll('.picker-item');
@@ -774,7 +765,6 @@ namePicker.addEventListener("scroll", () => {
   updateSelection();
   clearSelectedClass();
   updateScale();
-  vibrate(200);
   
 });
 
