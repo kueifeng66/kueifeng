@@ -60,8 +60,13 @@ body {
 .selected  {
   background-color: turquoise;
 }
+
 .selected2  {
-  background-color: #009D94;
+  background-color: #B2A4D8;
+}
+
+.selected3  {
+  background-color: #EBD9AA;
 }
 
 .weekday {
@@ -135,7 +140,7 @@ body.dark {
   justify-content: center;
   align-items: center;
 }
-label:before {
+label::before {
   content: "";
   /*background: linear-gradient(110deg,red, orange,yellow, #FFD600,green,blue, purple);*/
   background: linear-gradient(90deg,#fff,transparent,transparent,#fff);
@@ -150,7 +155,7 @@ label:before {
   animation: glowing-button 15s linear infinite;
   transition: opacity 0.3s ease-in-out;
   border-radius: 200px;
-  z-index:-10;
+  z-index:-1;
 }
 @keyframes glowing-button {
   0% {
@@ -160,7 +165,7 @@ label:before {
     background-position: 400% 0;
   }
 }
-label:after {
+label::after {
   z-index: -1;
   content: "";
   position: absolute;
@@ -300,6 +305,7 @@ footer {
   background-color: #f2f2f2;
   transform: scale(1.5);
   overflow-x: hidden;
+  /* text-decoration: underline; */
 }
 
 #namePicker {
