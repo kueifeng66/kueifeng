@@ -169,7 +169,7 @@ function addEventListeners(dayElement, btn, day, month, year, date) {
       });
       
     if (btn.checked) {
-      dayElement.style.color = 'purple'; // Change the color when button is checked and mouse is over
+      dayElement.style.color = 'black'; // Change the color when button is checked and mouse is over
     }
     showTooltip(date); 
          
