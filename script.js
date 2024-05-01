@@ -172,7 +172,7 @@ function addEventListeners(dayElement, btn, day, month, year, date) {
       dayElement.style.color = 'black'; // Change the color when button is checked and mouse is over
     }
     showTooltip(date); 
-         
+    
   });
 
   dayElement.addEventListener('mouseout', () => {
@@ -190,6 +190,7 @@ function addEventListeners(dayElement, btn, day, month, year, date) {
     }
     highlightAdditionalHoliday();
     hideTooltip();
+    
   });
 }
 function addEventListener_toHideToolTipandShowToday(headerCell) {
@@ -350,15 +351,17 @@ function createCalendar(year, month) {
 function showTooltip(date) {
   const calendarRect = calendar.getBoundingClientRect(); 
   
-  tooltip.style.left = `${calendarRect.left-102}px`;
-  tooltip.style.top = `${calendarRect.top+106}px`;
+  tooltip.style.left = `${calendarRect.left - 102}px`;
+  tooltip.style.top = `${calendarRect.top + 106}px`;
 
-  tooltip.textContent = dutySchedule[date] || "None";
+  const dutyInfo = dutySchedule[date] || "None";
+  const weatherInfo = weatherData[date] ? `Temperature: ${weatherData[date].temperature}°C, Humidity: ${weatherData[date].humidity}%` : "";
+  
+  tooltip.textContent = `${dutyInfo}\n${weatherInfo}`;
   tooltip.style.display = 'block';
 
   document.title = holiday[date] || "None";
 }
-
 
 
 function hideTooltip() {
@@ -746,6 +749,8 @@ function fetchWeather() {
        humidity = data.main.humidity; // Humidity in percentage
        weatherCondition = data.weather[0].main;
 
+
+
       // Adjust background based on weather condition
       if (weatherCondition ==='Rain') {
         document.body.style.background = 'url(rain.png)';
@@ -800,10 +805,74 @@ function fetchWeather() {
     .catch(error => console.error('Error fetching weather:', error));
 }
 
+const weatherData = {};
+
+function fetchWeatherForecast() {
+  fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${latitude}&lon=${longitude}&appid=${apiKey}`)
+    .then(response => response.json())
+    .then(data => {
+       // Group forecast data by day
+       const forecastByDay = {};
+
+       data.list.forEach(item => {
+           const timestamp = item.dt * 1000;
+           const date = new Date(timestamp);
+           const year = date.getFullYear();
+           const month = date.getMonth() + 1; // Adding 1 because getMonth() returns zero-based index
+           const day = date.getDate();
+
+           // Format month and day without leading zeros
+           const formattedMonth = month < 10 ? `0${month}` : `${month}`;
+           const formattedDay = day < 10 ? `0${day}` : `${day}`;
+
+           const formattedDate = `${year}-${formattedMonth}-${formattedDay}`;
+
+           if (!forecastByDay[formattedDate]) {
+               forecastByDay[formattedDate] = [];
+           }
+
+           forecastByDay[formattedDate].push(item);
+       });
+
+       // Extract the next 5 days' forecast data
+       const nextFiveDays = Object.keys(forecastByDay).slice(1, 6);
+       
+       // Process forecast data for the next 5 days
+       nextFiveDays.forEach(day => {
+           const forecastDataForDay = forecastByDay[day];
+           let totalTemperature = 0;
+           let totalHumidity = 0;
+           
+           // Process each forecast item for this day as needed
+           forecastDataForDay.forEach(item => {
+               const temperatureKelvin = item.main.temp;
+               const temperatureCelsius = temperatureKelvin - 273.15;
+               const humidity = item.main.humidity;
+               
+               totalTemperature += temperatureCelsius;
+               totalHumidity += humidity;
+           });
+           
+           // Calculate average temperature and humidity
+           const averageTemperature = (totalTemperature / forecastDataForDay.length).toFixed(1);
+           const averageHumidity = (totalHumidity / forecastDataForDay.length).toFixed(1);
+
+           // Format the date key without leading zeros
+           const formattedDay = day.replace(/-0?/g, '-'); // Remove leading zeros
+           
+           // Store weather data for this day
+           weatherData[formattedDay] = { temperature: averageTemperature, humidity: averageHumidity };
+       });
+
+    })
+    .catch(error => console.error('Error fetching weather forecast:', error));
+}
+
+
 
 // Call fetchWeather function initially
 fetchWeather();
-
+fetchWeatherForecast();
 // Call fetchWeather function periodically (e.g., every 10 minutes)
 setInterval(fetchWeather, 600000); // 600000 milliseconds = 10 minutes
 
