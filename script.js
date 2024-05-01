@@ -14,36 +14,7 @@ var temp_name;
 
 
 const dutySchedule = {
-"2024-4-1": "S: 范振宇 A: 黃煜森 N: 彭偉慎 C: 張日曜 R: 張哲維 T: 方振彬",
-"2024-4-2": "S: 柯正和 A: 許敦智 N: 劉暐丞 C: 邱冠霖 R: 林厚運 T: 羅應順",
-"2024-4-3": "S: 詹文欽 A: 呂明峰 N: 陳建中 C: 秦桔萬 R: 黃煜森 T: 林宏儒",
-"2024-4-4": "S: 黃經洲 A: 劉暐丞 N: 彭偉慎 C: 孫景泰 R: 余金原 T: 方振彬",
-"2024-4-5": "S: 詹文欽 A: 洪柜峰 N: 許敦智 C: 邱冠霖 R: 張哲維 T: 羅應順",
-"2024-4-6": "S: 范振宇 A: 林宏儒 N: 唐__茂 C: 張日曜 R: 劉錦郎 T: 呂明峰",
-"2024-4-7": "S: 林森發 A: 王瑞發 N: 劉暐丞 C: 秦桔萬 R: 林厚運 T: 方振彬",
-"2024-4-8": "S: 黃榮國 A: 張哲維 N: 陳建中 C: 孫景泰 R: 余金原 T: 羅應順",
-"2024-4-9": "S: 柯正和 A: 劉暐丞 N: 王瑞發 C: 邱冠霖 R: 劉錦郎 T: 洪柜峰",
-"2024-4-10": "S: 黃經洲 A: 張哲維 N: 彭偉慎 C: 張日曜 R: 林厚運 T: 林宏儒",
-"2024-4-11": "S: 林森發 A: 孫景泰 N: 范振宇 C: 秦桔萬 R: 黃煜森 T: 方振彬",
-"2024-4-12": "S: 詹文欽 A: 陳建中 N: 劉暐丞 C: 邱冠霖 R: 劉錦郎 T: 洪柜峰",
-"2024-4-13": "S: 黃榮國 A: 林宏儒 N: 王瑞發 C: 柯正和 R: 黃煜森 T: 羅應順",
-"2024-4-14": "S: 黃經洲 A: 唐__茂 N: 陳建中 C: 秦桔萬 R: 林厚運 T: 呂明峰",
-"2024-4-15": "S: 范振宇 A: 劉錦郎 N: 彭偉慎 C: 張日曜 R: 余金原 T: 方振彬",
-"2024-4-16": "S: 柯正和 A: 羅應順 N: 許敦智 C: 孫景泰 R: 黃煜森 T: 林宏儒",
-"2024-4-17": "S: 林森發 A: 唐__茂 N: 彭偉慎 C: 邱冠霖 R: 劉錦郎 T: 許世勳",
-"2024-4-18": "S: 黃榮國 A: 林厚運 N: 王瑞發 C: 張日曜 R: 黃煜森 T: 呂明峰",
-"2024-4-19": "S: 柯正和 A: 唐__茂 N: 許敦智 C: 孫景泰 R: 劉錦郎 T: 許世勳",
-"2024-4-20": "S: 詹文欽 A: 林森發 N: 范振宇 C: 秦桔萬 R: 林厚運 T: 黃經洲",
-"2024-4-21": "S: 黃榮國 A: 許世勳 N: 許敦智 C: 張日曜 R: 余金原 T: 洪柜峰",
-"2024-4-22": "S: 黃經洲 A: 王瑞發 N: 唐__茂 C: 孫景泰 R: 劉錦郎 T: 方振彬",
-"2024-4-23": "S: 林森發 A: 柯正和 N: 陳建中 C: 邱冠霖 R: 余金原 T: 林宏儒",
-"2024-4-24": "S: 黃榮國 A: 許世勳 N: 王瑞發 C: 秦桔萬 R: 張哲維 T: 洪柜峰",
-"2024-4-25": "S: 范振宇 A: 彭偉慎 N: 許敦智 C: 孫景泰 R: 林厚運 T: 黃經洲",
-"2024-4-26": "S: 林森發 A: 方振彬 N: 王瑞發 C: 邱冠霖 R: 黃煜森 T: 呂明峰",
-"2024-4-27": "S: 柯正和 A: 彭偉慎 N: 陳建中 C: 張日曜 R: 張哲維 T: 許世勳",
-"2024-4-28": "S: 黃榮國 A: 洪柜峰 N: 唐__茂 C: 孫景泰 R: 余金原 T: 羅應順",
-"2024-4-29": "S: 范振宇 A: 張哲維 N: 許敦智 C: 邱冠霖 R: 黃煜森 T: 呂明峰",
-"2024-4-30": "S: 林森發 A: 余金原 N: 劉暐丞 C: 秦桔萬 R: 劉錦郎 T: 許世勳",
+
 "2024-5-1": "S: 黃榮國 A: 黃煜森 N: 王瑞發 C: 孫景泰 R: 張哲維 T: 羅應順",
 "2024-5-2": "S: 黃經洲 A: 唐__茂 N: 陳建中 C: 張日曜 R: 林厚運 T: 方振彬",
 "2024-5-3": "S: 詹文欽 A: 王金誠 N: 許敦智 C: 秦桔萬 R: 劉錦郎 T: 呂明峰",
@@ -77,41 +48,10 @@ const dutySchedule = {
 "2024-5-31": "S: 黃榮國 A: 王瑞發 N: 彭偉慎 C: 邱冠霖 R: 張哲維 T: 羅應順",
 
 
-
 };
 
 const holiday = {
-  
-"2024-4-1": "【廿三】",
-"2024-4-2": "【廿四】",
-"2024-4-3": "【廿五】",
-"2024-4-4": "【清明兒童節】【放假日】",
-"2024-4-5": "【廿七】【放假日】",
-"2024-4-6": "【廿八】【放假日】",
-"2024-4-7": "【廿九】【放假日】",
-"2024-4-8": "【三十】",
-"2024-4-9": "【三月小】",
-"2024-4-10": "【初二】",
-"2024-4-11": "【初三】",
-"2024-4-12": "【初四】",
-"2024-4-13": "【初五】【放假日】",
-"2024-4-14": "【初六】【放假日】",
-"2024-4-15": "【初七】",
-"2024-4-16": "【初八】",
-"2024-4-17": "【初九】",
-"2024-4-18": "【初十】",
-"2024-4-19": "【穀雨】",
-"2024-4-20": "【十二】【放假日】",
-"2024-4-21": "【十三】【放假日】",
-"2024-4-22": "【十四】",
-"2024-4-23": "【十五】",
-"2024-4-24": "【十六】",
-"2024-4-25": "【十七】",
-"2024-4-26": "【十八】",
-"2024-4-27": "【十九】【放假日】",
-"2024-4-28": "【二十】【放假日】",
-"2024-4-29": "【廿一】",
-"2024-4-30": "【廿二】",  
+
 "2024-5-1": "【廿三】",
 "2024-5-2": "【廿四】",
 "2024-5-3": "【廿五】",
@@ -243,9 +183,12 @@ function addEventListeners(dayElement, btn, day, month, year, date) {
         today.style.color = 'MediumBlue';
       });
       if (Zellercongruence(day, month, year) === 0 || Zellercongruence(day, month, year) === 6) {
-        dayElement.style.color = 'yellow';
+        dayElement.style.color = '#FF33CC';
+        
       }
+      highlightAdditionalHoliday();
     }
+    highlightAdditionalHoliday();
     hideTooltip();
   });
 }
@@ -451,7 +394,7 @@ function change() {
     
     let weekendDays = document.querySelectorAll('.weekend');
     weekendDays.forEach(day => {
-      day.style.color = 'yellow';
+      day.style.color = '#FF33CC';
     });
     
     let header = document.getElementById('header');
@@ -670,7 +613,7 @@ function highlightAdditionalHoliday() {
     // console.log('namesForHoliday:', namesForHoliday);
     if (namesForHoliday.some(name => name.includes('放假日'))) {
       if (btn.checked) {
-      dayElement.style.color = 'yellow';
+      dayElement.style.color = '#FF33CC';
       } else{
         dayElement.style.color = 'red';
       }
@@ -802,7 +745,7 @@ function fetchWeather() {
        
        humidity = data.main.humidity; // Humidity in percentage
        weatherCondition = data.weather[0].main;
-       
+
       // Adjust background based on weather condition
       if (weatherCondition ==='Rain') {
         document.body.style.background = 'url(rain.png)';
