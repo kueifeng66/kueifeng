@@ -851,7 +851,7 @@ function fetchWeatherForecast() {
        });
 
        // Extract the next 5 days' forecast data
-       const nextFiveDays = Object.keys(forecastByDay).slice(1, 6);
+       const nextFiveDays = Object.keys(forecastByDay).slice(0, 6);
        // Initialize variables to store minimum and maximum values
        let minTemperature = Infinity;
        let maxTemperature = -Infinity;
