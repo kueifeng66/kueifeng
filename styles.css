@@ -92,9 +92,8 @@ body {
 }
 
 #tooltip {
-
   width:100px;
-  height:220px;
+  height:250px;
   text-align: center;
   font-weight: bold;
   position: absolute;
