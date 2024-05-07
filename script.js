@@ -212,8 +212,7 @@ function addEventListener_toHideToolTipandShowToday(headerCell) {
             dayElement.classList.remove(selectedClassName2);
             dayElement.classList.remove(selectedClassName3);
           });
-       
-      
+
       let todays = document.querySelectorAll('.today');
       todays.forEach(today => {
         today.style.backgroundColor = '#ffff99';
@@ -527,7 +526,6 @@ const names = [
   "．．．",
   "．．．",
   "．．．",
-  "．．．",
   "詹文欽",
   "黃榮國",
   "柯正和",
@@ -722,7 +720,7 @@ function updateScale() {
   const items = document.querySelectorAll('.picker-item');
   const containerRect = container.getBoundingClientRect();
   const containerCenterY = containerRect.top + containerRect.height / 2;
-  
+  let hasTurquoiseBackground = false;
   items.forEach((item) => {
     const itemRect = item.getBoundingClientRect();
     const itemCenterY = itemRect.top + itemRect.height / 2;
@@ -734,13 +732,27 @@ function updateScale() {
         item.style.color = '';
         temp_name=item.textContent;
         highlightSelectedName(item.textContent);
+        hasTurquoiseBackground = true;
       } else {
         item.style.transform = 'scale(1)';
         item.style.color = 'gray';
-        
       }
   });  
+
+  if (!hasTurquoiseBackground) {
+    ClearSelectedName();
+  }
 }
+
+function ClearSelectedName() {
+  const days = document.querySelectorAll('.day');
+  days.forEach(dayElement => {        
+    dayElement.classList.remove(selectedClassName);
+    dayElement.classList.remove(selectedClassName2);
+    dayElement.classList.remove(selectedClassName3);
+  });
+}
+
 
 namePicker.addEventListener("scroll", () => {
   const itemHeight = namePicker.querySelector(".picker-item").offsetHeight;
@@ -750,7 +762,6 @@ namePicker.addEventListener("scroll", () => {
   updateScale();
   
 });
-
 
 
 
