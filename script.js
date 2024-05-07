@@ -198,6 +198,7 @@ function addEventListeners(dayElement, btn, day, month, year, date) {
 function addEventListener_toHideToolTipandShowToday(headerCell) {
   headerCell.addEventListener('click', () => {
     const formattedDate = `${year}-${month}-${day}`
+    const days =document.querySelectorAll('.day');
     if (clickCount % 2 === 0) {
       hideTooltip();
       let todays = document.querySelectorAll('.today');
@@ -206,6 +207,13 @@ function addEventListener_toHideToolTipandShowToday(headerCell) {
       });
       // Perform actions for hiding tooltip
     } else {
+          days.forEach(dayElement => {
+            dayElement.classList.remove(selectedClassName);
+            dayElement.classList.remove(selectedClassName2);
+            dayElement.classList.remove(selectedClassName3);
+          });
+       
+      
       let todays = document.querySelectorAll('.today');
       todays.forEach(today => {
         today.style.backgroundColor = '#ffff99';
