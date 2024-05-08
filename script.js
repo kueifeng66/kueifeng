@@ -174,6 +174,9 @@ function addEventListeners(dayElement, btn, day, month, year, date) {
       dayElement.style.color = 'black'; // Change the color when button is checked and mouse is over
     }
     showTooltip(date); 
+    if (date == '999'){
+      hideTooltip();
+    }
     
   });
 
