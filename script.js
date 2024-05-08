@@ -190,6 +190,14 @@ function addEventListeners(dayElement, btn, day, month, year, date) {
       }
       highlightAdditionalHoliday();
     }
+    highlightSelectedName(temp_name);
+    const items = document.querySelectorAll('.picker-item');
+    items.forEach((item) => {
+      if (temp_name === item.textContent && temp_name != "．．．"){
+        item.style.transform = 'scale(1.5)';
+        item.style.backgroundColor = "turquoise";
+      }
+    });
     highlightAdditionalHoliday();
     hideTooltip();
     
@@ -205,6 +213,16 @@ function addEventListener_toHideToolTipandShowToday(headerCell) {
       todays.forEach(today => {
         today.style.backgroundColor = '';
       });
+              //below is to highlight the name previously selected in the change function
+      highlightSelectedName(temp_name);
+      const items = document.querySelectorAll('.picker-item');
+      items.forEach((item) => {
+      if (temp_name === item.textContent && temp_name != "．．．"){
+      item.style.transform = 'scale(1.5)';
+      item.style.backgroundColor = "turquoise";
+      }
+      });
+      //highlightAdditionalHoliday();
       // Perform actions for hiding tooltip
     } else {
           days.forEach(dayElement => {
@@ -741,6 +759,7 @@ function updateScale() {
 
   if (!hasTurquoiseBackground) {
     ClearSelectedName();
+    hasTurquoiseBackground = false;
   }
 }
 
