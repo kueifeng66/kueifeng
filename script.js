@@ -293,6 +293,7 @@ function createCalendar(year, month) {
     weekdayElement.classList.add('weekday');
     weekdayElement.textContent = weekdays[i];
     calendar.appendChild(weekdayElement);
+    addEventListeners(weekdayElement, btn, day, month, year, date);  
   }
 
     dayOfWeek = Zellercongruence(1, month, year);
@@ -371,6 +372,7 @@ function createCalendar(year, month) {
     dayElement.classList.add('day');
     dayElement.textContent = "";
     calendar.appendChild(dayElement);
+    addEventListeners(dayElement, btn, day, month, year, date);   
   }
 
 }
