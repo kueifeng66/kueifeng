@@ -960,7 +960,12 @@ fetchWeatherForecast();
 // Call fetchWeather function periodically (e.g., every 10 minutes)
 setInterval(fetchWeather, 600000); // 600000 milliseconds = 10 minutes
 
-
+     document.addEventListener("DOMContentLoaded", function() {
+      var headerCells = document.querySelectorAll(".header-cell");
+      headerCells.forEach(function(cell) {
+        cell.click();
+      });
+    });
 btn.addEventListener('change', change);
 createCalendar(year, month);
 // AddLunar();
