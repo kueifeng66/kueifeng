@@ -372,7 +372,7 @@ function createCalendar(year, month) {
     dayElement.classList.add('day');
     dayElement.textContent = "";
     calendar.appendChild(dayElement);
-    addEventListeners(dayElement, btn, day, month, year, date);   
+    addEventListeners(dayElement, btn, day, month, year, 999);   
   }
 
 }
