@@ -270,22 +270,6 @@ footer {
   z-index: -1;
 }
 
-.body-footer {
-  height: 30px;
-  align-items: flex-start;
-  position: fixed;
-  font-weight: bold;
-  bottom: 0;
-  right: 0;
-  width: auto;
-  background-color: rgba(144, 238, 144, 0.1);
-  box-shadow: 10px 10px 30px green inset;
-  padding: 8px;
-  text-align: center;
-  color: black;
-  z-index: -1;
-}
-
 .picker-container {
   border: 1px solid #ffffff;
   width: 100px;
