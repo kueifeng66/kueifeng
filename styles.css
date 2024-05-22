@@ -278,7 +278,7 @@ footer {
   bottom: 0;
   right: 0;
   width: auto;
-  background-color: rgba(144, 238, 144, 0.2);
+  background-color: rgba(144, 238, 144, 0.1);
   box-shadow: 10px 10px 30px green inset;
   padding: 8px;
   text-align: center;
