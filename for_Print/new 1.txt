@@ -1,0 +1,11 @@
+function showTooltip(date) {
+  const calendarRect = calendar.getBoundingClientRect(); 
+  
+  tooltip.style.left = `${calendarRect.left-102}px`;
+  tooltip.style.top = `${calendarRect.top+106}px`;
+
+  tooltip.textContent = dutySchedule[date] || "None";
+  tooltip.style.display = 'block';
+
+  document.title = holiday[date] || "None";
+}
