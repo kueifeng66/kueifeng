@@ -69,8 +69,6 @@ body {
   background-color: #EBD9AA;
 }
 
-
-
 .weekday {
   width: 2.6em;
   height: 2.7em;
@@ -95,7 +93,7 @@ body {
 
 #tooltip {
   width:100px;
-  height:250px;
+  height:280px;
   text-align: center;
   font-weight: bold;
   position: absolute;
@@ -103,7 +101,7 @@ body {
   color: white;
   padding: 10px;
   display: none;
-  z-index: 30;
+  z-index: 100;
   border-radius: 20px;
   box-shadow: 5px 5px 5px  rgba(0, 0, 0, 0.5); /* Add box shadow for a subtle lift */
   transition: 0.1s ease-in-out; /* Add transition for smooth appearance */
@@ -118,8 +116,6 @@ body {
   cursor: pointer;
   background-color: #ffff99;
 }
-
-
 
 body.dark {
   background-size: cover;
