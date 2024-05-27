@@ -1014,4 +1014,3 @@ function formatDate(date) {
   return months[monthIndex] + ' ' + day + ', ' + year + ' ' + strTime;
 }
 
-//abc
