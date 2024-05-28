@@ -986,13 +986,18 @@ function fetchWeatherForecast() {
               // Process forecast data for the next 5 days
               nextFiveDays.forEach(day => {
                 const forecastDataForDay = forecastByDay[day];
-                
+                // Initialize variables to store minimum and maximum values for the day
+                let minTemperature = Infinity;
+                let maxTemperature = -Infinity;
+                let minHumidity = Infinity;
+                let maxHumidity = -Infinity;
+                const weatherConditions = [];
                 // Process each forecast item for this day as needed
                 forecastDataForDay.forEach(item => {
                     const temperatureKelvin = item.main.temp;
                     const temperatureCelsius = temperatureKelvin - 273.15;
                     const humidity = item.main.humidity;
-                    const forecastWeatherCondition = item.weather[0].main;
+                    let forecastWeatherCondition = item.weather[0].main;
                     // Update minimum and maximum temperature
                     minTemperature = Math.min(minTemperature, temperatureCelsius);
                     maxTemperature = Math.max(maxTemperature, temperatureCelsius);
