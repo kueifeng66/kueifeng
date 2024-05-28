@@ -455,7 +455,7 @@ function showTooltip(date) {
     const maxTemperature = weatherData[date].maxTemperature;
     const minHumidity = weatherData[date].minHumidity;
     const maxHumidity = weatherData[date].maxHumidity;
-
+    const weatherCondition = weatherData[date].weatherCondition;
     // Display minimum and maximum temperature and humidity along with duty info
     tooltip.textContent = `${dutyInfo}\nTemperature: ${minTemperature}°C～${maxTemperature}°C\nHumidity: ${minHumidity}%～${maxHumidity}%\n Weather: ${weatherCondition}`;
   } else {
@@ -1009,8 +1009,9 @@ function fetchWeatherForecast() {
                     weatherConditions.push(forecastWeatherCondition);
                 });
 
-                 // Determine the most frequent weather condition (mode) or use the array of conditions
-                 const mostFrequentCondition = weatherConditions.sort((a, b) => weatherConditions.filter(v => v === a).length - weatherConditions.filter(v => v === b).length).pop();
+                 // Determine the most frequent weather condition (mode)
+                const conditionCounts = weatherConditions.reduce((acc, condition) => { acc[condition] = (acc[condition] || 0) + 1; return acc;}, {});
+                const mostFrequentCondition = Object.keys(conditionCounts).reduce((a, b) => conditionCounts[a] > conditionCounts[b] ? a : b);
 
                 const formattedDay = day.replace(/-0?/g, '-'); // Remove leading zeros
                 weatherData[formattedDay] = { 
@@ -1022,7 +1023,7 @@ function fetchWeatherForecast() {
               };
             });
             
-     
+            console.log(weatherData); 
          })
          .catch(error => console.error('Error fetching weather forecast:', error));
      }
