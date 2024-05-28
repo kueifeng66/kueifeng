@@ -1037,4 +1037,4 @@ window.onload = function() {
 btn.addEventListener('change', change);
 createCalendar(year, month);
 // AddLunar();
-highlightAdditionalHoliday(); //this must be done finally.
+highlightAdditionalHoliday(); //this must be done finally. 20240528
