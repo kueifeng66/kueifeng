@@ -457,7 +457,7 @@ function showTooltip(date) {
     const maxHumidity = weatherData[date].maxHumidity;
 
     // Display minimum and maximum temperature and humidity along with duty info
-    tooltip.textContent = `${dutyInfo}\nTemperature: ${minTemperature}°C～${maxTemperature}°C\nHumidity: ${minHumidity}%～${maxHumidity}%`;
+    tooltip.textContent = `${dutyInfo}\nTemperature: ${minTemperature}°C～${maxTemperature}°C\nHumidity: ${minHumidity}%～${maxHumidity}%\n Weather: ${weatherCondition}`;
   } else {
     tooltip.textContent = `${dutyInfo}`;
   }
@@ -982,6 +982,7 @@ function fetchWeatherForecast() {
        let maxTemperature = -Infinity;
        let minHumidity = Infinity;
        let maxHumidity = -Infinity;
+       const weatherConditions = [];
               // Process forecast data for the next 5 days
               nextFiveDays.forEach(day => {
                 const forecastDataForDay = forecastByDay[day];
@@ -991,7 +992,7 @@ function fetchWeatherForecast() {
                     const temperatureKelvin = item.main.temp;
                     const temperatureCelsius = temperatureKelvin - 273.15;
                     const humidity = item.main.humidity;
-                    
+                    const forecastWeatherCondition = item.weather[0].main;
                     // Update minimum and maximum temperature
                     minTemperature = Math.min(minTemperature, temperatureCelsius);
                     maxTemperature = Math.max(maxTemperature, temperatureCelsius);
@@ -999,13 +1000,20 @@ function fetchWeatherForecast() {
                     // Update minimum and maximum humidity
                     minHumidity = Math.min(minHumidity, humidity);
                     maxHumidity = Math.max(maxHumidity, humidity);
+                    // Collect weather conditions
+                    weatherConditions.push(forecastWeatherCondition);
                 });
+
+                 // Determine the most frequent weather condition (mode) or use the array of conditions
+                 const mostFrequentCondition = weatherConditions.sort((a, b) => weatherConditions.filter(v => v === a).length - weatherConditions.filter(v => v === b).length).pop();
+
                 const formattedDay = day.replace(/-0?/g, '-'); // Remove leading zeros
                 weatherData[formattedDay] = { 
                   minTemperature: minTemperature.toFixed(1),
                   maxTemperature: maxTemperature.toFixed(1),
                   minHumidity: minHumidity.toFixed(1),
-                  maxHumidity: maxHumidity.toFixed(1)
+                  maxHumidity: maxHumidity.toFixed(1),
+                  weatherCondition: mostFrequentCondition
               };
             });
             
