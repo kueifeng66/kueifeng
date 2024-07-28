@@ -54,7 +54,7 @@ body {
   height: 2.7em;
   font-weight: bold;
   border: 3px solid magenta;
-  animation: changeBorders 3s linear;
+  animation: changeBorders 4s linear;
  }
 @keyframes changeBorders {
   10% {
