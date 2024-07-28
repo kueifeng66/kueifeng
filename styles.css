@@ -60,37 +60,31 @@ body {
   10% {
     border: solid 3px yellow;
   }
-  25% {
+  20% {
     border: solid 3px yellow;
-    border-left: solid 3px magenta;
+    border-top: solid 3px magenta;
+	
   }
   45% {
     border: solid 3px yellow;
-    border-left: solid 3px magenta;
+    border-top: solid 3px magenta;
+	border-right: solid 3px magenta;
   }
-  45.02% {
-    border: solid 3px yellow;
-    border-left: solid 3px magenta;
-    border-bottom: solid 3px magenta;
-  }
+
   70% {
     border: solid 3px yellow;
-    border-left: solid 3px magenta;
+    border-top: solid 3px magenta;
+	border-right: solid 3px magenta;
     border-bottom: solid 3px magenta;
   }
-  70.02% {
+
+  90% {
     border: solid 3px yellow;
-    border-left: solid 3px magenta;
+    border-top: solid 3px magenta;
+	border-right: solid 3px magenta;
     border-bottom: solid 3px magenta;
-    border-right: solid 3px magenta;
   }
-  95% {
-    border: solid 3px yellow;
-    border-left: solid 3px magenta;
-    border-bottom: solid 3px magenta;
-    border-right: solid 3px magenta;
-  }
-  95.02% {
+   90% {
     border: solid 3px magenta;
   }
 
