@@ -316,6 +316,15 @@ function addEventListener_toHideToolTipandShowToday(headerCell) {
   
 }
 
+function createheadercell(year, month){
+  const headerCell = document.createElement('div');
+  headerCell.classList.add('header-cell');
+  headerCell.textContent = ` ${year} 年　${month} 月  `;
+  header.appendChild(headerCell);
+  addEventListener_toHideToolTipandShowToday(headerCell);
+  
+}
+
 // Function to create calendar days
 function createCalendar(year, month) {
   const daysInMonth = new Date(year, month, 0).getDate();
@@ -326,35 +335,8 @@ function createCalendar(year, month) {
   var year_now = now.getFullYear();
   var month_now = (now.getMonth() + 1); // Months are zero-based
   var day_now = now.getDate();
-  var yearN;
-  var nextMonth = (now.getMonth() + 1) + 1;
-    if (nextMonth > 12) {
-      nextMonth = 1;
-      yearN = year + 1;
-    }
-  yearN=year;
-  const daysInMonthN = new Date(yearN, nextMonth, 0).getDate();
-  dayOfWeekN = Zellercongruence(1, nextMonth, yearN);
-  if (dayOfWeekN === 1) {
-    counterN=0;
-  } else if (dayOfWeekN === 2) {
-    counterN=1;
-  } else if (dayOfWeekN === 3) {
-    counterN=2;
-  } else if (dayOfWeekN === 4) {
-    counterN=3;
-  } else if (dayOfWeekN === 5) {
-    counterN=4;
-  } else if (dayOfWeekN === 6) {
-    counterN=5;
-  } else {
-    counterN=6;
-  }
-  const headerCell = document.createElement('div');
-  headerCell.classList.add('header-cell');
-  headerCell.textContent = ` ${year} 年　${month} 月  `;
-  header.appendChild(headerCell);
-  addEventListener_toHideToolTipandShowToday(headerCell);
+
+
   
 
   const date = `${year}-${month}-${day}`;
@@ -437,14 +419,14 @@ function createCalendar(year, month) {
     addEventListeners(dayElement, btn, day, month, year, date);    
   }
 
-  //below is created for the next month. If the days of next month exceeds this month
-  for (let i = 0; i < (daysInMonthN + counterN - daysInMonth - counter) ; i++) {
-    const dayElement = document.createElement('div');
-    dayElement.classList.add('day');
-    dayElement.textContent = "";
-    calendar.appendChild(dayElement);
-    addEventListeners(dayElement, btn, day, month, year, 999);   
-  }
+  // //below is created for the next month. If the days of next month exceeds this month
+  // for (let i = 0; i < (daysInMonthN + counterN - daysInMonth - counter) ; i++) {
+  //   const dayElement = document.createElement('div');
+  //   dayElement.classList.add('day');
+  //   dayElement.textContent = "";
+  //   calendar.appendChild(dayElement);
+  //   addEventListeners(dayElement, btn, day, month, year, 999);   
+  // }
 
 }
 
@@ -491,16 +473,15 @@ function change() {
     clearSelectedClass();
     hideTooltip();
 
-    let todays = document.querySelectorAll('.today');
-      todays.forEach(today => {
-        today.style.backgroundColor = '';
-      });
-    
-    let previousToday = document.querySelectorAll('.today');
-    previousToday.forEach(today => {
-      today.classList.remove('today');
-    });
+    calendar.innerHTML = '';
 
+    month++;
+    
+    if (month > 12) {
+      month = 1;
+      year++;
+    }
+    createCalendar(year,month);
     body.classList.add("dark");
     body.style.backgroundImage = "url('TIAC.png')";
     
@@ -520,25 +501,8 @@ function change() {
 
    
 
-    month = (now.getMonth() + 1) + 1;
-    if (month > 12) {
-      month = 1;
-      year++;
-    }
-    var daysInNextMonth = new Date(year, month, 0).getDate();
-    days.forEach((day, index) => {
-      day.textContent = "";
-      if (index >= Zellercongruence(1, month, year) - 1 && index < daysInNextMonth + Zellercongruence(1, month, year) - 1) {
-        const date = `${year}-${month}-${index - Zellercongruence(1, month, year) + 2}`;
-        day.textContent = index - Zellercongruence(1, month, year) + 2;
-        addEventListeners(day, btn, index - Zellercongruence(1, month, year) + 2, month, year, date);
-      }else{
-        addEventListeners(day, btn, index - Zellercongruence(1, month, year) + 2, month, year, 999);
-      }
-    });
-    const headerCell = document.querySelector('.header-cell');
-    headerCell.textContent = ` ${year} 年　${month} 月  `;
-    highlightAdditionalHoliday();
+    
+    
   } else {
     updateSelection();
     clearSelectedClass();
@@ -546,12 +510,15 @@ function change() {
     body.classList.remove("dark");
     body.style.backgroundImage = "url('tower.png')";
 
-    // Reset the color of '.day' elements to their default
-    let days = document.querySelectorAll('.day');
-    days.forEach(day => {
-      day.style.color = ''; // This will remove the inline 'color' style, allowing the CSS rule to take effect
-    });
-    // Reset the color of 'header' element to its default
+    calendar.innerHTML = '';
+
+    month--;
+    
+    if (month === 0) {
+      month = 12;
+      year--;
+    }
+    createCalendar(year,month);
     let header = document.getElementById('header');
     header.style.color = ''; // This will remove the inline 'color' style, allowing the CSS rule to take effect
     footer.style.color = 'black';
@@ -738,7 +705,7 @@ function highlightAdditionalHoliday() {
   days.forEach(dayElement => {
     const date = `${year}-${month}-${dayElement.textContent}`;
     const namesForHoliday = (holiday[date] || '').split(' ');
-    // console.log('namesForHoliday:', namesForHoliday);
+    
     if (namesForHoliday.some(name => name.includes('放假日'))) {
       if (btn.checked) {
       dayElement.style.color = '#FF33CC';
@@ -1031,7 +998,7 @@ function fetchWeatherForecast() {
               };
             });
             
-            console.log(weatherData); 
+            
          })
          .catch(error => console.error('Error fetching weather forecast:', error));
      }
@@ -1057,6 +1024,7 @@ window.onload = function() {
 
 
 btn.addEventListener('change', change);
+createheadercell(year, month);
 createCalendar(year, month);
 // AddLunar();
 highlightAdditionalHoliday(); //this must be done finally. 20240528
