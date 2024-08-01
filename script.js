@@ -79,9 +79,6 @@ const dutySchedule = {
 "2024-8-31": "S: 黃經洲 A: 林森發 N: 王瑞發 C: 邱冠霖 R: 林厚運 T: 羅應順",
 
 
-
-
-
 };
 
 const holiday = {
@@ -494,14 +491,13 @@ function change() {
     weekendDays.forEach(day => {
       day.style.color = '#FF33CC';
     });
+    const headerCell = document.querySelector('.header-cell');
+    headerCell.textContent = ` ${year} 年　${month} 月  `;   
     
     let header = document.getElementById('header');
-    header.style.color = 'white';   
+    header.style.color = 'white';
     footer.style.color = 'MediumBlue';
 
-   
-
-    
     
   } else {
     updateSelection();
@@ -512,10 +508,8 @@ function change() {
 
     calendar.innerHTML = '';
 
-    month--;
-    
-    if (month === 0) {
-      month = 12;
+    month = (now.getMonth() + 1);
+    if (month === 12) {
       year--;
     }
     createCalendar(year,month);
@@ -523,24 +517,6 @@ function change() {
     header.style.color = ''; // This will remove the inline 'color' style, allowing the CSS rule to take effect
     footer.style.color = 'black';
     
-    month = (now.getMonth() + 1);
-    if (month === 12) {
-      year--;
-    }
-    var daysInCurrentMonth = new Date(year, month, 0).getDate();
-    days.forEach((day, index) => {
-      day.textContent = "";
-      if (index >= Zellercongruence(1, month, year) - 1 && index < daysInCurrentMonth + Zellercongruence(1, month, year) - 1) {
-        const date = `${year}-${month}-${index - Zellercongruence(1, month, year) + 2}`;
-        day.textContent = index - Zellercongruence(1, month, year) + 2;
-        addEventListeners(day, btn, index - Zellercongruence(1, month, year) + 2, month, year, date);
-      }else {
-        addEventListeners(day, btn, index - Zellercongruence(1, month, year) + 2, month, year, 999);
-      }
-      if (index - Zellercongruence(1, month, year) + 2 === day_now) {
-        day.classList.add('today');
-      }
-    });
     
     const headerCell = document.querySelector('.header-cell');
     headerCell.textContent = ` ${year} 年　${month} 月  `;   
