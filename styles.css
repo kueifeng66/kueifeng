@@ -53,39 +53,57 @@ body {
   width: 2.6em;
   height: 2.7em;
   font-weight: bold;
-  border: 3px solid magenta;
-  animation: changeBorders 4s linear;
+  border: 3px solid yellow;
+  animation: changeBorders 8s infinite;
  }
 @keyframes changeBorders {
-  10% {
+  5.26% {
     border: solid 3px yellow;
   }
-  20% {
+  15.7% {
     border: solid 3px yellow;
     border-top: solid 3px magenta;
 	
   }
-  45% {
+  26.3% {
     border: solid 3px yellow;
     border-top: solid 3px magenta;
-	border-right: solid 3px magenta;
+	  border-right: solid 3px magenta;
   }
 
-  70% {
+  36.8% {
+    border: solid 3px yellow;
+    border-top: solid 3px magenta;
+	  border-right: solid 3px magenta;
+    border-bottom: solid 3px magenta;
+  }
+
+  47.3% {
     border: solid 3px yellow;
     border-top: solid 3px magenta;
 	border-right: solid 3px magenta;
     border-bottom: solid 3px magenta;
   }
-
-  90% {
-    border: solid 3px yellow;
-    border-top: solid 3px magenta;
-	border-right: solid 3px magenta;
-    border-bottom: solid 3px magenta;
-  }
-   90% {
+   57.9% {
     border: solid 3px magenta;
+  }
+  68.4% {
+    border: solid 3px magenta;
+    border-top: solid 3px yellow;
+  }
+  78.9% {
+    border: solid 3px magenta;
+    border-top: solid 3px yellow;
+	  border-right: solid 3px yellow;
+  }
+  89.4% {
+    border: solid 3px magenta;
+    border-top: solid 3px yellow;
+	  border-right: solid 3px yellow;
+    border-bottom: solid 3px yellow;
+  }
+  100% {
+    border: solid 3px yellow;
   }
 
 }
