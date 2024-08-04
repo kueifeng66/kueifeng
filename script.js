@@ -313,10 +313,10 @@ function addEventListener_toHideToolTipandShowToday(headerCell) {
   
 }
 
-function createheadercell(year, month){
+function createheadercell(year, month, day){
   const headerCell = document.createElement('div');
   headerCell.classList.add('header-cell');
-  headerCell.textContent = ` ${year} 年　${month} 月  `;
+  headerCell.textContent = ` ${year} 年　${month} 月 ${day} 日 `;
   header.appendChild(headerCell);
   addEventListener_toHideToolTipandShowToday(headerCell);
   
@@ -512,14 +512,14 @@ function change() {
     if (month === 12) {
       year--;
     }
-    createCalendar(year,month);
+    createCalendar(year,month,day);
     let header = document.getElementById('header');
     header.style.color = ''; // This will remove the inline 'color' style, allowing the CSS rule to take effect
     footer.style.color = 'black';
     
     
     const headerCell = document.querySelector('.header-cell');
-    headerCell.textContent = ` ${year} 年　${month} 月  `;   
+    headerCell.textContent = ` ${year} 年　${month} 月 ${day} 日 `;   
     fetchWeather();
   }
   //below is to highlight the name previously selected in the change function
@@ -1000,7 +1000,7 @@ window.onload = function() {
 
 
 btn.addEventListener('change', change);
-createheadercell(year, month);
+createheadercell(year, month, day);
 createCalendar(year, month);
 // AddLunar();
 highlightAdditionalHoliday(); //this must be done finally. 20240528
