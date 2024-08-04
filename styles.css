@@ -53,41 +53,108 @@ body {
   width: 2.6em;
   height: 2.7em;
   font-weight: bold;
-  border: 3px solid magenta;
-  animation: changeBorders 4s linear;
+  border: 3px solid yellow;
+  animation: changeBorders 16s infinite;
  }
 @keyframes changeBorders {
-  10% {
+  4.76% {
     border: solid 3px yellow;
   }
-  20% {
+  9.52% {
     border: solid 3px yellow;
     border-top: solid 3px magenta;
 	
   }
-  45% {
+  14.28% {
     border: solid 3px yellow;
     border-top: solid 3px magenta;
-	border-right: solid 3px magenta;
+	  border-right: solid 3px magenta;
   }
 
-  70% {
+  19.04% {
     border: solid 3px yellow;
     border-top: solid 3px magenta;
-	border-right: solid 3px magenta;
+	  border-right: solid 3px magenta;
     border-bottom: solid 3px magenta;
   }
 
-  90% {
-    border: solid 3px yellow;
-    border-top: solid 3px magenta;
-	border-right: solid 3px magenta;
-    border-bottom: solid 3px magenta;
-  }
-   90% {
+  
+  23.8% {
     border: solid 3px magenta;
   }
-
+  28.5% {
+    border: solid 3px magenta;
+    border-top: solid 3px yellow;
+  }
+  33.32% {
+    border: solid 3px magenta;
+    border-top: solid 3px yellow;
+	  border-right: solid 3px yellow;
+  }
+  38.08% {
+    border: solid 3px magenta;
+    border-top: solid 3px yellow;
+	  border-right: solid 3px yellow;
+    border-bottom: solid 3px yellow;
+  }
+  42.84% {
+    border: solid 3px yellow;
+  }
+  
+  47.6% {
+    border: solid 3px yellow;
+    border-top: solid 3px green;
+  }
+  52.36% {
+    border: solid 3px yellow;
+    border-top: solid 3px green;
+	  border-right: solid 3px green;
+  }
+  57.12% {
+    border: solid 3px yellow;
+    border-top: solid 3px green;
+	  border-right: solid 3px green;
+    border-bottom: solid 3px green;
+  }
+  61.88% {
+    border: solid 3px green;
+  }
+  66.64% {
+    border: solid 3px green;
+    border-top: solid 3px blue;
+  }
+  71.4% {
+    border: solid 3px green;
+    border-top: solid 3px blue;
+	  border-right: solid 3px blue;
+  }
+  76.16% {
+    border: solid 3px green;
+    border-top: solid 3px blue;
+	  border-right: solid 3px blue;
+    border-bottom: solid 3px blue;
+  }
+  80.92% {
+    border: solid 3px blue;
+  }
+  85.68% {
+    border: solid 3px blue;
+    border-top: solid 3px yellow;
+  }
+  90.44% {
+    border: solid 3px blue;
+    border-top: solid 3px yellow;
+	  border-right: solid 3px yellow;
+  }
+  95.2% {
+    border: solid 3px blue;
+    border-top: solid 3px yellow;
+	  border-right: solid 3px yellow;
+    border-bottom: solid 3px yellow;
+  }
+  100% {
+    border: solid 3px yellow;;
+  }
 }
 .selected  {
   background-color: turquoise;
