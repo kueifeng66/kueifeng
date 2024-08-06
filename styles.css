@@ -57,10 +57,10 @@ body {
   animation: changeBorders 16s infinite;
  }
 @keyframes changeBorders {
-  2% {
+  4.76% {
     border: solid 3px yellow;
   }
-  4% {
+  9.52% {
     border: solid 3px yellow;
     border-top: solid 3px magenta;
 	
