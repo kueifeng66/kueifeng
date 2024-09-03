@@ -468,15 +468,3 @@ footer {
   }
 
 }
-#myVideo {
-  position: fixed;
-  left: 120px;
-  top: 10px;
-  width: 300px;
-  height: 300px;
-  z-index:-100;
-  object-fit: cover;
-}
-
-
-
