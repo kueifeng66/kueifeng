@@ -1005,6 +1005,17 @@ window.onload = function() {
 };
 
 
+document.addEventListener('DOMContentLoaded', function () {
+  var video = document.getElementById('myVideo');
+  video.muted = true; // Ensure it's muted to allow autoplay
+  video.play().catch(function(error) {
+    // Handle autoplay failure if needed
+    console.log("Autoplay failed: ", error);
+  });
+});
+
+
+
 
 btn.addEventListener('change', change);
 createheadercell(year, month, day);
