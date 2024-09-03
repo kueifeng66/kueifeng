@@ -34,6 +34,7 @@ body {
   color: #fff;
   font-size:18px;
   border-radius: 10px;
+  z-index: 100;
 }
 
 .day {
@@ -396,6 +397,7 @@ footer {
   overflow: hidden;
   border-radius: 20px;
   text-align: center;
+  z-index: 100;
 }
 
 .picker-body {
@@ -408,6 +410,7 @@ footer {
   font-weight: bold;
   overflow: auto;
   height: 150px;
+  z-index: 100;
 }
 
 .picker-item {
