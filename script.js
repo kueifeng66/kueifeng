@@ -921,6 +921,12 @@ function fetchWeatherForecast() {
 
 
 
+
+   
+     document.getElementById('myVideo').onclick = function() {
+      this.style.visibility = 'hidden';
+  };
+
 // Call fetchWeather function initially
 fetchWeather();
 fetchWeatherForecast();
@@ -938,8 +944,9 @@ window.onload = function() {
 };
 
 
-
-
+document.getElementById('myVideo').addEventListener('ended', function() {
+  this.style.display = 'none'; // Hide the video when it ends
+}, false);
 
 
 btn.addEventListener('change', change);

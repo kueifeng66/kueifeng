@@ -380,7 +380,7 @@ footer {
   bottom: 0;
   left: 0;
   width: 100%;
-  background-color: #FBA0E3;
+  background-color: rgba(251,160,227,0.8); 
   box-shadow: 10px 10px 30px #FBA0E3 inset; /* Adjust the background color as needed */
   padding: 8px;
   text-align: center;
@@ -480,9 +480,11 @@ footer {
   width: 298px;
   height: 266px;
   border: 1px solid #ffffff;
-  z-index:-100;
+  z-index:-50;
   object-fit: cover;
 }
+
+
 
 iframe {
   position: absolute;
