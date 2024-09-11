@@ -944,9 +944,11 @@ window.onload = function() {
 };
 
 
+
 document.getElementById('myVideo').addEventListener('ended', function() {
   this.style.display = 'none'; // Hide the video when it ends
 }, false);
+
 
 
 btn.addEventListener('change', change);
