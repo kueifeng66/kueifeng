@@ -174,6 +174,25 @@ body {
   96.25% {
     border: solid 3px purple;
   }
+  84.7% {
+    border: solid 3px purple;
+    border-top: solid 3px gold;
+  }
+  88.55% {
+    border: solid 3px purple;
+    border-top: solid 3px gold;
+	  border-right: solid 3px gold;
+  }
+  92.4% {
+    border: solid 3px purple;
+    border-top: solid 3px gold;
+	  border-right: solid 3px gold;
+    border-bottom: solid 3px  gold;
+  }
+  96.25% {
+    border: solid 3px gold;
+  }
+
 }
 .selected  {
   background-color: turquoise;
