@@ -58,21 +58,21 @@ body {
   animation: changeBorders 16s infinite;
  }
 @keyframes changeBorders {
-  3.85% {
+  3.57% {
     border: solid 3px yellow;
   }
-  7.7% {
+  7.14% {
     border: solid 3px yellow;
     border-top: solid 3px magenta;
 	
   }
-  11.55% {
+  10.71% {
     border: solid 3px yellow;
     border-top: solid 3px magenta;
 	  border-right: solid 3px magenta;
   }
 
-  15.4% {
+  14.28% {
     border: solid 3px yellow;
     border-top: solid 3px magenta;
 	  border-right: solid 3px magenta;
@@ -80,116 +80,116 @@ body {
   }
 
   
-  19.25% {
+  17.85% {
     border: solid 3px magenta;
   }
-  23.1% {
+  21.42% {
     border: solid 3px magenta;
     border-top: solid 3px yellow;
   }
-  26.95% {
+  25% {
     border: solid 3px magenta;
     border-top: solid 3px yellow;
 	  border-right: solid 3px yellow;
   }
-  30.8% {
+  28.57% {
     border: solid 3px magenta;
     border-top: solid 3px yellow;
 	  border-right: solid 3px yellow;
     border-bottom: solid 3px yellow;
   }
-  34.65% {
+  32.14% {
     border: solid 3px yellow;
   }
   
-  38.5% {
+  35.71% {
     border: solid 3px yellow;
     border-top: solid 3px green;
   }
-  42.35% {
+  39.28% {
     border: solid 3px yellow;
     border-top: solid 3px green;
 	  border-right: solid 3px green;
   }
-  46.2% {
+  42.85% {
     border: solid 3px yellow;
     border-top: solid 3px green;
 	  border-right: solid 3px green;
     border-bottom: solid 3px green;
   }
-  50.05% {
+  46.42% {
     border: solid 3px green;
   }
-  53.9% {
+  50% {
     border: solid 3px green;
     border-top: solid 3px blue;
   }
-  57.75% {
+  53.57% {
     border: solid 3px green;
     border-top: solid 3px blue;
 	  border-right: solid 3px blue;
   }
-  61.6% {
+  57.14% {
     border: solid 3px green;
     border-top: solid 3px blue;
 	  border-right: solid 3px blue;
     border-bottom: solid 3px blue;
   }
-  65.45% {
+  60.71% {
     border: solid 3px blue;
   }
-  69.3% {
+  64.28% {
     border: solid 3px blue;
     border-top: solid 3px yellow;
   }
-  73.15% {
+  67.85% {
     border: solid 3px blue;
     border-top: solid 3px yellow;
 	  border-right: solid 3px yellow;
   }
-  77% {
+  71.42% {
     border: solid 3px blue;
     border-top: solid 3px yellow;
 	  border-right: solid 3px yellow;
     border-bottom: solid 3px yellow;
   }
-  80.85% {
+  75% {
     border: solid 3px yellow;;
   }
-  84.7% {
+  78.57% {
     border: solid 3px yellow;
     border-top: solid 3px purple;
   }
-  88.55% {
+  82.14% {
     border: solid 3px yellow;
     border-top: solid 3px purple;
 	  border-right: solid 3px purple;
   }
-  92.4% {
+  85.71% {
     border: solid 3px yellow;
     border-top: solid 3px purple;
 	  border-right: solid 3px purple;
     border-bottom: solid 3px  purple;
   }
-  96.25% {
+  89.28% {
     border: solid 3px purple;
   }
-  84.7% {
+  92.85% {
     border: solid 3px purple;
     border-top: solid 3px gold;
   }
-  88.55% {
+  96.42% {
     border: solid 3px purple;
     border-top: solid 3px gold;
 	  border-right: solid 3px gold;
   }
-  92.4% {
+  98% {
     border: solid 3px purple;
     border-top: solid 3px gold;
 	  border-right: solid 3px gold;
     border-bottom: solid 3px  gold;
   }
-  96.25% {
+  100% {
     border: solid 3px gold;
   }
 
