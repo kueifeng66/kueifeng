@@ -367,11 +367,25 @@ function createCalendar(year, month) {
 
 }
 
+// Function to position the tooltip
+function positionTooltip() {
+  const header = document.getElementById('header');
+  const tooltip = document.getElementById('tooltip');
+  
+  // Get header's position and height
+  const headerRect = header.getBoundingClientRect();
+  
+  // Position tooltip at the bottom of the header
+  tooltip.style.top = `${headerRect.bottom}px`;
+  tooltip.style.left = `${headerRect.left}px`; // Align left with header, adjust as needed
+}
+
 function showTooltip(date) {
   const calendarRect = calendar.getBoundingClientRect(); 
   
-  tooltip.style.left = `${calendarRect.left - 102}px`;
-  tooltip.style.top = `${calendarRect.top + 106}px`;
+  // tooltip.style.left = `${calendarRect.left - 102}px`;
+  // tooltip.style.top = `${calendarRect.top + 106}px`;
+  positionTooltip();
 
   const dutyInfo = dutySchedule[date] || "None";
 
