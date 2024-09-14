@@ -518,12 +518,12 @@ iframe {
 .trail {
 
   position: absolute;
-  width: 10px;
-  height: 10px;
+  width: 15px;
+  height: 15px;
   background-color: #f032e6;
   border-radius: 50%;
   pointer-events: none;
-  animation: fade 0.7s forwards;
+  animation: fade 1.2s forwards;
   z-index: 101;
 }
 
@@ -531,6 +531,19 @@ iframe {
   0% {
     opacity:1;
     transform:scale(1);
+  }
+  25%{
+    opacity:0.75;
+    transform:scale(0.75);
+  }
+  50%{
+    opacity:0.5;
+    transform:scale(0.5);
+  }
+  75%{
+    opacity:0.25;
+    transform:scale(0.25);
+
   }
   100% {
     opacity:0;
