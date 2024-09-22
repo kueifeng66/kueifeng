@@ -693,7 +693,7 @@ names.forEach((name) => {
       // window.location.href = 'line://nv/chat';
       if (isLineBrowser()) {
         // Message or alternative action if using Line in-app browser
-        alert('Please open this link in a regular browser for the full functionality.');
+        alert('Use a Regular Browser, like chrome, to open LINE since it is in LINE now');
       } else {
         // Open the Line chat interface when not in Line's browser
         window.location.href = 'line://nv/chat';
