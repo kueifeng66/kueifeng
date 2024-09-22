@@ -655,6 +655,10 @@ function highlightAdditionalHoliday() {
 //     dayElement.textContent += lunarName;
 //   });
 // }
+function isLineBrowser() {
+  const ua = navigator.userAgent || navigator.vendor || window.opera;
+  return ua.indexOf('Line') > -1;
+}
 
 // Populate the name picker with the list of names
 names.forEach((name) => {
@@ -682,12 +686,18 @@ names.forEach((name) => {
     // Add double-click event listener to send a message via Line
     item.addEventListener("dblclick", () => {
       // Get the message from the data attribute
-      const message = item.getAttribute("data-line");
-  
+      // const message = item.getAttribute("data-line");
       // Construct the URL for sending a message through Line
       // const lineURL = `line://msg/text/${encodeURIComponent(message)}`;
       // Open the Line app with the constructed URL
-      window.location.href = 'line://nv/chat';
+      // window.location.href = 'line://nv/chat';
+      if (isLineBrowser()) {
+        // Message or alternative action if using Line in-app browser
+        alert('Please open this link in a regular browser for the full functionality.');
+      } else {
+        // Open the Line chat interface when not in Line's browser
+        window.location.href = 'line://nv/chat';
+      }
     });
 
   namePicker.appendChild(item);
