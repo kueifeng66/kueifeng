@@ -38,20 +38,13 @@ const dutySchedule = {
 "2024-9-21": "S: 詹文欽 A: 陳建中 N: 王金誠 C: 秦桔萬 R: 林厚運 T: 方振彬",
 "2024-9-22": "S: 范振宇 A: 羅應順 N: 唐__茂 C: 孫景泰 R: 劉錦郎 T: 洪柜峰",
 "2024-9-23": "S: 黃經洲 A: 張哲維 N: 彭偉慎 C: 張日曜 R: 余金原 T: 周育稔",
-"2024-9-24": "S: 黃榮國 A: 王瑞發 N: 陳建中 C: 柯正和 R: 黃煜森 T: 方振彬",
+"2024-9-24": "S: 林森發 A: 王瑞發 N: 陳建中 C: 柯正和 R: 黃煜森 T: 方振彬",
 "2024-9-25": "S: 范振宇 A: 呂明峰 N: 劉暐丞 C: 秦桔萬 R: 張哲維 T: 羅應順",
 "2024-9-26": "S: 林森發 A: 王金誠 N: 許敦智 C: 邱冠霖 R: 黃煜森 T: 洪柜峰",
 "2024-9-27": "S: 黃榮國 A: 林宏儒 N: 劉暐丞 C: 孫景泰 R: 劉錦郎 T: 羅應順",
 "2024-9-28": "S: 詹文欽 A: 許世勳 N: 許敦智 C: 邱冠霖 R: 余金原 T: 方振彬",
 "2024-9-29": "S: 林森發 A: 唐__茂 N: 王瑞發 C: 張日曜 R: 林厚運 T: 呂明峰",
 "2024-9-30": "S: 黃經洲 A: 彭偉慎 N: 劉暐丞 C: 邱冠霖 R: 劉錦郎 T: 周育稔",
-
-
-
-
-
-
-
 
 };
 
@@ -685,6 +678,18 @@ names.forEach((name) => {
     temp_name=selectedName;
     highlightSelectedName(selectedName);
   });
+
+    // Add double-click event listener to send a message via Line
+    item.addEventListener("dblclick", () => {
+      // Get the message from the data attribute
+      const message = item.getAttribute("data-line");
+  
+      // Construct the URL for sending a message through Line
+      // const lineURL = `line://msg/text/${encodeURIComponent(message)}`;
+      // Open the Line app with the constructed URL
+      window.location.href = 'line://nv/chat';
+    });
+
   namePicker.appendChild(item);
 });
 
