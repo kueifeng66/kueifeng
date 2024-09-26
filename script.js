@@ -539,6 +539,7 @@ function change() {
     }
   });
   highlightAdditionalHoliday();
+  AddWeekDay();
 } //change function ends here
 
 function scroll(info) {
@@ -1011,10 +1012,33 @@ function fetchWeatherForecast() {
 
 
 
-   
-     document.getElementById('myVideo').onclick = function() {
-      this.style.visibility = 'hidden';
-  };
+
+function AddWeekDay() {
+if (!btn.checked) {
+  const headerCell = document.querySelector('.header-cell');
+  dayOfWeek = Zellercongruence(day, month, year);
+  if (dayOfWeek === 1) {
+    headerCell.textContent += `(一)`;
+    // headerCell.textContent = ` ${year} 年　${month} 月 ${day} 日 `;   
+  } else if (dayOfWeek === 2) {
+    headerCell.textContent += `(二)`;
+  } else if (dayOfWeek === 3) {
+    headerCell.textContent += `(三)`;
+  } else if (dayOfWeek === 4) {
+    headerCell.textContent += `(四)`;
+  } else if (dayOfWeek === 5) {
+    headerCell.textContent += `(五)`;
+  } else if (dayOfWeek === 6) {
+    headerCell.textContent += `(六)`;
+  } else {
+    headerCell.textContent += `(日)`;
+  }
+}
+}
+
+
+
+  
 
 // Call fetchWeather function initially
 fetchWeather();
@@ -1067,3 +1091,5 @@ createheadercell(year, month, day);
 createCalendar(year, month);
 // AddLunar();
 highlightAdditionalHoliday(); //this must be done finally. 20240528
+
+AddWeekDay();
