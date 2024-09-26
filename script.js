@@ -1072,17 +1072,10 @@ document.addEventListener('mousemove', (e) => {
   trail.style.top = e.pageY + 'px';
 
   setTimeout(() => {
-
     trail.remove();
-
   },500);
 
 });
-
-
-
-
-
 
 
 
