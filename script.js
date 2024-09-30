@@ -336,7 +336,13 @@ function createCalendar(year, month) {
     weekdayElement.classList.add('weekday');
     weekdayElement.textContent = weekdays[i];
     calendar.appendChild(weekdayElement);
-    addEventListeners(weekdayElement, btn, day, month, year, 999);  
+    weekdayElement.addEventListener('dblclick', function() {
+      // Perform your action when weekdayElement is clicked
+      alert("1. 點左側的太陽，會切換下個月班表 \n 2. 點左側的年月日會切換個人班表及選擇某日班表 \n 3. 滑動人名會顯示值班人員班表 \n 4. 點2下任何人名會彈跳出Line App");
+      
+      // Example function call or other actions
+      addEventListeners(weekdayElement, btn, day, month, year, 999);  
+    });
   }
 
     dayOfWeek = Zellercongruence(1, month, year);
