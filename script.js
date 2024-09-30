@@ -338,7 +338,7 @@ function createCalendar(year, month) {
     calendar.appendChild(weekdayElement);
     weekdayElement.addEventListener('dblclick', function() {
       // Perform your action when weekdayElement is clicked
-      alert("1. 點左側的太陽，會切換下個月班表 \n 2. 點左側的年月日會切換個人班表及選擇某日班表 \n 3. 滑動人名會顯示值班人員班表 \n 4. 點2下任何人名會彈跳出Line App");
+      alert("1. 點左側的太陽，會切換下個月班表 \n 2. 點左側的年月日框框會切換個人班表及選擇某日班表 \n 3. 滑動名字會顯示值班人員班表 \n 4. 點2下名字會切換至Line視窗 \n 5. 背景取至windy網站的氣象資訊，其中越紅代表雲層越厚");
       
       // Example function call or other actions
       addEventListeners(weekdayElement, btn, day, month, year, 999);  
@@ -566,6 +566,8 @@ function scroll(info) {
       // isSpaceBeforeUppercase = false; 
     }
   }
+  result = '★★★&nbsp;&nbsp;&nbsp【使用說明】請點2下&nbsp;&nbsp;&nbsp星期(一～五)&nbsp;&nbsp;&nbsp★★★&nbsp;&nbsp;&nbsp' + result;
+  result = '&nbsp;&nbsp;&nbsp' + result;
   var marquee = document.getElementById("scrollingText");
   marquee.innerHTML = '<p>' + result + '</p>'; 
 }
