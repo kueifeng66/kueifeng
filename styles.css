@@ -48,6 +48,11 @@ body {
   position: relative;
   cursor: pointer;
   color:#000000;
+  z-index: 100;
+}
+
+.day:hover {
+  transform: scale(1.5); 
 }
 
 .today {
