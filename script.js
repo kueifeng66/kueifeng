@@ -436,11 +436,8 @@ function showTooltip(date) {
   }
 
   tooltip.style.display = 'block';
-
   document.title = holiday[date] || lastUpdated;
 }
-
-
 
 
 function hideTooltip() {
