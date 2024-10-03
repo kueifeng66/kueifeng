@@ -444,7 +444,7 @@ function showTooltip(date) {
 
 function hideTooltip() {
   tooltip.style.display = 'none';
-  document.title = 'On Duty Calendar';
+  // document.title = 'On Duty Calendar';
 }
 
 function change() {
