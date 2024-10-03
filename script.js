@@ -229,9 +229,9 @@ function addEventListeners(dayElement, btn, day, month, year, date) {
         today.style.backgroundColor = '';
       });
       
-    // if (btn.checked) {
-    //   dayElement.style.color = 'black'; // Change the color when button is checked and mouse is over
-    // }
+    if (btn.checked) {
+      dayElement.style.color = 'black'; // Change the color when button is checked and mouse is over
+    }
     showTooltip(date); 
     if (date == '999'){
       hideTooltip();
@@ -240,18 +240,18 @@ function addEventListeners(dayElement, btn, day, month, year, date) {
   });
 
   dayElement.addEventListener('mouseout', () => {
-    // if (btn.checked) {
-    //   dayElement.style.color = 'white'; // Reset the color when button is checked and mouse is out
-    //   let today = document.querySelectorAll('.today');
-    //   today.forEach(today => {
-    //     today.style.color = 'MediumBlue';
-    //   });
-    //   if (Zellercongruence(day, month, year) === 0 || Zellercongruence(day, month, year) === 6) {
-    //     dayElement.style.color = '#FF33CC';
+    if (btn.checked) {
+      dayElement.style.color = 'white'; // Reset the color when button is checked and mouse is out
+      let today = document.querySelectorAll('.today');
+      today.forEach(today => {
+        today.style.color = 'MediumBlue';
+      });
+      if (Zellercongruence(day, month, year) === 0 || Zellercongruence(day, month, year) === 6) {
+        dayElement.style.color = '#FF33CC';
         
-    //   }
-    //   highlightAdditionalHoliday();
-    // }
+      }
+      highlightAdditionalHoliday();
+    }
     highlightSelectedName(temp_name);
     const items = document.querySelectorAll('.picker-item');
     items.forEach((item) => {
@@ -493,6 +493,18 @@ function change() {
       year++;
     }
     createCalendar(year,month);
+    body.classList.add("dark");
+    body.style.backgroundImage = "url('TIAC.png')";
+    
+    let days = document.querySelectorAll('.day');
+    days.forEach(day => {
+      day.style.color = 'white';
+    });
+    
+    let weekendDays = document.querySelectorAll('.weekend');
+    weekendDays.forEach(day => {
+      day.style.color = '#FF33CC';
+    });
     const headerCell = document.querySelector('.header-cell');
     headerCell.textContent = ` ${year} 年　${month} 月  `;   
     
@@ -556,7 +568,7 @@ function scroll(info) {
     }
   }
   result = '★★★&nbsp;&nbsp;&nbsp【使用說明】請點2下&nbsp;&nbsp;&nbsp星期(一～日)&nbsp;&nbsp;&nbsp★★★&nbsp;&nbsp;&nbsp' + result;
-  
+  result = '&nbsp;&nbsp;&nbsp' + result;
   var marquee = document.getElementById("scrollingText");
   marquee.innerHTML = '<p>' + result + '</p>'; 
 }
@@ -688,10 +700,18 @@ function highlightAdditionalHoliday() {
     const namesForHoliday = (holiday[date] || '').split(' ');
     
     if (namesForHoliday.some(name => name.includes('放假日'))) {
+      if (btn.checked) {
+      dayElement.style.color = '#FF33CC';
+      } else{
         dayElement.style.color = 'red';
+      }
     }
     if (namesForHoliday.some(name => !name.includes('放假日'))) {
+      if (btn.checked) {
+        dayElement.style.color = 'white';
+      } else {
         dayElement.style.color = 'black';
+      }
     }
      
   });
@@ -1066,7 +1086,7 @@ document.addEventListener('mousemove', (e) => {
 
 });
 
-document.getElementById("update-time").textContent = lastUpdated;
+
 
 btn.addEventListener('change', change);
 createheadercell(year, month, day);
