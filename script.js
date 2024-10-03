@@ -312,7 +312,7 @@ function createCalendar(year, month) {
     calendar.appendChild(weekdayElement);
     weekdayElement.addEventListener('dblclick', function() {
       // Perform your action when weekdayElement is clicked
-      alert("\n 1. 點左側的太陽，會切換下個月班表 \n 2. 點左側的年月日框框會切換個人班表及選擇某日班表 \n 3. 滑動名字會顯示值班人員班表 \n 4. 點2下名字會切換至Line視窗 \n 5. 背景取至windy網站的氣象資訊，其中越紅代表雲層越厚 \n 6. 新增功能→→→點日期會放大該點選的日期 \n 7. 新增總臺(桃園區臺)介紹短片，播放1次後會消失 \n\n\n 祝 平安 順心 \n 柜峰敬上");
+      alert("\n 1. 點左側的太陽，會切換下個月班表 \n 2. 點左側的年月日框框會切換個人班表及選擇某日班表 \n 3. 滑動名字會顯示值班人員班表 \n 4. 點2下名字會切換至Line視窗 \n 5. 背景取至windy網站的氣象資訊，其中越紅代表雲層越厚 \n 6. 新增功能→→→點日期會放大該點選的日期 \n 7. 新增總臺(桃園區臺)介紹短片，播放1次後會消失 \n 8. 標題(Document Title)會顯示最近1次更新班表的時間 \n\n\n 祝 平安 順心 \n 柜峰敬上");
       
       // Example function call or other actions
       addEventListeners(weekdayElement, btn, day, month, year, 999);  
