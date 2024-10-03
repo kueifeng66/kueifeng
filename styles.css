@@ -54,7 +54,7 @@ body {
 .day:hover {
   transform: scale(1.5); 
   background: linear-gradient(to right, orange, yellow ,lightyellow, #ffffff);
-  border-radius: 10px;
+  border-radius: 5px;
 }
 
 
