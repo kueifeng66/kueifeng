@@ -5,6 +5,7 @@ const footer = document.getElementById('scrollingText');
 const header = document.getElementById('header');
 const body = document.body;
 const lastUpdated = document.title;
+
 let clickCount = 1;
 
 const now = new Date();
