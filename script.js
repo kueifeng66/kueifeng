@@ -4,6 +4,7 @@ const btn = document.querySelector("#check");
 const footer = document.getElementById('scrollingText');
 const header = document.getElementById('header');
 const body = document.body;
+const lastUpdated = document.title;
 let clickCount = 1;
 
 const now = new Date();
@@ -436,7 +437,7 @@ function showTooltip(date) {
 
   tooltip.style.display = 'block';
 
-  document.title = holiday[date] || "None";
+  document.title = holiday[date] || lastUpdated;
 }
 
 
@@ -444,7 +445,7 @@ function showTooltip(date) {
 
 function hideTooltip() {
   tooltip.style.display = 'none';
-  // document.title = 'On Duty Calendar';
+  document.title = lastUpdated;
 }
 
 function change() {
