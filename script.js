@@ -556,6 +556,7 @@ function scroll(info) {
     }
   }
   result = '★★★&nbsp;&nbsp;&nbsp【使用說明】請點2下&nbsp;&nbsp;&nbsp星期(一～日)&nbsp;&nbsp;&nbsp★★★&nbsp;&nbsp;&nbsp' + result;
+  result += '&nbsp;&nbsp;&nbsp Last updated on: ' + lastUpdated;
   result = '&nbsp;&nbsp;&nbsp' + result;
   var marquee = document.getElementById("scrollingText");
   marquee.innerHTML = '<p>' + result + '</p>'; 
@@ -1066,7 +1067,7 @@ document.addEventListener('mousemove', (e) => {
 
 });
 
-
+document.getElementById("update-time").textContent = lastUpdated;
 
 btn.addEventListener('change', change);
 createheadercell(year, month, day);
