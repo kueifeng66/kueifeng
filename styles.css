@@ -48,160 +48,79 @@ body {
   position: relative;
   cursor: pointer;
   color:#000000;
+  
   z-index: 100;
+  
 }
 
 .day:hover {
   transform: scale(1.5); 
-  background: linear-gradient(to right, orange, yellow ,lightyellow, #ffffff);
+  background: linear-gradient(to right, orange, yellow , #ffff99,lightyellow, #ffffff);
   border-radius: 5px;
 }
 
 
 .today {
+  margin: 0 auto;
   width: 2.6em;
   height: 2.7em;
   font-weight: bold;
-  border: 3px solid purple;
-  animation: changeBorders 16s infinite;
+  background: #ffff99;
+  text-align: center;
+  position: relative;
+  z-index:0;
+  
  }
-@keyframes changeBorders {
-  3.57% {
-    border: solid 3px yellow;
-  }
-  7.14% {
-    border: solid 3px yellow;
-    border-top: solid 3px magenta;
-	
-  }
-  10.71% {
-    border: solid 3px yellow;
-    border-top: solid 3px magenta;
-	  border-right: solid 3px magenta;
-  }
+ @property --angle{
+    syntax: "<angle>";
+    initial-value: 0deg;
+    inherits: false;
+ }
 
-  14.28% {
-    border: solid 3px yellow;
-    border-top: solid 3px magenta;
-	  border-right: solid 3px magenta;
-    border-bottom: solid 3px magenta;
-  }
-
-  
-  17.85% {
-    border: solid 3px magenta;
-  }
-  21.42% {
-    border: solid 3px magenta;
-    border-top: solid 3px yellow;
-  }
-  25% {
-    border: solid 3px magenta;
-    border-top: solid 3px yellow;
-	  border-right: solid 3px yellow;
-  }
-  28.57% {
-    border: solid 3px magenta;
-    border-top: solid 3px yellow;
-	  border-right: solid 3px yellow;
-    border-bottom: solid 3px yellow;
-  }
-  32.14% {
-    border: solid 3px yellow;
-  }
-  
-  35.71% {
-    border: solid 3px yellow;
-    border-top: solid 3px green;
-  }
-  39.28% {
-    border: solid 3px yellow;
-    border-top: solid 3px green;
-	  border-right: solid 3px green;
-  }
-  42.85% {
-    border: solid 3px yellow;
-    border-top: solid 3px green;
-	  border-right: solid 3px green;
-    border-bottom: solid 3px green;
-  }
-  46.42% {
-    border: solid 3px green;
-  }
-  50% {
-    border: solid 3px green;
-    border-top: solid 3px blue;
-  }
-  53.57% {
-    border: solid 3px green;
-    border-top: solid 3px blue;
-	  border-right: solid 3px blue;
-  }
-  57.14% {
-    border: solid 3px green;
-    border-top: solid 3px blue;
-	  border-right: solid 3px blue;
-    border-bottom: solid 3px blue;
-  }
-  60.71% {
-    border: solid 3px blue;
-  }
-  64.28% {
-    border: solid 3px blue;
-    border-top: solid 3px yellow;
-  }
-  67.85% {
-    border: solid 3px blue;
-    border-top: solid 3px yellow;
-	  border-right: solid 3px yellow;
-  }
-  71.42% {
-    border: solid 3px blue;
-    border-top: solid 3px yellow;
-	  border-right: solid 3px yellow;
-    border-bottom: solid 3px yellow;
-  }
-  75% {
-    border: solid 3px yellow;;
-  }
-  78.57% {
-    border: solid 3px yellow;
-    border-top: solid 3px purple;
-  }
-  82.14% {
-    border: solid 3px yellow;
-    border-top: solid 3px purple;
-	  border-right: solid 3px purple;
-  }
-  85.71% {
-    border: solid 3px yellow;
-    border-top: solid 3px purple;
-	  border-right: solid 3px purple;
-    border-bottom: solid 3px  purple;
-  }
-  89.28% {
-    border: solid 3px purple;
-  }
-  92.85% {
-    border: solid 3px purple;
-    border-top: solid 3px gold;
-  }
-  96.42% {
-    border: solid 3px purple;
-    border-top: solid 3px gold;
-	  border-right: solid 3px gold;
-  }
-  98% {
-    border: solid 3px purple;
-    border-top: solid 3px gold;
-	  border-right: solid 3px gold;
-    border-bottom: solid 3px  gold;
-  }
-  100% {
-    border: solid 3px gold;
-  }
-
+.today::after{
+ content: '';
+ position: absolute;
+ height: 100%;
+ width: 100%;
+ background-image: conic-gradient(from var(--angle), transparent 70%, #ff4545, #00ff99, #006aff, #ff0095, #ff4545);
+ top: 50%;
+ left: 50%;
+ translate: -50% -50%;
+ z-index: -2;
+ padding: 3px;
+ animation: 3s spin linear infinite;
 }
+ .today::before{
+  content: '';
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  background: #ffff99;
+  /* background-image: conic-gradient(from var(--angle), transparent , #ff4545, #00ff99, #006aff, #ff0095, #ff4545); */
+  top: 50%;
+  left: 50%;
+  translate: -50% -50%; 
+  z-index: -1;
+  padding: 0px;
+  animation: 3s spin linear infinite;
+  
+ 
+ }
+
+
+@keyframes spin {
+  from{
+    --angle: 0deg;
+  }
+  to{
+    --angle: 360deg;
+  }
+  
+}
+
+
+
+
 .selected  {
   background-color: turquoise;
 }
@@ -257,10 +176,6 @@ body {
   background-color: rgba(51, 51, 51, 1);
 }
 
-.day:hover {
-  cursor: pointer;
-  background-color: #ffff99;
-}
 
 body.dark {
   background-size: cover;
