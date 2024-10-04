@@ -202,17 +202,20 @@ body {
   }
 
 }
-.selected  {
-  background-color: turquoise;
+
+.selected {
+  background-image: linear-gradient(to right, turquoise, lightblue);
 }
 
-.selected2  {
-  background-color: #B2FF9E;
+.selected2 {
+  background-image: linear-gradient(to right, #B2FF9E, lightgreen);
 }
 
-.selected3  {
-  background-color: #EBD9AA;
+.selected3 {
+  background-image: linear-gradient(to right, #EBD9AA, lightyellow);
 }
+
+
 
 .weekday {
   width: 2.6em;
