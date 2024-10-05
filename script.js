@@ -197,10 +197,10 @@ function Zellercongruence(day, month, year)
 
 function addEventListeners(dayElement, btn, day, month, year, date) {
   dayElement.addEventListener('mouseover', () => {
-    let todays = document.querySelectorAll('.today');
-      todays.forEach(today => {
-        today.style.backgroundColor = '';
-      });
+    // let todays = document.querySelectorAll('.today');
+    //   todays.forEach(today => {
+    //     today.style.backgroundColor = '';
+    //   });
       
     // if (btn.checked) {
     //   dayElement.style.color = 'black'; // Change the color when button is checked and mouse is over
@@ -244,10 +244,10 @@ function addEventListener_toHideToolTipandShowToday(headerCell) {
     const days =document.querySelectorAll('.day');
     if (clickCount % 2 === 0) {
       hideTooltip();
-      let todays = document.querySelectorAll('.today');
-      todays.forEach(today => {
-        today.style.backgroundColor = '';
-      });
+      // let todays = document.querySelectorAll('.today');
+      // todays.forEach(today => {
+      //   today.style.backgroundColor = '';
+      // });
               //below is to highlight the name previously selected in the change function
       highlightSelectedName(temp_name);
       const items = document.querySelectorAll('.picker-item');
@@ -266,10 +266,10 @@ function addEventListener_toHideToolTipandShowToday(headerCell) {
             dayElement.classList.remove(selectedClassName3);
           });
 
-      let todays = document.querySelectorAll('.today');
-      todays.forEach(today => {
-        today.style.backgroundColor = '#ffff99';
-      });
+      // let todays = document.querySelectorAll('.today');
+      // todays.forEach(today => {
+      //   today.style.backgroundColor = '#ffff99';
+      // });
       showTooltip(formattedDate);
       if (btn.checked){
         hideTooltip();
@@ -389,15 +389,7 @@ function createCalendar(year, month) {
     addEventListeners(dayElement, btn, day, month, year, date);    
   }
 
-  // //below is created for the next month. If the days of next month exceeds this month
-  // for (let i = 0; i < (daysInMonthN + counterN - daysInMonth - counter) ; i++) {
-  //   const dayElement = document.createElement('div');
-  //   dayElement.classList.add('day');
-  //   dayElement.textContent = "";
-  //   calendar.appendChild(dayElement);
-  //   addEventListeners(dayElement, btn, day, month, year, 999);   
-  // }
-
+  
 }
 
 // Function to position the tooltip
@@ -617,6 +609,7 @@ function highlightSelectedName(selectedName) {
       }
     });
 
+    const isToday = dayElement.classList.contains('today');
     // Check if selectedName is in either category and apply appropriate class
 
     if (namesForSelectedClassName3.includes(selectedName)) {
@@ -637,6 +630,12 @@ function highlightSelectedName(selectedName) {
       dayElement.classList.remove(selectedClassName);
     }
 
+    // If the day is today and has any selected class, stop or hide the spinning animation
+    if (isToday && (dayElement.classList.contains('selected') || dayElement.classList.contains('selected2') || dayElement.classList.contains('selected3'))) {
+      dayElement.classList.add('today-selected'); // Custom class to stop the spinning
+    } else if (isToday) {
+      dayElement.classList.remove('today-selected'); // Revert if no selection is made
+    }
   });
 
     // Remove all selected classes when hovering over a day element
