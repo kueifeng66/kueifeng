@@ -264,6 +264,7 @@ function addEventListener_toHideToolTipandShowToday(headerCell) {
             dayElement.classList.remove(selectedClassName);
             dayElement.classList.remove(selectedClassName2);
             dayElement.classList.remove(selectedClassName3);
+            dayElement.classList.remove('today-selected');
           });
 
       // let todays = document.querySelectorAll('.today');
