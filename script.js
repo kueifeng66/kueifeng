@@ -402,7 +402,7 @@ function positionTooltip() {
   const headerRect = header.getBoundingClientRect();
   
   // Position tooltip at the bottom of the header
-  tooltip.style.top = `${headerRect.bottom}px`;
+  tooltip.style.top = `${headerRect.bottom + 4}px`;
   tooltip.style.left = `${headerRect.left}px`; // Align left with header, adjust as needed
 }
 
