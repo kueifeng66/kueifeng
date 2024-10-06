@@ -127,7 +127,7 @@ body {
   position: absolute;
   height: 100%;
   width: 100%;
-  background: #ffff99;
+  background-image: linear-gradient(to right, #D3D3D3, #A9A9A9);
   /* background-image: conic-gradient(from var(--angle), transparent , #ff4545, #00ff99, #006aff, #ff0095, #ff4545); */
   top: 50%;
   left: 50%;
