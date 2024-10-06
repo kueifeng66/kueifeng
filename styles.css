@@ -28,7 +28,7 @@ body {
 
 #header {
   border: 1px solid #ffffff;
-  height: 82px;
+  height: 78px;
   width: 98px;
   font-weight: bold;
   padding: 0px;
@@ -44,7 +44,7 @@ body {
 #header::after{
   content: '';
   position: absolute;
-  height: 82px;
+  height: 78px;
   width: 98px;
   background-image: conic-gradient(from var(--angle), transparent 70%, #ff4545, #00ff99, #006aff, #ff0095, #ff4545);
   top: 50%;
@@ -59,7 +59,7 @@ body {
   #header::before{
    content: '';
    position: absolute;
-   height: 82px;
+   height: 78px;
    width: 98px;
    background: #3498db;
    /* background-image: conic-gradient(from var(--angle), transparent , #ff4545, #00ff99, #006aff, #ff0095, #ff4545); */
