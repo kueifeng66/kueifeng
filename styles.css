@@ -1,3 +1,4 @@
+
 body {
   font-family:  Arial, Helvetica, sans-serif;
   display: flex;
@@ -27,15 +28,50 @@ body {
 
 #header {
   border: 1px solid #ffffff;
+  height: 82px;
+  width: 98px;
   font-weight: bold;
-  padding: 4px;
+  padding: 0px;
   background-color: #3498db;
   text-align: center;
   color: #fff;
   font-size:18px;
-  border-radius: 10px;
+  border-radius: 5px;
+  position: relative;
   z-index: 100;
 }
+
+#header::after{
+  content: '';
+  position: absolute;
+  height: 82px;
+  width: 98px;
+  background-image: conic-gradient(from var(--angle), transparent 70%, #ff4545, #00ff99, #006aff, #ff0095, #ff4545);
+  top: 50%;
+  left: 50%;
+  translate: -47% -50%;
+  z-index: -2;
+  padding: 4px;
+  border-radius: 5px;
+  
+  animation: 3s spin linear infinite;
+ }
+  #header::before{
+   content: '';
+   position: absolute;
+   height: 82px;
+   width: 98px;
+   background: #3498db;
+   /* background-image: conic-gradient(from var(--angle), transparent , #ff4545, #00ff99, #006aff, #ff0095, #ff4545); */
+   top: 50%;
+   left: 50%;
+   translate: -47% -50%; 
+   z-index: -1;
+   padding: 0px;
+   border-radius: 5px;
+   
+   animation: 3s spin linear infinite;
+  }
 
 .day {
   width: 2.6em;
@@ -231,7 +267,7 @@ label::after {
   z-index: -1;
   content: "";
   position: absolute;
-  width: 100%;
+  width: 110%;
   height: 50%;
   left: 0;
   top: 0;
@@ -241,7 +277,7 @@ label::after {
 label {
   width:100px;
   height: 40px;
-  border-radius: 200px;
+  border-radius: 100px;
   box-shadow: 20px 20px 40px rgba(0, 0, 0, 0.2) inset;
   background:lightgrey;
   cursor: pointer;
@@ -263,7 +299,7 @@ input {
     -10px -10px 30px rgba(0, 0, 0, 0.01) inset;
     position: absolute;
     top: 50%;
-    left: -2.2%;
+    left: -2.5%;
     transform: translate(3%, -50%);
     display: flex;
     align-items: center;
@@ -294,10 +330,12 @@ input:checked + .display label {
   box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.5) inset;
 }
 .indicator {
+  
 color:gray;
 font-size: 10pt;
 }
 input:checked + .display label .circle {
+  
   left: 100%;
   transform: translate(-104.8%, -50%);
   background: #121212;
@@ -335,15 +373,18 @@ footer {
 
 .picker-container {
   border: 1px solid #ffffff;
-  width: 100px;
+  width: 104px;
   margin: 3px;
   background-color: #ccc;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   overflow: hidden;
-  border-radius: 20px;
+  border-radius: 5px;
   text-align: center;
+  border: #ffffff;
   z-index: 100;
 }
+  
+  
 
 .picker-body {
   /* border: 1px double #ffffff; */
