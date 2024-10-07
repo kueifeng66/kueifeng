@@ -404,6 +404,7 @@ footer {
 
 .picker-body {
   /* border: 1px double #ffffff; */
+  align-self: flex-start;
   border-radius: 5px;
   padding: 1px;
   background-color: lightgrey;
