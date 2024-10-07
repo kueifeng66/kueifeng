@@ -2,9 +2,12 @@
 body {
   font-family:  Arial, Helvetica, sans-serif;
   display: flex;
-  align-items: center;
+  flex-wrap: wrap;
   justify-content: center;
+  align-items: center;
+  align-content: center;
   height: 100vh;
+  width:100vw;
   margin: 0;
   overflow: hidden; 
   background-image: url('tower.png');
@@ -27,6 +30,9 @@ body {
 }
 
 #header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   border: 1px solid #ffffff;
   height: 78px;
   width: 98px;
@@ -72,8 +78,17 @@ body {
    
    animation: 3s spin linear infinite;
   }
+#header-selected::before, 
+#header-selected::after {
+  animation: none; /* Stop the spinning animation */
+  background: transparent; /* Hide the background image if needed */
+}
+
 
 .day {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   width: 2.6em;
   height: 2.7em;
   font-weight: bold;
@@ -372,8 +387,9 @@ footer {
 }
 
 .picker-container {
+ 
   border: 1px solid #ffffff;
-  width: 104px;
+  width: 102px;
   margin: 3px;
   background-color: #ccc;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
