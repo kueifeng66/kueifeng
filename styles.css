@@ -387,7 +387,7 @@ footer {
 }
 
 .picker-container {
- 
+  margin-right: auto;
   border: 1px solid #ffffff;
   width: 102px;
   margin: 3px;
