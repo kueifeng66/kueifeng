@@ -435,23 +435,26 @@ footer {
 }
 
 
-@media screen and (max-width:325px) {
+
+@media (width <= 400px) {
   body{
     display:inline-flex;
     flex-wrap: wrap;
   }
   .day {
-    width: 1.9em;
+    width: 2.3em;
     height: 2.7em;
   }
   .weekday {
-    width: 1.9em;
+    width:  2.3em;
     height: 2.7em;
   }
   .weekend {
-    width: 1.9em;
+    width:  2.3em;
     height: 2.7em;
   }
+
+    
 
 }
 #myVideo {
