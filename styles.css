@@ -212,7 +212,8 @@ body {
   white-space: pre-line; 
   width: 6.25em;
   height: 15em;
-  text-align: center;
+  font-size:16px;
+  text-align: left;
   font-weight: bold;
   position: fixed;
   background-color: rgba(51, 51, 51, 0.75); 
@@ -226,8 +227,7 @@ body {
 }
 
 .tooltip-info{
-
-  font-size:18px;
+  font-size:16px;
   text-align: left; /* Align text to the left */
   display: block; 
 }
@@ -239,9 +239,12 @@ body {
 }
 
 /* Optional: Add some styling when tooltip is hovered */
-#tooltip:hover {
+/* #tooltip:hover {
   background-color: rgba(51, 51, 51, 1);
-}
+  font-size:16px;
+  text-align: left; 
+  display: block; 
+} */
 
 
 body.dark {
