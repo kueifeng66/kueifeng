@@ -432,7 +432,7 @@ function showTooltip(date) {
     // `Humid: ${minHumidity}%～${maxHumidity}%\n` +
     // `→ ${weatherCondition}`;
 
-    tooltip.innerHTML = `${formattedDate}\n${dutyInfo}
+    tooltip.innerHTML = `<span class="tooltip-info">${formattedDate}\n${dutyInfo}<span>
       <span class="weather-info">Temperature: ${minTemperature}°C～${maxTemperature}°C
       Humidity:\n ${minHumidity}%～${maxHumidity}%
       Weather: ${weatherCondition}</span>
@@ -1029,7 +1029,7 @@ window.onload = function() {
   headerCells.forEach(function(cell) {
     setTimeout(function() {
       cell.click();
-    }, 300);
+    }, 500);
   });
 };
 
