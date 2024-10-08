@@ -33,8 +33,8 @@ body {
   justify-content: center;
   align-items: center;
   border: 1px solid #ffffff;
-  height: 78px;
-  width: 98px;
+  height: 4.875em;
+  width: 5.3em;
   font-weight: bold;
   padding: 0px;
   background-color: #3498db;
@@ -49,8 +49,8 @@ body {
 #header::after{
   content: '';
   position: absolute;
-  height: 78px;
-  width: 98px;
+  height: 4.875em;
+  width: 5.3em;
   background-image: conic-gradient(from var(--angle), transparent 70%, #ff4545, #00ff99, #006aff, #ff0095, #ff4545);
   top: 50%;
   left: 50%;
@@ -64,8 +64,8 @@ body {
   #header::before{
    content: '';
    position: absolute;
-   height: 78px;
-   width: 98px;
+   height: 4.875em;
+   width: 5.3em;
    background: #3498db;
    /* background-image: conic-gradient(from var(--angle), transparent , #ff4545, #00ff99, #006aff, #ff0095, #ff4545); */
    top: 50%;
@@ -209,8 +209,8 @@ body {
 }
 
 #tooltip {
-  width:100px;
-  height:300px;
+  width: 6.25em;
+  height: 18.75em;
   text-align: center;
   font-weight: bold;
   position: fixed;
@@ -245,8 +245,8 @@ body.dark {
 
 .display {
  
-  width: 100px;
-  height: 40px;
+  width: 6.25em;
+  height: 2.5em;
   border-radius: 200px;
   display: flex;
   justify-content: center;
@@ -289,8 +289,8 @@ label::after {
 }
 
 label {
-  width:100px;
-  height: 40px;
+  width: 6.25em;
+  height: 2.5em;
   border-radius: 100px;
   box-shadow: 20px 20px 40px rgba(0, 0, 0, 0.2) inset;
   background:lightgrey;
@@ -311,8 +311,8 @@ input {
 }
 
 .circle {
-    width: 40px;
-    height: 40px;
+    width: 2.5em;
+    height: 2.5em;
     border-radius: 30px;
     background: white;
     box-shadow: 20px 20px 40px rgba(0, 0, 0, 0.01),
@@ -327,7 +327,7 @@ input {
     overflow: hidden;
 }
 svg {
-  width: 30px;
+  width: 1.875em;
   position: absolute;
 }
 .sun {
@@ -342,8 +342,8 @@ svg {
 }
 input:checked + .display {
   background: #121212;
-  width: 100px;
-  height: 40px;
+  width: 6.25em;
+  height: 2.5em;
 }
 input:checked + .display label {
   background: #2ecc71;
@@ -367,12 +367,12 @@ input:checked + .display label .circle .moon {
   opacity: 1;
 }
 label:active .circle  {
-  width: 48px;
-  height: 40px;
+  width: 3em;
+  height: 2.5em;
 }
 
 footer {
-  height: 30px;
+  height:  1.875em;
   align-items: flex-start;
   position: fixed;
   font-weight: bold;
@@ -392,8 +392,8 @@ footer {
   justify-content: flex-start; */
   margin-right: auto;
   border: 1px solid #ffffff;
-  width: 102px;
-  margin: 3px;
+  width: 6.25em;
+  margin: 1px;
   background-color: #ccc;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   overflow: hidden;
@@ -416,7 +416,7 @@ footer {
   font-size: 18px;
   font-weight: bold;
   overflow: auto;
-  height: 150px;
+  height: 9.375em;
   z-index: 100;
 }
 
