@@ -209,6 +209,7 @@ body {
 }
 
 #tooltip {
+  white-space: pre-line; 
   width: 6.25em;
   height: 18.75em;
   text-align: center;
