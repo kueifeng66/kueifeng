@@ -287,6 +287,7 @@ function createheadercell(year, month, day){
   headerCell.classList.add('header-cell');
   headerCell.textContent = ` ${year} 年　${month} 月 ${day} 日 `;
   header.appendChild(headerCell);
+  headerCell.style.zIndex = '103';
   addEventListener_toHideToolTipandShowToday(headerCell);
   
 }
