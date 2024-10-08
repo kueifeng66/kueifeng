@@ -409,12 +409,12 @@ function positionTooltip() {
 }
 
 function showTooltip(date) {
-  const calendarRect = calendar.getBoundingClientRect(); 
-  
+  // const calendarRect = calendar.getBoundingClientRect(); 
   // tooltip.style.left = `${calendarRect.left - 102}px`;
   // tooltip.style.top = `${calendarRect.top + 106}px`;
   positionTooltip();
-
+  const [year, month, day] = date.split('-');
+  const formattedDate =  `${month}月${day}日`
   const dutyInfo = dutySchedule[date] || "None";
 
   // Check if weather data is available for the date
@@ -426,9 +426,9 @@ function showTooltip(date) {
     const maxHumidity = weatherData[date].maxHumidity;
     const weatherCondition = weatherData[date].weatherCondition;
     // Display minimum and maximum temperature and humidity along with duty info
-    tooltip.textContent = `${dutyInfo}\nTemperature: ${minTemperature}°C～${maxTemperature}°C\nHumidity: ${minHumidity}%～${maxHumidity}%\n Weather: ${weatherCondition}`;
+    tooltip.textContent = `${formattedDate}\n${dutyInfo}\nTemperature: ${minTemperature}°C～${maxTemperature}°C\nHumidity: ${minHumidity}%～${maxHumidity}%\n Weather: ${weatherCondition}`;
   } else {
-    tooltip.textContent = `${dutyInfo}`;
+    tooltip.textContent = `${formattedDate}\n${dutyInfo}`;
   }
 
   tooltip.style.display = 'block';
