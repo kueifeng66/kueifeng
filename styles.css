@@ -387,6 +387,7 @@ footer {
   font-size: 18px;
   font-weight: bold;
   overflow: auto;
+  text-align: center;
   width: 6.25em;
   height: 10.55em;
   z-index: 100;
