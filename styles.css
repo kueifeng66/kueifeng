@@ -390,7 +390,7 @@ footer {
   text-align: center;
   width: 5.5em;
   height: 10.55em;
-  z-index: 100;
+  z-index: 99;
 }
 
 .picker-item {
@@ -398,7 +398,7 @@ footer {
   transition: background-color 0.3s ease;
   transition: transform 0.3s ease;
   margin: 3px;
-  z-index: 100;
+  z-index: 99;
 }
 
 .picker-item:hover {
@@ -410,7 +410,7 @@ footer {
 
 #namePicker {
   overflow-x: hidden;
-  z-index: 100;
+  z-index: 99;
 }
 
 #scrollingText {
