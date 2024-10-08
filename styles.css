@@ -321,10 +321,11 @@ input:checked + .display {
 input:checked + .display label {
   background: #2ecc71;
   box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.5) inset;
-  /* width: 7.3em;
-  height: 2.8em; */
-  width: 7.1em;
-  height: 2.4em;
+  width: 7.3em;
+  height: 2.8em;
+  border-radius: 100px;
+  /* width: 7.1em;
+  height: 2.4em; */
 
 }
 
