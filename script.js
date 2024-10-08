@@ -426,13 +426,26 @@ function showTooltip(date) {
     const maxHumidity = weatherData[date].maxHumidity;
     const weatherCondition = weatherData[date].weatherCondition;
     // Display minimum and maximum temperature and humidity along with duty info
-    tooltip.textContent = `${formattedDate}\n${dutyInfo}\nTemperature: ${minTemperature}°C～${maxTemperature}°C\nHumidity: ${minHumidity}%～${maxHumidity}%\n Weather: ${weatherCondition}`;
+    //tooltip.textContent = `${formattedDate}\n${dutyInfo}\nTemperature: ${minTemperature}°C～${maxTemperature}°C\nHumidity: ${minHumidity}%～${maxHumidity}%\n Weather: ${weatherCondition}`;
+    // tooltip.textContent = `${formattedDate}\n${dutyInfo}\n` +
+    // `Temp: ${minTemperature}°C～${maxTemperature}°C\n` +
+    // `Humid: ${minHumidity}%～${maxHumidity}%\n` +
+    // `→ ${weatherCondition}`;
+
+    tooltip.innerHTML = `${formattedDate}\n${dutyInfo}
+      <span class="weather-info">Temperature: ${minTemperature}°C～${maxTemperature}°C
+      Humidity:\n ${minHumidity}%～${maxHumidity}%
+      Weather: ${weatherCondition}</span>
+    `;
+
   } else {
-    tooltip.textContent = `${formattedDate}\n${dutyInfo}`;
+    // tooltip.textContent = `${formattedDate}\n${dutyInfo}`;
+    tooltip.innerHTML = `${formattedDate}<br>${dutyInfo}`;
   }
 
   tooltip.style.display = 'block';
   document.title = holiday[date] || lastUpdated;
+  tooltip.style.fontSize = '16px'; 
 }
 
 
