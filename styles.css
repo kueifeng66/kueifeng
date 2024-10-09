@@ -212,7 +212,7 @@ body {
 #tooltip {
   white-space: pre-line; 
   width: 10rem;
-  height: 28rem;
+  height: 30rem;
   font-size: 1.6rem;
   text-align: left;
   font-weight: bold;
@@ -239,7 +239,7 @@ body {
 }
 
 .tooltip-weather {
-  font-size: 1.2rem; /* Adjust this value as needed */
+  font-size: 1.4rem; /* Adjust this value as needed */
   text-align: left; /* Align text to the left */
   display: block;   /* Ensure it behaves like a block element */
 }
