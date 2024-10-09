@@ -469,14 +469,14 @@ function change() {
     fetchWeather();
   }
   //below is to highlight the name previously selected in the change function
-  highlightSelectedName(temp_name);
-  const items = document.querySelectorAll('.picker-item');
-  items.forEach((item) => {
-    if (temp_name === item.textContent && temp_name != "．．．"){
-      item.style.transform = 'scale(1.5)';
-      item.style.backgroundColor = "turquoise";
-    }
-  });
+  // highlightSelectedName(temp_name);
+  // const items = document.querySelectorAll('.picker-item');
+  // items.forEach((item) => {
+  //   if (temp_name === item.textContent && temp_name != "．．．"){
+  //     item.style.transform = 'scale(1.5)';
+  //     item.style.backgroundColor = "turquoise";
+  //   }
+  // });
   highlightAdditionalHoliday();
   AddWeekDay();
 } //change function ends here
