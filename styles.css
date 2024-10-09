@@ -450,7 +450,7 @@ footer {
 
 
 
-@media (width <= 410px) {
+@media (width <= 509px) {
   body{
     display:inline-flex;
     flex-wrap: wrap;
