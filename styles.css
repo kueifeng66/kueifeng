@@ -1,3 +1,7 @@
+html {
+  font-size: 62.5%; /* 1rem = 10px */
+}
+
 body {
   font-family:  Arial, Helvetica, sans-serif;
   display: flex;
@@ -25,58 +29,57 @@ body {
 #calendar {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 1px;
+  gap: 0.1rem;
 }
 
 #header {
   display: flex;
   justify-content: center;
   align-items: center;
-  border: 1px solid #ffffff;
-  height: 4.8em;
-  width: 5.3em;
+  border: 0.1rem solid #ffffff;
+  height: 7.8rem;
+  width: 9.8rem;
   font-weight: bold;
-  padding: 0px;
+  padding: 0rem;
   background-color: #3498db;
   text-align: center;
   color: #fff;
-  font-size:  1.125em;
-  border-radius: 5px;
+  font-size:  1.8rem;
+  border-radius: 0.5rem;
   position: relative;
-  z-index: 103;
+  z-index: 5;
 }
+#header::before{
+  content: '';
+  position: absolute;
+  height: 7.8rem;
+  width: 9.8rem;
+  background: #3498db;
+  /* background-image: conic-gradient(from var(--angle), transparent , #ff4545, #00ff99, #006aff, #ff0095, #ff4545); */
+  top: 50%;
+  left: 50%;
+  translate: -47% -50%; 
+  z-index: 4;
+  padding: 0rem;
+  border-radius: 0.5rem;
+  animation: 3s spin linear infinite;
+ }
 
 #header::after{
   content: '';
   position: absolute;
-  height: 4.8em;
-  width: 5.3em;
+  height: 7.8rem;
+  width: 9.8rem;
   background-image: conic-gradient(from var(--angle), transparent 70%, #ff4545, #00ff99, #006aff, #ff0095, #ff4545);
   top: 50%;
   left: 50%;
   translate: -47% -50%;
-  z-index: 101;
-  padding: 4px;
-  border-radius: 5px;
-  
+  z-index: 3;
+  padding: 0.4rem;
+  border-radius: 0.5rem;
   animation: 3s spin linear infinite;
  }
-  #header::before{
-   content: '';
-   position: absolute;
-   height: 4.8em;
-   width: 5.3em;
-   background: #3498db;
-   /* background-image: conic-gradient(from var(--angle), transparent , #ff4545, #00ff99, #006aff, #ff0095, #ff4545); */
-   top: 50%;
-   left: 50%;
-   translate: -47% -50%; 
-   z-index: 102;
-   padding: 0px;
-   border-radius: 5px;
-   
-   animation: 3s spin linear infinite;
-  }
+ 
 #header-selected::before, 
 #header-selected::after {
   animation: none; /* Stop the spinning animation */
@@ -88,11 +91,12 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 2.6em;
-  height: 2.7em;
+  width: 4.2rem;
+  height: 4.3rem;
+  font-size: 1.8rem;
   font-weight: bold;
-  border: 1px solid #ffffff;
-  padding: 10px;
+  border: 0.1rem solid #ffffff;
+  padding: 1rem;
   font-weight: bold;
   text-align: center;
   position: relative;
@@ -102,21 +106,21 @@ body {
 .day:hover {
   transform: scale(1.5); 
   background: linear-gradient(to right, orange, yellow , #ffff99,lightyellow, #ffffff);
-  border-radius: 5px;
+  border-radius: 0.5rem;
 }
 
 
 .today {
   margin: 0 auto;
-  width: 2.6em;
-  height: 2.7em;
+  width: 4.2rem;
+  height: 4.3rem;
   font-weight: bold;
   background: transparent;
   text-align: center;
   position: relative;
   z-index:0;
-  
  }
+
  @property --angle{
     syntax: "<angle>";
     initial-value: 0deg;
@@ -133,7 +137,7 @@ body {
  left: 50%;
  translate: -50% -50%;
  z-index: -2;
- padding: 3px;
+ padding: 0.3rem;
  animation: 3s spin linear infinite;
 }
  .today::before{
@@ -147,12 +151,9 @@ body {
   left: 50%;
   translate: -50% -50%; 
   z-index: -1;
-  padding: 0px;
+  padding: 0rem;
   animation: 3s spin linear infinite;
-  
- 
  }
-
 
 @keyframes spin {
   from{
@@ -161,9 +162,7 @@ body {
   to{
     --angle: 360deg;
   }
-  
 }
-
 
 .selected {
   background-image: linear-gradient(to right, turquoise, lightblue);
@@ -187,22 +186,23 @@ body {
 
 
 .weekday {
-  width: 2.6em;
-  height: 2.7em;
+  width: 4.2rem;
+  height: 4.3rem;
   font-weight: bold;
-  border: 1px solid #ffffff;
+  border: 0.1rem solid #ffffff;
   background-color: #3498db;
   color: #fff;
-  padding: 8px;
+  font-size: 1.8rem;
+  padding: 1rem;
   font-weight: bold;
   position: relative;
   cursor: pointer;
   text-align: center;
-  z-index: 100;
+  z-index: 10;
 }
 .weekend {
-  width: 2.6em;
-  height: 2.7em;
+  width: 4.2rem;
+  height: 4.3rem;
   color: red;
   font-weight: bold;
   text-align: center;
@@ -210,41 +210,38 @@ body {
 
 #tooltip {
   white-space: pre-line; 
-  width: 6.25em;
-  height: 15em;
-  font-size:1em;
+  width: 10rem;
+  height: 28rem;
+  font-size: 1.6rem;
   text-align: left;
   font-weight: bold;
   position: fixed;
   background-color: rgba(51, 51, 51, 0.75); 
   color: white;
-  padding: 10px;
+  padding: 1rem;
   display: none;
-  z-index: 100;
-  border-radius: 20px;
-  box-shadow: 5px 5px 5px  rgba(0, 0, 0, 0.5); /* Add box shadow for a subtle lift */
+  z-index: 10;
+  border-radius: 2rem;
+  box-shadow: 0.5rem 0.5rem 0.5rem  rgba(0, 0, 0, 0.5); /* Add box shadow for a subtle lift */
   transition: 0.1s ease-in-out; /* Add transition for smooth appearance */
 }
 
-.tooltip-info{
-  font-size:1em;
+.tooltip-day{
+  font-size: 1.6rem;
+  text-align: center; /* Align text to the left */
+  display: block; 
+}
+.tooltip-duty{
+  font-size: 1.6rem;
   text-align: left; /* Align text to the left */
   display: block; 
 }
 
 .weather-info {
-  font-size: 0.625em; /* Adjust this value as needed */
+  font-size: 1.2rem; /* Adjust this value as needed */
   text-align: left; /* Align text to the left */
   display: block;   /* Ensure it behaves like a block element */
 }
-
-/* Optional: Add some styling when tooltip is hovered */
-/* #tooltip:hover {
-  background-color: rgba(51, 51, 51, 1);
-  font-size:16px;
-  text-align: left; 
-  display: block; 
-} */
 
 
 body.dark {
@@ -261,57 +258,70 @@ body.dark {
 }
 
 .display {
- 
-  width: 6.25em;
-  height: 2.5em;
-  border-radius: 200px;
+  width: 10rem;
+  height: 4rem;
+  border-radius: 20rem;
   display: flex;
   justify-content: center;
   align-items: center;
+  position: relative; /* Ensure z-index works */
+  z-index: 2; /* Lower than header::after */
 }
-
 
 label {
-  width: 7.3em;
-  height: 2.8em;
-  border-radius: 100px;
-  box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.5) inset;
+  width: 10rem;
+  height: 4rem;
+  border-radius: 10rem;
+  box-shadow: 2rem 2rem 4rem rgba(0, 0, 0, 0.5) inset;
   background:lightgrey;
   cursor: pointer;
-  position: absolute;
   border: #ffffff;
-  
+ 
 }
-input {
-  display: none;
-  border-radius: 200px;
-  position: absolute;
+
+input#check{
+  position: absolute; /* if needed, based on layout */
+  z-index: -1; /* Not needed if it stays in the background */
 }
 .indicator {
-  position: absolute;
   color:gray;
-  font-size: 0.875em;
+  font-size: 1rem;
+  position: relative;
+  z-index: 10;
 }
 
 .circle {
-    width: 2.7em;
-    height: 2.7em;
-    border-radius: 30px;
+    width: 4rem;
+    height: 4rem;
+    border-radius: 3rem;
     background: white;
-    box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.5) inset;
-    position: absolute;
-    top: 0;
-    left: 0;
-    /* transform: translate(3%, -50%); */
+    box-shadow: 0.2rem 0.2rem 0.4rem rgba(0, 0, 0, 0.01),
+    -1rem -1rem 3rem rgba(0, 0, 0, 0.01) inset;
+    
+    top: 50%;
+    left: 0%;
+    transform: translate(0%, -50%);
     display: flex;
     align-items: center;
     justify-content: center;
     overflow: hidden;
+    position: relative;
+    z-index: auto;
+    
 }
-svg {
-  width: 1.875em;
+
+/* svg {
+  width: 300rem;
+  height: 300rem;
+  position: relative;
+} */
+.sun, .moon {
+  
+  border-radius: 10rem;
   position: absolute;
+  z-index: auto; /* Allow natural stacking or set explicit if one should overlap the other */
 }
+
 .sun {
   color: #FFD600;
   margin-top: 0%;
@@ -320,32 +330,24 @@ svg {
 .moon {
   margin-top: -180%;
   color: white;
-  opacity: 1;
+  opacity: 0;
+  
 }
 input:checked + .display {
   background: #121212;
-  width: 6.1em;
-  height: 2.1em;
-  
 }
 input:checked + .display label {
-  
   background: #2ecc71;
-  box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.5) inset;
-  width: 7.3em;
-  height: 2.8em;
-  border-radius: 100px;
-  /* width: 7.1em;
-  height: 2.4em; */
-
+  box-shadow: 0.1rem 0.1rem 0.4rem rgba(0, 0, 0, 0.5) inset;
 }
 
 input:checked + .display label .circle {
   position:absolute;
-  left: 101%;
-  transform: translate(-100%, 0%);
+  left: 100%;
+  transform: translate(-100%, -50%);
   background:#121212;
-  box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.5) inset;
+  box-shadow: 0.1rem 0.1rem 0.2rem rgba(0, 0, 0, 0.5),
+  -0.1rem -0.1rem 1rem rgba(0, 0, 0, 0.5) inset;
   
 }
 input:checked + .display label .circle .sun {
@@ -357,12 +359,12 @@ input:checked + .display label .circle .moon {
   opacity: 1;
 }
 label:active .circle  {
-  width: 3em;
-  height: 2.5em;
+  width: 4.8rem;
+  height: 4rem;
 }
 
 footer {
-  height:  1.875em;
+  height:  3rem;
   align-items: flex-start;
   position: fixed;
   font-weight: bold;
@@ -370,55 +372,49 @@ footer {
   left: 0;
   width: 100%;
   background-color: rgba(240,50,230,0.8); 
-  box-shadow: 10px 10px 30px  #dcbeff inset; /* Adjust the background color as needed */
-  padding: 8px;
+  box-shadow: 1rem 1rem 3rem  #dcbeff inset; /* Adjust the background color as needed */
+  padding: 0.2rem;
+  font-size: 2rem;
   text-align: center;
   color: black;
   z-index: -1;
 }
 
 .picker-container {
-  display: inline; 
-  justify-content: flex-start; 
+  /* display: inline; 
+  justify-content: flex-start;  */
   margin-right: auto;
-  border: 1px solid #ffffff;
-  width: 6.25em;
-  height: 18.75em;
-  margin: 1px;
+  border: 0.1rem solid #ffffff;
+  width: 10.2rem;
+  margin: 0.3rem;
   background-color: #ccc;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0 1rem rgba(0, 0, 0, 0.1);
   overflow: hidden;
-  border-radius: 5px;
+  border-radius: 0.5rem;
   text-align: center;
   border: #ffffff;
-  position: relative;
-  z-index: 100;
+  position:relative;
+  z-index: auto;
 }
   
-  
-
 .picker-body {
-  border: 1px double #ffffff;
-  align-self: flex-start;
-  border-radius: 5px;
-  padding: 1px;
+  border-radius: 0.5rem;
+  padding: 0.1rem;
   background-color: lightgrey;
   font-weight: bold;
-  font-size: 1.125em;
+  font-size: 1.8rem;
   font-weight: bold;
   overflow: auto;
   text-align: center;
-  width: 5.5em;
-  height: 10.55em;
-  z-index: 99;
+  height: 15rem;
+  position: relative;
+  z-index: 1;
 }
 
 .picker-item {
-  margin-bottom: 10px;
-  transition: background-color 0.3s ease;
+  margin-bottom: 1rem;
   transition: transform 0.3s ease;
-  margin: 3px;
-  z-index: 99;
+  margin: 0.3rem;
 }
 
 .picker-item:hover {
@@ -430,7 +426,6 @@ footer {
 
 #namePicker {
   overflow-x: hidden;
-  z-index: 99;
 }
 
 #scrollingText {
@@ -456,22 +451,22 @@ footer {
 
 
 
-@media (width <= 400px) {
+@media (width <= 410px) {
   body{
     display:inline-flex;
     flex-wrap: wrap;
   }
   .day {
-    width: 2.3em;
-    height: 2.7em;
+    width: 3.68rem;
+    height: 4.32rem;
   }
   .weekday {
-    width:  2.3em;
-    height: 2.7em;
+    width: 3.68rem;
+    height: 4.32rem;
   }
   .weekend {
-    width:  2.3em;
-    height: 2.7em;
+    width: 3.68rem;
+    height: 4.32rem;
   }
 
     
@@ -479,11 +474,11 @@ footer {
 }
 #myVideo {
   position: absolute;
-  top: 0px;
-  left: 117px;
-  width: 298px;
-  height: 266px;
-  border: 1px solid #ffffff;
+  top: 0rem;
+  left: 11.7rem;
+  width: 29.8rem;
+  height: 26.6rem;
+  border: 0.1rem solid #ffffff;
   z-index:-50;
   object-fit: cover;
 }
@@ -500,10 +495,9 @@ iframe {
 }
 
 .trail {
-
   position: absolute;
-  width: 15px;
-  height: 15px;
+  width: 1.5rem;
+  height: 1.5rem;
   background-color: #f032e6;
   border-radius: 50%;
   pointer-events: none;

@@ -432,7 +432,7 @@ function showTooltip(date) {
     // `Humid: ${minHumidity}%～${maxHumidity}%\n` +
     // `→ ${weatherCondition}`;
 
-    tooltip.innerHTML = `<span class="tooltip-info">${formattedDate}\n${dutyInfo}<span>
+    tooltip.innerHTML = `<span class="tooltip-day">${formattedDate}\n</span><span class="tooltip-duty">${dutyInfo}</span>
       <span class="weather-info">Temperature: ${minTemperature}°C～${maxTemperature}°C
       Humidity:\n ${minHumidity}%～${maxHumidity}%
       Weather: ${weatherCondition}</span>
@@ -440,7 +440,7 @@ function showTooltip(date) {
 
   } else {
     // tooltip.textContent = `${formattedDate}\n${dutyInfo}`;
-    tooltip.innerHTML = `${formattedDate}<br>${dutyInfo}`;
+    tooltip.innerHTML = `<span class="tooltip-day">${formattedDate}\n</span><span class="tooltip-duty">${dutyInfo}</span>`;
   }
 
   tooltip.style.display = 'block';
@@ -473,12 +473,13 @@ function change() {
     createCalendar(year,month);
     
     const headerCell = document.querySelector('.header-cell');
-    headerCell.textContent = ` ${year} 年　${month} 月  `;   
+    // headerCell.textContent = ` ${year} 年　${month} 月  `;   
+    headerCell.textContent = ` ${year} 年　${month} 月 ${day} 日 `; 
     
     let header = document.getElementById('header');
     header.style.color = 'white';
     footer.style.color = 'MediumBlue';
-
+    
     
   } else {
     updateSelection();
@@ -1012,6 +1013,7 @@ if (!btn.checked) {
     headerCell.textContent += `(日)`;
   }
 }
+
 }
 
 
