@@ -13,6 +13,7 @@ var year = now.getFullYear();
 var month = (now.getMonth() + 1);
 var day = now.getDate();
 var temp_name;
+const formattedDate = `${year}-${month}-${day}`
 
 
 const dutySchedule = {
@@ -211,7 +212,6 @@ function addEventListeners(dayElement, btn, day, month, year, date) {
 }
 function addEventListener_toHideToolTipandShowToday(headerCell) {
   headerCell.addEventListener('click', () => {
-    const formattedDate = `${year}-${month}-${day}`
     const days =document.querySelectorAll('.day');
     if (clickCount % 2 === 0) {
       hideTooltip();
@@ -257,7 +257,7 @@ function createheadercell(year, month, day){
   headerCell.classList.add('header-cell');
   headerCell.textContent = ` ${year} 年　${month} 月 ${day} 日 `;
   header.appendChild(headerCell);
-  headerCell.style.zIndex = '103';
+  headerCell.style.zIndex = '20';
   addEventListener_toHideToolTipandShowToday(headerCell);
   
 }
@@ -395,12 +395,7 @@ function showTooltip(date) {
     const minHumidity = weatherData[date].minHumidity;
     const maxHumidity = weatherData[date].maxHumidity;
     const weatherCondition = weatherData[date].weatherCondition;
-    // Display minimum and maximum temperature and humidity along with duty info
-    //tooltip.textContent = `${formattedDate}\n${dutyInfo}\nTemperature: ${minTemperature}°C～${maxTemperature}°C\nHumidity: ${minHumidity}%～${maxHumidity}%\n Weather: ${weatherCondition}`;
-    // tooltip.textContent = `${formattedDate}\n${dutyInfo}\n` +
-    // `Temp: ${minTemperature}°C～${maxTemperature}°C\n` +
-    // `Humid: ${minHumidity}%～${maxHumidity}%\n` +
-    // `→ ${weatherCondition}`;
+
 
     tooltip.innerHTML = `<span class="tooltip-day">${formattedDate}</span><span class="tooltip-duty">${dutyInfo}</span><span class="tooltip-weather">Temperature: ${minTemperature}°C～${maxTemperature}°C
       Humidity:\n ${minHumidity}%～${maxHumidity}%
@@ -424,7 +419,7 @@ function hideTooltip() {
 }
 
 function change() {
-
+  
   var day_now = now.getDate();
   if (btn.checked) {
     updateSelection();
@@ -441,8 +436,8 @@ function change() {
     }
     createCalendar(year,month);
     
-    const headerCell = document.querySelector('.header-cell');
-    headerCell.textContent = ` ${year} 年　${month} 月  `;   
+    const headerCells = document.querySelector('.header-cell');
+    headerCells.textContent = ` ${year} 年　${month} 月  `;   
     
     
     let header = document.getElementById('header');
@@ -468,9 +463,9 @@ function change() {
     header.style.color = ''; // This will remove the inline 'color' style, allowing the CSS rule to take effect
     footer.style.color = 'black';
     
-    
     const headerCell = document.querySelector('.header-cell');
-    headerCell.textContent = ` ${year} 年　${month} 月 ${day} 日 `;   
+    headerCell.textContent = ` ${year} 年　${month} 月 ${day} 日 `;  
+    showTooltip(formattedDate); 
     fetchWeather();
   }
   //below is to highlight the name previously selected in the change function
@@ -1034,3 +1029,7 @@ createCalendar(year, month);
 highlightAdditionalHoliday(); //this must be done finally. 20240528
 
 AddWeekDay();
+
+// const allDivs = document.querySelectorAll('div'); // selects all <div> elements
+// allDivs.forEach(div => console.log(div)); // loop through each div
+
