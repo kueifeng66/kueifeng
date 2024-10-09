@@ -432,8 +432,7 @@ function showTooltip(date) {
     // `Humid: ${minHumidity}%～${maxHumidity}%\n` +
     // `→ ${weatherCondition}`;
 
-    tooltip.innerHTML = `<span class="tooltip-day">${formattedDate}\n</span><span class="tooltip-duty">${dutyInfo}</span>
-      <span class="weather-info">Temperature: ${minTemperature}°C～${maxTemperature}°C
+    tooltip.innerHTML = `<span class="tooltip-day">${formattedDate}</span><span class="tooltip-duty">${dutyInfo}</span><span class="tooltip-weather">Temperature: ${minTemperature}°C～${maxTemperature}°C
       Humidity:\n ${minHumidity}%～${maxHumidity}%
       Weather: ${weatherCondition}</span>
     `;
