@@ -472,8 +472,8 @@ function change() {
     createCalendar(year,month);
     
     const headerCell = document.querySelector('.header-cell');
-    // headerCell.textContent = ` ${year} 年　${month} 月  `;   
-    headerCell.textContent = ` ${year} 年　${month} 月 ${day} 日 `; 
+    headerCell.textContent = ` ${year} 年　${month} 月  `;   
+    
     
     let header = document.getElementById('header');
     header.style.color = 'white';
