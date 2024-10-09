@@ -237,7 +237,7 @@ body {
   display: block; 
 }
 
-.weather-info {
+.tooltip-weather {
   font-size: 1.2rem; /* Adjust this value as needed */
   text-align: left; /* Align text to the left */
   display: block;   /* Ensure it behaves like a block element */
@@ -381,8 +381,6 @@ footer {
 }
 
 .picker-container {
-  /* display: inline; 
-  justify-content: flex-start;  */
   margin-right: auto;
   border: 0.1rem solid #ffffff;
   width: 10.2rem;
