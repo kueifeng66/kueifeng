@@ -243,6 +243,7 @@ function addEventListener_toHideToolTipandShowToday(headerCell) {
       //   today.style.backgroundColor = '#ffff99';
       // });
       showTooltip(formattedDate);
+      positionTooltip();
       if (btn.checked){
         hideTooltip();
       }
@@ -382,7 +383,7 @@ function showTooltip(date) {
   // const calendarRect = calendar.getBoundingClientRect(); 
   // tooltip.style.left = `${calendarRect.left - 102}px`;
   // tooltip.style.top = `${calendarRect.top + 106}px`;
-  positionTooltip();
+ // positionTooltip();
   const [year, month, day] = date.split('-');
   const formattedDate =  `${month}月${day}日`
   const dutyInfo = dutySchedule[date] || "None";
@@ -1033,3 +1034,34 @@ AddWeekDay();
 // const allDivs = document.querySelectorAll('div'); // selects all <div> elements
 // allDivs.forEach(div => console.log(div)); // loop through each div
 
+const tooltip_ = document.getElementById('tooltip');
+let offsetX = 0, offsetY = 0;
+let isDragging = false;
+
+// When mouse is pressed down on the tooltip
+tooltip_.addEventListener('mousedown', (e) => {
+  isDragging = true;
+  // Calculate the mouse position relative to the tooltip
+  offsetX = e.clientX - tooltip_.offsetLeft;
+  offsetY = e.clientY - tooltip_.offsetTop;
+  // Add mousemove and mouseup listeners
+  document.addEventListener('mousemove', moveTooltip);
+  document.addEventListener('mouseup', stopDragging);
+});
+
+// Function to move the tooltip
+function moveTooltip(e) {
+  if (isDragging) {
+    // Calculate new tooltip position based on mouse movement
+    tooltip_.style.left = (e.clientX - offsetX) + 'px';
+    tooltip_.style.top = (e.clientY - offsetY) + 'px';
+  }
+}
+
+// Stop dragging when mouse is released
+function stopDragging() {
+  isDragging = false;
+  // Remove the mousemove and mouseup listeners
+  document.removeEventListener('mousemove', moveTooltip);
+  document.removeEventListener('mouseup', stopDragging);
+}
