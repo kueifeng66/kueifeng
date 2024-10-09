@@ -1034,34 +1034,49 @@ AddWeekDay();
 // const allDivs = document.querySelectorAll('div'); // selects all <div> elements
 // allDivs.forEach(div => console.log(div)); // loop through each div
 
+//tooltip moveable 
 const tooltip_ = document.getElementById('tooltip');
 let offsetX = 0, offsetY = 0;
 let isDragging = false;
 
-// When mouse is pressed down on the tooltip
-tooltip_.addEventListener('mousedown', (e) => {
+// Shared start event for both mouse and touch
+function startDragging(e) {
   isDragging = true;
-  // Calculate the mouse position relative to the tooltip
-  offsetX = e.clientX - tooltip_.offsetLeft;
-  offsetY = e.clientY - tooltip_.offsetTop;
-  // Add mousemove and mouseup listeners
-  document.addEventListener('mousemove', moveTooltip);
-  document.addEventListener('mouseup', stopDragging);
-});
+  
+  const clientX = e.clientX || e.touches[0].clientX;
+  const clientY = e.clientY || e.touches[0].clientY;
 
-// Function to move the tooltip
+  offsetX = clientX - tooltip_.offsetLeft;
+  offsetY = clientY - tooltip_.offsetTop;
+
+  document.addEventListener(e.type === 'mousedown' ? 'mousemove' : 'touchmove', moveTooltip);
+  document.addEventListener(e.type === 'mousedown' ? 'mouseup' : 'touchend', stopDragging);
+
+  e.preventDefault(); // Prevent text selection or scrolling
+}
+
+// Move tooltip during drag
 function moveTooltip(e) {
   if (isDragging) {
-    // Calculate new tooltip position based on mouse movement
-    tooltip_.style.left = (e.clientX - offsetX) + 'px';
-    tooltip_.style.top = (e.clientY - offsetY) + 'px';
+    const clientX = e.clientX || e.touches[0].clientX;
+    const clientY = e.clientY || e.touches[0].clientY;
+
+    tooltip_.style.left = (clientX - offsetX) + 'px';
+    tooltip_.style.top = (clientY - offsetY) + 'px';
   }
 }
 
-// Stop dragging when mouse is released
+// Stop dragging
 function stopDragging() {
   isDragging = false;
-  // Remove the mousemove and mouseup listeners
   document.removeEventListener('mousemove', moveTooltip);
   document.removeEventListener('mouseup', stopDragging);
+  document.removeEventListener('touchmove', moveTooltip);
+  document.removeEventListener('touchend', stopDragging);
 }
+
+// Event listeners for both touch and mouse
+tooltip_.addEventListener('mousedown', startDragging);
+tooltip_.addEventListener('touchstart', startDragging);
+
+//tooltip moveable ends.
