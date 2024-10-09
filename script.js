@@ -575,7 +575,6 @@ const names = [
   "方振彬",
   "．．．",
   "．．．",
-  "．．．",
 ];
 const namePicker = document.getElementById("namePicker");
 let currentIndex = 0;
