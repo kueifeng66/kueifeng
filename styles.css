@@ -88,6 +88,7 @@ body {
 
 
 .day {
+  
   display: flex;
   justify-content: center;
   align-items: center;
@@ -243,6 +244,21 @@ body {
   font-size: 1.4rem; /* Adjust this value as needed */
   text-align: left; /* Align text to the left */
   display: block;   /* Ensure it behaves like a block element */
+}
+
+/* .lunar-name{
+  white-space: pre-line; 
+  font-size: 0.8rem;
+  text-align: center;
+  display: block;
+} */
+.lunar-name {
+  
+  display: block;       /* Forces the lunar name to appear on a new line */
+  font-size: 0.5rem;    /* Smaller font size */
+  text-align: center;   /* Centers the lunar name */
+  margin-top: 1rem;   /* Optional: Add some space between day and lunar name */
+   /* Avoid wrapping the text */
 }
 
 

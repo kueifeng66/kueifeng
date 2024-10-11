@@ -13,7 +13,7 @@ var year = now.getFullYear();
 var month = (now.getMonth() + 1);
 var day = now.getDate();
 var temp_name;
-const formattedDate = `${year}-${month}-${day}`
+const formattedDate = `${year}-${month}-${day}`;
 
 
 const dutySchedule = {
@@ -181,7 +181,7 @@ function addEventListeners(dayElement, btn, day, month, year, date) {
     if (date == '999'){
       hideTooltip();
     }
-    
+    highlightAdditionalHoliday();
   });
 
   dayElement.addEventListener('mouseout', () => {
@@ -286,7 +286,7 @@ function createCalendar(year, month) {
     calendar.appendChild(weekdayElement);
     weekdayElement.addEventListener('dblclick', function() {
       // Perform your action when weekdayElement is clicked
-      alert("\n 1. 點左側的太陽，會切換下個月班表 \n 2. 點左側的【年月日框框】會切換個人班表及選擇某日班表 \n 3. 滑動名字會顯示值班人員班表 \n 4. 點2下名字會切換至Line視窗 \n 5. 背景取至windy網站的氣象資訊，其中越紅代表雲層越厚 \n 6. 新增功能→→→點日期會放大該點選的日期 \n 7. 新增總臺(桃園區臺)介紹短片，播放1次後會消失 \n 8. 標題會顯示最近1次更新班表的時間(Last Updated) \n 9. 今天以灰底顏色搭配彩虹邊框表示，可以一目瞭然距離下次值班的天數 \n 10. 名單條可以拖曳移動，若要恢復原位置→點2下【年月日框框】\n\n\n 祝 平安 順心 \n 洪柜峰敬上");
+      alert("\n 1. 點【太陽】圖示，會切換下個月班表 \n 2. 點左側的【年月日框框】會切換個人班表及選擇某日班表 \n 3. 【滑動名字】會顯示值班人員當月班表 \n 4. 點2下名字會切換至【Line視窗】 \n 5. 背景取至windy網站的氣象資訊，其中越紅代表雲層越厚 \n 6. 新增功能→→→點日期會【放大】該點選的日期 \n 7. 新增總臺(桃園區臺)介紹短片，【播放1次】後會消失 \n 8. 標題會顯示最近1次更新班表的時間【Last Updated】 \n 9. 【今天】以灰底顏色搭配彩虹邊框表示，可以一目瞭然距離下次值班的天數 \n 10. 名單條【可以拖曳移動】，若要恢復原位置→【點2下】【年月日框框】\n\n\n 祝 平安 順心 \n 洪柜峰敬上");
       
       // Example function call or other actions
       addEventListeners(weekdayElement, btn, day, month, year, 999);  
@@ -551,7 +551,8 @@ const selectedClassName3 = 'selected3';
 function highlightSelectedName(selectedName) {
   const days = document.querySelectorAll('.day');
   days.forEach(dayElement => {
-    const date = `${year}-${month}-${dayElement.textContent}`;
+    const dayText = dayElement.textContent.split('\n')[0].trim();
+    const date = `${year}-${month}-${dayText}`;
     const scheduleForDay = dutySchedule[date] || '';
     
     // Split the schedule for the day into parts based on spaces
@@ -635,7 +636,8 @@ function highlightSelectedName(selectedName) {
 function highlightAdditionalHoliday() {
   const days = document.querySelectorAll('.day');
   days.forEach(dayElement => {
-    const date = `${year}-${month}-${dayElement.textContent}`;
+    const dayText = dayElement.textContent.split('\n')[0].trim();
+    const date = `${year}-${month}-${dayText}`;
     const namesForHoliday = (holiday[date] || '').split(' ');
     
     if (namesForHoliday.some(name => name.includes('放假日'))) {
@@ -648,16 +650,26 @@ function highlightAdditionalHoliday() {
     }
      
   });
+
+  AddLunar();
+ 
 }
-// function AddLunar() {
-//   const days = document.querySelectorAll('.day');
-//   days.forEach(dayElement => {
-//     const date = `${year}-${month}-${dayElement.textContent}`;
-//     const lunarName = (holiday[date] || '').split(' ');
-//     // console.log('namesForHoliday:', namesForHoliday);
-//     dayElement.textContent += lunarName;
-//   });
-// }
+
+
+
+function AddLunar() { 
+  const days = document.querySelectorAll('.day');
+  days.forEach(dayElement => {
+    const date = `${year}-${month}-${dayElement.textContent.trim()}`;
+    const lunarName = (holiday[date] || '').split('】')[0].replace('【', ''); // Get the first content between brackets
+    
+    if (lunarName) {
+      dayElement.innerHTML = `${dayElement.textContent}\n<span class="lunar-name">${lunarName}</span>`;
+    }
+  });
+}
+
+
 function isLineBrowser() {
   const ua = navigator.userAgent || navigator.vendor || window.opera;
   return ua.indexOf('Line') > -1;
@@ -1026,10 +1038,14 @@ document.addEventListener('mousemove', (e) => {
 btn.addEventListener('change', change);
 createheadercell(year, month, day);
 createCalendar(year, month);
-// AddLunar();
+
+
 highlightAdditionalHoliday(); //this must be done finally. 20240528
 
+
+
 AddWeekDay();
+
 
 // const allDivs = document.querySelectorAll('div'); // selects all <div> elements
 // allDivs.forEach(div => console.log(div)); // loop through each div
