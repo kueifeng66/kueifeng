@@ -248,9 +248,9 @@ body {
 
 .lunar-name {
   display: block;       /* Forces the lunar name to appear on a new line */
-  font-size: 0.5rem;    /* Smaller font size */
+  font-size: 0.7rem;    /* Smaller font size */
   text-align: center;   /* Centers the lunar name */
-  margin-top: 1rem;   /* Optional: Add some space between day and lunar name */
+  margin-top: 0.7rem;   /* Optional: Add some space between day and lunar name */
    /* Avoid wrapping the text */
 }
 
