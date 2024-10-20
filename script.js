@@ -7,6 +7,7 @@ const body = document.body;
 const lastUpdated = document.title;
 
 let clickCount = 1;
+let currentDay = new Date().getDate();
 
 const now = new Date();
 var year = now.getFullYear();
@@ -154,6 +155,16 @@ const holiday = {
 
 
 };
+
+function checkDayChange() {
+  const now = new Date();
+  const newDay = now.getDate();
+
+  // If the day has changed, reload the website
+  if (newDay !== currentDay) {
+      window.location.reload();
+  }
+}
 
 
 function Zellercongruence(day, month, year)
@@ -1078,6 +1089,8 @@ highlightAdditionalHoliday(); //this must be done finally. 20240528
 
 
 AddWeekDay();
+// Check the day every minute (60000 ms)
+setInterval(checkDayChange, 60000);
 
 
 // const allDivs = document.querySelectorAll('div'); // selects all <div> elements
