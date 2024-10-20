@@ -6,8 +6,10 @@ const header = document.getElementById('header');
 const body = document.body;
 const lastUpdated = document.title;
 
+
+const currentDay = new Date().getDate();
 let clickCount = 1;
-let currentDay = new Date().getDate();
+
 
 const now = new Date();
 var year = now.getFullYear();
