@@ -359,7 +359,7 @@ function createCalendar(year, month) {
     calendar.appendChild(weekdayElement);
     weekdayElement.addEventListener('dblclick', function() {
       // Perform your action when weekdayElement is clicked
-      alert("\n 1. 點【太陽】圖示，會切換下個月班表 \n 2. 點左側的【年月日框框】會切換個人班表及選擇某日班表 \n 3. 【滑動名字】會顯示值班人員當月班表 \n 4. 點2下名字會切換至【Line視窗】 \n 5. 背景取至windy網站的氣象資訊，其中越紅代表雲層越厚 \n 6. 新增功能→→→點日期會【放大】該點選的日期 \n 7. 新增總臺(桃園區臺)介紹短片，【播放1次】後會消失 \n 8. 標題會顯示最近1次更新班表的時間【Last Updated】 \n 9. 【今天】以灰底顏色搭配彩虹邊框表示，可以一目瞭然距離下次值班的天數 \n 10. 名單條【可以拖曳移動】，若要恢復原位置→【點2下】【年月日框框】\n 11. 【新增農曆】於日曆中 \n 12. 【換日會自動refresh】例如：23:59→00:00時，今天的格子會自動跳下一日，且 會跳出今日值班名單。\n\n\n 祝 平安 順心 \n 洪柜峰敬上");
+      alert("\n 1. 點【太陽】圖示，會切換下個月班表 \n 2. 點左側的【年月日框框】會切換個人班表及選擇某日班表 \n 3. 【滑動名字】會顯示值班人員當月班表 \n 4. 點2下名字會切換至【Line視窗】 \n 5. 背景取至windy網站的氣象資訊，其中越紅代表雲層越厚 \n 6. 新增功能→→→點日期會【放大】該點選的日期 \n 7. 新增總臺(桃園區臺)介紹短片，【播放1次】後會消失 \n 8. 標題會顯示最近1次更新班表的時間【Last Updated】 \n 9. 【今天】以灰底顏色搭配彩虹邊框表示，可以一目瞭然距離下次值班的天數 \n 10. 名單條【可以拖曳移動】，若要恢復原位置→【點2下】【年月日框框】\n 11. 【新增農曆】於日曆中 \n 12. 【換日會自動refresh】例如：23:59→00:00時，今天的格子會自動跳下一日，且 會跳出今日值班名單。\n 13. 按住星期一～星期日其中一格2秒，會自動reload網頁。\n\n\n 祝 平安 順心 \n 洪柜峰敬上");
       
       // Example function call or other actions
       addEventListeners(weekdayElement, btn, day, month, year, 999);  
