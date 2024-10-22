@@ -1138,7 +1138,7 @@ setInterval(checkDayChange, 60000);
       clearTimeout(pressTimer);
     }
 
-    for (let i = 0; i < 6; i++) {
+    for (let i = 0; i < 7; i++) {
       let reloadDiv = reloadDivs[i];
 
       // Event listeners for desktop (mouse)
