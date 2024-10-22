@@ -1122,7 +1122,7 @@ AddWeekDay();
 setInterval(checkDayChange, 60000);
 
     // Get the element by class name (access the first element if there's only one)
-    let reloadDiv = document.getElementsByClassName("weekday")[0]; // Since it's a collection, use [0] to access the first element
+    let reloadDivs = document.getElementsByClassName("weekday"); // Since it's a collection, use [0] to access the first element
 
     let pressTimer;
 
@@ -1131,23 +1131,26 @@ setInterval(checkDayChange, 60000);
       pressTimer = setTimeout(function() {
           window.location.reload();
       }, 2000); // 2 seconds hold to trigger reload
-  }
+    }
 
-  // Function to clear the reload timer
-  function clearTimer() {
+    // Function to clear the reload timer
+    function clearTimer() {
       clearTimeout(pressTimer);
+    }
+
+    for (let i = 0; i < 6; i++) {
+      let reloadDiv = reloadDivs[i];
+
+      // Event listeners for desktop (mouse)
+      reloadDiv.addEventListener("mousedown", startTimer);
+      reloadDiv.addEventListener("mouseup", clearTimer);
+      reloadDiv.addEventListener("mouseleave", clearTimer);
+
+      // Event listeners for mobile (touch)
+      reloadDiv.addEventListener("touchstart", startTimer);
+      reloadDiv.addEventListener("touchend", clearTimer);
+      reloadDiv.addEventListener("touchcancel", clearTimer); // in case the touch is canceled
   }
-
-  // Event listeners for desktop (mouse)
-  reloadDiv.addEventListener("mousedown", startTimer);
-  reloadDiv.addEventListener("mouseup", clearTimer);
-  reloadDiv.addEventListener("mouseleave", clearTimer);
-
-  // Event listeners for mobile (touch)
-  reloadDiv.addEventListener("touchstart", startTimer);
-  reloadDiv.addEventListener("touchend", clearTimer);
-  reloadDiv.addEventListener("touchcancel", clearTimer); // in case the touch is canceled
-
 
 //tooltip moveable 
 const tooltip_ = document.getElementById('tooltip');
