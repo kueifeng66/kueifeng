@@ -1125,23 +1125,27 @@ setInterval(checkDayChange, 60000);
 
     let pressTimer;
 
-    reloadDiv.addEventListener("mousedown", function() {
-        // Start a timer when the mouse is pressed
-        pressTimer = setTimeout(function() {
-            // Reload the page after holding down for 2 seconds
-            window.location.reload();
-        }, 2000); // 2 seconds hold to trigger reload
-    });
+    // Function to start the reload timer
+    function startTimer() {
+      pressTimer = setTimeout(function() {
+          window.location.reload();
+      }, 2000); // 2 seconds hold to trigger reload
+  }
 
-    reloadDiv.addEventListener("mouseup", function() {
-        // Clear the timer if the mouse is released before the hold time is reached
-        clearTimeout(pressTimer);
-    });
+  // Function to clear the reload timer
+  function clearTimer() {
+      clearTimeout(pressTimer);
+  }
 
-    reloadDiv.addEventListener("mouseleave", function() {
-        // Clear the timer if the mouse leaves the div before the hold time is reached
-        clearTimeout(pressTimer);
-    });
+  // Event listeners for desktop (mouse)
+  reloadDiv.addEventListener("mousedown", startTimer);
+  reloadDiv.addEventListener("mouseup", clearTimer);
+  reloadDiv.addEventListener("mouseleave", clearTimer);
+
+  // Event listeners for mobile (touch)
+  reloadDiv.addEventListener("touchstart", startTimer);
+  reloadDiv.addEventListener("touchend", clearTimer);
+  reloadDiv.addEventListener("touchcancel", clearTimer); // in case the touch is canceled
 
 
 //tooltip moveable 
