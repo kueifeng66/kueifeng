@@ -1120,9 +1120,29 @@ AddWeekDay();
 // Check the day every minute (60000 ms)
 setInterval(checkDayChange, 60000);
 
+    // Get the element by class name (access the first element if there's only one)
+    let reloadDiv = document.getElementsByClassName("weekday")[0]; // Since it's a collection, use [0] to access the first element
 
-// const allDivs = document.querySelectorAll('div'); // selects all <div> elements
-// allDivs.forEach(div => console.log(div)); // loop through each div
+    let pressTimer;
+
+    reloadDiv.addEventListener("mousedown", function() {
+        // Start a timer when the mouse is pressed
+        pressTimer = setTimeout(function() {
+            // Reload the page after holding down for 2 seconds
+            window.location.reload();
+        }, 2000); // 2 seconds hold to trigger reload
+    });
+
+    reloadDiv.addEventListener("mouseup", function() {
+        // Clear the timer if the mouse is released before the hold time is reached
+        clearTimeout(pressTimer);
+    });
+
+    reloadDiv.addEventListener("mouseleave", function() {
+        // Clear the timer if the mouse leaves the div before the hold time is reached
+        clearTimeout(pressTimer);
+    });
+
 
 //tooltip moveable 
 const tooltip_ = document.getElementById('tooltip');
