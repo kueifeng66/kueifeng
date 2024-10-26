@@ -493,7 +493,8 @@ function hideTooltip() {
 }
 
 function change() {
-  
+  let reloadDivs = document.getElementsByClassName("weekday"); 
+  let pressTimer;
   var day_now = now.getDate();
   if (btn.checked) {
     updateSelection();
@@ -517,7 +518,19 @@ function change() {
     let header = document.getElementById('header');
     header.style.color = 'white';
     footer.style.color = 'MediumBlue';
-    
+    for (let i = 0; i < 7; i++) {
+      let reloadDiv = reloadDivs[i];
+
+      // Event listeners for desktop (mouse)
+      reloadDiv.addEventListener("mousedown", startTimer);
+      reloadDiv.addEventListener("mouseup", clearTimer);
+      reloadDiv.addEventListener("mouseleave", clearTimer);
+
+      // Event listeners for mobile (touch)
+      reloadDiv.addEventListener("touchstart", startTimer);
+      reloadDiv.addEventListener("touchend", clearTimer);
+      reloadDiv.addEventListener("touchcancel", clearTimer); // in case the touch is canceled
+    }
     
   } else {
     updateSelection();
@@ -553,6 +566,19 @@ function change() {
   });
   highlightAdditionalHoliday();
   AddWeekDay();
+  for (let i = 0; i < 7; i++) {
+    let reloadDiv = reloadDivs[i];
+
+    // Event listeners for desktop (mouse)
+    reloadDiv.addEventListener("mousedown", startTimer);
+    reloadDiv.addEventListener("mouseup", clearTimer);
+    reloadDiv.addEventListener("mouseleave", clearTimer);
+
+    // Event listeners for mobile (touch)
+    reloadDiv.addEventListener("touchstart", startTimer);
+    reloadDiv.addEventListener("touchend", clearTimer);
+    reloadDiv.addEventListener("touchcancel", clearTimer); // in case the touch is canceled
+  }
 } //change function ends here
 
 function scroll(info) {
