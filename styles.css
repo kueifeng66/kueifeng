@@ -461,26 +461,23 @@ footer {
 }
 
 
-/* 
+
 @media (width <= 400px) {
-  body{
-    display:inline-flex;
-    flex-wrap: wrap;
-  }
+
   .day {
-    width: 3.68rem;
+    width: 4.1rem;
     height: 4.32rem;
   }
   .weekday {
-    width: 3.68rem;
+    width: 4.1rem;
     height: 4.32rem;
   }
   .weekend {
-    width: 3.68rem;
+    width: 4.1rem;
     height: 4.32rem;
   }
 
-} */
+}
 #myVideo {
   position: absolute;
   top: 0rem;
