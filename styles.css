@@ -465,15 +465,15 @@ footer {
 @media (width <= 400px) {
 
   .day {
-    width: 4.1rem;
+    width: 4rem;
     height: 4.32rem;
   }
   .weekday {
-    width: 4.1rem;
+    width: 4rem;
     height: 4.32rem;
   }
   .weekend {
-    width: 4.1rem;
+    width: 4rem;
     height: 4.32rem;
   }
 
