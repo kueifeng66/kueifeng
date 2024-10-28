@@ -468,15 +468,15 @@ footer {
     flex-wrap: wrap;
   }
   .day {
-    width: 3.68rem;
+    width: 4rem;
     height: 4.32rem;
   }
   .weekday {
-    width: 3.68rem;
+    width: 4rem;
     height: 4.32rem;
   }
   .weekend {
-    width: 3.68rem;
+    width: 4rem;
     height: 4.32rem;
   }
 
