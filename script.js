@@ -275,6 +275,7 @@ function addEventListener_toHideToolTipandShowToday(headerCell) {
       });
       //highlightAdditionalHoliday();
       // Perform actions for hiding tooltip
+      headerCell.style.backgroundColor="#3498db";
     } else {
           days.forEach(dayElement => {
             dayElement.classList.remove(selectedClassName);
@@ -283,10 +284,7 @@ function addEventListener_toHideToolTipandShowToday(headerCell) {
             dayElement.classList.remove('today-selected');
           });
 
-      // let todays = document.querySelectorAll('.today');
-      // todays.forEach(today => {
-      //   today.style.backgroundColor = '#ffff99';
-      // });
+      headerCell.style.backgroundColor="#345bdb";
       showTooltip(formattedDate);
       positionTooltip();
       if (btn.checked){
