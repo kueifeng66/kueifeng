@@ -1170,3 +1170,8 @@ tooltip_.addEventListener('mousedown', startDragging);
 tooltip_.addEventListener('touchstart', startDragging);
 
 //tooltip moveable ends.
+// if ('loading' in HTMLIFrameElement.prototype) {
+//   console.log("Browser supports lazy loading!");
+// } else {
+//   console.log("Browser does NOT support lazy loading. Consider using a polyfill.");
+// }
