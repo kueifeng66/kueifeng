@@ -6,11 +6,17 @@
 body {
     background:linear-gradient(to right, hsl(34, 51%, 86%),hsl(39, 65%, 78%));
     display: flex;  
+    flex-wrap: wrap;
+    align-items: center;
+    align-content: center;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
     overflow: hidden; /**disappear scroll bar**/
     background-image: url('MerryXmas.jpg');
+    background-size: cover; 
+    background-position: center; 
+    background-repeat: no-repeat; 
 	margin: 0;
 }
 
