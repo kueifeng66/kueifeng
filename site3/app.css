@@ -70,10 +70,15 @@ body {
 }
 
 .timer-box__count {
-    --size: 10rem;
+    --size: 8rem;
     width: var(--size);
     height: var(--size);
-    display: grid;
+    /* display: grid; */
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
     place-items: center;
 }
 
