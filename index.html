@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- <link rel="icon" href="favicon.png" type="image/png"> -->
     <link id="favicon" rel="icon" href="favicon1.ico" type="image/x-icon">
     <title>Last Updated: 2024-12-03</title>
     <style>
@@ -14,10 +13,10 @@
         }
         button {
             position: fixed;
-            bottom: 20px; /* Adjust for better reachability */
+            bottom: 20px;
             right: 20px;
             padding: 15px;
-            background-color: #007BFF; /* Highlight button for visibility */
+            background-color: #007BFF;
             color: white;
             border: none;
             border-radius: 50%;
@@ -32,24 +31,24 @@
 </head>
 <body>
     <iframe id="website-frame" src="site1/index.html"></iframe>
-    <button onclick="switchWebsite()">⇄</button> <!-- Icon instead of text for simplicity -->
+    <button onclick="switchWebsite()">⇄</button>
     <script>
-        let currentSite = 'site1';
+        const sites = [
+            { src: 'site1/index.html', favicon: 'favicon1.ico' },
+            { src: 'site2/index.html', favicon: 'favicon2.ico' },
+            { src: 'site3/index.html', favicon: 'favicon3.ico' }
+        ];
+        let currentSiteIndex = 0;
 
         function switchWebsite() {
+            // Increment the index and reset if it exceeds the array length
+            currentSiteIndex = (currentSiteIndex + 1) % sites.length;
+
+            // Update iframe source and favicon
             const frame = document.getElementById('website-frame');
             const favicon = document.getElementById('favicon');
-            // currentSite = currentSite === 'site1' ? 'site2' : 'site1';
-            if (currentSite === 'site1') {
-                currentSite = 'site2';
-                frame.src = 'site2/index.html';
-                favicon.href = 'favicon2.ico'; // Change to site2's favicon
-            } else {
-                currentSite = 'site1';
-                frame.src = 'site1/index.html';
-                favicon.href = 'favicon1.ico'; // Change back to site1's favicon
-            }
-            frame.src = `${currentSite}/index.html`;
+            frame.src = sites[currentSiteIndex].src;
+            favicon.href = sites[currentSiteIndex].favicon;
         }
     </script>
 </body>
