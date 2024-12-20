@@ -1342,7 +1342,7 @@ body {
 .clock {
     width: 350px;
     height: 350px;
-    background-color: rgba(214,0,28, 0.8);   /*rgba(191, 128, 64, 0.8);*/
+    background-color: rgba(214,0,28, 0.8);   
     border-radius: 50%;
     border: 3.5px solid rgb(22,42,114);
     position: relative;
@@ -1386,7 +1386,7 @@ body {
 .mark {
     width: 300px;
     height: 300px;
-    background-color: rgba(255, 255, 255, 0.8);
+    background-color:snow;
     border-radius: 50%;
     border: 3px solid rgb(22,42,114);
     position: absolute;
