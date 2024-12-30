@@ -1235,3 +1235,44 @@ tooltip_.addEventListener('touchstart', startDragging);
 // } else {
 //   console.log("Browser does NOT support lazy loading. Consider using a polyfill.");
 // }
+document.getElementById('scrollToBottomButton').addEventListener('click', () => {
+  const namePicker = document.getElementById('namePicker');
+  namePicker.scrollTo({
+    top: namePicker.scrollHeight, // Scroll to the bottom
+    behavior: 'smooth' // Smooth scrolling effect
+  });
+});
+
+
+const button = document.getElementById('scrollToBottomButton');
+
+
+button.addEventListener('click', () => {
+    namePicker.scrollTo({
+        top: namePicker.scrollHeight,
+        behavior: 'smooth'
+    });
+});
+
+namePicker.addEventListener('scroll', () => {
+    const atBottom = namePicker.scrollTop + namePicker.clientHeight >= namePicker.scrollHeight;
+    button.disabled = atBottom; // Disable button if at the bottom
+    button.style.display = "none";
+
+    if (namePicker.scrollTop + namePicker.clientHeight >= namePicker.scrollHeight) {
+      button.disabled = true; // Disable button if at the bottom
+      button.style.display = "none";
+    } else {
+      button.disabled = false; // Disable button if at the bottom
+      button.style.display = "block";
+    }
+});
+
+
+
+
+
+
+
+
+
