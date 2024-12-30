@@ -442,6 +442,7 @@ footer {
   position: relative;
   width: auto;
   padding: 0px 3px;
+  border-radius:5px;
   opacity: 0.85;
   filter: drop-shadow(0 2px 2px #555);
   will-change: transform, opacity;
