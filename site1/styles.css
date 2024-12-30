@@ -436,6 +436,14 @@ footer {
   margin-bottom: 1rem;
   transition: transform 0.3s ease;
   margin: 0.3rem;
+  display: inline-flex;
+  align-items: center;
+  position: relative;
+  width: 100%;
+  padding: 0px 12px;
+  opacity: 0.85;
+  filter: drop-shadow(0 2px 2px #555);
+  will-change: transform, opacity;
 }
 
 .picker-item:hover {
