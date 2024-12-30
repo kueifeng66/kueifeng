@@ -556,3 +556,29 @@ iframe {
     transform:scale(0);
   }
 }
+
+
+
+#scrollToBottomButton {
+  margin-top: 10px;
+  padding: 10px 20px;
+  background-color: #3498db; 
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+#scrollToBottomButton:hover {
+  background-color: #0056b3;
+  border-radius: 5px;
+  transform: scale(1.5);
+}
+
+#scrollToBottomButton:active {
+  transform: scale(1);
+}
+
