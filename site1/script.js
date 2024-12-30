@@ -790,10 +790,12 @@ names.forEach((name) => {
     items.forEach((item) => {
       item.style.transform = 'scale(1)';
       item.style.color = 'gray';
+      item.style.opacity = '0.85';
     });
     item.style.transform = 'scale(1.5)';
     item.style.color = '';
     item.style.backgroundColor = "turquoise";
+   item.style.opacity = '1';
     temp_name=selectedName;
     highlightSelectedName(selectedName);
   });
@@ -848,11 +850,13 @@ function updateScale() {
         updateSelection();
         item.style.backgroundColor = "turquoise";
         item.style.color = '';
+        item.style.opacity = '1';
         temp_name=item.textContent;
         highlightSelectedName(item.textContent);
         hasTurquoiseBackground = true;
       } else {
         item.style.transform = 'scale(1)';
+        item.style.opacity = '0.85';
         item.style.color = 'gray';
       }
   });  
