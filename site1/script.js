@@ -1237,30 +1237,38 @@ tooltip_.addEventListener('touchstart', startDragging);
 // }
 
 
-
 const button = document.getElementById('scrollToBottomButton');
 
 let scrollToBottom = true; // Track whether the button should scroll to the bottom or top
+let scrollEndTimeout; // Timer to detect scroll end
 
 button.addEventListener('click', () => {
-  if (scrollToBottom) {
-    // Scroll to the bottom
-    namePicker.scrollTo({
-      top: namePicker.scrollHeight,
-      behavior: 'smooth',
-    });
-  } else {
-    // Scroll to the top
-    namePicker.scrollTo({
-      top: 0,
-      behavior: 'smooth',
-    });
-  }
-  scrollToBottom = !scrollToBottom; // Toggle the behavior
-  button.textContent = scrollToBottom ? "👇Bottom" : "👆Top"; // Update button text
+   
+    scrolling = true; // Set scrolling to true
+    if (scrollToBottom) {
+      // Scroll to the bottom
+      namePicker.scrollTo({
+        top: namePicker.scrollHeight,
+        behavior: 'smooth',
+      });
+    } else {
+      // Scroll to the top
+      namePicker.scrollTo({
+        top: 0,
+        behavior: 'smooth',
+      });
+    }
+    scrollToBottom = !scrollToBottom;
+    // Wait for the scroll action to complete before toggling
+    scrollEndTimeout = setTimeout(() => { 
+    button.textContent = scrollToBottom ? "👇Bottom" : "👆Top"; 
+    }, 1000); 
+  
 });
 
 namePicker.addEventListener('scroll', () => {
+  clearTimeout(scrollEndTimeout); // Clear the timeout if the user scrolls manually
+
   const atBottom = namePicker.scrollTop + namePicker.clientHeight >= namePicker.scrollHeight;
   const atTop = namePicker.scrollTop === 0;
 
@@ -1270,16 +1278,17 @@ namePicker.addEventListener('scroll', () => {
   clearSelectedClass();
   updateScale();
 
-  if (atBottom) {
+  if (atBottom) { // Change only if not scrolling programmatically
     scrollToBottom = false; // Switch to scroll to the top
     button.textContent = "👆Top"; // Update button text
-  } else if (atTop) {
+  } else if (atTop) { // Change only if not scrolling programmatically
     scrollToBottom = true; // Switch to scroll to the bottom
     button.textContent = "👇Bottom"; // Update button text
   }
 
   button.style.display = "block"; // Always show the button
 });
+
 
 
 
