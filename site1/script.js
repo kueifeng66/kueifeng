@@ -877,15 +877,15 @@ function ClearSelectedName() {
 }
 
 
-namePicker.addEventListener("scroll", () => {
-  const itemHeight = namePicker.querySelector(".picker-item").offsetHeight;
-  currentIndex = Math.floor(namePicker.scrollTop / itemHeight);
-  updateSelection();
-  clearSelectedClass();
-  updateScale();
+// namePicker.addEventListener("scroll", () => {
+//   const itemHeight = namePicker.querySelector(".picker-item").offsetHeight;
+//   currentIndex = Math.floor(namePicker.scrollTop / itemHeight);
+//   updateSelection();
+//   clearSelectedClass();
+//   updateScale();
   
-});
-
+// });
+//Above namePicker has been moved to the bottom together with the scrollToBottomButton.
 
 
 
@@ -1235,37 +1235,50 @@ tooltip_.addEventListener('touchstart', startDragging);
 // } else {
 //   console.log("Browser does NOT support lazy loading. Consider using a polyfill.");
 // }
-document.getElementById('scrollToBottomButton').addEventListener('click', () => {
-  const namePicker = document.getElementById('namePicker');
-  namePicker.scrollTo({
-    top: namePicker.scrollHeight, // Scroll to the bottom
-    behavior: 'smooth' // Smooth scrolling effect
-  });
-});
+
 
 
 const button = document.getElementById('scrollToBottomButton');
 
+let scrollToBottom = true; // Track whether the button should scroll to the bottom or top
 
 button.addEventListener('click', () => {
+  if (scrollToBottom) {
+    // Scroll to the bottom
     namePicker.scrollTo({
-        top: namePicker.scrollHeight,
-        behavior: 'smooth'
+      top: namePicker.scrollHeight,
+      behavior: 'smooth',
     });
+  } else {
+    // Scroll to the top
+    namePicker.scrollTo({
+      top: 0,
+      behavior: 'smooth',
+    });
+  }
+  scrollToBottom = !scrollToBottom; // Toggle the behavior
+  button.textContent = scrollToBottom ? "👇Bottom" : "👆Top"; // Update button text
 });
 
 namePicker.addEventListener('scroll', () => {
-    const atBottom = namePicker.scrollTop + namePicker.clientHeight >= namePicker.scrollHeight;
-    button.disabled = atBottom; // Disable button if at the bottom
-    button.style.display = "none";
+  const atBottom = namePicker.scrollTop + namePicker.clientHeight >= namePicker.scrollHeight;
+  const atTop = namePicker.scrollTop === 0;
 
-    if (namePicker.scrollTop + namePicker.clientHeight >= namePicker.scrollHeight) {
-      button.disabled = true; // Disable button if at the bottom
-      button.style.display = "none";
-    } else {
-      button.disabled = false; // Disable button if at the bottom
-      button.style.display = "block";
-    }
+  const itemHeight = namePicker.querySelector(".picker-item").offsetHeight;
+  currentIndex = Math.floor(namePicker.scrollTop / itemHeight);
+  updateSelection();
+  clearSelectedClass();
+  updateScale();
+
+  if (atBottom) {
+    scrollToBottom = false; // Switch to scroll to the top
+    button.textContent = "👆Top"; // Update button text
+  } else if (atTop) {
+    scrollToBottom = true; // Switch to scroll to the bottom
+    button.textContent = "👇Bottom"; // Update button text
+  }
+
+  button.style.display = "block"; // Always show the button
 });
 
 
