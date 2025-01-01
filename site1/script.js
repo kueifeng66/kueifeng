@@ -556,7 +556,7 @@ function change() {
     footer.style.color = 'black';
     
     const headerCells = document.querySelector('.header-cell');
-    headerCells.innerHTML = `${year}年<br>${month} 月${day} 日 `;  
+    headerCells.innerHTML = `${year} 年 <br> ${month}月${day} 日 `;  
     showTooltip(formattedDate); 
     fetchWeather();
   }
