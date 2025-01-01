@@ -33,15 +33,20 @@ body {
   grid-template-columns: repeat(7, 1fr);
   gap: 0.1rem;
 }
-.header-cell{
+
+
+.header-cell {
   border-radius: 0.5rem;
   height: 7.8rem;
   width: 9.8rem;
   display: flex;
-  justify-content: center;
-  align-items: center;
-  position: relative;
+  justify-content: center; /* Center horizontally */
+  align-items: center; /* Center vertically */
+  text-align: center;
+  flex-direction: column; /* Ensure text aligns in the center */
 }
+
+
 
 #header {
   display: flex;
