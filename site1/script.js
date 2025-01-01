@@ -331,10 +331,9 @@ function addEventListener_toHideToolTipandShowToday(headerCell) {
 function createheadercell(year, month, day){
   const headerCell = document.createElement('div');
   headerCell.classList.add('header-cell');
-  headerCell.innerHTML = `${year} 年 <br> ${month}月${day} 日 `;  
+   
+  headerCell.innerHTML = `${year} 年 &nbsp;&nbsp;&nbsp&nbsp;&nbsp${month} 月&nbsp;&nbsp&nbsp;&nbsp&nbsp;&nbsp ${day} 日 &nbsp;`; 
 
-
-  
   header.appendChild(headerCell);
   headerCell.style.zIndex = '20';
   addEventListener_toHideToolTipandShowToday(headerCell);
@@ -517,7 +516,7 @@ function change() {
     createCalendar(year,month);
     
     const headerCells = document.querySelector('.header-cell');
-    headerCells.innerHTML = ` ${year} 年<br>${month} 月  `;   
+    headerCells.innerHTML = `${year} 年 &nbsp;&nbsp;&nbsp;&nbsp${month} 月`;  
     
     
     let header = document.getElementById('header');
@@ -556,7 +555,7 @@ function change() {
     footer.style.color = 'black';
     
     const headerCells = document.querySelector('.header-cell');
-    headerCells.innerHTML = `${year} 年 <br> ${month}月${day} 日 `;  
+    headerCells.innerHTML = `${year} 年 &nbsp;&nbsp;&nbsp&nbsp;&nbsp${month} 月&nbsp;&nbsp&nbsp;&nbsp&nbsp;&nbsp ${day} 日 &nbsp;`;  
     showTooltip(formattedDate); 
     fetchWeather();
   }
