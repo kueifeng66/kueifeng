@@ -331,7 +331,10 @@ function addEventListener_toHideToolTipandShowToday(headerCell) {
 function createheadercell(year, month, day){
   const headerCell = document.createElement('div');
   headerCell.classList.add('header-cell');
-  headerCell.textContent = ` ${year} 年　${month} 月 ${day} 日 `;
+  headerCell.innerHTML = `${year} 年<br>${month} 月${day} 日 `;  
+
+
+  
   header.appendChild(headerCell);
   headerCell.style.zIndex = '20';
   addEventListener_toHideToolTipandShowToday(headerCell);
@@ -514,7 +517,7 @@ function change() {
     createCalendar(year,month);
     
     const headerCells = document.querySelector('.header-cell');
-    headerCells.textContent = ` ${year} 年　${month} 月  `;   
+    headerCells.innerHTML = ` ${year} 年<br>${month} 月  `;   
     
     
     let header = document.getElementById('header');
@@ -552,8 +555,8 @@ function change() {
     header.style.color = ''; // This will remove the inline 'color' style, allowing the CSS rule to take effect
     footer.style.color = 'black';
     
-    const headerCell = document.querySelector('.header-cell');
-    headerCell.textContent = ` ${year} 年　${month} 月 ${day} 日 `;  
+    const headerCells = document.querySelector('.header-cell');
+    headerCells.innerHTML = `${year}年<br>${month} 月${day} 日 `;  
     showTooltip(formattedDate); 
     fetchWeather();
   }
@@ -1077,7 +1080,7 @@ if (!btn.checked) {
   dayOfWeek = Zellercongruence(day, month, year);
   if (dayOfWeek === 1) {
     headerCell.textContent += `(一)`;
-    // headerCell.textContent = ` ${year} 年　${month} 月 ${day} 日 `;   
+      
   } else if (dayOfWeek === 2) {
     headerCell.textContent += `(二)`;
   } else if (dayOfWeek === 3) {
