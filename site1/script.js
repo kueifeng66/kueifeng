@@ -331,7 +331,7 @@ function addEventListener_toHideToolTipandShowToday(headerCell) {
 function createheadercell(year, month, day){
   const headerCell = document.createElement('div');
   headerCell.classList.add('header-cell');
-  headerCell.innerHTML = `${year} 年<br>${month} 月${day} 日 `;  
+  headerCell.innerHTML = `${year} 年 <br> ${month}月${day} 日 `;  
 
 
   
