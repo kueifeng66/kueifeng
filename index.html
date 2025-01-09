@@ -28,6 +28,17 @@
             background-color: #0056b3;
         }
     </style>
+    <script type="speculationrules">
+        {
+          
+          "prerender": [
+            {
+              "urls": ["/", "/site1/index.html", "/site2/index.html", /site3/index.html],
+              "eagerness": "eager"
+            }
+          ]
+        }
+    </script>
 </head>
 <body>
     <iframe id="website-frame" src="site1/index.html"></iframe>

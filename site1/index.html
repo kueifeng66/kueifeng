@@ -5,6 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="styles.css" rel="stylesheet">
   <title>Last Updated: 2024-11-26</title>
+  <script type="speculationrules">
+    {
+      
+      "prerender": [
+        {
+          "urls": ["/", "/site1/index.html", "/site2/index.html", /site3/index.html],
+          "eagerness": "eager"
+        }
+      ]
+    }
+</script>
   <script defer src="script.js"></script>
 </head>
 
