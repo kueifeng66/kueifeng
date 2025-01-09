@@ -1084,7 +1084,7 @@ window.onload = function() {
   headerCells.forEach(function(cell) {
     setTimeout(function() {
       cell.click();
-    }, 100);
+    }, 2000);
   });
 };
 
