@@ -64,6 +64,11 @@ body {
   border-radius: 0.5rem;
   position: relative;
   z-index: 5;
+  text-shadow:
+    0 0 1rem rgba(0, 255, 255, 0.5),
+    0 0 2rem rgba(0, 255, 255, 0.5),
+    0 0 3rem rgba(0, 255, 255, 0.5),
+    0 0 4rem rgba(0, 255, 255, 0.8);
 }
 #header::before{
   content: '';
