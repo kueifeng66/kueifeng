@@ -83,41 +83,12 @@ const dutySchedule = {
 
 
 
+
 };
 
 const holiday = {
 
-"2024-12-1": "【十一月大】【放假日】",
-"2024-12-2": "【初二】",
-"2024-12-3": "【初三】",
-"2024-12-4": "【初四】",
-"2024-12-5": "【初五】",
-"2024-12-6": "【大雪】",
-"2024-12-7": "【初七】【放假日】",
-"2024-12-8": "【初八】【放假日】",
-"2024-12-9": "【初九】",
-"2024-12-10": "【初十】",
-"2024-12-11": "【十一】",
-"2024-12-12": "【十二】",
-"2024-12-13": "【十三】",
-"2024-12-14": "【十四】【放假日】",
-"2024-12-15": "【十五】【放假日】",
-"2024-12-16": "【十六】",
-"2024-12-17": "【十七】",
-"2024-12-18": "【十八】",
-"2024-12-19": "【十九】",
-"2024-12-20": "【二十】",
-"2024-12-21": "【冬至】【放假日】",
-"2024-12-22": "【廿二】【放假日】",
-"2024-12-23": "【廿三】",
-"2024-12-24": "【廿四】",
-"2024-12-25": "【廿五】",
-"2024-12-26": "【廿六】",
-"2024-12-27": "【廿七】",
-"2024-12-28": "【廿八】【放假日】",
-"2024-12-29": "【廿九】【放假日】",
-"2024-12-30": "【三十】",
-"2024-12-31": "【十二月小】",
+
 "2025-1-1": "【初二】【放假日】",
 "2025-1-2": "【初三】",
 "2025-1-3": "【初四】",
@@ -794,10 +765,10 @@ function AddLunar() {
   const days = document.querySelectorAll('.day');
   days.forEach(dayElement => {
     const date = `${year}-${month}-${dayElement.textContent.trim()}`;
-    // const lunarName = (holiday[date] || '').split('】')[0].replace('【', ''); // Get the first content between brackets
-    const lunarName = Lunar.fromDate(gregorianDate)
+    const lunarName = (holiday[date] || '').split('】')[0].replace('【', ''); // Get the first content between brackets
+    
     if (lunarName) {
-      dayElement.innerHTML = `${dayElement.textContent}\n<span class="lunar-name">${lunarName.getDay()}</span>`;
+      dayElement.innerHTML = `${dayElement.textContent}\n<span class="lunar-name">${lunarName}</span>`;
     }
   });
 }
