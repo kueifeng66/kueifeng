@@ -10,7 +10,7 @@ const now = new Date()
 newYear.innerHTML = now.getFullYear() 
 
 
- const countToDate = new Date(now.getFullYear() + 1, 0, 28).getTime(); //Lunar New Year next year , january 28th
+ const countToDate = new Date(now.getFullYear() , 0, 28).getTime(); //Lunar New Year next year , january 28th
 
 //const countToDate = new Date(now.getFullYear() + 1, 0, 1).getTime(); // Next year's January 1
 
