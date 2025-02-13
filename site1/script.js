@@ -601,13 +601,6 @@ function setMode(newMode) {
 
 
 
-  if (btn.checked) {
-
-    
-  } else {
-
-} //change function ends here
-
 function scroll(info) {
   var result = ''; 
   // var isSpaceBeforeUppercase = false; 
