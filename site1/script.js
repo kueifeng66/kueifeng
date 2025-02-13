@@ -1,12 +1,12 @@
 const calendar = document.getElementById('calendar');
 const tooltip = document.getElementById('tooltip');
-const btn = document.querySelector("#check");
+const btn = document.querySelector("#toggle");
 const footer = document.getElementById('scrollingText');
 const header = document.getElementById('header');
 const body = document.body;
 const lastUpdated = document.title;
 
-
+let mode = "neutral"; // Always start in Neutral Mode
 const currentDay = new Date().getDate();
 let clickCount = 1;
 
@@ -20,7 +20,37 @@ const formattedDate = `${year}-${month}-${day}`;
 
 
 const dutySchedule = {
-  
+"2025-1-1": "S: 范振宇 A: 呂明峰 N: 王金誠 C: 秦桔萬 R: 黃煜森 T: 洪柜峰",
+"2025-1-2": "S: 黃經洲 A: 林厚運 N: 王瑞發 C: 孫景泰 R: 張哲維 T: 方振彬",
+"2025-1-3": "S: 柯正和 A: 許世勳 N: 范振宇 C: 邱冠霖 R: 黃煜森 T: 林宏儒",
+"2025-1-4": "S: 詹文欽 A: 王瑞發 N: 唐__茂 C: 張日曜 R: 劉錦郎 T: 呂明峰",
+"2025-1-5": "S: 林森發 A: 許敦智 N: 彭偉慎 C: 孫景泰 R: 張哲維 T: 羅應順",
+"2025-1-6": "S: 黃榮國 A: 黃煜森 N: 劉暐丞 C: 秦桔萬 R: 劉錦郎 T: 許世勳",
+"2025-1-7": "S: 柯正和 A: 張哲維 N: 許敦智 C: 邱冠霖 R: 余金原 T: 呂明峰",
+"2025-1-8": "S: 范振宇 A: 唐__茂 N: 彭偉慎 C: 孫景泰 R: 林厚運 T: 林宏儒",
+"2025-1-9": "S: 林森發 A: 許敦智 N: 劉暐丞 C: 張日曜 R: 黃煜森 T: 洪柜峰",
+"2025-1-10": "S: 詹文欽 A: 呂明峰 N: 王金誠 C: 秦桔萬 R: 余金原 T: 許世勳",
+"2025-1-11": "S: 黃榮國 A: 劉暐丞 N: 彭偉慎 C: 孫景泰 R: 黃煜森 T: 羅應順",
+"2025-1-12": "S: 柯正和 A: 林森發 N: 許敦智 C: 邱冠霖 R: 林厚運 T: 林宏儒",
+"2025-1-13": "S: 黃經洲 A: 劉暐丞 N: 唐__茂 C: 秦桔萬 R: 余金原 T: 羅應順",
+"2025-1-14": "S: 黃榮國 A: 洪柜峰 N: 彭偉慎 C: 孫景泰 R: 劉錦郎 T: 方振彬",
+"2025-1-15": "S: 范振宇 A: 王金誠 N: 劉暐丞 C: 邱冠霖 R: 余金原 T: 呂明峰",
+"2025-1-16": "S: 柯正和 A: 許世勳 N: 王瑞發 C: 秦桔萬 R: 黃煜森 T: 羅應順",
+"2025-1-17": "S: 林森發 A: 范振宇 N: 彭偉慎 C: 張日曜 R: 林厚運 T: 洪柜峰",
+"2025-1-18": "S: 詹文欽 A: 黃經洲 N: 劉暐丞 C: 柯正和 R: 張哲維 T: 方振彬",
+"2025-1-19": "S: 黃榮國 A: 王瑞發 N: 唐__茂 C: 張日曜 R: 余金原 T: 林宏儒",
+"2025-1-20": "S: 黃經洲 A: 劉錦郎 N: 許敦智 C: 邱冠霖 R: 林厚運 T: 許世勳",
+"2025-1-21": "S: 柯正和 A: 范振宇 N: 王金誠 C: 孫景泰 R: 黃煜森 T: 羅應順",
+"2025-1-22": "S: 林森發 A: 林宏儒 N: 王瑞發 C: 張日曜 R: 張哲維 T: 許世勳",
+"2025-1-23": "S: 黃榮國 A: 秦桔萬 N: 許敦智 C: 邱冠霖 R: 劉錦郎 T: 呂明峰",
+"2025-1-24": "S: 范振宇 A: 林森發 N: 王瑞發 C: 孫景泰 R: 張哲維 T: 羅應順",
+"2025-1-25": "S: 黃經洲 A: 黃煜森 N: 許敦智 C: 張日曜 R: 林厚運 T: 洪柜峰",
+"2025-1-26": "S: 林森發 A: 林宏儒 N: 王金誠 C: 邱冠霖 R: 劉錦郎 T: 方振彬",
+"2025-1-27": "S: 詹文欽 A: 周育稔 N: 唐__茂 C: 秦桔萬 R: 余金原 T: 許世勳",
+"2025-1-28": "S: 黃榮國 A: 彭偉慎 N: 王金誠 C: 孫景泰 R: 張哲維 T: 呂明峰",
+"2025-1-29": "S: 柯正和 A: 洪柜峰 N: 劉暐丞 C: 張日曜 R: 余金原 T: 羅應順",
+"2025-1-30": "S: 范振宇 A: 方振彬 N: 彭偉慎 C: 邱冠霖 R: 林厚運 T: 林宏儒",
+"2025-1-31": "S: 黃經洲 A: 唐__茂 N: 王瑞發 C: 秦桔萬 R: 劉錦郎 T: 許世勳",
 "2025-2-1": "S: 黃榮國 A: 范振宇 N: 劉暐丞 C: 孫景泰 R: 黃煜森 T: 周育稔",
 "2025-2-2": "S: 林森發 A: 羅應順 N: 許敦智 C: 柯正和 R: 張哲維 T: 呂明峰",
 "2025-2-3": "S: 范振宇 A: 黃經洲 N: 唐__茂 C: 張日曜 R: 劉錦郎 T: 許世勳",
@@ -212,14 +242,7 @@ function Zellercongruence(day, month, year)
 
 function addEventListeners(dayElement, btn, day, month, year, date) {
   dayElement.addEventListener('mouseover', () => {
-    // let todays = document.querySelectorAll('.today');
-    //   todays.forEach(today => {
-    //     today.style.backgroundColor = '';
-    //   });
-      
-    // if (btn.checked) {
-    //   dayElement.style.color = 'black'; // Change the color when button is checked and mouse is over
-    // }
+
     showTooltip(date); 
     if (date == '999'){
       hideTooltip();
@@ -228,18 +251,7 @@ function addEventListeners(dayElement, btn, day, month, year, date) {
   });
 
   dayElement.addEventListener('mouseout', () => {
-    // if (btn.checked) {
-    //   dayElement.style.color = 'white'; // Reset the color when button is checked and mouse is out
-    //   let today = document.querySelectorAll('.today');
-    //   today.forEach(today => {
-    //     today.style.color = 'MediumBlue';
-    //   });
-    //   if (Zellercongruence(day, month, year) === 0 || Zellercongruence(day, month, year) === 6) {
-    //     dayElement.style.color = '#FF33CC';
-        
-    //   }
-    //   highlightAdditionalHoliday();
-    // }
+    
     highlightSelectedName(temp_name);
     const items = document.querySelectorAll('.picker-item');
     items.forEach((item) => {
@@ -468,11 +480,20 @@ function hideTooltip() {
   document.title = lastUpdated;
 }
 
-function change() {
+function setMode(newMode) {
+  // Remove previous classes
+  body.classList.remove("light", "neutral", "dark");
+  toggle.classList.remove("light", "neutral", "dark");
+
+  // Apply new mode
+  body.classList.add(newMode);
+  toggle.classList.add(newMode);
+
   let reloadDivs = document.getElementsByClassName("weekday"); 
   let pressTimer;
   var day_now = now.getDate();
-  if (btn.checked) {
+
+  if (newMode === "dark"){
     updateSelection();
     clearSelectedClass();
     hideTooltip();
@@ -507,8 +528,8 @@ function change() {
       reloadDiv.addEventListener("touchend", clearTimer);
       reloadDiv.addEventListener("touchcancel", clearTimer); // in case the touch is canceled
     }
-    
-  } else {
+    hideTooltip();
+  } else if (mode === "neutral"){
     updateSelection();
     clearSelectedClass();
 
@@ -530,6 +551,27 @@ function change() {
     headerCells.innerHTML = `${year} 年 &nbsp;&nbsp;&nbsp&nbsp;&nbsp${month} 月&nbsp;&nbsp&nbsp;&nbsp&nbsp;&nbsp ${day} 日 &nbsp;`;  
     showTooltip(formattedDate); 
     fetchWeather();
+    AddWeekDay();
+  } else if (mode === "light"){
+    updateSelection();
+    clearSelectedClass();
+
+    calendar.innerHTML = '';
+
+    month--;
+    if (month === 12) {
+      year--;
+    }
+    createCalendar(year,month,day);
+    let header = document.getElementById('header');
+    header.style.color = ''; // This will remove the inline 'color' style, allowing the CSS rule to take effect
+    footer.style.color = 'black';
+    
+    const headerCells = document.querySelector('.header-cell');
+    headerCells.innerHTML = `${year} 年 &nbsp;&nbsp;&nbsp;&nbsp${month} 月`;  
+    showTooltip(formattedDate); 
+    fetchWeather();
+    hideTooltip();
   }
   //below is to highlight the name previously selected in the change function
   highlightSelectedName(temp_name);
@@ -541,7 +583,7 @@ function change() {
     }
   });
   highlightAdditionalHoliday();
-  AddWeekDay();
+  
   for (let i = 0; i < 7; i++) {
     let reloadDiv = reloadDivs[i];
 
@@ -555,6 +597,15 @@ function change() {
     reloadDiv.addEventListener("touchend", clearTimer);
     reloadDiv.addEventListener("touchcancel", clearTimer); // in case the touch is canceled
   }
+  }
+
+
+
+  if (btn.checked) {
+
+    
+  } else {
+
 } //change function ends here
 
 function scroll(info) {
@@ -1113,7 +1164,34 @@ document.addEventListener('mousemove', (e) => {
 
 
 
-btn.addEventListener('change', change);
+btn.addEventListener("click", function (event) {
+  const rect = btn.getBoundingClientRect(); 
+  const clickX = event.clientX - rect.left;
+  const toggleWidth = rect.width;
+  const center = toggleWidth / 2;
+  const prevMode = mode; // Store the current mode before changes
+
+  if (clickX > center) { 
+      if (mode === "neutral") {
+          mode = "dark";
+      } else if (mode === "light") {
+          mode = "neutral";
+      }
+  }
+
+  if (clickX < center) { 
+  if (mode === "neutral") {
+          mode = "light";
+      } else if(mode === "dark") {
+          mode = "neutral";
+      } 
+  }
+
+    // Call setMode(mode) only if mode has changed
+  if (mode !== prevMode) {
+      setMode(mode);
+  }
+});
 createheadercell(year, month, day);
 createCalendar(year, month);
 
@@ -1204,11 +1282,6 @@ tooltip_.addEventListener('mousedown', startDragging);
 tooltip_.addEventListener('touchstart', startDragging);
 
 //tooltip moveable ends.
-// if ('loading' in HTMLIFrameElement.prototype) {
-//   console.log("Browser supports lazy loading!");
-// } else {
-//   console.log("Browser does NOT support lazy loading. Consider using a polyfill.");
-// }
 
 
 const button = document.getElementById('scrollToBottomButton');
