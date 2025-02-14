@@ -321,7 +321,7 @@ body.dark {
   border-radius: 3rem;
   cursor: pointer;
   position: relative;
-  transition: 0.3s ease;
+  transition: 0.3s ease-in-out;
 }
 
 .button::before {
@@ -333,7 +333,7 @@ body.dark {
   border-radius: 50%;
   top: 0.11rem;
   left: 3rem; /* Start in the center */
-  transition: transform 0.3s ease;
+  transition: transform 0.3s ease-in-out;
 }
 
 
