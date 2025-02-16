@@ -305,12 +305,15 @@ body.dark {
 
 .button.dark {
   background-color: #2ecc71;
+  box-shadow: 0.1rem 0.1rem 0.4rem rgba(0, 0, 0, 0.5) inset;
 }
 .button.light {
   background-color: #b0b0b0;
+  box-shadow: 0.1rem 0.1rem 0.4rem rgba(0, 0, 0, 0.5) inset;
 }
 .button.neutral {
   background-color: #f0d78c;
+  box-shadow: 0.1rem 0.1rem 0.4rem rgba(0, 0, 0, 0.5) inset;
 }
 
 
