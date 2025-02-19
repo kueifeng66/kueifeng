@@ -1207,12 +1207,12 @@ btn.addEventListener("click", function (event) {
 
   }
   if (prevMode === "dark") {
-    if (clickX < 10 ){
+    if (clickX < 11 ){
       mode = "neutral"
     } 
   }
   if (prevMode === "light") {
-    if (clickX > -10 ){
+    if (clickX > -11 ){
       mode = "neutral"
     } 
   }
