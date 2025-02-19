@@ -686,7 +686,6 @@ const names = [
   "周育稔",
   "林宏儒",
   "羅應順",
-  
   "呂明峰",
   "．．．",
   "．．．",
@@ -1191,26 +1190,33 @@ document.addEventListener('mousemove', (e) => {
 
 btn.addEventListener("click", function (event) {
   const rect = btn.getBoundingClientRect(); 
-  const clickX = event.clientX - rect.left;
+  const centerX = rect.left + rect.width / 2;
+  const clickX = event.clientX - centerX;
   const toggleWidth = rect.width;
   const center = toggleWidth / 2;
+  
+ 
   const prevMode = mode; // Store the current mode before changes
+  console.log(`Click Position: ${clickX}`);
+  if (prevMode === "neutral") {
+    if (clickX > 18.5 ){
+      mode = "dark"
+    } else if (clickX < -18.5){
+      mode = "light"
+    }
 
-  if (clickX > center) { 
-      if (mode === "neutral") {
-          mode = "dark";
-      } else if (mode === "light") {
-          mode = "neutral";
-      }
   }
-
-  if (clickX < center) { 
-  if (mode === "neutral") {
-          mode = "light";
-      } else if(mode === "dark") {
-          mode = "neutral";
-      } 
+  if (prevMode === "dark") {
+    if (clickX < 10 ){
+      mode = "neutral"
+    } 
   }
+  if (prevMode === "light") {
+    if (clickX > -10 ){
+      mode = "neutral"
+    } 
+  }
+  
 
     // Call setMode(mode) only if mode has changed
   if (mode !== prevMode) {
