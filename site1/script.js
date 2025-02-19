@@ -1199,20 +1199,20 @@ btn.addEventListener("click", function (event) {
   const prevMode = mode; // Store the current mode before changes
   console.log(`Click Position: ${clickX}`);
   if (prevMode === "neutral") {
-    if (clickX > 18.5 ){
+    if (clickX > 7 ){
       mode = "dark"
-    } else if (clickX < -18.5){
+    } else if (clickX < -7){
       mode = "light"
     }
 
   }
   if (prevMode === "dark") {
-    if (clickX < 15 ){
+    if (clickX < 22 ){
       mode = "neutral"
     } 
   }
   if (prevMode === "light") {
-    if (clickX > -15 ){
+    if (clickX > -22 ){
       mode = "neutral"
     } 
   }
