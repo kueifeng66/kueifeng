@@ -164,6 +164,7 @@ body {
  z-index: -2;
  padding: 0.3rem;
  animation: 3s spin linear infinite;
+ border-radius: 0.3rem;
 }
  .today::before{
   content: '';
@@ -178,6 +179,7 @@ body {
   z-index: -1;
   padding: 0rem;
   animation: 3s spin linear infinite;
+  border-radius: 0.3rem;
  }
 
 @keyframes spin {
