@@ -339,7 +339,7 @@ body.dark {
   width: 4rem;
   height: 4rem;
   border-radius: 50%;
-  top: 0.11rem;
+  top: 0rem;
   left: 3rem; /* Start in the center */
   transition: transform 0.3s ease-in-out;
 }
