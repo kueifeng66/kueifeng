@@ -76,9 +76,10 @@ const dutySchedule = {
 "2025-2-23": "S: 黃經洲 A: 彭偉慎 N: 王瑞發 C: 秦桔萬 R: 林厚運 T: 林宏儒",
 "2025-2-24": "S: 范振宇 A: 張哲維 N: 唐__茂 C: 張日曜 R: 劉錦郎 T: 洪柜峰",
 "2025-2-25": "S: 柯正和 A: 羅應順 N: 劉暐丞 C: 孫景泰 R: 黃煜森 T: 呂明峰",
-"2025-2-26": "S: 黃榮國 A: 王金誠 N: 王瑞發 C: 邱冠霖 R: 林厚運 T: 林宏儒",
+"2025-2-26": "S: 黃榮國 A: 王金誠 N: 王瑞發 C: 邱冠霖 R: 張哲維 T: 林宏儒",
 "2025-2-27": "S: 黃經洲 A: 方振彬 N: 劉暐丞 C: 張日曜 R: 黃煜森 T: 羅應順",
 "2025-2-28": "S: 詹文欽 A: 王瑞發 N: 王金誠 C: 秦桔萬 R: 張哲維 T: 洪柜峰",
+
 
 
 
@@ -179,6 +180,37 @@ const holiday = {
 "2025-3-29": "【三月大】【放假日】",
 "2025-3-30": "【初二】【放假日】",
 "2025-3-31": "【初三】",
+"2025-4-1": "【初四】",
+"2025-4-2": "【初五】",
+"2025-4-3": "【初六】【放假日】",
+"2025-4-4": "【清明】【放假日】",
+"2025-4-5": "【初八】【放假日】",
+"2025-4-6": "【初九】【放假日】",
+"2025-4-7": "【初十】",
+"2025-4-8": "【十一】",
+"2025-4-9": "【十二】",
+"2025-4-10": "【十三】",
+"2025-4-11": "【十四】",
+"2025-4-12": "【十五】【放假日】",
+"2025-4-13": "【十六】【放假日】",
+"2025-4-14": "【十七】",
+"2025-4-15": "【十八】",
+"2025-4-16": "【十九】",
+"2025-4-17": "【二十】",
+"2025-4-18": "【廿一】",
+"2025-4-19": "【廿二】【放假日】",
+"2025-4-20": "【穀雨】【放假日】",
+"2025-4-21": "【廿四】",
+"2025-4-22": "【廿五】",
+"2025-4-23": "【廿六】",
+"2025-4-24": "【廿七】",
+"2025-4-25": "【廿八】",
+"2025-4-26": "【廿九】【放假日】",
+"2025-4-27": "【三十】【放假日】",
+"2025-4-28": "【四月小】",
+"2025-4-29": "【初二】",
+"2025-4-30": "【初三】",
+
 
 
 
@@ -640,6 +672,7 @@ const names = [
   "柯正和",
   "張日曜",
   "秦桔萬",
+  "方振彬",
   "邱冠霖",
   "孫景泰",
   "林森發",
@@ -654,7 +687,6 @@ const names = [
   "周育稔",
   "林宏儒",
   "羅應順",
-  "方振彬",
   "呂明峰",
   "．．．",
   "．．．",
@@ -1159,26 +1191,33 @@ document.addEventListener('mousemove', (e) => {
 
 btn.addEventListener("click", function (event) {
   const rect = btn.getBoundingClientRect(); 
-  const clickX = event.clientX - rect.left;
+  const centerX = rect.left + rect.width / 2;
+  const clickX = event.clientX - centerX;
   const toggleWidth = rect.width;
   const center = toggleWidth / 2;
+  
+ 
   const prevMode = mode; // Store the current mode before changes
+  console.log(`Click Position: ${clickX}`);
+  if (prevMode === "neutral") {
+    if (clickX > 7 ){
+      mode = "dark"
+    } else if (clickX < -7){
+      mode = "light"
+    }
 
-  if (clickX > center) { 
-      if (mode === "neutral") {
-          mode = "dark";
-      } else if (mode === "light") {
-          mode = "neutral";
-      }
   }
-
-  if (clickX < center) { 
-  if (mode === "neutral") {
-          mode = "light";
-      } else if(mode === "dark") {
-          mode = "neutral";
-      } 
+  if (prevMode === "dark") {
+    if (clickX < 22 ){
+      mode = "neutral"
+    } 
   }
+  if (prevMode === "light") {
+    if (clickX > -22 ){
+      mode = "neutral"
+    } 
+  }
+  
 
     // Call setMode(mode) only if mode has changed
   if (mode !== prevMode) {
@@ -1328,13 +1367,3 @@ namePicker.addEventListener('scroll', () => {
 
   button.style.display = "block"; // Always show the button
 });
-
-
-
-
-
-
-
-
-
-

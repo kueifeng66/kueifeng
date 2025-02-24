@@ -164,6 +164,7 @@ body {
  z-index: -2;
  padding: 0.3rem;
  animation: 3s spin linear infinite;
+ border-radius: 0.3rem;
 }
  .today::before{
   content: '';
@@ -178,6 +179,7 @@ body {
   z-index: -1;
   padding: 0rem;
   animation: 3s spin linear infinite;
+  border-radius: 0.3rem;
  }
 
 @keyframes spin {
@@ -337,7 +339,7 @@ body.dark {
   width: 4rem;
   height: 4rem;
   border-radius: 50%;
-  top: 0.11rem;
+  top: 0rem;
   left: 3rem; /* Start in the center */
   transition: transform 0.3s ease-in-out;
 }
