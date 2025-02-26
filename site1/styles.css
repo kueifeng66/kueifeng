@@ -300,7 +300,6 @@ body.dark {
   display: flex;
   justify-content: center;
   align-items: center;
-  
   position: relative; /* Ensure z-index works */
   z-index: 2; /* Lower than header::after */
 }
@@ -309,14 +308,17 @@ body.dark {
 .button.dark {
   background-color: #2ecc71;
   box-shadow: 0.1rem 0.1rem 0.4rem rgba(0, 0, 0, 0.5) inset;
+  background-image: url('nextmonth.png');
 }
 .button.light {
   background-color: #b0b0b0;
   box-shadow: 0.1rem 0.1rem 0.4rem rgba(0, 0, 0, 0.5) inset;
+  background-image: url('lastmonth.png');
 }
 .button.neutral {
   background-color: #f0d78c;
   box-shadow: 0.1rem 0.1rem 0.4rem rgba(0, 0, 0, 0.5) inset;
+  background-image: url('currentmonth.png');
 }
 
 
@@ -334,7 +336,7 @@ body.dark {
 .button::before {
   content: "";
   position: absolute;
-  background-color: #fff;
+  background-color: rgba(255, 255, 255, 0.82);
   box-shadow: 0.1rem 0.1rem 0.4rem rgba(0, 0, 0, 0.5) ;
   width: 4rem;
   height: 4rem;
@@ -342,12 +344,14 @@ body.dark {
   top: 0rem;
   left: 3rem; /* Start in the center */
   transition: transform 0.3s ease-in-out;
+  
 }
 
 
 
 .button.light::before {
   transform: translateX(-3rem);
+  
 }
 
 .button.dark::before {
