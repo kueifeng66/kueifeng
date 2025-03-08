@@ -44,7 +44,12 @@ body {
   align-items: center; /* Center vertically */
   text-align: center;
   flex-direction: column; /* Ensure text aligns in the center */
-  user-select: none;
+  
+  user-select: none;          /* Standard syntax */
+  -webkit-user-select: none;  /* Safari, Chrome, and Opera */
+  -moz-user-select: none;     /* Firefox */
+  -ms-user-select: none;      /* Internet Explorer/Edge */
+  -webkit-touch-callout: none;  /* iOS Safari */
 }
 
 
@@ -227,7 +232,11 @@ body {
   cursor: pointer;
   text-align: center;
   z-index: 10;
-  user-select: none;
+  user-select: none;          /* Standard syntax */
+  -webkit-user-select: none;  /* Safari, Chrome, and Opera */
+  -moz-user-select: none;     /* Firefox */
+  -ms-user-select: none;      /* Internet Explorer/Edge */
+  -webkit-touch-callout: none;  /* iOS Safari */
 }
 .weekend {
   width: 4.2rem;
