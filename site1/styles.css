@@ -401,6 +401,12 @@ footer {
   border: #ffffff;
   position:relative;
   z-index: auto;
+
+  user-select: none;          /* Standard syntax */
+  -webkit-user-select: none;  /* Safari, Chrome, and Opera */
+  -moz-user-select: none;     /* Firefox */
+  -ms-user-select: none;      /* Internet Explorer/Edge */
+  -webkit-touch-callout: none;  /* iOS Safari */
 }
   
 .picker-body {
