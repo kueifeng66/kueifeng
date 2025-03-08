@@ -44,6 +44,7 @@ body {
   align-items: center; /* Center vertically */
   text-align: center;
   flex-direction: column; /* Ensure text aligns in the center */
+  user-select: none;
 }
 
 
@@ -226,6 +227,7 @@ body {
   cursor: pointer;
   text-align: center;
   z-index: 10;
+  user-select: none;
 }
 .weekend {
   width: 4.2rem;
