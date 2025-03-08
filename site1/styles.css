@@ -269,6 +269,12 @@ body {
   box-shadow: 0.5rem 0.5rem 0.5rem  rgba(0, 0, 0, 0.5); /* Add box shadow for a subtle lift */
   transition: 0.1s ease-in-out; /* Add transition for smooth appearance */
   cursor: move; 
+
+  user-select: none;          /* Standard syntax */
+  -webkit-user-select: none;  /* Safari, Chrome, and Opera */
+  -moz-user-select: none;     /* Firefox */
+  -ms-user-select: none;      /* Internet Explorer/Edge */
+  -webkit-touch-callout: none;  /* iOS Safari */
 }
 
 .tooltip-day{
