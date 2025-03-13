@@ -1,0 +1,601 @@
+html {
+  font-size: 62.5%; /* 1rem = 10px */
+}
+
+body {
+  font-family:  Arial, Helvetica, sans-serif;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+  height: 100vh;
+  width:100vw;
+  margin: 0;
+  overflow: hidden; 
+  background-image: url('tower.png');
+  background-size: cover; 
+  background-position: center; 
+  background-repeat: no-repeat; 
+  position: relative;
+  z-index: -200;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  transition: 0.1s;
+}
+
+#calendar {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.1rem;
+}
+
+
+.header-cell {
+  border-radius: 0.5rem;
+  height: 7.8rem;
+  width: 9.8rem;
+  display: flex;
+  justify-content: center; /* Center horizontally */
+  align-items: center; /* Center vertically */
+  text-align: center;
+  flex-direction: column; /* Ensure text aligns in the center */
+  
+  user-select: none;          /* Standard syntax */
+  -webkit-user-select: none;  /* Safari, Chrome, and Opera */
+  -moz-user-select: none;     /* Firefox */
+  -ms-user-select: none;      /* Internet Explorer/Edge */
+  -webkit-touch-callout: none;  /* iOS Safari */
+}
+
+
+
+#header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 0.1rem solid #ffffff;
+  height: 7.8rem;
+  width: 9.8rem;
+  font-weight: bold;
+  padding: 0rem;
+  background-color: #3498db;
+  text-align: center;
+  color: #fff;
+  font-size:  1.8rem;
+  border-radius: 0.5rem;
+  position: relative;
+  z-index: 5;
+  text-shadow:
+  0 0 0.8rem rgba(173, 216, 230, 0.8),
+  0 0 1rem rgba(173, 216, 230, 0.7), 
+  0 0 3rem rgba(173, 216, 230, 0.6), 
+  0 0 4rem rgba(173, 216, 230, 0.5), 
+  0 0 5rem rgba(135, 206, 250, 0.4);
+}
+#header::before{
+  content: '';
+  position: absolute;
+  height: 7.8rem;
+  width: 9.8rem;
+  background: #3498db;
+  /* background-image: conic-gradient(from var(--angle), transparent , #ff4545, #00ff99, #006aff, #ff0095, #ff4545); */
+  top: 50%;
+  left: 50%;
+  translate: -47% -50%; 
+  padding: 0rem;
+  border-radius: 0.5rem;
+  animation: 3s spin linear infinite;
+  z-index: 4;
+ }
+
+#header::after{
+  content: '';
+  position: absolute;
+  height: 7.8rem;
+  width: 9.8rem;
+  background-image: conic-gradient(from var(--angle), transparent 70%, #ff4545, #00ff99, #006aff, #ff0095, #ff4545);
+  top: 50%;
+  left: 50%;
+  translate: -47% -50%;
+  padding: 0.4rem;
+  border-radius: 0.5rem;
+  animation: 3s spin linear infinite;
+  z-index: 3;
+ }
+ 
+#header-selected::before, 
+#header-selected::after {
+  animation: none; /* Stop the spinning animation */
+  background: transparent; /* Hide the background image if needed */
+}
+
+
+.day {
+  
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 4.2rem;
+  height: 4.3rem;
+  font-size: 1.8rem;
+  font-weight: bold;
+  border: 0.1rem solid #ffffff;
+  padding: 1rem;
+  font-weight: bold;
+  text-align: center;
+  position: relative;
+  cursor: pointer;
+
+  user-select: none;          /* Standard syntax */
+  -webkit-user-select: none;  /* Safari, Chrome, and Opera */
+  -moz-user-select: none;     /* Firefox */
+  -ms-user-select: none;      /* Internet Explorer/Edge */
+  -webkit-touch-callout: none;  /* iOS Safari */
+}
+
+.day:hover {
+  transform: scale(1.7); 
+  background: linear-gradient(to right, orange, yellow , #ffff99,lightyellow, #ffffff);
+  border-radius: 0.5rem;
+  z-index: 11;
+  transition: 0.3s;
+}
+
+
+.today {
+  margin: 0 auto;
+  width: 4.2rem;
+  height: 4.3rem;
+  font-weight: bold;
+  background: transparent;
+  text-align: center;
+  position: relative;
+  z-index:0;
+ }
+
+ @property --angle{
+    syntax: "<angle>";
+    initial-value: 0deg;
+    inherits: false;
+ }
+
+.today::after{
+ content: '';
+ position: absolute;
+ height: 100%;
+ width: 100%;
+ background-image: conic-gradient(from var(--angle), transparent 70%, #ff4545, #00ff99, #006aff, #ff0095, #ff4545);
+ top: 50%;
+ left: 50%;
+ translate: -50% -50%;
+ z-index: -2;
+ padding: 0.3rem;
+ animation: 3s spin linear infinite;
+ border-radius: 0.3rem;
+}
+ .today::before{
+  content: '';
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  background-image: linear-gradient(to right, #D3D3D3, #A9A9A9);
+  /* background-image: conic-gradient(from var(--angle), transparent , #ff4545, #00ff99, #006aff, #ff0095, #ff4545); */
+  top: 50%;
+  left: 50%;
+  translate: -50% -50%; 
+  z-index: -1;
+  padding: 0rem;
+  animation: 3s spin linear infinite;
+  border-radius: 0.3rem;
+ }
+
+@keyframes spin {
+  from{
+    --angle: 0deg;
+  }
+  to{
+    --angle: 360deg;
+  }
+}
+
+.selected {
+  background-image: linear-gradient(to right, turquoise, lightblue);
+}
+
+.selected2 {
+  background-image: linear-gradient(to right, #B2FF9E, lightgreen);
+}
+
+.selected3 {
+  background-image: linear-gradient(to right, #EBD9AA, lightyellow);
+}
+
+
+
+.today-selected::before, 
+.today-selected::after {
+  animation: none; /* Stop the spinning animation */
+  background: transparent; /* Hide the background image if needed */
+}
+
+
+.weekday {
+  width: 4.2rem;
+  height: 4.3rem;
+  font-weight: bold;
+  border: 0.1rem solid #ffffff;
+  background-color: #3498db;
+  color: #fff;
+  font-size: 1.8rem;
+  padding: 1rem;
+  font-weight: bold;
+  position: relative;
+  cursor: pointer;
+  text-align: center;
+  z-index: 10;
+  user-select: none;          /* Standard syntax */
+  -webkit-user-select: none;  /* Safari, Chrome, and Opera */
+  -moz-user-select: none;     /* Firefox */
+  -ms-user-select: none;      /* Internet Explorer/Edge */
+  -webkit-touch-callout: none;  /* iOS Safari */
+}
+.weekend {
+  width: 4.2rem;
+  height: 4.3rem;
+  color: red;
+  font-weight: bold;
+  text-align: center;
+}
+
+#tooltip {
+  white-space: pre-line; 
+  width: 10rem;
+  height: 30rem;
+  font-size: 1.6rem;
+  text-align: left;
+  font-weight: bold;
+  position: fixed;
+  background-color: rgba(51, 51, 51, 0.75); 
+  color: white;
+  padding: 1rem;
+  display: none;
+  z-index: 10;
+  border-radius: 2rem;
+  box-shadow: 0.5rem 0.5rem 0.5rem  rgba(0, 0, 0, 0.5); /* Add box shadow for a subtle lift */
+  transition: 0.1s ease-in-out; /* Add transition for smooth appearance */
+  cursor: move; 
+
+  user-select: none;          /* Standard syntax */
+  -webkit-user-select: none;  /* Safari, Chrome, and Opera */
+  -moz-user-select: none;     /* Firefox */
+  -ms-user-select: none;      /* Internet Explorer/Edge */
+  -webkit-touch-callout: none;  /* iOS Safari */
+}
+
+.tooltip-day{
+  font-size: 1.6rem;
+  text-align: center; /* Align text to the left */
+  display: block; 
+}
+.tooltip-duty{
+  font-size: 1.6rem;
+  text-align: left; /* Align text to the left */
+  display: block; 
+}
+
+.tooltip-weather {
+  font-size: 1.4rem; /* Adjust this value as needed */
+  text-align: left; /* Align text to the left */
+  display: block;   /* Ensure it behaves like a block element */
+}
+
+.lunar-name {
+  display: block;       /* Forces the lunar name to appear on a new line */
+  font-size: 0.7rem;    /* Smaller font size */
+  text-align: center;   /* Centers the lunar name */
+  margin-top: 0.7rem;   /* Optional: Add some space between day and lunar name */
+   /* Avoid wrapping the text */
+}
+
+
+body.dark {
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.dark {
+  background: #121212;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.display {
+  width: 10rem;
+  height: 4rem;
+  border-radius: 20rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative; /* Ensure z-index works */
+  z-index: 2; /* Lower than header::after */
+}
+
+
+.button.dark {
+  background-color: #2ecc71;
+  box-shadow: 0.1rem 0.1rem 0.4rem rgba(0, 0, 0, 0.5) inset;
+  background-image: url('nextmonth.png');
+}
+.button.light {
+  background-color: #b0b0b0;
+  box-shadow: 0.1rem 0.1rem 0.4rem rgba(0, 0, 0, 0.5) inset;
+  background-image: url('lastmonth.png');
+}
+.button.neutral {
+  background-color: #f0d78c;
+  box-shadow: 0.1rem 0.1rem 0.4rem rgba(0, 0, 0, 0.5) inset;
+  background-image: url('currentmonth.png');
+}
+
+
+.button {
+  background-color:  #f0d78c;
+  width: 10rem;
+  height: 4rem;
+  border-radius: 3rem;
+  box-shadow: 0.1rem 0.1rem 0.4rem rgba(0, 0, 0, 0.5) inset;
+  cursor: pointer;
+  position: relative;
+  transition: 0.3s ease-in-out;
+  background-image: url('currentmonth.png');
+}
+
+.button::before {
+  content: "";
+  position: absolute;
+  background-color: rgba(255, 255, 255, 0.82);
+  box-shadow: 0.1rem 0.1rem 0.4rem rgba(0, 0, 0, 0.5) ;
+  width: 4rem;
+  height: 4rem;
+  border-radius: 50%;
+  top: 0rem;
+  left: 3rem; /* Start in the center */
+  transition: transform 0.3s ease-in-out;
+  
+}
+
+
+
+.button.light::before {
+  transform: translateX(-3rem);
+  
+}
+
+.button.dark::before {
+  transform: translateX(3rem);
+}
+
+
+footer {
+  height:  3rem;
+  align-items: flex-start;
+  position: fixed;
+  font-weight: bold;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: rgba(240,50,230,0.8); 
+  box-shadow: 1rem 1rem 3rem  #dcbeff inset; /* Adjust the background color as needed */
+  padding: 0.2rem;
+  font-size: 2rem;
+  text-align: center;
+  color: black;
+  z-index: -1;
+}
+
+.picker-container {
+  margin-right: auto;
+  border: 0.1rem solid #ffffff;
+  width: 10.2rem;
+  margin: 0.3rem;
+  background-color: #ccc;
+  box-shadow: 0 0 1rem rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  border-radius: 0.5rem;
+  text-align: center;
+  border: #ffffff;
+  position:relative;
+  z-index: auto;
+
+  user-select: none;          /* Standard syntax */
+  -webkit-user-select: none;  /* Safari, Chrome, and Opera */
+  -moz-user-select: none;     /* Firefox */
+  -ms-user-select: none;      /* Internet Explorer/Edge */
+  -webkit-touch-callout: none;  /* iOS Safari */
+}
+  
+.picker-body {
+  border-radius: 0.5rem;
+  padding: 0.1rem;
+  background-color: lightgrey;
+  font-weight: bold;
+  font-size: 1.8rem;
+  font-weight: bold;
+  overflow: auto;
+  text-align: center;
+  height: 15rem;
+  position: relative;
+  z-index: 1;
+
+   user-select: none;          /* Standard syntax */
+  -webkit-user-select: none;  /* Safari, Chrome, and Opera */
+  -moz-user-select: none;     /* Firefox */
+  -ms-user-select: none;      /* Internet Explorer/Edge */
+  -webkit-touch-callout: none;  /* iOS Safari */
+}
+
+.picker-item {
+  margin-bottom: 1rem;
+  transition: transform 0.3s ease;
+  margin: 0.3rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center; 
+  position: relative;
+  width: auto;
+  padding: 0px 3px;
+  border-radius: 0.5rem;
+  opacity: 0.85;
+  filter: drop-shadow(0 2px 2px #555);
+  will-change: transform, opacity;
+
+   user-select: none;          /* Standard syntax */
+  -webkit-user-select: none;  /* Safari, Chrome, and Opera */
+  -moz-user-select: none;     /* Firefox */
+  -ms-user-select: none;      /* Internet Explorer/Edge */
+  -webkit-touch-callout: none;  /* iOS Safari */
+}
+
+.picker-item:hover {
+  background-color: #f2f2f2;
+  transform: scale(1.5);
+  overflow-x: hidden;
+  /* text-decoration: underline; */
+}
+
+#namePicker {
+  overflow-x: hidden;
+}
+
+#scrollingText {
+  white-space: nowrap; /* Prevents the text from wrapping */
+  overflow: hidden; /* Hides the overflow text */
+}
+
+#scrollingText p {
+  display: inline-block; /* Makes the text inline but allows it to be treated as a block element */
+  margin-right: 100%; /* Moves the text off-screen initially */
+  animation: marquee 20s linear infinite; /* Define the animation */
+}
+
+/* Define the animation */
+@keyframes marquee {
+  from {
+    margin-right: 100%; /* Start off-screen to the right */
+  }
+  to {
+    margin-left: 0%; /* Move to the left, displaying the text */
+  }
+}
+
+
+
+@media (width <= 400px) {
+
+  .day {
+    width: 4rem;
+    height: 4.32rem;
+  }
+  .weekday {
+    width: 4rem;
+    height: 4.32rem;
+  }
+  .weekend {
+    width: 4rem;
+    height: 4.32rem;
+  }
+
+}
+#myVideo {
+  position: absolute;
+  top: 0rem;
+  left: 11.7rem;
+  width: 29.8rem;
+  height: 26.6rem;
+  border: 0.1rem solid #ffffff;
+  z-index:-50;
+  object-fit: cover;
+}
+
+
+iframe {
+  
+  top: 0;
+  left: 0;
+  width: 100vw; /* Full viewport width */
+  height: 100vh; /* Full viewport height */
+  border: 0;
+  position: absolute;
+  
+  
+}
+
+.trail {
+  position: absolute;
+  width: 1.5rem;
+  height: 1.5rem;
+  background-color: #f032e6;
+  border-radius: 50%;
+  pointer-events: none;
+  animation: fade 1.2s forwards;
+  z-index: 101;
+}
+
+@keyframes fade {
+  0% {
+    opacity:1;
+    transform:scale(1);
+  }
+  25%{
+    opacity:0.75;
+    transform:scale(0.75);
+  }
+  50%{
+    opacity:0.5;
+    transform:scale(0.5);
+  }
+  75%{
+    opacity:0.25;
+    transform:scale(0.25);
+
+  }
+  100% {
+    opacity:0;
+    transform:scale(0);
+  }
+}
+
+
+
+#scrollToBottomButton {
+  height: 7.8rem;
+  width: 10.1rem;
+  margin-top: 10px;
+  padding: 10px 20px;
+  background-color: #3498db; 
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 2rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+#scrollToBottomButton:hover {
+  background: linear-gradient(to right, #345bdb, #2e4d8f);
+  border-radius: 5px;
+  transform: scale(1.5);
+}
+
+#scrollToBottomButton:active {
+  transform: scale(1.2);
+}
+
