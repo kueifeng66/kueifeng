@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<<<<<<< HEAD:just for fun/index.html
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="styles.css">
@@ -48,4 +49,67 @@
 <footer class="footer">
   <marquee id="scrollingText"></marquee>
 </footer>
+=======
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link id="favicon" rel="icon" href="favicon1.ico" type="image/x-icon">
+    <title>Last Updated: 2025-03-06</title>
+    <style>
+        iframe {
+            width: 100%;
+            height: 100vh;
+            border: none;
+        }
+        button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 15px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:active {
+            background-color: #0056b3;
+        }
+    </style>
+    <script type="speculationrules">
+        {
+          "prerender": [
+            {
+              "urls": ["/", "/site1/index.html", "/site2/index.html", "/site3/index.html"],
+              "eagerness": "eager"
+            }
+          ]
+        }
+    </script>
+</head>
+<body>
+    <iframe id="website-frame" src="site1/index.html"></iframe>
+    <button onclick="switchWebsite()">⇄</button>
+    <script>
+        const sites = [
+            { src: 'site1/index.html', favicon: 'favicon1.ico' },
+            { src: 'site2/index.html', favicon: 'favicon2.ico' },
+            { src: 'site3/index.html', favicon: 'favicon3.ico' }
+        ];
+        let currentSiteIndex = 0;
+
+        function switchWebsite() {
+            // Increment the index and reset if it exceeds the array length
+            currentSiteIndex = (currentSiteIndex + 1) % sites.length;
+
+            // Update iframe source and favicon
+            const frame = document.getElementById('website-frame');
+            const favicon = document.getElementById('favicon');
+            frame.src = sites[currentSiteIndex].src;
+            favicon.href = sites[currentSiteIndex].favicon;
+        }
+    </script>
+</body>
+>>>>>>> e8c1f0a38b0cd9f41c578f495c03e58c26040daf:index.html
 </html>
