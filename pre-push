@@ -1,0 +1,17 @@
+#!/bin/bash
+
+# Get the current date and time
+currentDate=$(date +"%Y-%m-%d")
+
+# Define the path to the HTML file
+htmlFilePath="C:/Users/user/Desktop/duty/git/kueifeng/index.html"
+
+# Update the HTML file with the current date
+#
+sed -i "s/\(<title>Last Updated: \).*\(<\/title>\)/\1${currentDate}\2/" "$htmlFilePath"
+
+# Stage the changes
+#git add "$htmlFilePath"
+
+# Commit the changes with a message
+#git commit -m "Update: Last updated on ${currentDate}" --no-verify
