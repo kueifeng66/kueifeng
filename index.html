@@ -6,23 +6,43 @@
     <link id="favicon" rel="icon" href="favicon1.ico" type="image/x-icon">
     <title>Last Updated: 2025-03-21</title>
     <style>
+        html {
+                font-size: 62.5%; /* 1rem = 10px */
+             }
         iframe {
             width: 100%;
             height: 100vh;
             border: none;
         }
-        button {
+        #switchWebsite {
+            width:5rem;
+            height:5rem;
             position: fixed;
-            bottom: 20px;
-            right: 20px;
-            padding: 15px;
+            bottom: 2rem;
+            right: 8rem;
+            padding: 1.5rem;
             background-color: #007BFF;
             color: white;
             border: none;
             border-radius: 50%;
-            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+            box-shadow: 0px 0.4rem 0.6rem rgba(0, 0, 0, 0.2);
             cursor: pointer;
-            font-size: 16px;
+            font-size: 1.6rem;
+        }
+        #logout-btn {
+            width:5rem;
+            height:5rem;
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            padding: 1.5rem;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            box-shadow: 0px 0.4rem 0.6rem rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            font-size: 1.6rem;
         }
         button:active {
             background-color: #0056b3;
@@ -40,7 +60,7 @@
     </script>
 	 <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
 
         // Initialize Firebase
         const firebaseConfig = {
@@ -55,17 +75,30 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
 
+        
         // Check if user is authenticated when the page loads
         onAuthStateChanged(auth, (user) => {
             if (!user) {
                 window.location.href = "login.html";  // Redirect to login page if not authenticated
             }
         });
+    
+        window.logout = function() {
+            signOut(auth).then(() => {
+            alert("Logged out successfully!");
+            window.location.href = "login.html"; // Redirect to login page
+            }).catch(error => {
+             alert("Error logging out: " + error.message);
+         });
+        }
+                
+        
     </script>
 </head>
 <body>
     <iframe id="website-frame" src="site1/index.html"></iframe>
-    <button onclick="switchWebsite()">⇄</button>
+    <button id="switchWebsite"onclick="switchWebsite()">⇄</button>
+    <button id="logout-btn" onclick="logout()">🔓</button>
     <script>
         const sites = [
             { src: 'site1/index.html', favicon: 'favicon1.ico' },
@@ -84,6 +117,10 @@
             frame.src = sites[currentSiteIndex].src;
             favicon.href = sites[currentSiteIndex].favicon;
         }
+
+        
+
+        
     </script>
 </body>
 </html>
