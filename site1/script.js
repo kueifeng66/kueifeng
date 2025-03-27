@@ -1437,7 +1437,39 @@ namePicker.addEventListener('scroll', () => {
   button.style.display = "block"; // Always show the button
 });
 
+document.addEventListener('DOMContentLoaded', () => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const userEmail = urlParams.get('userEmail');
+  
 
+  const emailNameMap = {
+    'kueifeng7166@gmail.com': '洪柜峰',
+    'shinchir46@gmail.com': '洪柜峰',
+    'qqcats0901@mail.post.gov.tw': '洪柜峰',
+    'jeremycks@gmail.com':'劉錦郎',
+    'chinjiewan@anws.gov.tw':'秦桔萬',
+    'sishin@anws.gov.tw':'許世勳',
+    'cw.chang@anws.gov.tw':'張哲維',
+
+  };
+
+  const targetName = emailNameMap[userEmail];
+  if (targetName) {    
+    const items = document.querySelectorAll('.picker-item');
+    const nameElement = Array.from(items).find(item => 
+        item.textContent.trim() === '洪柜峰'
+    );
+    if (nameElement) {
+      // Scroll to Joe's element
+      nameElement.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center'
+      });
+      // Trigger click event programmatically to select Joe
+      nameElement.click();
+    }
+  }
+});
 
 
 

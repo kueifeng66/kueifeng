@@ -76,11 +76,14 @@
         const auth = getAuth(app);
 
         
-        // Check if user is authenticated when the page loads
         onAuthStateChanged(auth, (user) => {
-            if (!user) {
-                window.location.href = "login.html";  // Redirect to login page if not authenticated
-            }
+        if (!user) {
+        window.location.href = "login.html"; // Redirect to login if no user
+        return;
+        }
+        // If user exists, load the iframe with user email
+        const iframe = document.getElementById('website-frame');
+        iframe.src = `site1/index.html?userEmail=${encodeURIComponent(user.email)}`;
         });
     
     window.logout = function() {
@@ -134,9 +137,6 @@
             favicon.href = sites[currentSiteIndex].favicon;
         }
 
-        
-
-        
     </script>
 </body>
 </html>
