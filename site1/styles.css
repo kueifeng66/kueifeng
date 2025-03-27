@@ -306,7 +306,7 @@ body {
 }
 
 
-body.dark {
+/* body.dark {
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
@@ -317,7 +317,7 @@ body.dark {
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
-}
+} */
 
 .display {
   width: 10rem;

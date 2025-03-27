@@ -1,7 +1,7 @@
 const calendar = document.getElementById('calendar');
 const tooltip = document.getElementById('tooltip');
 const btn = document.querySelector("#toggle");
-const footer = document.getElementById('scrollingText');
+// const footer = document.getElementById('scrollingText');
 const header = document.getElementById('header');
 const body = document.body;
 const lastUpdated = document.title;
@@ -100,8 +100,8 @@ const dutySchedule = {
 "2025-4-18": "S: 黃榮國 A: 唐__茂 N: 劉暐丞 C: 張日曜 R: 林厚運 T: 許世勳",
 "2025-4-19": "S: 詹文欽 A: 黃經洲 N: 許敦智 C: 秦桔萬 R: 余金原 T: 呂明峰",
 "2025-4-20": "S: 范振宇 A: 洪柜峰 N: 唐__茂 C: 邱冠霖 R: 張哲維 T: 林宏儒",
-"2025-4-21": "S: 柯正和 A: 劉錦郎 N: 王瑞發 C: 孫景泰 R: 林厚運 T: 許世勳",
-"2025-4-22": "S: 黃經洲 A: 許敦智 N: 彭偉慎 C: 張日曜 R: 黃煜森 T: 羅應順",
+"2025-4-21": "S: 柯正和 A: 劉錦郎 N: 王瑞發 C: 孫景泰 R: 林厚運 T: 羅應順",
+"2025-4-22": "S: 黃經洲 A: 許敦智 N: 彭偉慎 C: 張日曜 R: 黃煜森 T: 許世勳",
 "2025-4-23": "S: 林森發 A: 唐__茂 N: 王金誠 C: 孫景泰 R: 劉錦郎 T: 林宏儒",
 "2025-4-24": "S: 黃榮國 A: 林厚運 N: 許敦智 C: 秦桔萬 R: 張哲維 T: 洪柜峰",
 "2025-4-25": "S: 黃經洲 A: 黃經洲 N: 王瑞發 C: 張日曜 R: 黃煜森 T: 林宏儒",
@@ -110,6 +110,8 @@ const dutySchedule = {
 "2025-4-28": "S: 林森發 A: 王金誠 N: 王瑞發 C: 邱冠霖 R: 劉錦郎 T: 林宏儒",
 "2025-4-29": "S: 黃榮國 A: 黃榮國 N: 唐__茂 C: 張日曜 R: 林厚運 T: 呂明峰",
 "2025-4-30": "S: 范振宇 A: 黃煜森 N: 王金誠 C: 孫景泰 R: 張哲維 T: 許世勳",
+
+
 
 
 
@@ -571,6 +573,8 @@ function hideTooltip() {
 }
 
 function setMode(newMode) {
+
+
   // Remove previous classes
   body.classList.remove("light", "neutral", "dark");
   toggle.classList.remove("light", "neutral", "dark");
@@ -581,7 +585,7 @@ function setMode(newMode) {
 
   let reloadDivs = document.getElementsByClassName("weekday"); 
   let pressTimer;
-  var day_now = now.getDate();
+  
 
   if (newMode === "dark"){
     updateSelection();
@@ -604,7 +608,7 @@ function setMode(newMode) {
     
     let header = document.getElementById('header');
     header.style.color = 'white';
-    footer.style.color = 'MediumBlue';
+    // footer.style.color = 'MediumBlue';
     for (let i = 0; i < 7; i++) {
       let reloadDiv = reloadDivs[i];
 
@@ -619,12 +623,11 @@ function setMode(newMode) {
       reloadDiv.addEventListener("touchcancel", clearTimer); // in case the touch is canceled
     }
     hideTooltip();
+    highlightAdditionalHoliday();
   } else if (mode === "neutral"){
     updateSelection();
     clearSelectedClass();
 
-    body.classList.remove("dark");
-    body.style.backgroundImage = "url('tower.png')";
 
     calendar.innerHTML = '';
 
@@ -635,13 +638,14 @@ function setMode(newMode) {
     createCalendar(year,month,day);
     let header = document.getElementById('header');
     header.style.color = ''; // This will remove the inline 'color' style, allowing the CSS rule to take effect
-    footer.style.color = 'black';
+    // footer.style.color = 'black';
     
     const headerCells = document.querySelector('.header-cell');
     headerCells.innerHTML = `${year} 年 &nbsp;&nbsp;&nbsp&nbsp;&nbsp${month} 月&nbsp;&nbsp&nbsp;&nbsp&nbsp;&nbsp ${day} 日 &nbsp;`;  
     showTooltip(formattedDate); 
     fetchWeather();
     AddWeekDay();
+    highlightAdditionalHoliday();
   } else if (mode === "light"){
     updateSelection();
     clearSelectedClass();
@@ -655,13 +659,14 @@ function setMode(newMode) {
     createCalendar(year,month,day);
     let header = document.getElementById('header');
     header.style.color = ''; // This will remove the inline 'color' style, allowing the CSS rule to take effect
-    footer.style.color = 'black';
+    // footer.style.color = 'black';
     
     const headerCells = document.querySelector('.header-cell');
     headerCells.innerHTML = `${year} 年 &nbsp;&nbsp;&nbsp;&nbsp${month} 月`;  
     showTooltip(formattedDate); 
     fetchWeather();
     hideTooltip();
+    highlightAdditionalHoliday();
   }
   //below is to highlight the name previously selected in the change function
   highlightSelectedName(temp_name);
@@ -672,7 +677,7 @@ function setMode(newMode) {
       item.style.backgroundColor = "turquoise";
     }
   });
-  highlightAdditionalHoliday();
+ 
   
   for (let i = 0; i < 7; i++) {
     let reloadDiv = reloadDivs[i];
@@ -687,7 +692,12 @@ function setMode(newMode) {
     reloadDiv.addEventListener("touchend", clearTimer);
     reloadDiv.addEventListener("touchcancel", clearTimer); // in case the touch is canceled
   }
-  }
+
+
+
+
+
+}
 
 
 
@@ -1084,9 +1094,9 @@ function fetchWeather() {
         ch_weather='颱風天';
         
       }
-      const date2 = `${year}-${month}-${day}`;
-      let info = `${year}年${month}月${day}日`+ (holiday[date2] || '') + `桃園機場 ☛☛☛ 溫度:${temperatureCelsius}°C  濕度:${humidity}%   能見度:${visibility}km  ${ch_weather}(${weatherCondition}) ☛☛☛`+ " " + (dutySchedule[date2] || '');
-      scroll(info);
+      // const date2 = `${year}-${month}-${day}`;
+      // let info = `${year}年${month}月${day}日`+ (holiday[date2] || '') + `桃園機場 ☛☛☛ 溫度:${temperatureCelsius}°C  濕度:${humidity}%   能見度:${visibility}km  ${ch_weather}(${weatherCondition}) ☛☛☛`+ " " + (dutySchedule[date2] || '');
+      // scroll(info);
       // Log temperature and humidity
 
     })
@@ -1226,7 +1236,7 @@ window.onload = function() {
 
 
 // document.getElementById('myVideo').addEventListener('ended', function() {
-//   this.style.display = 'none'; 
+//   this.style.display = 'none'; // Hide the video when it ends
 // }, false);
 
 
