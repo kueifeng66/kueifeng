@@ -1456,16 +1456,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const targetName = emailNameMap[userEmail];
   if (targetName) {    
     const items = document.querySelectorAll('.picker-item');
-    const nameElement = Array.from(items).find(item => 
-        item.textContent.trim() === '洪柜峰'
-    );
+    const nameElement = Array.from(items).find(item => item.textContent.trim() === targetName);
     if (nameElement) {
-      // Scroll to Joe's element
       nameElement.scrollIntoView({
           behavior: 'smooth',
           block: 'center'
       });
-      // Trigger click event programmatically to select Joe
       nameElement.click();
     }
   }
