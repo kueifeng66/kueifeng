@@ -1235,7 +1235,7 @@ window.onload = function() {
   headerCells.forEach(function(cell) {
     setTimeout(function() {
       cell.click();
-    }, 15000);
+    }, 8000);
   });
 };
 
