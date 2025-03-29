@@ -7,6 +7,7 @@ html, body {
   width: 100%;       /* Ensure body takes full width */
   -webkit-overflow-scrolling: none; /* For iOS */
   overscroll-behavior: none; /* Prevents pull-to-refresh and bounce effects */
+  touch-action: none;
 }
 
 
