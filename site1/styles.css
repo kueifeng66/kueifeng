@@ -2,7 +2,7 @@ html, body {
   font-size: 62.5%; /* 1rem = 10px */
   margin: 0;
   padding: 0;
-  overflow: hidden;  /* Disable scrolling */
+  overflow: hidden !important;  /* Disable scrolling */
   height: 100%;      /* Ensure body takes full height */
   width: 100%;       /* Ensure body takes full width */
 }
@@ -23,7 +23,7 @@ body {
   background-size: cover; 
   background-position: center center;
   background-repeat: no-repeat; 
-  position: relative;
+  position: fixed;
   
 }
 
