@@ -1314,7 +1314,7 @@ setInterval(checkDayChange, 60000);
     function startTimer() {
       pressTimer = setTimeout(function() {
           window.location.reload();
-      }, 1500); // 2 seconds hold to trigger reload
+      }, 800); // 0.8 seconds hold to trigger reload
     }
 
     // Function to clear the reload timer
