@@ -1,16 +1,20 @@
-html {
+html, body {
   font-size: 62.5%; /* 1rem = 10px */
+  margin: 0;
+  padding: 0;
+  overflow: hidden;  /* Disable scrolling */
+  height: 100%;      /* Ensure body takes full height */
+  width: 100%;       /* Ensure body takes full width */
 }
+
 
 body {
   font-family:  Arial, Helvetica, sans-serif;
   display: flex;
   flex-wrap: wrap;
-
   justify-content: center;
   align-items: center;
   align-content: center;
-  overflow: hidden;
   height: 100vh;
   width:100vw;
   margin: 0;
@@ -36,6 +40,7 @@ body {
   gap: 0.1rem;
   position: relative;
   z-index: auto;
+  
 }
 
 
@@ -90,10 +95,10 @@ body {
   /* background-image: conic-gradient(from var(--angle), transparent , #ff4545, #00ff99, #006aff, #ff0095, #ff4545); */
   top: 50%;
   left: 50%;
-  translate: -47% -50%; 
+  translate: -50% -50%; 
   padding: 0rem;
   border-radius: 0.5rem;
-  animation: 3s spin linear infinite;
+  animation: 5s spin linear infinite;
   z-index: 4;
  }
 
@@ -105,10 +110,10 @@ body {
   background-image: conic-gradient(from var(--angle), transparent 70%, #ff4545, #00ff99, #006aff, #ff0095, #ff4545);
   top: 50%;
   left: 50%;
-  translate: -47% -50%;
+  translate: -50% -50%;
   padding: 0.4rem;
   border-radius: 0.5rem;
-  animation: 3s spin linear infinite;
+  animation: 5s spin linear infinite;
   z-index: 3;
  }
  
@@ -134,6 +139,7 @@ body {
   text-align: center;
   position: relative;
   cursor: pointer;
+  
   z-index: 0;
 
   user-select: none;          /* Standard syntax */
@@ -180,7 +186,7 @@ body {
  translate: -50% -50%;
  z-index: -2;
  padding: 0.3rem;
- animation: 3s spin linear infinite;
+ animation: 5s spin linear infinite;
  border-radius: 0.3rem;
 }
  .today::before{
@@ -195,7 +201,7 @@ body {
   translate: -50% -50%; 
   z-index: -1;
   padding: 0rem;
-  animation: 3s spin linear infinite;
+  animation: 5s spin linear infinite;
   border-radius: 0.3rem;
  }
 
@@ -308,18 +314,6 @@ body {
 }
 
 
-/* body.dark {
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-position: center;
-}
-
-.dark {
-  background: #121212;
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-position: center;
-} */
 
 .display {
   width: 10rem;
@@ -549,7 +543,7 @@ body {
   background-color: #f032e6;
   border-radius: 50%;
   pointer-events: none;
-  animation: fade 1s forwards;
+  animation: fade 2s forwards;
   z-index: 101;
 }
 
