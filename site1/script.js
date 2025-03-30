@@ -1390,40 +1390,13 @@ tooltip_.addEventListener('touchstart', startDragging);
 //tooltip moveable ends.
 
 
-const button = document.getElementById('scrollToBottomButton');
 
-let scrollToBottom = true; // Track whether the button should scroll to the bottom or top
-let scrollEndTimeout; // Timer to detect scroll end
-
-button.addEventListener('click', () => {
-   
-    scrolling = true; // Set scrolling to true
-    if (scrollToBottom) {
-      // Scroll to the bottom
-      namePicker.scrollTo({
-        top: namePicker.scrollHeight,
-        behavior: 'smooth',
-      });
-    } else {
-      // Scroll to the top
-      namePicker.scrollTo({
-        top: 0,
-        behavior: 'smooth',
-      });
-    }
-    scrollToBottom = !scrollToBottom;
-    // Wait for the scroll action to complete before toggling
-    scrollEndTimeout = setTimeout(() => { 
-    button.textContent = scrollToBottom ? "👇Bottom" : "👆Top"; 
-    }, 1000); 
-  
-});
 
 namePicker.addEventListener('scroll', () => {
-  clearTimeout(scrollEndTimeout); // Clear the timeout if the user scrolls manually
+  //clearTimeout(scrollEndTimeout); // Clear the timeout if the user scrolls manually
 
-  const atBottom = namePicker.scrollTop + namePicker.clientHeight >= namePicker.scrollHeight;
-  const atTop = namePicker.scrollTop === 0;
+ // const atBottom = namePicker.scrollTop + namePicker.clientHeight >= namePicker.scrollHeight;
+ // const atTop = namePicker.scrollTop === 0;
 
   const itemHeight = namePicker.querySelector(".picker-item").offsetHeight;
   currentIndex = Math.floor(namePicker.scrollTop / itemHeight);
@@ -1431,13 +1404,13 @@ namePicker.addEventListener('scroll', () => {
   clearSelectedClass();
   updateScale();
 
-  if (atBottom) { // Change only if not scrolling programmatically
-    scrollToBottom = false; // Switch to scroll to the top
-    button.textContent = "👆Top"; // Update button text
-  } else if (atTop) { // Change only if not scrolling programmatically
-    scrollToBottom = true; // Switch to scroll to the bottom
-    button.textContent = "👇Bottom"; // Update button text
-  }
+  //if (atBottom) { // Change only if not scrolling programmatically
+  //  scrollToBottom = false; // Switch to scroll to the top
+  //  button.textContent = "👆Top"; // Update button text
+  //} else if (atTop) { // Change only if not scrolling programmatically
+   // scrollToBottom = true; // Switch to scroll to the bottom
+  //  button.textContent = "👇Bottom"; // Update button text
+  //}
 
   button.style.display = "block"; // Always show the button
 });
@@ -1470,7 +1443,28 @@ document.addEventListener('DOMContentLoaded', () => {
       nameElement.click();
     }
   }
+
+
+  const button = document.getElementById('scrollToMeButton');
+
+  button.addEventListener('click', () => {
+   
+    if (targetName) {    
+    const items = document.querySelectorAll('.picker-item');
+    const nameElement = Array.from(items).find(item => item.textContent.trim() === targetName);
+    if (nameElement) {
+      nameElement.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center'
+      });
+      nameElement.click();
+    }
+  }
+  
+   });
+
 });
+
 
 
 
