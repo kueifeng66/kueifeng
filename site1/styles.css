@@ -142,9 +142,7 @@ body {
   text-align: center;
   position: relative;
   cursor: pointer;
-  
   z-index: 0;
-
   user-select: none;          /* Standard syntax */
   -webkit-user-select: none;  /* Safari, Chrome, and Opera */
   -moz-user-select: none;     /* Firefox */
