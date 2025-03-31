@@ -593,13 +593,8 @@ body {
   
 }
 
-#scrollToMeButton:hover {
-  background: linear-gradient(to right, #345bdb, #2e4d8f);
-  border-radius: 5px;
-  transform: scale(1.5);
-}
-
 #scrollToMeButton:active {
   transform: scale(1.2);
+  background: linear-gradient(to right, #345bdb, #2e4d8f);
 }
 
