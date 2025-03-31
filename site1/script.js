@@ -1227,11 +1227,7 @@ setInterval(fetchWeather, 600000); // 600000 milliseconds = 10 minutes
 
 window.onload = function() {
   const headerCells = document.querySelectorAll(".header-cell");
-  headerCells.forEach(function(cell) {
-    setTimeout(function() {
-      cell.click();
-    }, 5000);
-  });
+
   headerCells.forEach(function(cell) {
     setTimeout(function() {
       cell.click();
