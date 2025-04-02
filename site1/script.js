@@ -1423,7 +1423,7 @@ document.addEventListener('DOMContentLoaded', () => {
     'qqcats0901@mail.post.gov.tw': '洪柜峰',
     'jeremycks@gmail.com':'劉錦郎',
     'chinjiewan@anws.gov.tw':'秦桔萬',
-    'sishin@anws.gov.tw':'許世勳',
+    'shihhsun.hsu@gmail.com':'許世勳',
     'cw.chang@anws.gov.tw':'張哲維',
 
   };
