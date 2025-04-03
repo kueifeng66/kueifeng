@@ -1,12 +1,16 @@
+var username;
 const calendar = document.getElementById('calendar');
 const tooltip = document.getElementById('tooltip');
-const btn = document.querySelector("#toggle");
-// const footer = document.getElementById('scrollingText');
+const btn = document.querySelector('#toggle');
 const header = document.getElementById('header');
 const body = document.body;
 const lastUpdated = document.title;
 
-let mode = "neutral"; // Always start in Neutral Mode
+const urlParams = new URLSearchParams(window.location.search);
+const userID = urlParams.get('userID');
+
+
+let mode = "neutral";
 const currentDay = new Date().getDate();
 let clickCount = 1;
 
@@ -92,25 +96,24 @@ const dutySchedule = {
 "2025-4-10": "S: 柯正和 A: 周育稔 N: 許敦智 C: 秦桔萬 R: 張哲維 T: 林宏儒",
 "2025-4-11": "S: 詹文欽 A: 林森發 N: 王金誠 C: 孫景泰 R: 劉錦郎 T: 羅應順",
 "2025-4-12": "S: 黃榮國 A: 彭偉慎 N: 王瑞發 C: 邱冠霖 R: 余金原 T: 洪柜峰",
-"2025-4-13": "S: 林森發 A: 羅應順 N: 王金誠 C: 柯正和 R: 林厚運 T: 林宏儒",
+"2025-4-13": "S: 林森發 A: 羅應順 N: 王金誠 C: 柯正和 R: 林厚運 T: 周育稔",
 "2025-4-14": "S: 黃經洲 A: 唐__茂 N: 劉暐丞 C: 張日曜 R: 劉錦郎 T: 呂明峰",
 "2025-4-15": "S: 黃榮國 A: 黃煜森 N: 王瑞發 C: 邱冠霖 R: 林厚運 T: 許世勳",
 "2025-4-16": "S: 范振宇 A: 孫景泰 N: 許敦智 C: 秦桔萬 R: 劉錦郎 T: 洪柜峰",
-"2025-4-17": "S: 林森發 A: 方振彬 N: 彭偉慎 C: 邱冠霖 R: 黃煜森 T: 羅應順",
+"2025-4-17": "S: 林森發 A: 林森發 N: 彭偉慎 C: 邱冠霖 R: 黃煜森 T: 羅應順",
 "2025-4-18": "S: 黃榮國 A: 唐__茂 N: 劉暐丞 C: 張日曜 R: 林厚運 T: 許世勳",
 "2025-4-19": "S: 詹文欽 A: 黃經洲 N: 許敦智 C: 秦桔萬 R: 余金原 T: 呂明峰",
-"2025-4-20": "S: 范振宇 A: 洪柜峰 N: 唐__茂 C: 邱冠霖 R: 張哲維 T: 周育稔",
+"2025-4-20": "S: 范振宇 A: 洪柜峰 N: 唐__茂 C: 邱冠霖 R: 張哲維 T: 林宏儒",
 "2025-4-21": "S: 柯正和 A: 劉錦郎 N: 王瑞發 C: 孫景泰 R: 林厚運 T: 許世勳",
 "2025-4-22": "S: 黃經洲 A: 許敦智 N: 彭偉慎 C: 張日曜 R: 黃煜森 T: 羅應順",
 "2025-4-23": "S: 林森發 A: 唐__茂 N: 王金誠 C: 孫景泰 R: 劉錦郎 T: 林宏儒",
 "2025-4-24": "S: 黃榮國 A: 林厚運 N: 許敦智 C: 秦桔萬 R: 張哲維 T: 洪柜峰",
-"2025-4-25": "S: 黃經洲 A: 方振彬 N: 王瑞發 C: 張日曜 R: 黃煜森 T: 林宏儒",
+"2025-4-25": "S: 黃經洲 A: 黃經洲 N: 王瑞發 C: 張日曜 R: 黃煜森 T: 林宏儒",
 "2025-4-26": "S: 范振宇 A: 呂明峰 N: 唐__茂 C: 孫景泰 R: 林厚運 T: 許世勳",
 "2025-4-27": "S: 柯正和 A: 劉暐丞 N: 彭偉慎 C: 秦桔萬 R: 張哲維 T: 周育稔",
 "2025-4-28": "S: 林森發 A: 王金誠 N: 王瑞發 C: 邱冠霖 R: 劉錦郎 T: 林宏儒",
-"2025-4-29": "S: 黃榮國 A: 方振彬 N: 唐__茂 C: 張日曜 R: 林厚運 T: 呂明峰",
+"2025-4-29": "S: 黃榮國 A: 黃榮國 N: 唐__茂 C: 張日曜 R: 林厚運 T: 呂明峰",
 "2025-4-30": "S: 范振宇 A: 黃煜森 N: 王金誠 C: 孫景泰 R: 張哲維 T: 許世勳",
-
 
 
 
@@ -283,7 +286,7 @@ function checkDayChange() {
   const now = new Date();
   const newDay = now.getDate();
 
-  // If the day has changed, reload the website
+ 
   if (newDay !== currentDay) {
       window.location.reload();
   }
@@ -364,11 +367,7 @@ function addEventListener_toHideToolTipandShowToday(headerCell) {
     const days =document.querySelectorAll('.day');
     if (clickCount % 2 === 0) {
       hideTooltip();
-      // let todays = document.querySelectorAll('.today');
-      // todays.forEach(today => {
-      //   today.style.backgroundColor = '';
-      // });
-              //below is to highlight the name previously selected in the change function
+   
       highlightSelectedName(temp_name);
       const items = document.querySelectorAll('.picker-item');
       items.forEach((item) => {
@@ -377,11 +376,10 @@ function addEventListener_toHideToolTipandShowToday(headerCell) {
       item.style.backgroundColor = "turquoise";
       }
       });
-      //highlightAdditionalHoliday();
-      // Perform actions for hiding tooltip
+   
       headerCell.style.backgroundColor="#3498db";
       headerCell.style.backgroundImage ="";
-      // headerCell.style.backgroundImage = "linear-gradient(to right, #3498db, #1f78c1)";
+     
     } else {
           days.forEach(dayElement => {
             dayElement.classList.remove(selectedClassName);
@@ -390,7 +388,7 @@ function addEventListener_toHideToolTipandShowToday(headerCell) {
             dayElement.classList.remove('today-selected');
           });
 
-      // headerCell.style.backgroundColor="#345bdb";
+    
       
       headerCell.style.backgroundImage = "linear-gradient(to right, #345bdb, #2e4d8f)";
 
@@ -406,7 +404,7 @@ function addEventListener_toHideToolTipandShowToday(headerCell) {
   
 }
 
-function createheadercell(year, month, day){
+function createheadercell(year, month, day) {
   const headerCell = document.createElement('div');
   headerCell.classList.add('header-cell');
    
@@ -418,7 +416,7 @@ function createheadercell(year, month, day){
   
 }
 
-// Function to create calendar days
+
 function createCalendar(year, month) {
   const daysInMonth = new Date(year, month, 0).getDate();
   const weekdays = ['一', '二', '三', '四', '五', '六', '日'];
@@ -426,13 +424,13 @@ function createCalendar(year, month) {
   var counterN = 0;
   var now = new Date();
   var year_now = now.getFullYear();
-  var month_now = (now.getMonth() + 1); // Months are zero-based
+  var month_now = (now.getMonth() + 1); 
   var day_now = now.getDate();
-
-
+  
+  
   
 
-  const date = `${year}-${month}-${day}`;
+  
   
   for (let i=0; i < 7; i++){
     const weekdayElement = document.createElement('div');
@@ -440,10 +438,10 @@ function createCalendar(year, month) {
     weekdayElement.textContent = weekdays[i];
     calendar.appendChild(weekdayElement);
     weekdayElement.addEventListener('dblclick', function() {
-      // Perform your action when weekdayElement is clicked
+     
       alert("\n 1. 點【太陽】圖示，會切換下個月班表 \n 2. 點左側的【年月日框框】會切換個人班表及選擇某日班表 \n 3. 【滑動名字】會顯示值班人員當月班表 \n 4. 點2下名字會切換至【Line視窗】 \n 5. 背景取至windy網站的氣象資訊，其中越紅代表雲層越厚 \n 6. 新增功能→→→點日期會【放大】該點選的日期 \n 7. 新增總臺(桃園區臺)介紹短片，【播放1次】後會消失 \n 8. 標題會顯示最近1次更新班表的時間【Last Updated】 \n 9. 【今天】以灰底顏色搭配彩虹邊框表示，可以一目瞭然距離下次值班的天數 \n 10. 名單條【可以拖曳移動】，若要恢復原位置→【點2下】【年月日框框】\n 11. 【新增農曆】於日曆中 \n 12. 【換日會自動refresh】例如：23:59→00:00時，今天的格子會自動跳下一日，且 會跳出今日值班名單。\n 13. 按住星期一～星期日其中一格2秒，會自動reload網頁。\n 14. 按右下角的圓形圖示，可切換至【時鐘】 \n 15. 背景地圖可移動、可量風速，按左下角的三角形可看天氣變化。\n\n\n 祝 平安 順心 \n 洪柜峰敬上");
       
-      // Example function call or other actions
+    
       addEventListeners(weekdayElement, btn, day, month, year, 999);  
     });
   }
@@ -502,50 +500,341 @@ function createCalendar(year, month) {
       }
     }
 
-  for (let day = 1; day <= daysInMonth; day++) {
-    const date = `${year}-${month}-${day}`;
-    const dayElement = document.createElement('div');
-    dayElement.classList.add('day');
-    dayElement.textContent = day;
-    calendar.appendChild(dayElement);
+    for (let day = 1; day <= daysInMonth; day++) {
+      const date = `${year}-${month}-${day}`;
+      
+   
+      const card = document.createElement('div');
+      card.classList.add('card');
+      
+      const innerCard = document.createElement('div');
+      innerCard.classList.add('inner-card');
+      
+      const frontFace = document.createElement('div');
+      frontFace.classList.add('card-face', 'day');
+      frontFace.textContent = day;
+      
+      const backFace = document.createElement('div');
+      backFace.classList.add('card-face', 'back');
+      
+      const noteContent = document.createElement('div');
+      noteContent.classList.add('note-content');
+      noteContent.textContent = 'Loading...';
+      
+      const noteEditor = document.createElement('div');
+      noteEditor.classList.add('note-editor');
+      
+      const textarea = document.createElement('textarea');
+      textarea.placeholder = 'Write your note here...';
+      
+      const editorButtons = document.createElement('div');
+      editorButtons.classList.add('note-editor-buttons');
+      
+      const saveBtn = document.createElement('button');
+      saveBtn.classList.add('btn', 'save-btn');
+      saveBtn.textContent = 'Save';
+      
+      const cancelBtn = document.createElement('button');
+      cancelBtn.classList.add('btn', 'cancel-btn');
+      cancelBtn.textContent = 'Cancel';
+      
+      const deleteBtn = document.createElement('button');
+      deleteBtn.classList.add('btn', 'delete-btn');
+      deleteBtn.textContent = 'Delete';
+      
+  
+      editorButtons.appendChild(saveBtn);
+      editorButtons.appendChild(cancelBtn);
+      editorButtons.appendChild(deleteBtn);
+      
+      noteEditor.appendChild(textarea);
+      noteEditor.appendChild(editorButtons);
+      
+      backFace.appendChild(noteContent);
+      backFace.appendChild(noteEditor);
+      
+      innerCard.appendChild(frontFace);
+      innerCard.appendChild(backFace);
+      
+      card.appendChild(innerCard);
+      
+   
+      calendar.appendChild(card);
+      
+    
+      if (Zellercongruence(day, month, year) === 0 || Zellercongruence(day, month, year) === 6) {
+        frontFace.classList.add('weekend');
+      }
+      
+    
+      if (year === year_now && month === month_now && day === day_now) {
+        frontFace.classList.add('today');
+      }
+      
+     
+      addEventListeners(card, btn, day, month, year, date);
+      
+      
+      setupNoteEventListeners(card, date);
 
-    if (Zellercongruence(day, month, year) === 0 || Zellercongruence(day, month, year) === 6) {
-      dayElement.classList.add('weekend');
+      
+      fetchNote(card, date);
+      
     }
-    if (year === year_now && month === month_now && day === day_now) {
-      dayElement.classList.add('today');
-    }
-    addEventListeners(dayElement, btn, day, month, year, date);    
-  }
+  
+    function setupNoteEventListeners(card, date) {
+      const backFace = card.querySelector('.back');
+      const noteContent = card.querySelector('.note-content');
+      const noteEditor = card.querySelector('.note-editor');
+      const textarea = card.querySelector('textarea');
+      const saveBtn = card.querySelector('.save-btn');
+      const cancelBtn = card.querySelector('.cancel-btn');
+      const deleteBtn = card.querySelector('.delete-btn');
+    
+      // Enhanced textarea styling for better mobile interaction
+      textarea.style.WebkitAppearance = 'none';
+      textarea.style.appearance = 'none';
+      textarea.style.borderRadius = '4px';
+      textarea.style.border = '1px solid #ccc';
+      textarea.style.padding = '8px';
+      textarea.style.width = '100%';
+      textarea.style.minHeight = '60px';
+      textarea.style.fontSize = '16px'; // Important for iOS to prevent zoom
+      textarea.autocomplete = 'off';
+      textarea.autocorrect = 'off';
+      textarea.autocapitalize = 'off';
+      textarea.spellcheck = false;
+    
+      function showEditor() {
+        noteContent.style.display = 'none'; // Hide content when editing
+        textarea.value = noteContent.textContent === 'Click to edit note' ? '' : noteContent.textContent;
+        noteEditor.style.display = 'flex';
+        
+        // Force keyboard to appear by using a sequence of actions
+        setTimeout(() => {
+          textarea.readOnly = false;
+          textarea.blur();
+          
+          // A more aggressive focusing technique
+          textarea.click();
+          textarea.focus();
+          
+          // Secondary focus attempt after a longer delay
+          setTimeout(() => {
+            if (document.activeElement !== textarea) {
+              textarea.focus();
+              // Try to force virtual keyboard on mobile
+              if (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+                textarea.click();
+              }
+            }
+          }, 500);
+        }, 100);
+      }
+    
+      function hideEditor() {
+        noteEditor.style.display = 'none';
+        noteContent.style.display = 'block'; // Show content again
+      }
+    
+      function saveNote(text) {
+        noteContent.textContent = text || 'Click to edit note';
+        const safeKey = date + "-" + username;
+    
+        window.firebaseSet(window.firebaseRef(window.firebaseDB, "Notes/" + safeKey), {
+          Name: username,
+          Date: date,
+          Content: text || '',
+          Timestamp: new Date().toISOString()
+        })
+        .then(() => {
+          console.log("Note saved successfully");
+        })
+        .catch((error) => {
+          console.error("Error saving note:", error);
+          alert("Error saving note: " + error.message);
+        });
+      }
+    
+      // Separate touch and click events completely
+      backFace.addEventListener('click', function(e) {
+        e.stopPropagation();
+        if (e.target === backFace || e.target === noteContent) {
+          showEditor();
+        }
+      });
+    
+      // Dedicated mobile touch handlers
+      backFace.addEventListener('touchend', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        if (e.target === backFace || e.target === noteContent) {
+          showEditor();
+        }
+      });
+    
+      // Ensure textarea captures all its own events
+      textarea.addEventListener('touchstart', function(e) {
+        e.stopPropagation();
+      }, { passive: true });
+      
+      textarea.addEventListener('touchend', function(e) {
+        e.stopPropagation();
+      });
+    
+      textarea.addEventListener('click', function(e) {
+        e.stopPropagation();
+        setTimeout(() => textarea.focus(), 10);
+      });
+    
+      // Create a dedicated tap handler for the textarea
+      let tapHandler = function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        textarea.focus();
+      };
+      
+      textarea.addEventListener('touchstart', tapHandler, { passive: false });
+    
+      // Button handlers
+      saveBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        saveNote(textarea.value);
+        hideEditor();
+      });
+    
+      saveBtn.addEventListener('touchend', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        saveNote(textarea.value);
+        hideEditor();
+      });
+    
+      cancelBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        hideEditor();
+      });
+    
+      cancelBtn.addEventListener('touchend', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        hideEditor();
+      });
+    
+      deleteBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        if (confirm('Are you sure you want to delete this note?')) {
+          saveNote('');
+          hideEditor();
+        }
+      });
+    
+      deleteBtn.addEventListener('touchend', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        if (confirm('Are you sure you want to delete this note?')) {
+          saveNote('');
+          hideEditor();
+        }
+      });
+    
+      // Prevent event bubbling in the editor
+      noteEditor.addEventListener('click', function(e) {
+        e.stopPropagation();
+      });
+      
+      noteEditor.addEventListener('touchstart', function(e) {
+        e.stopPropagation();
+      }, { passive: true });
+      
+      // Improve editor positioning
+      
+    }    
 
   
-}
+    
 
-// Function to position the tooltip
+  function fetchNote(card, date) {
+  
+  const noteContent = card.querySelector('.note-content');
+  
+  
+  if (typeof username === 'undefined' || !username) {
+    
+    noteContent.textContent = "Loading...";
+    
+    setTimeout(() => {
+      if (typeof username !== 'undefined' && username) {
+        fetchNote(card, date); // Retry once username is defined
+      }
+    }, 500);
+    return;
+  }
+  
+  const safeKey = date + "-" + username;
+  
+  
+  if (!window.firebaseRef || !window.firebaseDB || !window.firebaseGet) {
+    console.error("Firebase references are not available");
+    noteContent.textContent = "Click to edit note";
+    return;
+  }
+  
+  const noteRef = window.firebaseRef(window.firebaseDB, "Notes/" + safeKey);
+
+  
+  window.firebaseGet(noteRef)
+    .then((snapshot) => {
+      if (snapshot && snapshot.exists()) {
+        const noteData = snapshot.val();
+        if (noteData && noteData.Content) {
+          noteContent.textContent = noteData.Content;
+          console.log(`Note for ${date} fetched successfully`);
+        } else {
+          console.log(`Empty note content for ${date}`);
+          noteContent.textContent = "Click to edit note";
+        }
+      } else {
+        console.log(`No note found for ${date}`);
+        noteContent.textContent = "Click to edit note";
+      }
+    })
+    .catch((error) => {
+      console.error(`Error fetching note for ${date}:`, error);
+      noteContent.textContent = "Click to edit note";
+    });
+}
+    
+    setupCardFlip();
+
+} /* Create Calendar ends */
+
+
+
+
+
+
 function positionTooltip() {
   const header = document.getElementById('header');
   const tooltip = document.getElementById('tooltip');
   
-  // Get header's position and height
+ 
   const headerRect = header.getBoundingClientRect();
   
-  // Position tooltip at the bottom of the header
+  
   tooltip.style.top = `${headerRect.bottom + 4}px`;
-  tooltip.style.left = `${headerRect.left}px`; // Align left with header, adjust as needed
+  tooltip.style.left = `${headerRect.left}px`; 
 }
 
 function showTooltip(date) {
-  // const calendarRect = calendar.getBoundingClientRect(); 
-  // tooltip.style.left = `${calendarRect.left - 102}px`;
-  // tooltip.style.top = `${calendarRect.top + 106}px`;
- // positionTooltip();
+  
   const [year, month, day] = date.split('-');
   const formattedDate =  `${month}月${day}日`
   const dutyInfo = dutySchedule[date] || "None";
 
-  // Check if weather data is available for the date
+  
   if (weatherData[date]) {
-    // Get temperature and humidity data for the date
+   
     const minTemperature = weatherData[date].minTemperature;
     const maxTemperature = weatherData[date].maxTemperature;
     const minHumidity = weatherData[date].minHumidity;
@@ -559,7 +848,7 @@ function showTooltip(date) {
     `;
 
   } else {
-    // tooltip.textContent = `${formattedDate}\n${dutyInfo}`;
+   
     tooltip.innerHTML = `<span class="tooltip-day">${formattedDate}\n</span><span class="tooltip-duty">${dutyInfo}</span>`;
   }
 
@@ -577,11 +866,11 @@ function hideTooltip() {
 function setMode(newMode) {
 
 
-  // Remove previous classes
+  
   body.classList.remove("light", "neutral", "dark");
   toggle.classList.remove("light", "neutral", "dark");
 
-  // Apply new mode
+  
   body.classList.add(newMode);
   toggle.classList.add(newMode);
 
@@ -610,19 +899,19 @@ function setMode(newMode) {
     
     let header = document.getElementById('header');
     header.style.color = 'white';
-    // footer.style.color = 'MediumBlue';
+    
     for (let i = 0; i < 7; i++) {
       let reloadDiv = reloadDivs[i];
 
-      // Event listeners for desktop (mouse)
+      
       reloadDiv.addEventListener("mousedown", startTimer);
       reloadDiv.addEventListener("mouseup", clearTimer);
       reloadDiv.addEventListener("mouseleave", clearTimer);
 
-      // Event listeners for mobile (touch)
+      
       reloadDiv.addEventListener("touchstart", startTimer);
       reloadDiv.addEventListener("touchend", clearTimer);
-      reloadDiv.addEventListener("touchcancel", clearTimer); // in case the touch is canceled
+      reloadDiv.addEventListener("touchcancel", clearTimer); 
     }
     hideTooltip();
     highlightAdditionalHoliday();
@@ -637,10 +926,10 @@ function setMode(newMode) {
     if (month === 12) {
       year--;
     }
-    createCalendar(year,month,day);
+    createCalendar(year,month);
     let header = document.getElementById('header');
-    header.style.color = ''; // This will remove the inline 'color' style, allowing the CSS rule to take effect
-    // footer.style.color = 'black';
+    header.style.color = '';
+  
     
     const headerCells = document.querySelector('.header-cell');
     headerCells.innerHTML = `${year} 年 &nbsp;&nbsp;&nbsp&nbsp;&nbsp${month} 月&nbsp;&nbsp&nbsp;&nbsp&nbsp;&nbsp ${day} 日 &nbsp;`;  
@@ -658,10 +947,10 @@ function setMode(newMode) {
     if (month === 12) {
       year--;
     }
-    createCalendar(year,month,day);
+    createCalendar(year,month);
     let header = document.getElementById('header');
-    header.style.color = ''; // This will remove the inline 'color' style, allowing the CSS rule to take effect
-    // footer.style.color = 'black';
+    header.style.color = '';
+    
     
     const headerCells = document.querySelector('.header-cell');
     headerCells.innerHTML = `${year} 年 &nbsp;&nbsp;&nbsp;&nbsp${month} 月`;  
@@ -670,7 +959,7 @@ function setMode(newMode) {
     hideTooltip();
     highlightAdditionalHoliday();
   }
-  //below is to highlight the name previously selected in the change function
+  
   highlightSelectedName(temp_name);
   const items = document.querySelectorAll('.picker-item');
   items.forEach((item) => {
@@ -684,28 +973,28 @@ function setMode(newMode) {
   for (let i = 0; i < 7; i++) {
     let reloadDiv = reloadDivs[i];
 
-    // Event listeners for desktop (mouse)
+    
     reloadDiv.addEventListener("mousedown", startTimer);
     reloadDiv.addEventListener("mouseup", clearTimer);
     reloadDiv.addEventListener("mouseleave", clearTimer);
 
-    // Event listeners for mobile (touch)
+   
     reloadDiv.addEventListener("touchstart", startTimer);
     reloadDiv.addEventListener("touchend", clearTimer);
-    reloadDiv.addEventListener("touchcancel", clearTimer); // in case the touch is canceled
+    reloadDiv.addEventListener("touchcancel", clearTimer);
   }
 
 
 
 
 
-}
+}//setMode ends here
 
 
 
 function scroll(info) {
   var result = ''; 
-  // var isSpaceBeforeUppercase = false; 
+  
   
   for (var i = 0; i < info.length; i++) {
     var currentChar = info[i];
@@ -713,12 +1002,12 @@ function scroll(info) {
     
     if (currentChar === ' ' && (nextChar.match(/[A-Z]/) )) {
       result += '&nbsp;&nbsp;&nbsp'; 
-      // isSpaceBeforeUppercase = true; 
+      
     } else if (currentChar === ' '){
       result += '&nbsp';
     }else {
       result += currentChar; 
-      // isSpaceBeforeUppercase = false; 
+ 
     }
   }
   result =  result + '&nbsp;&nbsp;&nbsp★★★&nbsp;&nbsp;&nbsp【使用說明】請點2下&nbsp;&nbsp;&nbsp星期(一～日)&nbsp;&nbsp;&nbsp★★★' ;
@@ -775,44 +1064,44 @@ function highlightSelectedName(selectedName) {
     const date = `${year}-${month}-${dayText}`;
     const scheduleForDay = dutySchedule[date] || '';
     
-    // Split the schedule for the day into parts based on spaces
+   
     const scheduleParts = scheduleForDay.split(' ');
 
-    // Initialize two arrays to store names for each category
+   
     const namesForSelectedClassName = [];
     const namesForSelectedClassName2 = [];
     const namesForSelectedClassName3 = [];
 
-    // Initialize a flag to indicate whether to start categorizing into selectedClassName2
+   
     let shouldCategorizeToClassName2 = false;
     let shouldCategorizeToClassName3 = false;
-    // Loop through each part of the schedule
+   
     scheduleParts.forEach(part => {
-      // Check if the part starts with "S:" or "A:"
+     
       if (part.startsWith('S:')) {
-        // Set the flag to true to start categorizing into selectedClassName2
+       
         shouldCategorizeToClassName3 = true;
       } else if (part.startsWith('A:')) {
         shouldCategorizeToClassName2 = true;
       } else if (shouldCategorizeToClassName2) {
-        // If shouldCategorizeToClassName2 is true, categorize the part to selectedClassName2
+        
         const name = part.trim();
         namesForSelectedClassName2.push(name);
         shouldCategorizeToClassName2 = false;
       } else if (shouldCategorizeToClassName3) {
-        // If shouldCategorizeToClassName2 is true, categorize the part to selectedClassName2
+        
         const name = part.trim();
         namesForSelectedClassName3.push(name);
         shouldCategorizeToClassName3 = false;
       } else {
-        // If shouldCategorizeToClassName2 is false, categorize the part to selectedClassName
+       
         const name = part.trim();
         namesForSelectedClassName.push(name);
       }
     });
 
     const isToday = dayElement.classList.contains('today');
-    // Check if selectedName is in either category and apply appropriate class
+    
 
     if (namesForSelectedClassName3.includes(selectedName)) {
       dayElement.classList.add(selectedClassName3);
@@ -832,15 +1121,15 @@ function highlightSelectedName(selectedName) {
       dayElement.classList.remove(selectedClassName);
     }
 
-    // If the day is today and has any selected class, stop or hide the spinning animation
+    
     if (isToday && (dayElement.classList.contains('selected') || dayElement.classList.contains('selected2') || dayElement.classList.contains('selected3'))) {
-      dayElement.classList.add('today-selected'); // Custom class to stop the spinning
+      dayElement.classList.add('today-selected'); 
     } else if (isToday) {
-      dayElement.classList.remove('today-selected'); // Revert if no selection is made
+      dayElement.classList.remove('today-selected');
     }
   });
 
-    // Remove all selected classes when hovering over a day element
+    
     days.forEach(dayElement => {
       dayElement.addEventListener('mouseover', () => {
         days.forEach(day => {
@@ -881,7 +1170,7 @@ function AddLunar() {
   const days = document.querySelectorAll('.day');
   days.forEach(dayElement => {
     const date = `${year}-${month}-${dayElement.textContent.trim()}`;
-    const lunarName = (holiday[date] || '').split('】')[0].replace('【', ''); // Get the first content between brackets
+    const lunarName = (holiday[date] || '').split('】')[0].replace('【', '');
     
     if (lunarName) {
       dayElement.innerHTML = `${dayElement.textContent}\n<span class="lunar-name">${lunarName}</span>`;
@@ -895,7 +1184,7 @@ function isLineBrowser() {
   return ua.indexOf('Line') > -1;
 }
 
-// Populate the name picker with the list of names
+
 names.forEach((name) => {
   const selectedName = name;
   const item = document.createElement("div");
@@ -903,7 +1192,7 @@ names.forEach((name) => {
   item.textContent = name;
   item.style.color = "gray";
  
- // Add click event listener to handle name selection
+
  item.addEventListener("click", () => {
     updateSelection();
     const items = document.querySelectorAll('.picker-item');
@@ -920,19 +1209,14 @@ names.forEach((name) => {
     highlightSelectedName(selectedName);
   });
 
-    // Add double-click event listener to send a message via Line
+    
     item.addEventListener("dblclick", () => {
-      // Get the message from the data attribute
-      // const message = item.getAttribute("data-line");
-      // Construct the URL for sending a message through Line
-      // const lineURL = `line://msg/text/${encodeURIComponent(message)}`;
-      // Open the Line app with the constructed URL
-      // window.location.href = 'line://nv/chat';
+     
       if (isLineBrowser()) {
-        // Message or alternative action if using Line in-app browser
+       
         alert('Use a Regular Browser, like chrome, to open LINE since it is in LINE now');
       } else {
-        // Open the Line chat interface when not in Line's browser
+       
         window.location.href = 'line://nv/chat';
       }
     });
@@ -965,7 +1249,7 @@ function updateScale() {
     const itemRect = item.getBoundingClientRect();
     const itemCenterY = itemRect.top + itemRect.height / 2;
     const distanceToCenter = Math.abs(containerCenterY - itemCenterY);
-      if (distanceToCenter < containerRect.height / 10 && item.textContent != "．．．") { // Adjust this threshold as needed
+      if (distanceToCenter < containerRect.height / 10 && item.textContent != "．．．") { 
         item.style.transform = 'scale(1.5)';
         updateSelection();
         item.style.backgroundColor = "turquoise";
@@ -997,15 +1281,6 @@ function ClearSelectedName() {
 }
 
 
-// namePicker.addEventListener("scroll", () => {
-//   const itemHeight = namePicker.querySelector(".picker-item").offsetHeight;
-//   currentIndex = Math.floor(namePicker.scrollTop / itemHeight);
-//   updateSelection();
-//   clearSelectedClass();
-//   updateScale();
-  
-// });
-//Above namePicker has been moved to the bottom together with the scrollToBottomButton.
 
 
 
@@ -1015,37 +1290,22 @@ const apiKey = '35af5c01f0d331eb99f5a42b0259c663';
 const latitude = 25.07639;
 const longitude = 121.22389;
 
-// Clear: Indicates clear sky conditions.
-// Clouds: Indicates cloudy weather.
-// Rain: Indicates rainy weather.
-// Drizzle: Indicates light rain.
-// Thunderstorm: Indicates thunderstorm activity.
-// Snow: Indicates snowy weather.
-// Mist: Indicates misty or foggy conditions.
-// Smoke: Indicates smoky conditions.
-// Haze: Indicates hazy conditions.
-// Dust: Indicates dusty or sandy conditions.
-// Fog: Indicates foggy conditions.
-// Sand: Indicates sandstorm conditions.
-// Ash: Indicates volcanic ash in the air.
-// Squall: Indicates sudden violent winds.
-//Tornado
-// Function to fetch weather data from the API
+
 function fetchWeather() {
   fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${apiKey}`)
     .then(response => response.json())
     .then(data => {
-       let temperatureKelvin = data.main.temp; // Temperature in Kelvin
+       let temperatureKelvin = data.main.temp;
        let temperatureCelsius = (temperatureKelvin - 273.15).toFixed(1);
        let ch_weather ='';
        let visibility = (data.visibility/1000).toFixed(1);
-       let windSpeed = (data.wind.speed*1.943844).toFixed(2);; // Wind Speed in meters per second
-      //  let windDirection = data.wind.deg; // Wind Direction in degrees
+       let windSpeed = (data.wind.speed*1.943844).toFixed(2);
+     
        
-       humidity = data.main.humidity; // Humidity in percentage
+       humidity = data.main.humidity;
        weatherCondition = data.weather[0].main;
 
-      // Adjust background based on weather condition
+     
       if (weatherCondition ==='Rain') {
         document.body.style.background = 'url(cozy.png)';
         document.body.style.backgroundSize= 'cover';
@@ -1083,7 +1343,7 @@ function fetchWeather() {
         ch_weather='濛濛有霧';
         
       } else {
-        // Default background for other weather conditions
+      
         document.body.style.background = 'url(cozy.png)';
         document.body.style.backgroundSize= 'cover';
         document.body.style.backgroundPosition= 'center';
@@ -1096,11 +1356,7 @@ function fetchWeather() {
         ch_weather='颱風天';
         
       }
-      // const date2 = `${year}-${month}-${day}`;
-      // let info = `${year}年${month}月${day}日`+ (holiday[date2] || '') + `桃園機場 ☛☛☛ 溫度:${temperatureCelsius}°C  濕度:${humidity}%   能見度:${visibility}km  ${ch_weather}(${weatherCondition}) ☛☛☛`+ " " + (dutySchedule[date2] || '');
-      // scroll(info);
-      // Log temperature and humidity
-
+      
     })
     .catch(error => console.error('Error fetching weather:', error));
 }
@@ -1111,17 +1367,17 @@ function fetchWeatherForecast() {
   fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${latitude}&lon=${longitude}&appid=${apiKey}`)
     .then(response => response.json())
     .then(data => {
-       // Group forecast data by day
+     
        const forecastByDay = {};
 
        data.list.forEach(item => {
            const timestamp = item.dt * 1000;
            const date = new Date(timestamp);
            const year = date.getFullYear();
-           const month = date.getMonth() + 1; // Adding 1 because getMonth() returns zero-based index
+           const month = date.getMonth() + 1;
            const day = date.getDate();
 
-           // Format month and day without leading zeros
+           
            const formattedMonth = month < 10 ? `0${month}` : `${month}`;
            const formattedDay = day < 10 ? `0${day}` : `${day}`;
 
@@ -1134,45 +1390,45 @@ function fetchWeatherForecast() {
            forecastByDay[formattedDate].push(item);
        });
 
-       // Extract the next 5 days' forecast data
+      
        const nextFiveDays = Object.keys(forecastByDay).slice(0, 6);
-       // Initialize variables to store minimum and maximum values
+       
        let minTemperature = Infinity;
        let maxTemperature = -Infinity;
        let minHumidity = Infinity;
        let maxHumidity = -Infinity;
        const weatherConditions = [];
-              // Process forecast data for the next 5 days
+              
               nextFiveDays.forEach(day => {
                 const forecastDataForDay = forecastByDay[day];
-                // Initialize variables to store minimum and maximum values for the day
+               
                 let minTemperature = Infinity;
                 let maxTemperature = -Infinity;
                 let minHumidity = Infinity;
                 let maxHumidity = -Infinity;
                 const weatherConditions = [];
-                // Process each forecast item for this day as needed
+                
                 forecastDataForDay.forEach(item => {
                     const temperatureKelvin = item.main.temp;
                     const temperatureCelsius = temperatureKelvin - 273.15;
                     const humidity = item.main.humidity;
                     let forecastWeatherCondition = item.weather[0].main;
-                    // Update minimum and maximum temperature
+                    
                     minTemperature = Math.min(minTemperature, temperatureCelsius);
                     maxTemperature = Math.max(maxTemperature, temperatureCelsius);
      
-                    // Update minimum and maximum humidity
+                    
                     minHumidity = Math.min(minHumidity, humidity);
                     maxHumidity = Math.max(maxHumidity, humidity);
-                    // Collect weather conditions
+                    
                     weatherConditions.push(forecastWeatherCondition);
                 });
 
-                 // Determine the most frequent weather condition (mode)
+                 
                 const conditionCounts = weatherConditions.reduce((acc, condition) => { acc[condition] = (acc[condition] || 0) + 1; return acc;}, {});
                 const mostFrequentCondition = Object.keys(conditionCounts).reduce((a, b) => conditionCounts[a] > conditionCounts[b] ? a : b);
 
-                const formattedDay = day.replace(/-0?/g, '-'); // Remove leading zeros
+                const formattedDay = day.replace(/-0?/g, '-');
                 weatherData[formattedDay] = { 
                   minTemperature: minTemperature.toFixed(1),
                   maxTemperature: maxTemperature.toFixed(1),
@@ -1192,38 +1448,32 @@ function fetchWeatherForecast() {
 
 
 function AddWeekDay() {
-if (!btn.checked) {
-  const headerCell = document.querySelector('.header-cell');
-  dayOfWeek = Zellercongruence(day, month, year);
-  if (dayOfWeek === 1) {
-    headerCell.textContent += `(一)`;
+  if (!btn.checked) {
+    const headerCell = document.querySelector('.header-cell');
+    dayOfWeek = Zellercongruence(day, month, year);
+   if (dayOfWeek === 1) {
+      headerCell.textContent += `(一)`;
       
-  } else if (dayOfWeek === 2) {
-    headerCell.textContent += `(二)`;
-  } else if (dayOfWeek === 3) {
-    headerCell.textContent += `(三)`;
-  } else if (dayOfWeek === 4) {
-    headerCell.textContent += `(四)`;
-  } else if (dayOfWeek === 5) {
-    headerCell.textContent += `(五)`;
-  } else if (dayOfWeek === 6) {
-    headerCell.textContent += `(六)`;
-  } else {
-    headerCell.textContent += `(日)`;
+    } else if (dayOfWeek === 2) {
+      headerCell.textContent += `(二)`;
+    } else if (dayOfWeek === 3) {
+     headerCell.textContent += `(三)`;
+    } else if (dayOfWeek === 4) {
+      headerCell.textContent += `(四)`;
+    } else if (dayOfWeek === 5) {
+      headerCell.textContent += `(五)`;
+    } else if (dayOfWeek === 6) {
+      headerCell.textContent += `(六)`;
+    } else {
+     headerCell.textContent += `(日)`;
+    }
   }
 }
 
-}
-
-
-
-  
-
-// Call fetchWeather function initially
 fetchWeather();
 fetchWeatherForecast();
-// Call fetchWeather function periodically (e.g., every 10 minutes)
-setInterval(fetchWeather, 600000); // 600000 milliseconds = 10 minutes
+
+setInterval(fetchWeather, 600000); 
 
 
 window.onload = function() {
@@ -1238,9 +1488,7 @@ window.onload = function() {
 
 
 
-// document.getElementById('myVideo').addEventListener('ended', function() {
-//   this.style.display = 'none'; // Hide the video when it ends
-// }, false);
+
 
 
 document.addEventListener('mousemove', (e) => {
@@ -1268,7 +1516,7 @@ btn.addEventListener("click", function (event) {
   const center = toggleWidth / 2;
   
  
-  const prevMode = mode; // Store the current mode before changes
+  const prevMode = mode;
   console.log(`Click Position: ${clickX}`);
   if (prevMode === "neutral") {
     if (clickX > 7 ){
@@ -1290,36 +1538,32 @@ btn.addEventListener("click", function (event) {
   }
   
 
-    // Call setMode(mode) only if mode has changed
+   
   if (mode !== prevMode) {
       setMode(mode);
   }
 });
+
+
 createheadercell(year, month, day);
 createCalendar(year, month);
-
-
-highlightAdditionalHoliday(); //this must be done finally. 20240528
-
-
-
+highlightAdditionalHoliday(); 
 AddWeekDay();
-// Check the day every minute (60000 ms)
 setInterval(checkDayChange, 60000);
 
-    // Get the element by class name (access the first element if there's only one)
-    let reloadDivs = document.getElementsByClassName("weekday"); // Since it's a collection, use [0] to access the first element
+    
+    let reloadDivs = document.getElementsByClassName("weekday"); 
     
     let pressTimer;
 
-    // Function to start the reload timer
+    
     function startTimer() {
       pressTimer = setTimeout(function() {
           window.location.reload();
-      }, 800); // 0.8 seconds hold to trigger reload
+      }, 800); 
     }
 
-    // Function to clear the reload timer
+    
     function clearTimer() {
       clearTimeout(pressTimer);
     }
@@ -1328,23 +1572,23 @@ setInterval(checkDayChange, 60000);
       
       let reloadDiv = reloadDivs[i];
       
-      // Event listeners for desktop (mouse)
+      
       reloadDiv.addEventListener("mousedown", startTimer);
       reloadDiv.addEventListener("mouseup", clearTimer);
       reloadDiv.addEventListener("mouseleave", clearTimer);
 
-      // Event listeners for mobile (touch)
+      
       reloadDiv.addEventListener("touchstart", startTimer);
       reloadDiv.addEventListener("touchend", clearTimer);
-      reloadDiv.addEventListener("touchcancel", clearTimer); // in case the touch is canceled
+      reloadDiv.addEventListener("touchcancel", clearTimer); 
   }
 
-//tooltip moveable 
+
 const tooltip_ = document.getElementById('tooltip');
 let offsetX = 0, offsetY = 0;
 let isDragging = false;
 
-// Shared start event for both mouse and touch
+
 function startDragging(e) {
   isDragging = true;
   
@@ -1357,10 +1601,10 @@ function startDragging(e) {
   document.addEventListener(e.type === 'mousedown' ? 'mousemove' : 'touchmove', moveTooltip);
   document.addEventListener(e.type === 'mousedown' ? 'mouseup' : 'touchend', stopDragging);
 
-  e.preventDefault(); // Prevent text selection or scrolling
+  e.preventDefault();
 }
 
-// Move tooltip during drag
+
 function moveTooltip(e) {
   if (isDragging) {
     const clientX = e.clientX || e.touches[0].clientX;
@@ -1371,7 +1615,7 @@ function moveTooltip(e) {
   }
 }
 
-// Stop dragging
+
 function stopDragging() {
   isDragging = false;
   document.removeEventListener('mousemove', moveTooltip);
@@ -1380,20 +1624,16 @@ function stopDragging() {
   document.removeEventListener('touchend', stopDragging);
 }
 
-// Event listeners for both touch and mouse
+
 tooltip_.addEventListener('mousedown', startDragging);
 tooltip_.addEventListener('touchstart', startDragging);
 
-//tooltip moveable ends.
+
 
 
 
 
 namePicker.addEventListener('scroll', () => {
-  //clearTimeout(scrollEndTimeout); // Clear the timeout if the user scrolls manually
-
- // const atBottom = namePicker.scrollTop + namePicker.clientHeight >= namePicker.scrollHeight;
- // const atTop = namePicker.scrollTop === 0;
 
   const itemHeight = namePicker.querySelector(".picker-item").offsetHeight;
   currentIndex = Math.floor(namePicker.scrollTop / itemHeight);
@@ -1401,21 +1641,14 @@ namePicker.addEventListener('scroll', () => {
   clearSelectedClass();
   updateScale();
 
-  //if (atBottom) { // Change only if not scrolling programmatically
-  //  scrollToBottom = false; // Switch to scroll to the top
-  //  button.textContent = "👆Top"; // Update button text
-  //} else if (atTop) { // Change only if not scrolling programmatically
-   // scrollToBottom = true; // Switch to scroll to the bottom
-  //  button.textContent = "👇Bottom"; // Update button text
-  //}
-
-  button.style.display = "block"; // Always show the button
 });
+
+
 
 document.addEventListener('DOMContentLoaded', () => {
   const urlParams = new URLSearchParams(window.location.search);
-  const userEmail = urlParams.get('userEmail');
-  
+  userEmail = urlParams.get('userEmail');
+
 
   const emailNameMap = {
     'kueifeng7166@gmail.com': '洪柜峰',
@@ -1423,12 +1656,17 @@ document.addEventListener('DOMContentLoaded', () => {
     'qqcats0901@mail.post.gov.tw': '洪柜峰',
     'jeremycks@gmail.com':'劉錦郎',
     'chinjiewan@anws.gov.tw':'秦桔萬',
-    'shihhsun.hsu@gmail.com':'許世勳',
+    'sishin@anws.gov.tw':'許世勳',
     'cw.chang@anws.gov.tw':'張哲維',
-    'allen99lo@gmail.com' :'羅應順', 
-  };
 
+  };
+  
   const targetName = emailNameMap[userEmail];
+  username = targetName;
+
+
+
+
   if (targetName) {    
     const items = document.querySelectorAll('.picker-item');
     const nameElement = Array.from(items).find(item => item.textContent.trim() === targetName);
@@ -1460,12 +1698,68 @@ document.addEventListener('DOMContentLoaded', () => {
   
    });
 
+
 });
 
 
+function setupCardFlip() {
+
+         // Get all calendar cards
+    const cards = document.querySelectorAll('.card');
+    const overlay = document.createElement('div');
+    overlay.className = 'overlay';
+    document.body.appendChild(overlay);
+  
+    // Add double-click event listener to each card
+    cards.forEach(card => {
+      function toggleFlip(e) {
+        e.preventDefault(); // Prevent zooming or other default touch behavior
+        this.classList.toggle('flipped');
+    
+        // Toggle overlay
+        if (this.classList.contains('flipped')) {
+          overlay.classList.add('active');
+        } else {
+          overlay.classList.remove('active');
+        }
+    
+        // Stop propagation to prevent issues
+        e.stopPropagation();
+      }
+    
+      // Add both event listeners for desktop and mobile support
+      card.addEventListener('dblclick', toggleFlip);  // Desktop double-click
+      card.addEventListener('touchend', toggleFlip);  // Mobile tap
+    });
+    
+  
+  // Click on overlay to close flipped card
+    overlay.addEventListener('click', function() {
+        // Find and unflip any flipped cards
+       const flippedCard = document.querySelector('.card.flipped');
+       if (flippedCard) {
+          flippedCard.classList.remove('flipped');
+       }
+    
+        // Hide overlay
+        this.classList.remove('active');
+    });
+  
+  // Add event listeners for the buttons on the back of the card
+  document.querySelectorAll('.btn').forEach(button => {
+    button.addEventListener('click', function(e) {
+      
+      e.stopPropagation();
+      
+      // Close the card if it's a save, cancel, or delete button
+      const card = this.closest('.card');
+      if (card && card.classList.contains('flipped')) {
+        card.classList.remove('flipped');
+        overlay.classList.remove('active');
+      }
+    });
+  });
 
 
 
-
-
-
+}

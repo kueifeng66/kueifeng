@@ -1,14 +1,14 @@
-html, body {
-  font-size: 62.5%; /* 1rem = 10px */
+html, body {  
+  font-size: 62.5%; 
   margin: 0;
   padding: 0;
-  overflow: hidden !important;  /* Disable scrolling */
-  height: 100%;      /* Ensure body takes full height */
-  width: 100%;       /* Ensure body takes full width */
-  -webkit-overflow-scrolling: none; /* For iOS */
-  overscroll-behavior: none; /* Prevents pull-to-refresh and bounce effects */
+  overflow: hidden !important;  
+  height: 100%;     
+  width: 100%;      
+  -webkit-overflow-scrolling: none;
+  overscroll-behavior: none;
   touch-action: none;
-}
+  }
 
 
 body {
@@ -52,16 +52,15 @@ body {
   height: 7.8rem;
   width: 9.8rem;
   display: flex;
-  justify-content: center; /* Center horizontally */
-  align-items: center; /* Center vertically */
+  justify-content: center; 
+  align-items: center; 
   text-align: center;
-  flex-direction: column; /* Ensure text aligns in the center */
-  
-  user-select: none;          /* Standard syntax */
-  -webkit-user-select: none;  /* Safari, Chrome, and Opera */
-  -moz-user-select: none;     /* Firefox */
-  -ms-user-select: none;      /* Internet Explorer/Edge */
-  -webkit-touch-callout: none;  /* iOS Safari */
+  flex-direction: column; 
+  user-select: none;  
+  -webkit-user-select: none;  
+  -moz-user-select: none;    
+  -ms-user-select: none;      
+  -webkit-touch-callout: none;  
 }
 
 
@@ -95,7 +94,6 @@ body {
   height: 7.8rem;
   width: 9.8rem;
   background: #3498db;
-  /* background-image: conic-gradient(from var(--angle), transparent , #ff4545, #00ff99, #006aff, #ff0095, #ff4545); */
   top: 50%;
   left: 50%;
   translate: -50% -50%; 
@@ -122,28 +120,97 @@ body {
  
 #header-selected::before, 
 #header-selected::after {
-  animation: none; /* Stop the spinning animation */
-  background: transparent; /* Hide the background image if needed */
+  animation: none; 
+  background: transparent;
 }
 
 
-.day {
-  
+/* Common card styles for all modes */
+.card {
   display: flex;
   justify-content: center;
   align-items: center;
   width: 4.2rem;
   height: 4.3rem;
-  font-size: 1.8rem;
-  font-weight: bold;
-  border: 0.1rem solid #ffffff;
-  background-color: #ffffff;
-  padding: 1rem;
-  font-weight: bold;
-  text-align: center;
+  perspective: 1000px;
   position: relative;
-  cursor: pointer;
   z-index: 0;
+}
+
+.card:hover {
+  z-index: 100;
+}
+
+/* Inner card container */
+.inner-card {
+  width: 100%;
+  height: 100%;
+  transition: transform 0.6s;
+  transform-style: preserve-3d;
+  position: relative;
+}
+
+/* Remove hover transform effect */
+.card:hover .inner-card {
+  transform: none;
+}
+
+/* Card flipped state - works for all modes because no mode selectors are used */
+.card.flipped {
+  z-index: 100;
+  position: relative;
+}
+
+.card.flipped .inner-card {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotateY(180deg) scale(2);
+  z-index: 100;
+}
+
+/* Mode-specific styles if needed */
+.light .card.flipped .inner-card {
+  /* Custom light mode styles */
+  box-shadow: 0 0 15px rgba(100, 100, 255, 0.6);
+}
+
+.neutral .card.flipped .inner-card {
+  /* Custom neutral mode styles */
+  box-shadow: 0 0 15px rgba(70, 130, 180, 0.7);
+}
+
+.dark .card.flipped .inner-card {
+  /* Custom dark mode styles */
+  box-shadow: 0 0 15px rgba(40, 40, 40, 0.8);
+}
+
+/* Overlay for when card is flipped */
+.overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 99;
+}
+
+.overlay.active {
+  display: block;
+}
+
+/* Card face styling */
+.card-face {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  display: flex;
+  border: 0.1rem solid #ffffff;
+  box-sizing: border-box;
+  cursor: pointer;
   user-select: none;          /* Standard syntax */
   -webkit-user-select: none;  /* Safari, Chrome, and Opera */
   -moz-user-select: none;     /* Firefox */
@@ -151,12 +218,153 @@ body {
   -webkit-touch-callout: none;  /* iOS Safari */
 }
 
+/* Back face of card needs to be rotated initially */
+.card-face.back {
+  transform: rotateY(180deg);
+}
+
+/* Front face - day number */
+.day {
+  justify-content: center;
+  align-items: center;
+  font-size: 1.8rem;
+  font-weight: bold;
+  padding: 1rem;
+  text-align: center;
+  background-color: #ffffff;
+}
+
+
+
 .day:hover {
   transform: scale(1.7); 
   background: linear-gradient(to right, orange, yellow , #ffff99,lightyellow, #ffffff);
   border-radius: 0.5rem;
-  z-index: 1;
+  z-index: 100;
   transition: 0.3s;
+}
+
+
+
+/* Back face - note content */
+.back {
+  background-color: #f7c6d9;
+  transform: rotateY(180deg);
+  flex-direction: column;
+  padding: 0.5rem;
+  justify-content: space-between;
+  border-radius: 0.5rem;
+}
+
+
+
+.card:hover .back {
+  width: 10vw;  /* Make it take full screen width */
+  height: 20vh; /* Make it take full screen height */
+  position: fixed; /* Fix position to center on the screen */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotateY(180deg); /* Center it */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  z-index: 20;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 0.5rem;
+}
+
+
+.note-content {
+  width: 100%;
+  height: 70%;
+  overflow-y: auto;
+  margin-bottom: 0rem;
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-size: 0.5rem;
+  color: black;
+  font-weight: bold; 
+  text-align: left; 
+  display: flex;
+  align-items: flex-start;
+  justify-content:  flex-start;
+}
+
+.note-editor {
+  display: none;
+  width: 30vw;
+  height: 20vh;
+  max-width: 150px; 
+  max-height: 40vh;
+  flex-direction: column;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #f7c6d9;
+  z-index: 20;
+  padding: 0.5rem;
+  box-sizing: border-box;
+  border-radius: 1rem;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Larger textarea for easier typing */
+.note-editor textarea {
+  width: 100%;
+  height: 50vh;
+  flex-grow: 1;
+  flex-direction: column;
+  padding: 0.2rem;
+  border: none;
+  border-radius: 0.5rem;
+  resize: none;
+  font-size: 1rem;
+  
+  
+}
+
+
+.note-editor-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1rem;
+}
+
+.btn {
+  padding: 0.4rem 0.8rem;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 1rem;
+}
+
+.save-btn {
+  background-color: #4caf50;
+  color: white;
+}
+
+.cancel-btn {
+  background-color: #f44336;
+  color: white;
+}
+
+.delete-btn {
+  background-color: #f44336;
+  color: white;
+}
+
+/* Special day styles */
+.weekend {
+  background-color: #f8f8f8;
+  color: #ff6347;
+}
+
+.today {
+  background-color: #e6f7ff;
+  color: #0066cc;
+  box-shadow: 0 0 0.5rem #0066cc;
 }
 
 
@@ -290,12 +498,12 @@ body {
   -webkit-touch-callout: none;  /* iOS Safari */
 }
 
-.tooltip-day{
+.tooltip-day {
   font-size: 1.6rem;
   text-align: center; /* Align text to the left */
   display: block; 
 }
-.tooltip-duty{
+.tooltip-duty {
   font-size: 1.6rem;
   text-align: left; /* Align text to the left */
   display: block; 
@@ -384,22 +592,7 @@ body {
 }
 
 
-/* footer {
-  height:  3rem;
-  align-items: flex-start;
-  position: fixed;
-  font-weight: bold;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  background-color: rgba(245, 222, 179, 0.8);
-  box-shadow: 1rem 1rem 3rem  #dcbeff inset; 
-  padding: 0.2rem;
-  font-size: 2rem;
-  text-align: center;
-  color: black;
-  z-index: 2;
-} */
+
 
 .picker-container {
   margin-right: auto;
@@ -485,15 +678,6 @@ body {
   animation: marquee 20s linear infinite; /* Define the animation */
 }
 
-/* Define the animation */
-@keyframes marquee {
-  from {
-    margin-right: 100%; /* Start off-screen to the right */
-  }
-  to {
-    margin-left: 0%; /* Move to the left, displaying the text */
-  }
-}
 
 
 
@@ -514,29 +698,6 @@ body {
 
 }
 
-/* #myVideo {
-  position: absolute;
-  top: 0rem;
-  left: 11.7rem;
-  width: 29.8rem;
-  height: 26.6rem;
-  border: 0.1rem solid #ffffff;
-  z-index:-50;
-  object-fit: cover;
-} */
-
-
-/* iframe {
-  
-  top: 0;
-  left: 0;
-  width: 100vw; 
-  height: 100vh; 
-  border: 0;
-  position: absolute;
-  
-  
-} */
 
 .trail {
   position: absolute;

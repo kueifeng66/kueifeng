@@ -22,14 +22,6 @@
 
 
 <body>
-
-   <!-- <video autoplay="autoplay" muted defaultMuted playsinline oncontextmenu="return false;" preload="auto" id="myVideo">
-    <source src="tower.mp4" type="video/mp4">
-  </video>
-  
-  <iframe loading="lazy" src="https://embed.windy.com/embed2.html?lat=25.07639&lon=121.22389&zoom=5&level=surface&overlay=wind&menu=&message=&marker=&calendar=&pressure=&type=map&location=coordinates&detail=&detailLat=25.07639&detailLon=121.22389&metricWind=default&metricTemp=default&radarRange=-1" frameborder="0"></iframe>
-   -->
-
   <div class="picker-container">
     <div class="display">    
       <div class="button" id="toggle"></div>
@@ -42,9 +34,42 @@
   <div id="calendar"></div>
   <div id="tooltip" class="tooltip"></div>
 
-</body>
 
-<!-- <footer class="footer">
-  <marquee id="scrollingText"></marquee>
-</footer> -->
+  <script type="module">
+    // Import Firebase modules
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
+    import { getDatabase, ref, get, set, update, remove, child } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-database.js";
+    
+    // Initialize Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyB09LglfIXHfUGUWI5cFRzQvyz8D90dlGc",
+      authDomain: "on-duty-calenadar.firebaseapp.com",
+      projectId: "on-duty-calenadar",
+      storageBucket: "on-duty-calenadar.firebasestorage.app",
+      messagingSenderId: "1048788052024",
+      appId: "1:1048788052024:web:ea80ce1666c99ebc429ecd",
+      measurementId: "G-CHLW1GSW19",
+      databaseURL: "https://on-duty-calenadar-default-rtdb.asia-southeast1.firebasedatabase.app"
+    };
+    
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    
+    // Expose Firebase functions and database to the global scope
+    window.firebaseDB = db;
+    window.firebaseRef = ref;
+    window.firebaseSet = set;
+    window.firebaseGet = get;
+    window.firebaseUpdate = update;
+    window.firebaseRemove = remove;
+    window.firebaseChild = child;
+    
+  
+  </script>
+
+
+
+
+</body>
 </html>
