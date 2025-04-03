@@ -338,28 +338,40 @@ function Zellercongruence(day, month, year)
 }
 
 function addEventListeners(dayElement, btn, day, month, year, date) {
-  dayElement.addEventListener('mouseover', () => {
-
-    showTooltip(date); 
-    if (date == '999'){
+  function handleMouseOver() {
+    showTooltip(date);
+    if (date == '999') {
       hideTooltip();
     }
     highlightAdditionalHoliday();
-  });
+  }
 
-  dayElement.addEventListener('mouseout', () => {
-    
+  function handleMouseOut() {
     highlightSelectedName(temp_name);
     const items = document.querySelectorAll('.picker-item');
     items.forEach((item) => {
-      if (temp_name === item.textContent && temp_name != "．．．"){
+      if (temp_name === item.textContent && temp_name != "．．．") {
         item.style.transform = 'scale(1.5)';
         item.style.backgroundColor = "turquoise";
       }
     });
     highlightAdditionalHoliday();
     hideTooltip();
-    
+  }
+
+  // Mouse events (for desktop)
+  dayElement.addEventListener('mouseover', handleMouseOver);
+  dayElement.addEventListener('mouseout', handleMouseOut);
+
+  // Touch events (for mobile)
+  dayElement.addEventListener('touchstart', (event) => {
+    handleMouseOver();
+    event.preventDefault();  // Prevents triggering mouse events after touch
+  });
+
+  dayElement.addEventListener('touchend', (event) => {
+    handleMouseOut();
+    event.preventDefault();
   });
 }
 function addEventListener_toHideToolTipandShowToday(headerCell) {
@@ -657,7 +669,7 @@ function createCalendar(year, month) {
       }
     
       // Separate touch and click events completely
-      backFace.addEventListener('click', function(e) {
+      backFace.addEventListener('dblick', function(e) {
         e.stopPropagation();
         if (e.target === backFace || e.target === noteContent) {
           showEditor();
@@ -894,7 +906,7 @@ function setMode(newMode) {
     createCalendar(year,month);
     
     const headerCells = document.querySelector('.header-cell');
-    headerCells.innerHTML = `${year} 年 &nbsp;&nbsp;&nbsp;&nbsp${month} 月`;  
+    headerCells.innerHTML = `${year} 年 &nbsp;&nbsp;&nbsp&nbsp;&nbsp${month} 月&nbsp;`;  
     
     
     let header = document.getElementById('header');
@@ -953,7 +965,7 @@ function setMode(newMode) {
     
     
     const headerCells = document.querySelector('.header-cell');
-    headerCells.innerHTML = `${year} 年 &nbsp;&nbsp;&nbsp;&nbsp${month} 月`;  
+    headerCells.innerHTML = `${year} 年 &nbsp;&nbsp;&nbsp&nbsp;&nbsp${month} 月&nbsp;`;  
     showTooltip(formattedDate); 
     fetchWeather();
     hideTooltip();
