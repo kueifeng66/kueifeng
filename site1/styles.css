@@ -248,25 +248,35 @@ body {
 
 /* Back face - note content */
 .back {
-  background-color: #f7c6d9;
-  transform: rotateY(180deg);
+  width: 30vw;
+  height: 20vh;
+  max-width: 150px; 
+  max-height: 40vh;
   flex-direction: column;
+  transform: rotateY(180deg);
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #f7c6d9;
+  z-index: auto;
   padding: 0.5rem;
-  justify-content: space-between;
-  border-radius: 0.5rem;
+  box-sizing: border-box;
+  border-radius: 1rem;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
 }
 
 
 
 .card:hover .back {
-  width: 10vw;  /* Make it take full screen width */
-  height: 20vh; /* Make it take full screen height */
-  position: fixed; /* Fix position to center on the screen */
+  width: 10vw;
+  height: 20vh;
+  position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%) rotateY(180deg); /* Center it */
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-  z-index: 20;
+  z-index: auto;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -281,7 +291,7 @@ body {
   margin-bottom: 0rem;
   white-space: pre-wrap;
   word-break: break-word;
-  font-size: 0.5rem;
+  font-size: 1.2rem;
   color: black;
   font-weight: bold; 
   text-align: left; 
