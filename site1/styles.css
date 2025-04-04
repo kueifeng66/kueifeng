@@ -265,6 +265,9 @@ body {
   box-sizing: border-box;
   border-radius: 1rem;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+  -webkit-overflow-scrolling: touch; /* Smooth scrolling for iOS */
+  touch-action: pan-y;                /* Enables vertical swipe scrolling */
+  overscroll-behavior: contain;      /* Prevent scroll chaining */
 }
 
 
