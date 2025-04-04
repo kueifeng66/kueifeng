@@ -246,7 +246,15 @@ body {
 
 
 
-/* Back face - note content */
+/* .back {
+  background-color: #f7c6d9;
+  transform: rotateY(180deg);
+  flex-direction: column;
+  padding: 0.5rem;
+  justify-content: space-between;
+  border-radius: 0.5rem;
+} */
+
 .back {
   width: 30vw;
   height: 20vh;
@@ -269,9 +277,9 @@ body {
 
 
 .card:hover .back {
-  width: 10vw;
-  height: 20vh;
-  position: fixed;
+  width: 10vw;  /* Make it take full screen width */
+  height: 20vh; /* Make it take full screen height */
+  position: fixed; /* Fix position to center on the screen */
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%) rotateY(180deg); /* Center it */
@@ -320,12 +328,13 @@ body {
 }
 
 /* Larger textarea for easier typing */
+
 .note-editor textarea {
   width: 100%;
   height: 50vh;
   flex-grow: 1;
   flex-direction: column;
-  padding: 0.2rem;
+  padding: 0.1rem;
   border: none;
   border-radius: 0.5rem;
   resize: none;
@@ -361,6 +370,8 @@ body {
   min-width: 3rem;
   max-width: 10rem;
 }
+
+
 
 .save-btn {
   background-color: #4caf50;
@@ -779,4 +790,3 @@ body {
   transform: scale(1.2);
   background: linear-gradient(to right, #345bdb, #2e4d8f);
 }
-
