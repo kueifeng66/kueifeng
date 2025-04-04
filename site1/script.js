@@ -617,32 +617,39 @@ function createCalendar(year, month) {
       textarea.autocapitalize = 'off';
       textarea.spellcheck = false;
     
-      function showEditor() {
-        noteContent.style.display = 'none'; // Hide content when editing
-        textarea.value = noteContent.textContent === 'Click to edit note' ? '' : noteContent.textContent;
-        noteEditor.style.display = 'flex';
-        
-        // Force keyboard to appear by using a sequence of actions
-        setTimeout(() => {
-          textarea.readOnly = false;
-          textarea.blur();
-          
-          // A more aggressive focusing technique
+    // Update the showEditor function to be more mobile-friendly
+    function showEditor() {
+      noteContent.style.display = 'none'; // Hide content when editing
+      textarea.value = noteContent.textContent === 'Click to edit note' ? '' : noteContent.textContent;
+      noteEditor.style.display = 'flex';
+  
+      // Focus the textarea and try to show keyboard
+      setTimeout(() => {
+        textarea.readOnly = false;
+    
+       // Focus the textarea
+        textarea.focus();
+    
+       // For iOS specifically
+        if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+          // iOS sometimes needs the field to be editable before focusing
+          textarea.setAttribute('readonly', false);
           textarea.click();
-          textarea.focus();
-          
-          // Secondary focus attempt after a longer delay
+      
+          // Move cursor to end of text
+          textarea.selectionStart = textarea.selectionEnd = textarea.value.length;
+        }
+    
+        // For Android
+        if (/Android/i.test(navigator.userAgent)) {
+          // Android sometimes needs a small delay
           setTimeout(() => {
-            if (document.activeElement !== textarea) {
-              textarea.focus();
-              // Try to force virtual keyboard on mobile
-              if (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
-                textarea.click();
-              }
-            }
-          }, 500);
+            textarea.focus();
+            textarea.click();
+          }, 300);
+        }
         }, 100);
-      }
+    }
     
       function hideEditor() {
         noteEditor.style.display = 'none';
@@ -676,14 +683,55 @@ function createCalendar(year, month) {
         }
       });
     
-      // Dedicated mobile touch handlers
-      backFace.addEventListener('touchend', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        if (e.target === backFace || e.target === noteContent) {
-          showEditor();
-        }
+      backFace.addEventListener('touchstart', function(e) {
+        // Store the starting touch position
+        const touchStartY = e.touches[0].clientY;
+        const touchStartX = e.touches[0].clientX;
+        
+        // Flag to track if we're scrolling
+        let isScrolling = false;
+        
+        // Add a move handler to detect scrolling
+        const touchMoveHandler = function(moveEvent) {
+          // Calculate the distance moved
+          const touchY = moveEvent.touches[0].clientY;
+          const touchX = moveEvent.touches[0].clientX;
+          const diffY = Math.abs(touchY - touchStartY);
+          const diffX = Math.abs(touchX - touchStartX);
+          
+          // If we've moved more than a threshold, consider it a scroll
+          if (diffY > 10 || diffX > 10) {
+            isScrolling = true;
+          }
+        };
+        
+        // Add a touchend handler that checks if we were scrolling
+        const touchEndHandler = function(endEvent) {
+          // Remove our temporary handlers
+          backFace.removeEventListener('touchmove', touchMoveHandler);
+          backFace.removeEventListener('touchend', touchEndHandler);
+          
+          // If we weren't scrolling and this was a tap, show the editor
+          if (!isScrolling) {
+            // Make sure we're specifically tapping on the backFace or noteContent,
+            // not on any buttons or other interactive elements
+            if (endEvent.target === backFace || endEvent.target === noteContent) {
+              endEvent.preventDefault();
+              endEvent.stopPropagation();
+              showEditor();
+            }
+          }
+        };
+        
+        // Add our temporary handlers
+        backFace.addEventListener('touchmove', touchMoveHandler, { passive: true });
+        backFace.addEventListener('touchend', touchEndHandler);
       });
+
+      noteContent.addEventListener('touchstart', function(e) {
+        // Don't prevent default behavior on noteContent
+        e.stopPropagation(); // Just stop propagation to parent elements
+      }, { passive: true }); 
     
       // Ensure textarea captures all its own events
       textarea.addEventListener('touchstart', function(e) {
@@ -1643,20 +1691,17 @@ tooltip_.addEventListener('touchstart', startDragging);
 
 
 //movable cards
-
+// Get all cards
 const cards = document.querySelectorAll('.card');
 
 // Loop through each card to add dragging functionality
 cards.forEach(card => {
   const innerCard = card.querySelector('.inner-card');
-  const noteContent = card.querySelector('.note-content');
   
   // Variables specific to each card
   let isFlipped = false;
   let offsetX2 = 0, offsetY2 = 0;
   let isDragging2 = false;
-  let longPressTimer = null;
-  let startX, startY;
   
   // Store original position
   const originalPosition = {
@@ -1667,164 +1712,71 @@ cards.forEach(card => {
   
   // Function to check if card is flipped
   function checkFlipped() {
+    // Get the current transform style and check if it contains rotateY(180deg)
     const transform = window.getComputedStyle(innerCard).getPropertyValue('transform');
     const wasFlipped = isFlipped;
     isFlipped = transform.includes('matrix3d') && transform.includes('-1');
     
+    // If card was flipped but now is not, reset to original position
     if (wasFlipped && !isFlipped) {
       resetPosition();
     }
   }
   
+  // Function to reset position
   function resetPosition() {
     card.style.position = originalPosition.position;
     card.style.left = originalPosition.left;
     card.style.top = originalPosition.top;
   }
   
-  // Visual indicator for long press
-  function addDragIndicator() {
-    // Remove any existing indicator first
-    removeDragIndicator();
-    
-    // Create indicator
-    const indicator = document.createElement('div');
-    indicator.classList.add('drag-indicator');
-    indicator.style.cssText = `
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(255, 255, 255, 0.3);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      pointer-events: none;
-      z-index: 1001;
-      border-radius: 1rem;
-    `;
-    
-    // Add move icon to indicator
-    const icon = document.createElement('div');
-    icon.innerHTML = '↔️';
-    icon.style.fontSize = '24px';
-    indicator.appendChild(icon);
-    
-    // Add to card
-    card.appendChild(indicator);
-  }
-  
-  function removeDragIndicator() {
-    const indicator = card.querySelector('.drag-indicator');
-    if (indicator) {
-      indicator.remove();
-    }
-  }
-  
-  // Modified dragging functions with long press
-  function startTouch(e) {
-    // Check if card is flipped before allowing any interaction
+  // Dragging functions
+  function startDragging2(e) {
+    // Check if card is flipped before allowing drag
     checkFlipped();
     if (!isFlipped) return;
     
-    // Record starting position
-    startX = e.clientX || (e.touches && e.touches[0].clientX);
-    startY = e.clientY || (e.touches && e.touches[0].clientY);
+    isDragging2 = true;
     
-    // Clear any existing timer
-    if (longPressTimer) {
-      clearTimeout(longPressTimer);
-    }
+    const clientX = e.clientX || e.touches[0].clientX;
+    const clientY = e.clientY || e.touches[0].clientY;
     
-    // Start long press timer - 800ms is a good duration for long press
-    longPressTimer = setTimeout(() => {
-      // Once timer completes, enable dragging
-      isDragging2 = true;
-      
-      // Calculate the offset from the card's position
-      offsetX2 = startX - card.offsetLeft;
-      offsetY2 = startY - card.offsetTop;
-      
-      // Show visual indicator
-      addDragIndicator();
-      
-      // Add vibration feedback if supported
-      if (navigator.vibrate) {
-        navigator.vibrate(50);
-      }
-    }, 800);
+    offsetX2 = clientX - card.offsetLeft;
+    offsetY2 = clientY - card.offsetTop;
     
-    // Add move and end event listeners
-    document.addEventListener(e.type === 'mousedown' ? 'mousemove' : 'touchmove', moveHandler);
-    document.addEventListener(e.type === 'mousedown' ? 'mouseup' : 'touchend', endTouch);
+    document.addEventListener(e.type === 'mousedown' ? 'mousemove' : 'touchmove', moveCard);
+    document.addEventListener(e.type === 'mousedown' ? 'mouseup' : 'touchend', stopDragging2);
+    
+    e.preventDefault();
   }
   
-  function moveHandler(e) {
-    const clientX = e.clientX || (e.touches && e.touches[0].clientX);
-    const clientY = e.clientY || (e.touches && e.touches[0].clientY);
-    
-    // Calculate movement distance
-    const moveX = Math.abs(clientX - startX);
-    const moveY = Math.abs(clientY - startY);
-    
-    // If significant movement happens before long press timer completes,
-    // cancel the long press and allow normal scrolling
-    if (!isDragging2 && (moveX > 5 || moveY > 5)) {
-      if (longPressTimer) {
-        clearTimeout(longPressTimer);
-        longPressTimer = null;
-      }
-      
-      // Do not prevent default here to allow normal scrolling
-      return;
-    }
-    
-    // If dragging mode is active, move the card
+  function moveCard(e) {
     if (isDragging2) {
+      const clientX = e.clientX || e.touches[0].clientX;
+      const clientY = e.clientY || e.touches[0].clientY;
+      
       card.style.position = 'absolute';
       card.style.left = (clientX - offsetX2) + 'px';
       card.style.top = (clientY - offsetY2) + 'px';
-      e.preventDefault(); // Prevent scrolling while dragging
     }
   }
   
-  function endTouch(e) {
-    // Clear the long press timer if it exists
-    if (longPressTimer) {
-      clearTimeout(longPressTimer);
-      longPressTimer = null;
-    }
-    
-    // Clear dragging state
+  function stopDragging2() {
     isDragging2 = false;
-    
-    // Remove visual indicator
-    removeDragIndicator();
-    
-    // Remove event listeners
-    document.removeEventListener('mousemove', moveHandler);
-    document.removeEventListener('mouseup', endTouch);
-    document.removeEventListener('touchmove', moveHandler);
-    document.removeEventListener('touchend', endTouch);
+    document.removeEventListener('mousemove', moveCard);
+    document.removeEventListener('mouseup', stopDragging2);
+    document.removeEventListener('touchmove', moveCard);
+    document.removeEventListener('touchend', stopDragging2);
   }
   
-  // Add touch/mouse events to the card
-  card.addEventListener('mousedown', startTouch);
-  card.addEventListener('touchstart', startTouch);
-  
-  // Special handling for note content to allow scrolling
-  if (noteContent) {
-    // We don't need to prevent propagation anymore, 
-    // as the system will differentiate based on timing and movement
-    noteContent.style.touchAction = 'pan-y'; // Explicitly allow vertical scrolling
-  }
+  // Add event listeners for each card
+  card.addEventListener('mousedown', startDragging2);
+  card.addEventListener('touchstart', startDragging2);
   
   // Listen for transition end to update flipped state
   innerCard.addEventListener('transitionend', checkFlipped);
-
-  
 });
+
 
 namePicker.addEventListener('scroll', () => {
 
