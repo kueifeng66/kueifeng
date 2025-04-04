@@ -617,39 +617,32 @@ function createCalendar(year, month) {
       textarea.autocapitalize = 'off';
       textarea.spellcheck = false;
     
-    // Update the showEditor function to be more mobile-friendly
-    function showEditor() {
-      noteContent.style.display = 'none'; // Hide content when editing
-      textarea.value = noteContent.textContent === 'Click to edit note' ? '' : noteContent.textContent;
-      noteEditor.style.display = 'flex';
-  
-      // Focus the textarea and try to show keyboard
-      setTimeout(() => {
-        textarea.readOnly = false;
-    
-       // Focus the textarea
-        textarea.focus();
-    
-       // For iOS specifically
-        if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
-          // iOS sometimes needs the field to be editable before focusing
-          textarea.setAttribute('readonly', false);
+      function showEditor() {
+        noteContent.style.display = 'none'; // Hide content when editing
+        textarea.value = noteContent.textContent === 'Click to edit note' ? '' : noteContent.textContent;
+        noteEditor.style.display = 'flex';
+        
+        // Force keyboard to appear by using a sequence of actions
+        setTimeout(() => {
+          textarea.readOnly = false;
+          textarea.blur();
+          
+          // A more aggressive focusing technique
           textarea.click();
-      
-          // Move cursor to end of text
-          textarea.selectionStart = textarea.selectionEnd = textarea.value.length;
-        }
-    
-        // For Android
-        if (/Android/i.test(navigator.userAgent)) {
-          // Android sometimes needs a small delay
+          textarea.focus();
+          
+          // Secondary focus attempt after a longer delay
           setTimeout(() => {
-            textarea.focus();
-            textarea.click();
-          }, 300);
-        }
+            if (document.activeElement !== textarea) {
+              textarea.focus();
+              // Try to force virtual keyboard on mobile
+              if (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+                textarea.click();
+              }
+            }
+          }, 500);
         }, 100);
-    }
+      }
     
       function hideEditor() {
         noteEditor.style.display = 'none';
@@ -683,47 +676,14 @@ function createCalendar(year, month) {
         }
       });
     
-    backFace.addEventListener('touchstart', function (e) {
-      const touchStartY = e.touches[0].clientY;
-      const touchStartX = e.touches[0].clientX;
-      let isScrolling = false;
-
-      const touchMoveHandler = function (moveEvent) {
-      const touchY = moveEvent.touches[0].clientY;
-      const touchX = moveEvent.touches[0].clientX;
-      const diffY = Math.abs(touchY - touchStartY);
-      const diffX = Math.abs(touchX - touchStartX);
-
-        if (diffY > 10 || diffX > 10) {
-          isScrolling = true;
+      // Dedicated mobile touch handlers
+      backFace.addEventListener('touchend', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        if (e.target === backFace || e.target === noteContent) {
+          showEditor();
         }
-      };
-
-      const touchEndHandler = function (endEvent) {
-        backFace.removeEventListener('touchmove', touchMoveHandler);
-        backFace.removeEventListener('touchend', touchEndHandler);
-
-        // Check if it was a tap and not on a button or other element
-        if (!isScrolling) {
-          const tappedEl = endEvent.target;
-
-          // Check if tap target is noteContent or inside noteContent
-          if (backFace.contains(tappedEl) && (tappedEl === backFace || tappedEl.closest('#noteContent'))) {
-              showEditor();
-          }
-        }
-      };
-
-      // Use non-passive to allow preventDefault if needed in the future
-      backFace.addEventListener('touchmove', touchMoveHandler, { passive: true });
-      backFace.addEventListener('touchend', touchEndHandler, { passive: false });
-    });
-
-
-      noteContent.addEventListener('touchstart', function(e) {
-        // Don't prevent default behavior on noteContent
-        e.stopPropagation(); // Just stop propagation to parent elements
-      }, { passive: true }); 
+      });
     
       // Ensure textarea captures all its own events
       textarea.addEventListener('touchstart', function(e) {
