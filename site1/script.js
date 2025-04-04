@@ -683,50 +683,42 @@ function createCalendar(year, month) {
         }
       });
     
-      backFace.addEventListener('touchstart', function(e) {
-        // Store the starting touch position
-        const touchStartY = e.touches[0].clientY;
-        const touchStartX = e.touches[0].clientX;
-        
-        // Flag to track if we're scrolling
-        let isScrolling = false;
-        
-        // Add a move handler to detect scrolling
-        const touchMoveHandler = function(moveEvent) {
-          // Calculate the distance moved
-          const touchY = moveEvent.touches[0].clientY;
-          const touchX = moveEvent.touches[0].clientX;
-          const diffY = Math.abs(touchY - touchStartY);
-          const diffX = Math.abs(touchX - touchStartX);
-          
-          // If we've moved more than a threshold, consider it a scroll
-          if (diffY > 10 || diffX > 10) {
-            isScrolling = true;
-          }
-        };
-        
-        // Add a touchend handler that checks if we were scrolling
-        const touchEndHandler = function(endEvent) {
-          // Remove our temporary handlers
-          backFace.removeEventListener('touchmove', touchMoveHandler);
-          backFace.removeEventListener('touchend', touchEndHandler);
-          
-          // If we weren't scrolling and this was a tap, show the editor
-          if (!isScrolling) {
-            // Make sure we're specifically tapping on the backFace or noteContent,
-            // not on any buttons or other interactive elements
-            if (endEvent.target === backFace || endEvent.target === noteContent) {
-              endEvent.preventDefault();
-              endEvent.stopPropagation();
+    backFace.addEventListener('touchstart', function (e) {
+      const touchStartY = e.touches[0].clientY;
+      const touchStartX = e.touches[0].clientX;
+      let isScrolling = false;
+
+      const touchMoveHandler = function (moveEvent) {
+      const touchY = moveEvent.touches[0].clientY;
+      const touchX = moveEvent.touches[0].clientX;
+      const diffY = Math.abs(touchY - touchStartY);
+      const diffX = Math.abs(touchX - touchStartX);
+
+        if (diffY > 10 || diffX > 10) {
+          isScrolling = true;
+        }
+      };
+
+      const touchEndHandler = function (endEvent) {
+        backFace.removeEventListener('touchmove', touchMoveHandler);
+        backFace.removeEventListener('touchend', touchEndHandler);
+
+        // Check if it was a tap and not on a button or other element
+        if (!isScrolling) {
+          const tappedEl = endEvent.target;
+
+          // Check if tap target is noteContent or inside noteContent
+          if (backFace.contains(tappedEl) && (tappedEl === backFace || tappedEl.closest('#noteContent'))) {
               showEditor();
-            }
           }
-        };
-        
-        // Add our temporary handlers
-        backFace.addEventListener('touchmove', touchMoveHandler, { passive: true });
-        backFace.addEventListener('touchend', touchEndHandler);
-      });
+        }
+      };
+
+      // Use non-passive to allow preventDefault if needed in the future
+      backFace.addEventListener('touchmove', touchMoveHandler, { passive: true });
+      backFace.addEventListener('touchend', touchEndHandler, { passive: false });
+    });
+
 
       noteContent.addEventListener('touchstart', function(e) {
         // Don't prevent default behavior on noteContent
