@@ -252,6 +252,7 @@ body {
   height: 15rem; 
   max-width: 150px; 
   max-height: 40vh;
+  padding:0.5rem;
   flex-direction: column;
   transform: rotateY(180deg);
   position: fixed;
@@ -302,11 +303,9 @@ body {
   display: flex;
   align-items: flex-start;
   justify-content:  flex-start;
+  padding:0.5rem;
 }
 
-.note-content::-webkit-scrollbar {
-  display: none;
-}
 
 .note-editor {
   display: none;
