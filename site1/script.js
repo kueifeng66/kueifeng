@@ -1643,17 +1643,20 @@ tooltip_.addEventListener('touchstart', startDragging);
 
 
 //movable cards
-// Get all cards
+
 const cards = document.querySelectorAll('.card');
 
 // Loop through each card to add dragging functionality
 cards.forEach(card => {
   const innerCard = card.querySelector('.inner-card');
+  const noteContent = card.querySelector('.note-content');
   
   // Variables specific to each card
   let isFlipped = false;
   let offsetX2 = 0, offsetY2 = 0;
   let isDragging2 = false;
+  let longPressTimer = null;
+  let startX, startY;
   
   // Store original position
   const originalPosition = {
@@ -1664,71 +1667,164 @@ cards.forEach(card => {
   
   // Function to check if card is flipped
   function checkFlipped() {
-    // Get the current transform style and check if it contains rotateY(180deg)
     const transform = window.getComputedStyle(innerCard).getPropertyValue('transform');
     const wasFlipped = isFlipped;
     isFlipped = transform.includes('matrix3d') && transform.includes('-1');
     
-    // If card was flipped but now is not, reset to original position
     if (wasFlipped && !isFlipped) {
       resetPosition();
     }
   }
   
-  // Function to reset position
   function resetPosition() {
     card.style.position = originalPosition.position;
     card.style.left = originalPosition.left;
     card.style.top = originalPosition.top;
   }
   
-  // Dragging functions
-  function startDragging2(e) {
-    // Check if card is flipped before allowing drag
-    checkFlipped();
-    if (!isFlipped) return;
+  // Visual indicator for long press
+  function addDragIndicator() {
+    // Remove any existing indicator first
+    removeDragIndicator();
     
-    isDragging2 = true;
+    // Create indicator
+    const indicator = document.createElement('div');
+    indicator.classList.add('drag-indicator');
+    indicator.style.cssText = `
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(255, 255, 255, 0.3);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      pointer-events: none;
+      z-index: 1001;
+      border-radius: 1rem;
+    `;
     
-    const clientX = e.clientX || e.touches[0].clientX;
-    const clientY = e.clientY || e.touches[0].clientY;
+    // Add move icon to indicator
+    const icon = document.createElement('div');
+    icon.innerHTML = '↔️';
+    icon.style.fontSize = '24px';
+    indicator.appendChild(icon);
     
-    offsetX2 = clientX - card.offsetLeft;
-    offsetY2 = clientY - card.offsetTop;
-    
-    document.addEventListener(e.type === 'mousedown' ? 'mousemove' : 'touchmove', moveCard);
-    document.addEventListener(e.type === 'mousedown' ? 'mouseup' : 'touchend', stopDragging2);
-    
-    e.preventDefault();
+    // Add to card
+    card.appendChild(indicator);
   }
   
-  function moveCard(e) {
-    if (isDragging2) {
-      const clientX = e.clientX || e.touches[0].clientX;
-      const clientY = e.clientY || e.touches[0].clientY;
-      
-      card.style.position = 'absolute';
-      card.style.left = (clientX - offsetX2) + 'px';
-      card.style.top = (clientY - offsetY2) + 'px';
+  function removeDragIndicator() {
+    const indicator = card.querySelector('.drag-indicator');
+    if (indicator) {
+      indicator.remove();
     }
   }
   
-  function stopDragging2() {
-    isDragging2 = false;
-    document.removeEventListener('mousemove', moveCard);
-    document.removeEventListener('mouseup', stopDragging2);
-    document.removeEventListener('touchmove', moveCard);
-    document.removeEventListener('touchend', stopDragging2);
+  // Modified dragging functions with long press
+  function startTouch(e) {
+    // Check if card is flipped before allowing any interaction
+    checkFlipped();
+    if (!isFlipped) return;
+    
+    // Record starting position
+    startX = e.clientX || (e.touches && e.touches[0].clientX);
+    startY = e.clientY || (e.touches && e.touches[0].clientY);
+    
+    // Clear any existing timer
+    if (longPressTimer) {
+      clearTimeout(longPressTimer);
+    }
+    
+    // Start long press timer - 800ms is a good duration for long press
+    longPressTimer = setTimeout(() => {
+      // Once timer completes, enable dragging
+      isDragging2 = true;
+      
+      // Calculate the offset from the card's position
+      offsetX2 = startX - card.offsetLeft;
+      offsetY2 = startY - card.offsetTop;
+      
+      // Show visual indicator
+      addDragIndicator();
+      
+      // Add vibration feedback if supported
+      if (navigator.vibrate) {
+        navigator.vibrate(50);
+      }
+    }, 800);
+    
+    // Add move and end event listeners
+    document.addEventListener(e.type === 'mousedown' ? 'mousemove' : 'touchmove', moveHandler);
+    document.addEventListener(e.type === 'mousedown' ? 'mouseup' : 'touchend', endTouch);
   }
   
-  // Add event listeners for each card
-  card.addEventListener('mousedown', startDragging2);
-  card.addEventListener('touchstart', startDragging2);
+  function moveHandler(e) {
+    const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+    const clientY = e.clientY || (e.touches && e.touches[0].clientY);
+    
+    // Calculate movement distance
+    const moveX = Math.abs(clientX - startX);
+    const moveY = Math.abs(clientY - startY);
+    
+    // If significant movement happens before long press timer completes,
+    // cancel the long press and allow normal scrolling
+    if (!isDragging2 && (moveX > 5 || moveY > 5)) {
+      if (longPressTimer) {
+        clearTimeout(longPressTimer);
+        longPressTimer = null;
+      }
+      
+      // Do not prevent default here to allow normal scrolling
+      return;
+    }
+    
+    // If dragging mode is active, move the card
+    if (isDragging2) {
+      card.style.position = 'absolute';
+      card.style.left = (clientX - offsetX2) + 'px';
+      card.style.top = (clientY - offsetY2) + 'px';
+      e.preventDefault(); // Prevent scrolling while dragging
+    }
+  }
+  
+  function endTouch(e) {
+    // Clear the long press timer if it exists
+    if (longPressTimer) {
+      clearTimeout(longPressTimer);
+      longPressTimer = null;
+    }
+    
+    // Clear dragging state
+    isDragging2 = false;
+    
+    // Remove visual indicator
+    removeDragIndicator();
+    
+    // Remove event listeners
+    document.removeEventListener('mousemove', moveHandler);
+    document.removeEventListener('mouseup', endTouch);
+    document.removeEventListener('touchmove', moveHandler);
+    document.removeEventListener('touchend', endTouch);
+  }
+  
+  // Add touch/mouse events to the card
+  card.addEventListener('mousedown', startTouch);
+  card.addEventListener('touchstart', startTouch);
+  
+  // Special handling for note content to allow scrolling
+  if (noteContent) {
+    // We don't need to prevent propagation anymore, 
+    // as the system will differentiate based on timing and movement
+    noteContent.style.touchAction = 'pan-y'; // Explicitly allow vertical scrolling
+  }
   
   // Listen for transition end to update flipped state
   innerCard.addEventListener('transitionend', checkFlipped);
-});
 
+  
+});
 
 namePicker.addEventListener('scroll', () => {
 
