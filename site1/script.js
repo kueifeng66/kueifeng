@@ -669,7 +669,7 @@ function createCalendar(year, month) {
       }
     
       // Separate touch and click events completely
-      backFace.addEventListener('dblick', function(e) {
+      backFace.addEventListener('dblclick', function(e) {
         e.stopPropagation();
         if (e.target === backFace || e.target === noteContent) {
           showEditor();
