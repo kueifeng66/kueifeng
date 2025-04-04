@@ -246,18 +246,10 @@ body {
 
 
 
-/* .back {
-  background-color: #f7c6d9;
-  transform: rotateY(180deg);
-  flex-direction: column;
-  padding: 0.5rem;
-  justify-content: space-between;
-  border-radius: 0.5rem;
-} */
-
 .back {
-  width: 30vw;
-  height: 20vh;
+
+  width: 20rem; 
+  height: 15rem; 
   max-width: 150px; 
   max-height: 40vh;
   flex-direction: column;
@@ -268,7 +260,7 @@ body {
   transform: translate(-50%, -50%);
   background-color: #f7c6d9;
   z-index: auto;
-  padding: 0.5rem;
+  padding: 0.2rem;
   box-sizing: border-box;
   border-radius: 1rem;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
@@ -277,8 +269,9 @@ body {
 
 
 .card:hover .back {
-  width: 10vw;  /* Make it take full screen width */
-  height: 20vh; /* Make it take full screen height */
+
+  width: 20rem; 
+  height: 15rem; 
   position: fixed; /* Fix position to center on the screen */
   top: 50%;
   left: 50%;
@@ -294,7 +287,7 @@ body {
 
 .note-content {
   width: 100%;
-  height: 70%;
+  height: 100%;
   overflow-y: auto;
   margin-bottom: 0rem;
   white-space: pre-wrap;
@@ -310,8 +303,8 @@ body {
 
 .note-editor {
   display: none;
-  width: 30vw;
-  height: 20vh;
+  width: 100%;
+  height: 100%;
   max-width: 150px; 
   max-height: 40vh;
   flex-direction: column;
@@ -321,7 +314,7 @@ body {
   transform: translate(-50%, -50%);
   background-color: #f7c6d9;
   z-index: 20;
-  padding: 0.5rem;
+  padding: 0.2rem;
   box-sizing: border-box;
   border-radius: 1rem;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
@@ -331,10 +324,10 @@ body {
 
 .note-editor textarea {
   width: 100%;
-  height: 50vh;
+  height: 100%;
   flex-grow: 1;
   flex-direction: column;
-  padding: 0.1rem;
+  padding: 0.2rem;
   border: none;
   border-radius: 0.5rem;
   resize: none;
@@ -356,8 +349,8 @@ body {
 
 .btn {
   flex: 1;
-  padding: 0.5rem 0.2rem;
-  border: none;
+  padding: 0.4rem 0.2rem;
+  border: 0.1rem solid #ffffff;
   border-radius: 0.5rem;
   cursor: pointer;
   font-weight: bold;
