@@ -1642,7 +1642,92 @@ tooltip_.addEventListener('touchstart', startDragging);
 
 
 
+//movable cards
+// Get all cards
+const cards = document.querySelectorAll('.card');
 
+// Loop through each card to add dragging functionality
+cards.forEach(card => {
+  const innerCard = card.querySelector('.inner-card');
+  
+  // Variables specific to each card
+  let isFlipped = false;
+  let offsetX2 = 0, offsetY2 = 0;
+  let isDragging2 = false;
+  
+  // Store original position
+  const originalPosition = {
+    position: card.style.position || 'static',
+    left: card.style.left || 'auto',
+    top: card.style.top || 'auto'
+  };
+  
+  // Function to check if card is flipped
+  function checkFlipped() {
+    // Get the current transform style and check if it contains rotateY(180deg)
+    const transform = window.getComputedStyle(innerCard).getPropertyValue('transform');
+    const wasFlipped = isFlipped;
+    isFlipped = transform.includes('matrix3d') && transform.includes('-1');
+    
+    // If card was flipped but now is not, reset to original position
+    if (wasFlipped && !isFlipped) {
+      resetPosition();
+    }
+  }
+  
+  // Function to reset position
+  function resetPosition() {
+    card.style.position = originalPosition.position;
+    card.style.left = originalPosition.left;
+    card.style.top = originalPosition.top;
+  }
+  
+  // Dragging functions
+  function startDragging2(e) {
+    // Check if card is flipped before allowing drag
+    checkFlipped();
+    if (!isFlipped) return;
+    
+    isDragging2 = true;
+    
+    const clientX = e.clientX || e.touches[0].clientX;
+    const clientY = e.clientY || e.touches[0].clientY;
+    
+    offsetX2 = clientX - card.offsetLeft;
+    offsetY2 = clientY - card.offsetTop;
+    
+    document.addEventListener(e.type === 'mousedown' ? 'mousemove' : 'touchmove', moveCard);
+    document.addEventListener(e.type === 'mousedown' ? 'mouseup' : 'touchend', stopDragging2);
+    
+    e.preventDefault();
+  }
+  
+  function moveCard(e) {
+    if (isDragging2) {
+      const clientX = e.clientX || e.touches[0].clientX;
+      const clientY = e.clientY || e.touches[0].clientY;
+      
+      card.style.position = 'absolute';
+      card.style.left = (clientX - offsetX2) + 'px';
+      card.style.top = (clientY - offsetY2) + 'px';
+    }
+  }
+  
+  function stopDragging2() {
+    isDragging2 = false;
+    document.removeEventListener('mousemove', moveCard);
+    document.removeEventListener('mouseup', stopDragging2);
+    document.removeEventListener('touchmove', moveCard);
+    document.removeEventListener('touchend', stopDragging2);
+  }
+  
+  // Add event listeners for each card
+  card.addEventListener('mousedown', startDragging2);
+  card.addEventListener('touchstart', startDragging2);
+  
+  // Listen for transition end to update flipped state
+  innerCard.addEventListener('transitionend', checkFlipped);
+});
 
 
 namePicker.addEventListener('scroll', () => {
@@ -1774,4 +1859,4 @@ function setupCardFlip() {
 
 
 
-}
+}  //setupCardFlip ends.
