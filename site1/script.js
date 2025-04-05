@@ -1800,63 +1800,159 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 function setupCardFlip() {
+  // Get all calendar cards
+  const cards = document.querySelectorAll('.card');
+  const overlay = document.createElement('div');
+  
+  overlay.className = 'overlay';
+  document.body.appendChild(overlay);
 
-         // Get all calendar cards
-    const cards = document.querySelectorAll('.card');
-    const overlay = document.createElement('div');
-    overlay.className = 'overlay';
-    document.body.appendChild(overlay);
-  
-    // Add double-click event listener to each card
-    cards.forEach(card => {
-      function toggleFlip(e) {
-        e.preventDefault(); // Prevent zooming or other default touch behavior
-        this.classList.toggle('flipped');
+  // Define smooth infinite scroll function
+  function smoothInfiniteScrollNoteContent(noteContent, scrollSpeed = 50) {
+    if (!noteContent) {
+      console.error('Note content element not found');
+      return;
+    }
     
-        // Toggle overlay
-        if (this.classList.contains('flipped')) {
-          overlay.classList.add('active');
-        } else {
-          overlay.classList.remove('active');
-        }
+    let scrollInterval = null;
+    let isResetting = false;
     
-        // Stop propagation to prevent issues
-        e.stopPropagation();
+    const scroll = () => {
+      // If we're currently in a reset animation, don't do regular scrolling
+      if (isResetting) {
+        scrollInterval = setTimeout(scroll, scrollSpeed);
+        return;
       }
+      
+      // Check if we've reached the bottom
+      if (noteContent.scrollTop >= noteContent.scrollHeight - noteContent.clientHeight - 2) {
+        // Start the smooth reset process
+        isResetting = true;
+        
+        // Use requestAnimationFrame for smoother animation
+        let start = null;
+        const duration = 1000; // 1 second for reset animation
+        const startPosition = noteContent.scrollTop;
+        
+        function resetAnimation(timestamp) {
+          if (!start) start = timestamp;
+          const elapsed = timestamp - start;
+          const progress = Math.min(elapsed / duration, 1);
+          
+          // Ease-out function for smooth deceleration
+          const easeOut = 1 - Math.pow(1 - progress, 2);
+          
+          // Gradually scroll back to top
+          noteContent.scrollTop = startPosition * (1 - easeOut);
+          
+          if (progress < 1) {
+            requestAnimationFrame(resetAnimation);
+          } else {
+            // Reset complete
+            noteContent.scrollTop = 0;
+            isResetting = false;
+          }
+        }
+        
+        requestAnimationFrame(resetAnimation);
+      } else {
+        // Continue scrolling down
+        noteContent.scrollTop += 1;
+      }
+      
+      // Continue the infinite scroll
+      scrollInterval = setTimeout(scroll, scrollSpeed);
+    };
     
-      // Add both event listeners for desktop and mobile support
-      card.addEventListener('dblclick', toggleFlip);  // Desktop double-click
-      card.addEventListener('touchend', toggleFlip);  // Mobile tap
-    });
+    // Start at the top
+    noteContent.scrollTop = 0;
     
+    // Start the scrolling
+    scroll();
+    
+    // Return a function to stop scrolling if needed
+    return () => {
+      if (scrollInterval) clearTimeout(scrollInterval);
+      isResetting = false; // Ensure reset state is cleared
+    };
+  }
+
+  // Track active scrolling processes
+  const activeScrollProcesses = new Map();
+
+  // Add event listeners to each card
+  cards.forEach(card => {
+    const noteContent = card.querySelector('.note-content');
+    
+    function toggleFlip(e) {
+      e.preventDefault(); // Prevent zooming or other default touch behavior
+      this.classList.toggle('flipped');
   
+      // Toggle overlay
+      if (this.classList.contains('flipped')) {
+        overlay.classList.add('active');
+        // Start smooth infinite scrolling when card is flipped
+        if (noteContent) {
+          // Store the stop function for this specific card
+          activeScrollProcesses.set(card, smoothInfiniteScrollNoteContent(noteContent, 50));
+        }
+      } else {
+        overlay.classList.remove('active');
+        // Stop scrolling when card is unflipped
+        if (activeScrollProcesses.has(card)) {
+          const stopScrolling = activeScrollProcesses.get(card);
+          stopScrolling();
+          activeScrollProcesses.delete(card);
+        }
+      }
+  
+      // Stop propagation to prevent issues
+      e.stopPropagation();
+    }
+  
+    // Add both event listeners for desktop and mobile support
+    card.addEventListener('dblclick', toggleFlip);  // Desktop double-click
+    card.addEventListener('touchend', toggleFlip);  // Mobile tap
+  });
+
   // Click on overlay to close flipped card
-    overlay.addEventListener('click', function() {
-        // Find and unflip any flipped cards
-       const flippedCard = document.querySelector('.card.flipped');
-       if (flippedCard) {
-          flippedCard.classList.remove('flipped');
-       }
-    
-        // Hide overlay
-        this.classList.remove('active');
-    });
+  overlay.addEventListener('click', function() {
+    // Find and unflip any flipped cards
+    const flippedCard = document.querySelector('.card.flipped');
+    if (flippedCard) {
+      flippedCard.classList.remove('flipped');
+      
+      // Stop any associated scrolling
+      if (activeScrollProcesses.has(flippedCard)) {
+        const stopScrolling = activeScrollProcesses.get(flippedCard);
+        stopScrolling();
+        activeScrollProcesses.delete(flippedCard);
+      }
+    }
   
+    // Hide overlay
+    this.classList.remove('active');
+  });
+
   // Add event listeners for the buttons on the back of the card
   document.querySelectorAll('.btn').forEach(button => {
     button.addEventListener('click', function(e) {
-      
       e.stopPropagation();
       
       // Close the card if it's a save, cancel, or delete button
       const card = this.closest('.card');
       if (card && card.classList.contains('flipped')) {
         card.classList.remove('flipped');
+        
+        // Stop any associated scrolling
+        if (activeScrollProcesses.has(card)) {
+          const stopScrolling = activeScrollProcesses.get(card);
+          stopScrolling();
+          activeScrollProcesses.delete(card);
+        }
+        
         overlay.classList.remove('active');
       }
     });
   });
-
-
-
-}  //setupCardFlip ends.
+}
