@@ -1811,7 +1811,7 @@ function setupCardFlip() {
   document.body.appendChild(overlay);
 
   // Define smooth infinite scroll function
-  function smoothInfiniteScrollNoteContent(noteContent, scrollSpeed = 50) {
+  function smoothInfiniteScrollNoteContent(noteContent, scrollSpeed) {
     if (!noteContent) {
       console.error('Note content element not found');
       return;
@@ -1897,7 +1897,7 @@ function setupCardFlip() {
         // Start smooth infinite scrolling when card is flipped
         if (noteContent) {
           // Store the stop function for this specific card
-          activeScrollProcesses.set(card, smoothInfiniteScrollNoteContent(noteContent, 50));
+          activeScrollProcesses.set(card, smoothInfiniteScrollNoteContent(noteContent, 100));
         }
       } else {
         overlay.classList.remove('active');
