@@ -1958,4 +1958,18 @@ function setupCardFlip() {
       }
     });
   });
+  
+      // below enable copy-paste functionality.
+  document.querySelectorAll('.card textarea').forEach(textarea => {
+      // Enable paste functionality explicitly
+    textarea.addEventListener('paste', function(e) {
+    // This empty handler ensures the default paste behavior works
+    // iOS sometimes needs a slight delay to register the paste
+    });
+    // Ensure the textarea is properly focusable and editable
+    textarea.setAttribute('tabindex', '0');
+    textarea.removeAttribute('readonly');
+       
+  });
+  
 }
