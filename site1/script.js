@@ -618,8 +618,8 @@ function createCalendar(year, month) {
       textarea.spellcheck = false;
     
       function showEditor() {
-        noteContent.style.display = 'none'; // Hide content when editing
-        textarea.value = noteContent.textContent === 'Click to edit note' ? '' : noteContent.textContent;
+        noteContent.style.display = 'none'; 
+        textarea.value = noteContent.textContent === 'Click to edit note' ? `${date}` : `${date}\n${noteContent.textContent}`;
         noteEditor.style.display = 'flex';
         
         // Force keyboard to appear by using a sequence of actions
