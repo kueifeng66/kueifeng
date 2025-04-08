@@ -261,6 +261,7 @@ body {
   left: 50%;
   transform: translate(-50%, -50%);
   background-color: #f7c6d9;
+  box-shadow: 0 0 0.5rem #0066cc;
   z-index: auto;
   padding: 0.2rem;
   box-sizing: border-box;
