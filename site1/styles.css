@@ -239,6 +239,7 @@ body {
 .day:hover {
   transform: scale(1.7); 
   background: linear-gradient(to right, orange, yellow , #ffff99,lightyellow, #ffffff);
+  box-shadow: 0 0 0.5rem #0066cc;
   border-radius: 0.5rem;
   z-index: 100;
   transition: 0.3s;
