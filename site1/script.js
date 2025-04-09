@@ -648,32 +648,43 @@ function createCalendar(year, month) {
       textarea.autocapitalize = 'off';
       textarea.spellcheck = false;
     
-      function showEditor() {
-        noteContent.style.display = 'none'; 
-        textarea.value = noteContent.textContent === 'Click to edit note' ? `${date}` : `${date}\n${noteContent.textContent}`;
+    function showEditor() {
+        noteContent.style.display = 'none';
+        
+        // Check if textarea already contains the date
+        let content = noteContent.textContent === 'Click to edit note' ? '' : noteContent.textContent;
+        
+        if (!content.includes(`${date}`)) {
+            // Date not found, add it at the beginning
+            textarea.value = `${date}\n${content}`;
+        } else {
+            // Date already exists, just use the content as is
+            textarea.value = content;
+        }
+        
         noteEditor.style.display = 'flex';
         
         // Force keyboard to appear by using a sequence of actions
         setTimeout(() => {
-          textarea.readOnly = false;
-          textarea.blur();
-          
-          // A more aggressive focusing technique
-          textarea.click();
-          textarea.focus();
-          
-          // Secondary focus attempt after a longer delay
-          setTimeout(() => {
-            if (document.activeElement !== textarea) {
-              textarea.focus();
-              // Try to force virtual keyboard on mobile
-              if (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
-                textarea.click();
-              }
-            }
-          }, 500);
+            textarea.readOnly = false;
+            textarea.blur();
+            
+            // A more aggressive focusing technique
+            textarea.click();
+            textarea.focus();
+            
+            // Secondary focus attempt after a longer delay
+            setTimeout(() => {
+                if (document.activeElement !== textarea) {
+                    textarea.focus();
+                    // Try to force virtual keyboard on mobile
+                    if (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+                        textarea.click();
+                    }
+                }
+            }, 500);
         }, 100);
-      }
+    }
     
       function hideEditor() {
         noteEditor.style.display = 'none';
