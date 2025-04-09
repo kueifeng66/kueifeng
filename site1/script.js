@@ -647,44 +647,108 @@ function createCalendar(year, month) {
       textarea.autocorrect = 'off';
       textarea.autocapitalize = 'off';
       textarea.spellcheck = false;
+      textarea.style.userSelect = 'text'; // Explicitly enable text selection
+      textarea.style.WebkitUserSelect = 'text';
+      textarea.style.MozUserSelect = 'text';
+      textarea.style.msUserSelect = 'text';
     
-    function showEditor() {
+      // Setup clipboard helper
+      if (!window.Clipboard) {
+        window.Clipboard = (function(window, document, navigator) {
+          var textArea, copy;
+          
+          function isOS() {
+            return navigator.userAgent.match(/ipad|iphone/i);
+          }
+          
+          function createTextArea(text) {
+            textArea = document.createElement('textArea');
+            textArea.value = text;
+            textArea.style.position = 'fixed';
+            textArea.style.left = '-9999px';
+            document.body.appendChild(textArea);
+          }
+          
+          function selectText() {
+            var range, selection;
+            if (isOS()) {
+              range = document.createRange();
+              range.selectNodeContents(textArea);
+              selection = window.getSelection();
+              selection.removeAllRanges();
+              selection.addRange(range);
+              textArea.setSelectionRange(0, 999999);
+            } else {
+              textArea.select();
+            }
+          }
+          
+          function copyToClipboard() {
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+          }
+          
+          copy = function(text) {
+            createTextArea(text);
+            selectText();
+            copyToClipboard();
+          };
+          
+          return {
+            copy: copy
+          };
+        })(window, document, navigator);
+      }
+    
+      function showEditor() {
         noteContent.style.display = 'none';
         
         // Check if textarea already contains the date
         let content = noteContent.textContent === 'Click to edit note' ? '' : noteContent.textContent;
         
         if (!content.includes(`${date}`)) {
-            // Date not found, add it at the beginning
-            textarea.value = `${date}\n${content}`;
+          // Date not found, add it at the beginning
+          textarea.value = `${date}\n${content}`;
         } else {
-            // Date already exists, just use the content as is
-            textarea.value = content;
+          // Date already exists, just use the content as is
+          textarea.value = content;
         }
         
         noteEditor.style.display = 'flex';
         
         // Force keyboard to appear by using a sequence of actions
         setTimeout(() => {
-            textarea.readOnly = false;
-            textarea.blur();
-            
-            // A more aggressive focusing technique
+          textarea.readOnly = false;
+          textarea.blur();
+          
+          // More aggressive focusing technique for iOS
+          if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+            // iOS specific focus handling
             textarea.click();
             textarea.focus();
-            
-            // Secondary focus attempt after a longer delay
-            setTimeout(() => {
-                if (document.activeElement !== textarea) {
-                    textarea.focus();
-                    // Try to force virtual keyboard on mobile
-                    if (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
-                        textarea.click();
-                    }
-                }
-            }, 500);
+            // Try to set cursor position explicitly for iOS
+            try {
+              const len = textarea.value.length;
+              textarea.setSelectionRange(len, len);
+            } catch (e) {
+              console.log("Could not set selection range", e);
+            }
+          } else {
+            textarea.focus();
+          }
+          
+          // Secondary focus attempt after a longer delay
+          setTimeout(() => {
+            if (document.activeElement !== textarea) {
+              textarea.focus();
+              // Try to force virtual keyboard on mobile
+              if (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+                textarea.click();
+              }
+            }
+          }, 500);
         }, 100);
-    }
+      }
     
       function hideEditor() {
         noteEditor.style.display = 'none';
@@ -709,6 +773,8 @@ function createCalendar(year, month) {
           alert("Error saving note: " + error.message);
         });
       }
+    
+
     
       // Separate touch and click events completely
       backFace.addEventListener('dblclick', function(e) {
@@ -743,12 +809,33 @@ function createCalendar(year, month) {
     
       // Create a dedicated tap handler for the textarea
       let tapHandler = function(e) {
-        e.preventDefault();
         e.stopPropagation();
         textarea.focus();
       };
       
       textarea.addEventListener('touchstart', tapHandler, { passive: false });
+    
+      // Improved cut/copy/paste handling for iOS
+      textarea.addEventListener('cut', function(e) {
+        e.stopPropagation();
+        // Let default cut behavior happen
+      });
+      
+      textarea.addEventListener('copy', function(e) {
+        e.stopPropagation();
+        // Let default copy behavior happen
+      });
+      
+      textarea.addEventListener('paste', function(e) {
+        e.stopPropagation();
+        // For iOS Safari sometimes we need to manually handle paste
+        if (/iPhone|iPad|iPod/i.test(navigator.userAgent) && navigator.userAgent.indexOf('Safari') !== -1) {
+          // Let default paste happen first, then ensure the textarea keeps focus
+          setTimeout(() => {
+            textarea.focus();
+          }, 100);
+        }
+      });
     
       // Button handlers
       saveBtn.addEventListener('click', function(e) {
@@ -800,12 +887,7 @@ function createCalendar(year, month) {
       noteEditor.addEventListener('touchstart', function(e) {
         e.stopPropagation();
       }, { passive: true });
-      
-      // Improve editor positioning
-      
-    }    
-
-  
+    }
     
 
   function fetchNote(card, date) {
@@ -1844,7 +1926,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 });
 
-
 function setupCardFlip() {
   // Get all calendar cards
   const cards = document.querySelectorAll('.card');
@@ -2002,17 +2083,116 @@ function setupCardFlip() {
     });
   });
   
-      // below enable copy-paste functionality.
+  // Enhanced copy-paste functionality for all textareas
   document.querySelectorAll('.card textarea').forEach(textarea => {
-      // Enable paste functionality explicitly
-    textarea.addEventListener('paste', function(e) {
-    // This empty handler ensures the default paste behavior works
-    // iOS sometimes needs a slight delay to register the paste
-    });
-    // Ensure the textarea is properly focusable and editable
-    textarea.setAttribute('tabindex', '0');
+
     textarea.removeAttribute('readonly');
-       
+    // Enable text selection explicitly
+    textarea.style.userSelect = 'text';
+    textarea.style.WebkitUserSelect = 'text';
+    textarea.style.MozUserSelect = 'text';
+    textarea.style.msUserSelect = 'text';
+    
+    // Make sure textarea is editable
+    textarea.setAttribute('tabindex', '0');
+   
+    
+    // Handle iOS Safari specific paste issues
+    textarea.addEventListener('paste', function(e) {
+      // Let the default paste happen
+      // Add a slight delay to ensure iOS processes the paste
+      setTimeout(() => {
+        // Force focus to remain on textarea after paste
+        textarea.focus();
+      }, 100);
+    });
+    
+    // Better handling for iOS text selection
+    textarea.addEventListener('touchstart', function(e) {
+      // Don't prevent default to allow iOS text selection to work
+      e.stopPropagation();
+    }, { passive: true });
+    
+    // Help iOS maintain focus on textarea
+    textarea.addEventListener('touchend', function(e) {
+      e.stopPropagation();
+      // Don't prevent default to allow selection to work
+    });
+    
+    // Ensure the textarea is selectable on iOS
+    textarea.addEventListener('click', function(e) {
+      e.stopPropagation();
+      // Make sure the click doesn't bubble up which could flip the card
+    });
+    
+    // Handle selection changes to prevent unwanted card flips
+    textarea.addEventListener('selectionchange', function(e) {
+      e.stopPropagation();
+    });
+    
+    // For iOS double tap to select word
+    let lastTap = 0;
+    textarea.addEventListener('touchend', function(e) {
+      const currentTime = new Date().getTime();
+      const tapLength = currentTime - lastTap;
+      
+      if (tapLength < 500 && tapLength > 0) {
+        // Double tap detected - don't prevent default so iOS can select word
+        e.stopPropagation();
+      }
+      
+      lastTap = currentTime;
+    });
+
+
+
   });
   
+  // Initialize Clipboard utility if not already available
+  if (!window.Clipboard) {
+    window.Clipboard = (function(window, document, navigator) {
+      var textArea, copy;
+      
+      function isOS() {
+        return navigator.userAgent.match(/ipad|iphone/i);
+      }
+      
+      function createTextArea(text) {
+        textArea = document.createElement('textArea');
+        textArea.value = text;
+        textArea.style.position = 'fixed';
+        textArea.style.left = '-9999px';
+        document.body.appendChild(textArea);
+      }
+      
+      function selectText() {
+        var range, selection;
+        if (isOS()) {
+          range = document.createRange();
+          range.selectNodeContents(textArea);
+          selection = window.getSelection();
+          selection.removeAllRanges();
+          selection.addRange(range);
+          textArea.setSelectionRange(0, 999999);
+        } else {
+          textArea.select();
+        }
+      }
+      
+      function copyToClipboard() {
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+      }
+      
+      copy = function(text) {
+        createTextArea(text);
+        selectText();
+        copyToClipboard();
+      };
+      
+      return {
+        copy: copy
+      };
+    })(window, document, navigator);
+  }
 }
