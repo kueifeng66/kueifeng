@@ -704,7 +704,7 @@ function createCalendar(year, month) {
         noteContent.style.display = 'none';
         
         // Check if textarea already contains the date
-        let content = noteContent.textContent === 'Click to edit note' ? '' : noteContent.textContent;
+        let content = noteContent.textContent === `${date}\nClick to edit note` ? '' : noteContent.textContent;
         
         if (!content.includes(`${date}`)) {
           // Date not found, add it at the beginning
@@ -928,11 +928,11 @@ function createCalendar(year, month) {
           console.log(`Note for ${date} fetched successfully`);
         } else {
           console.log(`Empty note content for ${date}`);
-          noteContent.textContent = "Click to edit note";
+          noteContent.textContent = `${date}\nClick to edit note`;
         }
       } else {
         console.log(`No note found for ${date}`);
-        noteContent.textContent = "Click to edit note";
+        noteContent.textContent = `${date}\nClick to edit note`;
       }
     })
     .catch((error) => {
