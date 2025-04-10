@@ -135,7 +135,14 @@ body {
   perspective: 1000px;
   position: relative;
   z-index: 0;
+
+  transition: transform 0.5s;
 }
+
+.card, .back {
+  backface-visibility: hidden;
+}
+
 
 .card:hover {
   z-index: 100;
@@ -159,6 +166,10 @@ body {
 .card.flipped {
   z-index: 100;
   position: relative;
+}
+
+.card.flipped .back {
+  transform: translate(-50%, -50%) rotateY(180deg);
 }
 
 .card.flipped .inner-card {
