@@ -756,7 +756,7 @@ function createCalendar(year, month) {
       }
     
       function saveNote(text) {
-        noteContent.textContent = text || 'Click to edit note';
+        noteContent.textContent = text || `${date}\nClick to edit note`;
         const safeKey = date + "-" + username;
     
         window.firebaseSet(window.firebaseRef(window.firebaseDB, "Notes/" + safeKey), {
@@ -912,7 +912,7 @@ function createCalendar(year, month) {
   
   if (!window.firebaseRef || !window.firebaseDB || !window.firebaseGet) {
     console.error("Firebase references are not available");
-    noteContent.textContent = "Click to edit note";
+    noteContent.textContent = `${date}\nClick to edit note`;
     return;
   }
   
@@ -937,7 +937,7 @@ function createCalendar(year, month) {
     })
     .catch((error) => {
       console.error(`Error fetching note for ${date}:`, error);
-      noteContent.textContent = "Click to edit note";
+      noteContent.textContent = `${date}\nClick to edit note`;
     });
 }
     
