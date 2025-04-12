@@ -1884,6 +1884,7 @@ document.addEventListener('DOMContentLoaded', () => {
     'johnnyjan65@gmail.com':'詹文欽',
     'p0915208386@gmail.com':'清潔劉小惠',
     'larchyde310119@hotmail.com':'邱冠霖',
+    'swimmingfish@hotmail.com.tw':'余金原',
 
   };
   
