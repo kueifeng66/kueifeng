@@ -320,6 +320,7 @@ body {
   font-size: 1.2rem;
   color: black;
   font-weight: bold; 
+  flex-direction: column;
   text-align: left; 
   display: flex;
   align-items: flex-start;
