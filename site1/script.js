@@ -1132,7 +1132,7 @@ function setMode(newMode) {
   }
 
 
-
+   makeCardDraggable();
 
 
 }//setMode ends here
@@ -1784,98 +1784,102 @@ setInterval(checkDayChange, 60000);
 
 //movable cards
 
-const cards = document.querySelectorAll('.card');
+function makeCardDraggable() {
 
-// Loop through each card to add dragging functionality
-cards.forEach(card => {
-  const innerCard = card.querySelector('.inner-card');
+    const cards = document.querySelectorAll('.card');
+
+    // Loop through each card to add dragging functionality
+    cards.forEach(card => {
+     const innerCard = card.querySelector('.inner-card');
   
-  // Variables specific to each card
-  let isFlipped = false;
-  let offsetX2 = 0, offsetY2 = 0;
-  let isDragging2 = false;
+      // Variables specific to each card
+      let isFlipped = false;
+      let offsetX2 = 0, offsetY2 = 0;
+      let isDragging2 = false;
   
-  // Store original position
-  const originalPosition = {
-    position: card.style.position || 'static',
-    left: card.style.left || 'auto',
-    top: card.style.top || 'auto'
-  };
+      // Store original position
+      const originalPosition = {
+        position: card.style.position || 'static',
+        left: card.style.left || 'auto',
+        top: card.style.top || 'auto'
+      };
   
-  // Function to check if card is flipped
-  function checkFlipped() {
+      // Function to check if card is flipped
+    function checkFlipped() {
     // Get the current transform style and check if it contains rotateY(180deg)
-    const transform = window.getComputedStyle(innerCard).getPropertyValue('transform');
-    const wasFlipped = isFlipped;
-    isFlipped = transform.includes('matrix3d') && transform.includes('-1');
+      const transform = window.getComputedStyle(innerCard).getPropertyValue('transform');
+      const wasFlipped = isFlipped;
+      isFlipped = transform.includes('matrix3d') && transform.includes('-1');
     
-    // If card was flipped but now is not, reset to original position
-    if (wasFlipped && !isFlipped) {
-      resetPosition();
+      // If card was flipped but now is not, reset to original position
+      if (wasFlipped && !isFlipped) {
+       resetPosition();
+      }
     }
-  }
   
-  // Function to reset position
-  function resetPosition() {
-    card.style.position = originalPosition.position;
-    card.style.left = originalPosition.left;
-    card.style.top = originalPosition.top;
-  }
+    // Function to reset position
+    function resetPosition() {
+       card.style.position = originalPosition.position;
+       card.style.left = originalPosition.left;
+       card.style.top = originalPosition.top;
+    }
   
-  // Function to start dragging the card
-  function startDragging2(e) {
-    // Check if card is flipped before allowing drag
-    checkFlipped();
-    if (!isFlipped) return;
+    // Function to start dragging the card
+    function startDragging2(e) {
+      // Check if card is flipped before allowing drag
+      checkFlipped();
+      if (!isFlipped) return;
     
-    isDragging2 = true;
+      isDragging2 = true;
     
-    const isTouch = e.type.startsWith('touch');
-    const clientX = isTouch ? e.touches[0]?.clientX : e.clientX;
-    const clientY = isTouch ? e.touches[0]?.clientY : e.clientY;
+      const isTouch = e.type.startsWith('touch');
+      const clientX = isTouch ? e.touches[0]?.clientX : e.clientX;
+      const clientY = isTouch ? e.touches[0]?.clientY : e.clientY;
     
-    offsetX2 = clientX - card.offsetLeft;
-    offsetY2 = clientY - card.offsetTop;
+      offsetX2 = clientX - card.offsetLeft;
+      offsetY2 = clientY - card.offsetTop;
     
-    // Add the appropriate event listeners based on touch or mouse
-    document.addEventListener(isTouch ? 'touchmove' : 'mousemove', moveCard, { passive: false });
-    document.addEventListener(isTouch ? 'touchend' : 'mouseup', stopDragging2);
+      // Add the appropriate event listeners based on touch or mouse
+      document.addEventListener(isTouch ? 'touchmove' : 'mousemove', moveCard, { passive: false });
+      document.addEventListener(isTouch ? 'touchend' : 'mouseup', stopDragging2);
     
-    e.preventDefault(); // Prevent scrolling or other default actions during drag
-  }
+      e.preventDefault(); // Prevent scrolling or other default actions during drag
+    }
   
-  // Function to move the card during dragging
-  function moveCard(e) {
-    if (!isDragging2) return;
+    // Function to move the card during dragging
+    function moveCard(e) {
+      if (!isDragging2) return;
     
-    const isTouch = e.type.startsWith('touch');
-    const clientX = isTouch ? e.touches[0]?.clientX : e.clientX;
-    const clientY = isTouch ? e.touches[0]?.clientY : e.clientY;
+      const isTouch = e.type.startsWith('touch');
+      const clientX = isTouch ? e.touches[0]?.clientX : e.clientX;
+      const clientY = isTouch ? e.touches[0]?.clientY : e.clientY;
     
-    card.style.position = 'absolute';
-    card.style.left = (clientX - offsetX2) + 'px';
-    card.style.top = (clientY - offsetY2) + 'px';
+      card.style.position = 'absolute';
+      card.style.left = (clientX - offsetX2) + 'px';
+      card.style.top = (clientY - offsetY2) + 'px';
     
-    e.preventDefault(); // Prevent unwanted default behavior (like scrolling)
-  }
+      e.preventDefault(); // Prevent unwanted default behavior (like scrolling)
+    }
   
-  // Function to stop dragging the card
-  function stopDragging2() {
-    isDragging2 = false;
-    document.removeEventListener('mousemove', moveCard);
-    document.removeEventListener('mouseup', stopDragging2);
-    document.removeEventListener('touchmove', moveCard);
-    document.removeEventListener('touchend', stopDragging2);
-  }
+    // Function to stop dragging the card
+    function stopDragging2() {
+      isDragging2 = false;
+      document.removeEventListener('mousemove', moveCard);
+      document.removeEventListener('mouseup', stopDragging2);
+      document.removeEventListener('touchmove', moveCard);
+      document.removeEventListener('touchend', stopDragging2);
+    }
   
-  // Add event listeners for each card to start dragging
-  card.addEventListener('mousedown', startDragging2);
-  card.addEventListener('touchstart', startDragging2, { passive: false });
+    // Add event listeners for each card to start dragging
+    card.addEventListener('mousedown', startDragging2);
+    card.addEventListener('touchstart', startDragging2, { passive: false });
   
-  // Listen for transition end to update flipped state
-  innerCard.addEventListener('transitionend', checkFlipped);
-});
+    // Listen for transition end to update flipped state
+    innerCard.addEventListener('transitionend', checkFlipped);
+  }); //cards.forEach ends
 
+
+}
 
 
 namePicker.addEventListener('scroll', () => {
