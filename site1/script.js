@@ -1731,50 +1731,55 @@ setInterval(checkDayChange, 60000);
   }
 
 
-const tooltip_ = document.getElementById('tooltip');
-let offsetX = 0, offsetY = 0;
-let isDragging = false;
+  const tooltip_ = document.getElementById('tooltip');
+
+  let isDragging = false;
+  let offsetX = 0;
+  let offsetY = 0;
 
 
-function startDragging(e) {
-  isDragging = true;
-  
-  const clientX = e.clientX || e.touches[0].clientX;
-  const clientY = e.clientY || e.touches[0].clientY;
+  function startDragging(e) {
+    isDragging = true;
 
-  offsetX = clientX - tooltip_.offsetLeft;
-  offsetY = clientY - tooltip_.offsetTop;
+    const isTouch = e.type.startsWith('touch');
+    const clientX = isTouch ? e.touches[0]?.clientX : e.clientX;
+    const clientY = isTouch ? e.touches[0]?.clientY : e.clientY;
 
-  document.addEventListener(e.type === 'mousedown' ? 'mousemove' : 'touchmove', moveTooltip);
-  document.addEventListener(e.type === 'mousedown' ? 'mouseup' : 'touchend', stopDragging);
+    offsetX = clientX - tooltip_.offsetLeft;
+    offsetY = clientY - tooltip_.offsetTop;
 
-  e.preventDefault();
-}
+    document.addEventListener(isTouch ? 'touchmove' : 'mousemove', moveTooltip, { passive: false });
+    document.addEventListener(isTouch ? 'touchend' : 'mouseup', stopDragging);
 
-
-function moveTooltip(e) {
-  if (isDragging) {
-    const clientX = e.clientX || e.touches[0].clientX;
-    const clientY = e.clientY || e.touches[0].clientY;
-
-    tooltip_.style.left = (clientX - offsetX) + 'px';
-    tooltip_.style.top = (clientY - offsetY) + 'px';
+    e.preventDefault(); // Prevent scrolling on touch
   }
-}
+
+  function moveTooltip(e) {
+    if (!isDragging) return;
+
+    const isTouch = e.type.startsWith('touch');
+    const clientX = isTouch ? e.touches[0]?.clientX : e.clientX;
+    const clientY = isTouch ? e.touches[0]?.clientY : e.clientY;
+
+    tooltip_.style.left = `${clientX - offsetX}px`;
+    tooltip_.style.top = `${clientY - offsetY}px`;
+
+    e.preventDefault();
+  }
 
 
-function stopDragging() {
-  isDragging = false;
-  document.removeEventListener('mousemove', moveTooltip);
-  document.removeEventListener('mouseup', stopDragging);
-  document.removeEventListener('touchmove', moveTooltip);
-  document.removeEventListener('touchend', stopDragging);
-}
+  function stopDragging(e) {
+    isDragging = false;
+
+    const isTouch = e.type.startsWith('touch');
+    document.removeEventListener(isTouch ? 'touchmove' : 'mousemove', moveTooltip);
+    document.removeEventListener(isTouch ? 'touchend' : 'mouseup', stopDragging);
+  }
 
 
-tooltip_.addEventListener('mousedown', startDragging);
-tooltip_.addEventListener('touchstart', startDragging);
-
+  // Add event listeners for drag start
+  tooltip_.addEventListener('mousedown', startDragging);
+  tooltip_.addEventListener('touchstart', startDragging, { passive: false });
 
 
 //movable cards
