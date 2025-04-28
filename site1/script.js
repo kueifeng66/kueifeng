@@ -1883,13 +1883,11 @@ function makeCardDraggable() {
 
 
 namePicker.addEventListener('scroll', () => {
-
   const itemHeight = namePicker.querySelector(".picker-item").offsetHeight;
   currentIndex = Math.floor(namePicker.scrollTop / itemHeight);
   updateSelection();
   clearSelectedClass();
   updateScale();
-
 });
 
 
@@ -1913,7 +1911,6 @@ document.addEventListener('DOMContentLoaded', () => {
     'p0915208386@gmail.com':'清潔劉小惠',
     'larchyde310119@hotmail.com':'邱冠霖',
     'swimmingfish@hotmail.com.tw':'余金原',
-
   };
   
   const targetName = emailNameMap[userEmail];
