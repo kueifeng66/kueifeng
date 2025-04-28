@@ -1882,6 +1882,8 @@ function makeCardDraggable() {
 }
 
 
+makeCardDraggable();
+
 namePicker.addEventListener('scroll', () => {
   const itemHeight = namePicker.querySelector(".picker-item").offsetHeight;
   currentIndex = Math.floor(namePicker.scrollTop / itemHeight);
