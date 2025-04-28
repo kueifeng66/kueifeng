@@ -1783,7 +1783,7 @@ setInterval(checkDayChange, 60000);
 
 
 //movable cards
-// Get all cards
+
 const cards = document.querySelectorAll('.card');
 
 // Loop through each card to add dragging functionality
@@ -1822,7 +1822,7 @@ cards.forEach(card => {
     card.style.top = originalPosition.top;
   }
   
-  // Dragging functions
+  // Function to start dragging the card
   function startDragging2(e) {
     // Check if card is flipped before allowing drag
     checkFlipped();
@@ -1830,29 +1830,36 @@ cards.forEach(card => {
     
     isDragging2 = true;
     
-    const clientX = e.clientX || e.touches[0].clientX;
-    const clientY = e.clientY || e.touches[0].clientY;
+    const isTouch = e.type.startsWith('touch');
+    const clientX = isTouch ? e.touches[0]?.clientX : e.clientX;
+    const clientY = isTouch ? e.touches[0]?.clientY : e.clientY;
     
     offsetX2 = clientX - card.offsetLeft;
     offsetY2 = clientY - card.offsetTop;
     
-    document.addEventListener(e.type === 'mousedown' ? 'mousemove' : 'touchmove', moveCard);
-    document.addEventListener(e.type === 'mousedown' ? 'mouseup' : 'touchend', stopDragging2);
+    // Add the appropriate event listeners based on touch or mouse
+    document.addEventListener(isTouch ? 'touchmove' : 'mousemove', moveCard, { passive: false });
+    document.addEventListener(isTouch ? 'touchend' : 'mouseup', stopDragging2);
     
-    e.preventDefault();
+    e.preventDefault(); // Prevent scrolling or other default actions during drag
   }
   
+  // Function to move the card during dragging
   function moveCard(e) {
-    if (isDragging2) {
-      const clientX = e.clientX || e.touches[0].clientX;
-      const clientY = e.clientY || e.touches[0].clientY;
-      
-      card.style.position = 'absolute';
-      card.style.left = (clientX - offsetX2) + 'px';
-      card.style.top = (clientY - offsetY2) + 'px';
-    }
+    if (!isDragging2) return;
+    
+    const isTouch = e.type.startsWith('touch');
+    const clientX = isTouch ? e.touches[0]?.clientX : e.clientX;
+    const clientY = isTouch ? e.touches[0]?.clientY : e.clientY;
+    
+    card.style.position = 'absolute';
+    card.style.left = (clientX - offsetX2) + 'px';
+    card.style.top = (clientY - offsetY2) + 'px';
+    
+    e.preventDefault(); // Prevent unwanted default behavior (like scrolling)
   }
   
+  // Function to stop dragging the card
   function stopDragging2() {
     isDragging2 = false;
     document.removeEventListener('mousemove', moveCard);
@@ -1861,13 +1868,14 @@ cards.forEach(card => {
     document.removeEventListener('touchend', stopDragging2);
   }
   
-  // Add event listeners for each card
+  // Add event listeners for each card to start dragging
   card.addEventListener('mousedown', startDragging2);
-  card.addEventListener('touchstart', startDragging2);
+  card.addEventListener('touchstart', startDragging2, { passive: false });
   
   // Listen for transition end to update flipped state
   innerCard.addEventListener('transitionend', checkFlipped);
 });
+
 
 
 namePicker.addEventListener('scroll', () => {
