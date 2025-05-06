@@ -184,19 +184,18 @@ body {
   z-index: 100;
 }
 
-/* Mode-specific styles if needed */
 .light .card.flipped .inner-card {
-  /* Custom light mode styles */
+ 
   box-shadow: 0 0 15px rgba(100, 100, 255, 0.6);
 }
 
 .neutral .card.flipped .inner-card {
-  /* Custom neutral mode styles */
+ 
   box-shadow: 0 0 15px rgba(70, 130, 180, 0.7);
 }
 
 .dark .card.flipped .inner-card {
-  /* Custom dark mode styles */
+ 
   box-shadow: 0 0 15px rgba(40, 40, 40, 0.8);
 }
 

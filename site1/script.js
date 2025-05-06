@@ -1935,6 +1935,7 @@ document.addEventListener('DOMContentLoaded', () => {
     'p0915208386@gmail.com':'清潔劉小惠',
     'larchyde310119@hotmail.com':'邱冠霖',
     'swimmingfish@hotmail.com.tw':'余金原',
+    'sct@anws.gov.tw':'孫景泰',
   };
   
   const targetName = emailNameMap[userEmail];
