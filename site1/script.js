@@ -1936,6 +1936,7 @@ document.addEventListener('DOMContentLoaded', () => {
     'larchyde310119@hotmail.com':'邱冠霖',
     'swimmingfish@hotmail.com.tw':'余金原',
     'sct@anws.gov.tw':'孫景泰',
+    'folra679@gmail.com':'官郁庭',
   };
   
   const targetName = emailNameMap[userEmail];
