@@ -94,6 +94,8 @@ class CountdownTimer {
         alarm.pause();
         alarm.currentTime = 0;
         }
+    this.wrapper.classList.remove("blink-border");
+
   }
 
   reset() {
@@ -105,6 +107,8 @@ class CountdownTimer {
         alarm.pause();
         alarm.currentTime = 0;
     }
+    this.wrapper.classList.remove("blink-border");
+
   }
 
   update() {
@@ -118,7 +122,7 @@ class CountdownTimer {
       if (navigator.vibrate) {
         navigator.vibrate([300, 100, 300]); 
       }
-
+      this.wrapper.classList.add("blink-border");
       return;
     }
 
