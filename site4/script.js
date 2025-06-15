@@ -102,6 +102,8 @@ class CountdownTimer {
       clearInterval(this.timer);
       this.display.textContent = "00:00:00:00";
       this.isRunning = false;
+      const alarm = document.getElementById("alarmSound");
+      if (alarm) alarm.play();
       return;
     }
 
@@ -116,6 +118,7 @@ class CountdownTimer {
     milliseconds = String(milliseconds).padStart(2, "0");
 
     this.display.textContent = `${hours}:${minutes}:${seconds}:${milliseconds}`;
+    
   }
 }
 
