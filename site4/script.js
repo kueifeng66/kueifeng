@@ -88,12 +88,23 @@ class CountdownTimer {
     clearInterval(this.timer);
     this.duration = this.endTime - Date.now(); // Save remaining
     this.isRunning = false;
+
+    const alarm = document.getElementById("alarmSound");
+        if (alarm) {
+        alarm.pause();
+        alarm.currentTime = 0;
+        }
   }
 
   reset() {
     clearInterval(this.timer);
     this.isRunning = false;
     this.display.textContent = "00:00:00:00";
+    const alarm = document.getElementById("alarmSound");
+    if (alarm) {
+        alarm.pause();
+        alarm.currentTime = 0;
+    }
   }
 
   update() {
