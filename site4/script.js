@@ -115,6 +115,10 @@ class CountdownTimer {
       this.isRunning = false;
       const alarm = document.getElementById("alarmSound");
       if (alarm) alarm.play();
+      if (navigator.vibrate) {
+        navigator.vibrate([300, 100, 300]); 
+      }
+
       return;
     }
 
