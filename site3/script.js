@@ -71,7 +71,7 @@ class CountdownTimer {
     if (this.isRunning) return;
 
   // ⏱️ If first start, calculate full duration from pickers
-    if (!this.hasStartedBefore) {
+    if (!this.hasStartedBefore || this.duration === 0) {
       const h = parseInt(this.hoursSelect.value);
       const m = parseInt(this.minutesSelect.value);
       const s = parseInt(this.secondsSelect.value);
@@ -111,6 +111,7 @@ class CountdownTimer {
   reset() {
     clearInterval(this.timer);
     this.isRunning = false;
+    this.hasStartedBefore = false;
     this.display.textContent = "00:00:00:00";
     const alarm = document.getElementById("alarmSound");
     if (alarm) {
