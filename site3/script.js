@@ -1,12 +1,15 @@
 const timersContainer = document.getElementById("timers-container");
 
 class CountdownTimer {
+
   constructor(index) {
     this.index = index;
     this.timer = null;
+    this.initialDuration = 0; 
     this.duration = 0;
     this.endTime = 0;
     this.isRunning = false;
+    this.hasStartedBefore = false; 
 
     this.createElements();
     this.populatePickers();
@@ -67,16 +70,23 @@ class CountdownTimer {
   start() {
     if (this.isRunning) return;
 
-    const h = parseInt(this.hoursSelect.value);
-    const m = parseInt(this.minutesSelect.value);
-    const s = parseInt(this.secondsSelect.value);
-    this.duration = (h * 3600 + m * 60 + s) * 1000;
+  // ⏱️ If first start, calculate full duration from pickers
+    if (!this.hasStartedBefore) {
+      const h = parseInt(this.hoursSelect.value);
+      const m = parseInt(this.minutesSelect.value);
+      const s = parseInt(this.secondsSelect.value);
+      this.initialDuration = (h * 3600 + m * 60 + s) * 1000;
+      this.duration = this.initialDuration;
 
-    if (this.duration <= 0) {
-      alert(`Timer ${this.index + 1}: Please set a time`);
-      return;
+      if (this.duration <= 0) {
+        alert(`Timer ${this.index + 1}: Please set a time`);
+        return;
+      }
+
+      this.hasStartedBefore = true;
     }
 
+    // 🕒 Set new endTime and start interval
     this.endTime = Date.now() + this.duration;
     this.timer = setInterval(() => this.update(), 10);
     this.isRunning = true;
@@ -143,7 +153,7 @@ class CountdownTimer {
 
 // Create 5 timers
 window.addEventListener("DOMContentLoaded", () => {
-  for (let i = 0; i < 20; i++) {
+  for (let i = 0; i < 100; i++) {
     new CountdownTimer(i);
   }
 });
