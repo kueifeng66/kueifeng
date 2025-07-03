@@ -414,11 +414,11 @@ body {
   color: #ff6347;
 }
 
-.today {
+/* .today {
   background-color: #e6f7ff;
   color: #0066cc;
   box-shadow: 0 0 0.5rem #0066cc;
-}
+} */
 
 
 .today {
@@ -431,6 +431,28 @@ body {
   position: relative;
   z-index:auto;
  }
+
+
+ .today {
+  background: linear-gradient(to right, orange, yellow, #ffff99, lightyellow, #ffffff);
+  color: #cc6600;
+  box-shadow: 0 0 0.5rem orange;
+  animation: breathing-glow 3s ease-in-out infinite;
+}
+
+@keyframes breathing-glow {
+  0%, 100% {
+    box-shadow:
+      0 0 0.5rem rgba(255, 165, 0, 0.7),   /* orange */
+      0 0 1rem rgba(255, 255, 153, 0.4);  /* pale yellow */
+  }
+  50% {
+    box-shadow:
+      0 0 1rem rgba(255, 200, 0, 0.9),    /* golden yellow */
+      0 0 2rem rgba(255, 255, 153, 0.6),  /* light yellow */
+      0 0 3rem rgba(255, 255, 255, 0.3);  /* white glow */
+  }
+}
 
  @property --angle{
     syntax: "<angle>";
