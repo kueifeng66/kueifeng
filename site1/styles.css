@@ -414,11 +414,6 @@ body {
   color: #ff6347;
 }
 
-/* .today {
-  background-color: #e6f7ff;
-  color: #0066cc;
-  box-shadow: 0 0 0.5rem #0066cc;
-} */
 
 
 .today {
@@ -434,11 +429,13 @@ body {
 
 
  .today {
-  background: linear-gradient(to right, orange, yellow, #ffff99, lightyellow, #ffffff);
+  background: linear-gradient(to right, orange, yellow, #ffff99, lightyellow, #ffffff); 
   color: #cc6600;
   box-shadow: 0 0 0.5rem orange;
   animation: breathing-glow 3s ease-in-out infinite;
 }
+
+
 
 @keyframes breathing-glow {
   0%, 100% {
