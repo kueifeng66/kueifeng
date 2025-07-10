@@ -77,10 +77,20 @@ class Ball {
       getComputedStyle(this.paddleElem).getPropertyValue("--position")
     )
   }
+  
+  get height() {
+  return parseFloat(getComputedStyle(this.paddleElem).height) / window.innerHeight * 100
+  }
 
   set position(value) {
-    this.paddleElem.style.setProperty("--position", value)
-  }
+  const min = (this.height / 2)
+  const max = 100 - (this.height / 2)
+  value = Math.min(Math.max(value, min), max)
+  this.paddleElem.style.setProperty("--position", value)
+	}
+
+
+
 
   rect() {
     return this.paddleElem.getBoundingClientRect()
