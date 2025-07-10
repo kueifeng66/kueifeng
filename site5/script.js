@@ -4,6 +4,16 @@ const SPEED = 0.02
 const INITIAL_VELOCITY = 0.05
 const VELOCITY_INCREASE = 0.000001
 
+const hitSound = document.getElementById("hitSound");
+
+
+
+function playBounceSound() {
+  hitSound.currentTime = 0; // rewind to start
+  hitSound.play().catch(() => {
+    console.log('Audio play failed:', e)
+  });
+}
 
 
 class Ball {
@@ -57,10 +67,12 @@ class Ball {
 
     if (rect.bottom >= window.innerHeight || rect.top <= 0) {
       this.direction.y *= -1
+	  playBounceSound()
     }
 
     if (paddleRects.some(r => isCollision(r, rect))) {
       this.direction.x *= -1
+	  playBounceSound()
     }
   }
 }
@@ -87,7 +99,7 @@ class Ball {
   const max = 100 - (this.height / 2)
   value = Math.min(Math.max(value, min), max)
   this.paddleElem.style.setProperty("--position", value)
-	}
+  }
 
 
 
@@ -103,6 +115,16 @@ class Ball {
   update(delta, ballHeight) {
     this.position += SPEED * delta * (ballHeight - this.position)
   }
+}
+
+
+function playBounceSound() {
+  // Reset the audio to beginning and play
+  hitSound.currentTime = 0
+  hitSound.play().catch(e => {
+    // Handle cases where audio can't play (e.g., no user interaction yet)
+    console.log('Audio play failed:', e)
+  })
 }
 
 const ball = new Ball(document.getElementById("ball"));
