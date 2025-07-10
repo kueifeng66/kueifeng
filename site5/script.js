@@ -17,9 +17,13 @@ function playBounceSound() {
 
 
 class Ball {
+	
+  
+
   constructor(ballElem) {
-    this.ballElem = ballElem
-    this.reset()
+    this.ballElem = ballElem;
+    this.reset();
+	this.lastPaddleHitTime = 0;
   }
 
   get x() {
@@ -43,7 +47,7 @@ class Ball {
   }
   
   
-  
+
 
   reset() {
     this.x = 50
@@ -65,15 +69,36 @@ class Ball {
     this.velocity += VELOCITY_INCREASE * delta
     const rect = this.rect()
 
-    if (rect.bottom >= window.innerHeight || rect.top <= 0) {
-      this.direction.y *= -1
-	  playBounceSound()
+    // Bounce off top and bottom walls
+	if (rect.bottom >= window.innerHeight) {
+		this.direction.y *= -1
+		this.y = 100 - (rect.height / window.innerHeight * 100) // push ball inside
+		playBounceSound()
+	} else if (rect.top <= 0) {
+		this.direction.y *= -1
+		this.y = (rect.height / window.innerHeight * 100) // push ball inside
+		playBounceSound()
+	}
+
+	const now = performance.now()
+for (const paddle of paddleRects) {
+  if (isCollision(paddle, rect) && now - this.lastPaddleHitTime > 100) {
+    this.direction.x *= -1
+    this.lastPaddleHitTime = now
+
+    // Push the ball slightly away from the paddle to avoid sticking
+    if (this.direction.x < 0) {
+      this.x -= 1
+    } else {
+      this.x += 1
     }
 
-    if (paddleRects.some(r => isCollision(r, rect))) {
-      this.direction.x *= -1
-	  playBounceSound()
-    }
+    playBounceSound()
+    break
+  }
+}
+
+
   }
 }
 
