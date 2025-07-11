@@ -172,14 +172,23 @@ function handleLose() {
 // Controls
 document.addEventListener("mousemove", e => {
   playerPaddle.position = (e.y / window.innerHeight) * 100
-})
+});
 
 document.addEventListener("touchmove", e => {
   const touch = e.touches[0]
   playerPaddle.position = (touch.clientY / window.innerHeight) * 100
-})
+});
 
-window.requestAnimationFrame(update)
+
+
+
+window.requestAnimationFrame(update);
+
+
+window.addEventListener("load", () => {
+  hideScrollbar();
+});
+
 
 // Utility functions
 function randomNumberBetween(min, max) {
@@ -193,4 +202,13 @@ function isCollision(rect1, rect2) {
     rect1.top <= rect2.bottom &&
     rect1.bottom >= rect2.top
   )
+}
+
+
+function hideScrollbar() {
+  document.body.style.overflow = 'hidden';
+}
+
+function showScrollbar() {
+  document.body.style.overflow = 'auto';
 }
