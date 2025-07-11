@@ -1,4 +1,4 @@
-const SPEED = randomNumberBetween(0.005, 0.03)
+const SPEED = randomNumberBetween(0.005, 0.03);
 
 const INITIAL_VELOCITY = 0.05
 const VELOCITY_INCREASE = 0.00001
@@ -6,6 +6,7 @@ const VELOCITY_INCREASE = 0.00001
 const hitSound = document.getElementById("hitSound")
 
 function playBounceSound() {
+  
   hitSound.currentTime = 0
   hitSound.play().catch(e => {
     console.log('Audio play failed:', e)
@@ -95,6 +96,7 @@ class Ball {
 class Paddle {
   constructor(paddleElem) {
     this.paddleElem = paddleElem
+    this.speed = randomNumberBetween(0.005, 0.03)
     this.reset()
   }
 
@@ -148,7 +150,7 @@ function update(time) {
 
     if (isLose()) handleLose()
   }
-
+  
   lastTime = time
   window.requestAnimationFrame(update)
 }
