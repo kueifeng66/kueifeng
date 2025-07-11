@@ -1,29 +1,22 @@
-const SPEED = 0.02
-
-
+const SPEED = 0.01
 const INITIAL_VELOCITY = 0.05
-const VELOCITY_INCREASE = 0.000001
+const VELOCITY_INCREASE = 0.00001
 
-const hitSound = document.getElementById("hitSound");
-
-
+const hitSound = document.getElementById("hitSound")
 
 function playBounceSound() {
-  hitSound.currentTime = 0; // rewind to start
-  hitSound.play().catch(() => {
+  hitSound.currentTime = 0
+  hitSound.play().catch(e => {
     console.log('Audio play failed:', e)
-  });
+  })
 }
 
-
 class Ball {
-	
-  
-
   constructor(ballElem) {
-    this.ballElem = ballElem;
-    this.reset();
-	this.lastPaddleHitTime = 0;
+    this.ballElem = ballElem
+    this.reset()
+    this.lastPaddleHitTime = 0
+    this.lastHitter = null // 🆕 Track who hit last
   }
 
   get x() {
@@ -45,9 +38,6 @@ class Ball {
   rect() {
     return this.ballElem.getBoundingClientRect()
   }
-  
-  
-
 
   reset() {
     this.x = 50
@@ -61,49 +51,47 @@ class Ball {
       this.direction = { x: Math.cos(heading), y: Math.sin(heading) }
     }
     this.velocity = INITIAL_VELOCITY
+    this.lastHitter = null // Reset on score
   }
 
-  update(delta, paddleRects) {
+  update(delta, paddles) {
     this.x += this.direction.x * this.velocity * delta
     this.y += this.direction.y * this.velocity * delta
     this.velocity += VELOCITY_INCREASE * delta
+
     const rect = this.rect()
+    const now = performance.now()
 
-    // Bounce off top and bottom walls
-	if (rect.bottom >= window.innerHeight) {
-		this.direction.y *= -1
-		this.y = 100 - (rect.height / window.innerHeight * 100) // push ball inside
-		playBounceSound()
-	} else if (rect.top <= 0) {
-		this.direction.y *= -1
-		this.y = (rect.height / window.innerHeight * 100) // push ball inside
-		playBounceSound()
-	}
-
-	const now = performance.now()
-for (const paddle of paddleRects) {
-  if (isCollision(paddle, rect) && now - this.lastPaddleHitTime > 100) {
-    this.direction.x *= -1
-    this.lastPaddleHitTime = now
-
-    // Push the ball slightly away from the paddle to avoid sticking
-    if (this.direction.x < 0) {
-      this.x -= 1
-    } else {
-      this.x += 1
+    // Bounce off top and bottom
+    if (rect.bottom >= window.innerHeight) {
+      this.direction.y *= -1
+      this.y = 100 - (rect.height / window.innerHeight * 100)
+      playBounceSound()
+    } else if (rect.top <= 0) {
+      this.direction.y *= -1
+      this.y = (rect.height / window.innerHeight * 100)
+      playBounceSound()
     }
 
-    playBounceSound()
-    break
+    // Paddle collision
+    for (const paddle of paddles) {
+      const paddleRect = paddle.rect()
+      if (isCollision(paddleRect, rect) && now - this.lastPaddleHitTime > 100) {
+        this.direction.x *= -1
+        this.lastPaddleHitTime = now
+        this.lastHitter = (paddle === playerPaddle) ? "player" : "computer"
+
+        if (this.direction.x < 0) this.x -= 1
+        else this.x += 1
+
+        playBounceSound()
+        break
+      }
+    }
   }
 }
 
-
-  }
-}
-
-
- class Paddle {
+class Paddle {
   constructor(paddleElem) {
     this.paddleElem = paddleElem
     this.reset()
@@ -114,20 +102,17 @@ for (const paddle of paddleRects) {
       getComputedStyle(this.paddleElem).getPropertyValue("--position")
     )
   }
-  
+
   get height() {
-  return parseFloat(getComputedStyle(this.paddleElem).height) / window.innerHeight * 100
+    return parseFloat(getComputedStyle(this.paddleElem).height) / window.innerHeight * 100
   }
 
   set position(value) {
-  const min = (this.height / 2)
-  const max = 100 - (this.height / 2)
-  value = Math.min(Math.max(value, min), max)
-  this.paddleElem.style.setProperty("--position", value)
+    const min = this.height / 2
+    const max = 100 - this.height / 2
+    value = Math.min(Math.max(value, min), max)
+    this.paddleElem.style.setProperty("--position", value)
   }
-
-
-
 
   rect() {
     return this.paddleElem.getBoundingClientRect()
@@ -142,33 +127,23 @@ for (const paddle of paddleRects) {
   }
 }
 
+// Initialization
+const ball = new Ball(document.getElementById("ball"))
+const playerPaddle = new Paddle(document.getElementById("player-paddle"))
+const computerPaddle = new Paddle(document.getElementById("computer-paddle"))
+const playerScoreElem = document.getElementById("player-score")
+const computerScoreElem = document.getElementById("computer-score")
 
-function playBounceSound() {
-  // Reset the audio to beginning and play
-  hitSound.currentTime = 0
-  hitSound.play().catch(e => {
-    // Handle cases where audio can't play (e.g., no user interaction yet)
-    console.log('Audio play failed:', e)
-  })
-}
-
-const ball = new Ball(document.getElementById("ball"));
-const playerPaddle = new Paddle(document.getElementById("player-paddle"));
-const computerPaddle = new Paddle(document.getElementById("computer-paddle"));
-const playerScoreElem = document.getElementById("player-score");
-const computerScoreElem = document.getElementById("computer-score");
-
-let lastTime
+let lastTime = null
 function update(time) {
   if (lastTime != null) {
     const delta = time - lastTime
-    ball.update(delta, [playerPaddle.rect(), computerPaddle.rect()])
-    computerPaddle.update(delta, ball.y)
-    const hue = parseFloat(
-      getComputedStyle(document.documentElement).getPropertyValue("--hue")
-    )
+    ball.update(delta, [playerPaddle, computerPaddle])
 
-    document.documentElement.style.setProperty("--hue", hue + delta * 0.01)
+    // 🧠 Only move computer paddle after player hits the ball
+    if (ball.lastHitter === "player" || ball.lastHitter === null && ball.direction.x > 0) {
+      computerPaddle.update(delta, ball.y)
+    }
 
     if (isLose()) handleLose()
   }
@@ -189,15 +164,15 @@ function handleLose() {
   } else {
     computerScoreElem.textContent = parseInt(computerScoreElem.textContent) + 1
   }
+
   ball.reset()
   computerPaddle.reset()
 }
 
+// Controls
 document.addEventListener("mousemove", e => {
   playerPaddle.position = (e.y / window.innerHeight) * 100
 })
-
-
 
 document.addEventListener("touchmove", e => {
   const touch = e.touches[0]
@@ -206,11 +181,7 @@ document.addEventListener("touchmove", e => {
 
 window.requestAnimationFrame(update)
 
-
-
-
-
-
+// Utility functions
 function randomNumberBetween(min, max) {
   return Math.random() * (max - min) + min
 }
