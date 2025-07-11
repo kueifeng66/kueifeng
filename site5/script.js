@@ -1,4 +1,5 @@
-const SPEED = 0.01
+const SPEED = randomNumberBetween(0.005, 0.03)
+
 const INITIAL_VELOCITY = 0.05
 const VELOCITY_INCREASE = 0.00001
 
@@ -211,4 +212,9 @@ function hideScrollbar() {
 
 function showScrollbar() {
   document.body.style.overflow = 'auto';
+}
+
+
+function randomNumberBetween(min, max) {
+  return Math.random() * (max - min) + min;
 }
