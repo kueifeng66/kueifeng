@@ -1,7 +1,7 @@
 const SPEED = randomNumberBetween(0.005, 0.03);
 
 const INITIAL_VELOCITY = 0.05
-const VELOCITY_INCREASE = 0.00001
+const VELOCITY_INCREASE = 0.000001
 
 const bgMusic = document.getElementById("bgMusic");
 
