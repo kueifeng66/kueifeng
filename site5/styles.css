@@ -8,6 +8,10 @@
   --foreground-color: hsl(var(--hue), var(--saturation), 75%);
   --background-color: hsl(var(--hue), var(--saturation), 20%);
 }
+html, body {
+  overscroll-behavior: none;
+  touch-action: none;
+}
 
 body {
   margin: 0;

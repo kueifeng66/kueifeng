@@ -143,6 +143,10 @@ function update(time) {
     const delta = time - lastTime
     ball.update(delta, [playerPaddle, computerPaddle])
 
+
+    const hue = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--hue"));
+    document.documentElement.style.setProperty("--hue", hue + delta * 0.005);
+
     // 🧠 Only move computer paddle after player hits the ball
     if (ball.lastHitter === "player" || ball.lastHitter === null && ball.direction.x > 0) {
       computerPaddle.update(delta, ball.y)
@@ -178,10 +182,15 @@ document.addEventListener("mousemove", e => {
 });
 
 document.addEventListener("touchmove", e => {
-  const touch = e.touches[0]
-  playerPaddle.position = (touch.clientY / window.innerHeight) * 100
-});
+  e.preventDefault(); // 🛑 Prevent screen scroll
+  const touch = e.touches[0];
+  playerPaddle.position = (touch.clientY / window.innerHeight) * 100;
+}, { passive: false }); // 👈 Important to allow preventDefault
 
+
+document.addEventListener("touchstart", e => {
+  e.preventDefault();
+}, { passive: false });
 
 
 
