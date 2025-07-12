@@ -3,15 +3,14 @@ const SPEED = randomNumberBetween(0.005, 0.03);
 const INITIAL_VELOCITY = 0.05
 const VELOCITY_INCREASE = 0.00001
 
-const hitSound = document.getElementById("hitSound")
+const bgMusic = document.getElementById("bgMusic");
 
-function playBounceSound() {
-  
-  hitSound.currentTime = 0
-  hitSound.play().catch(e => {
-    console.log('Audio play failed:', e)
-  })
-}
+  function startMusic() {
+    bgMusic.currentTime = 0;
+    bgMusic.play().catch(e => {
+      console.log("Audio play failed:", e);
+    });
+  }
 
 class Ball {
   constructor(ballElem) {
@@ -68,11 +67,11 @@ class Ball {
     if (rect.bottom >= window.innerHeight) {
       this.direction.y *= -1
       this.y = 100 - (rect.height / window.innerHeight * 100)
-      playBounceSound()
+      
     } else if (rect.top <= 0) {
       this.direction.y *= -1
       this.y = (rect.height / window.innerHeight * 100)
-      playBounceSound()
+      
     }
 
     // Paddle collision
@@ -86,7 +85,7 @@ class Ball {
         if (this.direction.x < 0) this.x -= 1
         else this.x += 1
 
-        playBounceSound()
+        
         break
       }
     }
@@ -143,10 +142,6 @@ function update(time) {
     const delta = time - lastTime
     ball.update(delta, [playerPaddle, computerPaddle])
 
-
-    const hue = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--hue"));
-    document.documentElement.style.setProperty("--hue", hue + delta * 0.005);
-
     // 🧠 Only move computer paddle after player hits the ball
     if (ball.lastHitter === "player" || ball.lastHitter === null && ball.direction.x > 0) {
       computerPaddle.update(delta, ball.y)
@@ -197,9 +192,16 @@ document.addEventListener("touchstart", e => {
 window.requestAnimationFrame(update);
 
 
-window.addEventListener("load", () => {
-  hideScrollbar();
-});
+
+
+
+
+ document.addEventListener('DOMContentLoaded', () => {
+	 hideScrollbar();
+    document.addEventListener("click", () => {
+    startMusic();
+  }, { once: true });
+  });
 
 
 // Utility functions
