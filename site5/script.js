@@ -176,7 +176,7 @@ function handleLose() {
   } else {
     computerScoreElem.textContent = parseInt(computerScoreElem.textContent) + 1
   }
-
+  
   ball.reset()
   computerPaddle.reset()
 }
@@ -207,7 +207,11 @@ window.requestAnimationFrame(update);
 	 hideScrollbar();
      document.addEventListener("click", initMusicOnce);
      document.addEventListener("touchstart", initMusicOnce);
+     
   });
+
+
+
 
 
 // Utility functions
