@@ -259,6 +259,20 @@ body {
   transition: 0.3s;
 }
 
+.note-dot {
+  display: block;
+  width: 6px;
+  height: 6px;
+  background-color: #c71585;
+  border-radius: 50%;
+  position: absolute;
+  bottom: 4px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.card-face.day {
+  position: relative;
+}
 
 
 .back {

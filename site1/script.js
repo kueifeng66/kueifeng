@@ -972,7 +972,22 @@ function createCalendar(year, month) {
       function saveNote(text) {
         noteContent.textContent = text || `${date}\nClick to edit note`;
         const safeKey = date + "-" + username;
-    
+        const frontFace = card.querySelector('.day');
+        const existingDot = frontFace.querySelector('.note-dot');
+
+
+        if (text && text.trim() !== '') {
+          if (!existingDot) {
+            const dot = document.createElement('span');
+            dot.className = 'note-dot';
+            frontFace.appendChild(dot);
+          }
+        } else {
+          if (existingDot) {
+            frontFace.removeChild(existingDot);
+          }
+        }
+
         window.firebaseSet(window.firebaseRef(window.firebaseDB, "Notes/" + safeKey), {
           Name: username,
           Date: date,
@@ -1107,7 +1122,7 @@ function createCalendar(year, month) {
   function fetchNote(card, date) {
   
   const noteContent = card.querySelector('.note-content');
-  
+  const frontFace = card.querySelector('.day');
   
   if (typeof username === 'undefined' || !username) {
     
@@ -1139,14 +1154,32 @@ function createCalendar(year, month) {
         const noteData = snapshot.val();
         if (noteData && noteData.Content) {
           noteContent.textContent = noteData.Content;
+
+          // Add dot if not already there
+          if (!frontFace.querySelector('.note-dot')) {
+            const dot = document.createElement('span');
+            dot.className = 'note-dot';
+            frontFace.appendChild(dot);
+          }
+
           console.log(`Note for ${date} fetched successfully`);
         } else {
           console.log(`Empty note content for ${date}`);
           noteContent.textContent = `${date}\nClick to edit note`;
+          // Remove dot if note is empty
+          const existingDot = frontFace.querySelector('.note-dot');
+          if (existingDot) {
+            frontFace.removeChild(existingDot);
+          }
         }
       } else {
         console.log(`No note found for ${date}`);
         noteContent.textContent = `${date}\nClick to edit note`;
+
+        const existingDot = frontFace.querySelector('.note-dot');
+        if (existingDot) {
+          frontFace.removeChild(existingDot);
+        }
       }
     })
     .catch((error) => {
