@@ -776,7 +776,7 @@ body {
 
 
 
-@media (width <= 400px) {
+/* @media (width <= 400px) {
 
   .day {
     width: 4rem;
@@ -791,7 +791,7 @@ body {
     height: 4.32rem;
   }
 
-}
+} */
 
 
 .trail {
