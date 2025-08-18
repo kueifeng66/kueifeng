@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>On Duty Calendar</title>
+	<style>
+        html {
+                font-size: 62.5%; /* 1rem = 10px */
+                height: 100%;
+                width: 100%;
+                margin: 0;
+                padding: 0;
+             }
+
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            min-width: 100vw;
+            background-image: url('site1/tower.png');
+            background-size: cover;
+            margin: 0;
+            background-attachment: fixed;
+        }
+        h2 {
+        color: #007BFF;
+        font-size: 5rem;
+        margin-bottom: 2rem;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        }
+
+        /* h2 span {
+        position: relative;
+        display: inline-block;
+        color: #007BFF;
+        text-shadow: 0 0.1rem 0 #fff, 0 0.2rem 0 #fff, 0 0.3rem 0 #b7b7b7,
+            0 0.4rem 0 #b7b7b7, 0 0.5rem 0 #b7b7b7, 0 0.7rem 0 #b7b7b7,
+            0 0.8rem 0 #b7b7b7, 0 0.9rem 0 #b7b7b7, 0 1rem 1rem rgba(0,0,0,0.1);
+
+           
+        animation: bounce 3s ease-in-out infinite;
+        }
+
+       
+        h2 span:nth-child(1)  { animation-delay: 0s; }
+        h2 span:nth-child(2)  { animation-delay: 0.2s; }
+        h2 span:nth-child(3)  { width:1.5rem }
+        h2 span:nth-child(4)  { animation-delay: 0.6s; }
+        h2 span:nth-child(5)  { animation-delay: 0.8s; }
+        h2 span:nth-child(6)  { animation-delay: 1.0s; }
+        h2 span:nth-child(7)  { animation-delay: 1.2s; }
+        h2 span:nth-child(8)  { width:1.5rem }
+        h2 span:nth-child(9)  { animation-delay: 1.6s; }
+        h2 span:nth-child(10) { animation-delay: 1.8s; }
+        h2 span:nth-child(11) { animation-delay: 2s; }
+        h2 span:nth-child(12) { animation-delay: 2.2s; }
+        h2 span:nth-child(13) { animation-delay: 2.4s; }
+        h2 span:nth-child(14) { animation-delay: 2.6s; }
+        h2 span:nth-child(15) { animation-delay: 2.8s; }
+        h2 span:nth-child(16) { animation-delay: 3.0s; }
+
+        @keyframes bounce {
+            0%, 100% {
+                top: 0;
+            }
+            50% {
+            top: -2rem;
+            text-shadow: 0 0.1rem 0 #fff, 0 0.2rem 0 #fff, 0 0.3rem 0 #fff,
+            0 0.4rem 0 #fff, 0 0.5rem 0 #fff, 0 0.6rem 0 #fff,
+            0 0.7rem 0 #fff, 0 0.8rem 0 #fff, 0 0.9rem 0 #fff,
+            0 6rem 3rem rgba(0,0,0,0.1);
+                         
+            }
+        } */
+
+
+        input {
+            width: 30rem; 
+            padding: 1.5rem;
+            font-size: 2.2rem;
+            margin: 1rem 0;
+            border: 0.2rem solid #ccc;
+            border-radius: 0.5rem;
+        }
+        button {
+            width: 32rem;
+            padding: 1.5rem;
+            font-size: 4rem;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-login {
+            font-size: 4rem;
+            font-weight: bold;
+            padding: 1.5rem 5rem;
+            color: white;
+            border: none;
+            border-radius: 1rem;
+            cursor: pointer;
+            position: relative;
+            background: linear-gradient(145deg, #007BFF, #0056b3);
+            box-shadow: 0.2rem 0.2rem 0 #004494, 0.3rem 0.3rem 0.5rem #555;
+            transition: all 0.2s ease-in-out;
+             user-select: none;  
+            -webkit-user-select: none;  
+            -moz-user-select: none;    
+            -ms-user-select: none;      
+            -webkit-touch-callout: none;  
+        }
+
+        .btn-login::before {
+            content: "";
+            position: absolute;
+            top: 0rem;
+            left: 0rem;
+            right: 0rem;
+            bottom: 0rem;
+            background: linear-gradient(145deg, #008CFF, #0049A0);
+            border-radius: 1rem;
+            z-index: -1;
+            box-shadow: inset 0rem 0rem 0.5rem rgba(255, 255, 255, 0.7);
+        }
+
+        .btn-login:hover {
+            transform: translateY(-0.1rem);
+        }
+
+        .btn-login:active {
+            transform: translateY(0.1rem);
+            box-shadow: 0.1rem 0.1rem 0 #004494, 0.2rem 0.2rem 0.5rem rgba(0, 0, 0, 0.2);
+        }
+
+
+    </style>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } 
+          from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+
+           const firebaseConfig = {
+                    apiKey: "AIzaSyB09LglfIXHfUGUWI5cFRzQvyz8D90dlGc",
+                    authDomain: "on-duty-calenadar.firebaseapp.com",
+                    projectId: "on-duty-calenadar",
+                    storageBucket: "on-duty-calenadar.firebasestorage.app",
+                    messagingSenderId: "1048788052024",
+                    appId: "1:1048788052024:web:ea80ce1666c99ebc429ecd",
+                    measurementId: "G-CHLW1GSW19"
+                };
+
+        
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        document.addEventListener("DOMContentLoaded", () => {
+    const loginButton = document.getElementById("login");
+    let holdTimer;
+
+    loginButton.addEventListener("click", () => {
+        const email = document.getElementById("email").value.trim();
+        const password = document.getElementById("password").value.trim();
+
+        // Only attempt login if both fields are filled
+        if (email && password) {
+            signInWithEmailAndPassword(auth, email, password)
+                .then(() => {
+                    window.location.href = "index.html"; // Redirect to main page
+                })
+                .catch(error => alert("Please Enter Valid Email and Password"));
+        }
+    });
+
+    // function startHoldTimer() {
+    //     const email = document.getElementById("email").value.trim();
+    //     const password = document.getElementById("password").value.trim();
+
+    //     if (!email && !password) {
+    //         holdTimer = setTimeout(() => {
+    //             window.location.href = "index.html";
+    //         }, 2000); 
+    //     }
+    // }
+
+    // function clearHoldTimer() {
+    //     clearTimeout(holdTimer);
+    // }
+
+    // loginButton.addEventListener("mousedown", startHoldTimer);
+    // loginButton.addEventListener("mouseup", clearHoldTimer);
+    // loginButton.addEventListener("mouseleave", clearHoldTimer);
+
+    // loginButton.addEventListener("touchstart", startHoldTimer);
+    // loginButton.addEventListener("touchend", clearHoldTimer);
+});
+
+
+    </script>
+</head>
+<body>
+    <h2>
+        <span>O</span><span>n</span><span> </span>
+        <span>D</span><span>u</span><span>t</span><span>y</span><span> </span>
+        <span>C</span><span>a</span><span>l</span><span>e</span><span>n</span><span>d</span><span>a</span><span>r</span>
+    </h2>
+    <input type="email" id="email" placeholder="Enter email">
+    <input type="password" id="password" placeholder="Enter password">
+    <button class="btn-login" id="login">Submit</button>
+    
+    <!-- <div id="notification" style="
+    background-color: #FFF3CD; 
+    padding: 2rem; 
+    font-size: 2.5rem; 
+    font-weight: bold; 
+    border: 0.3rem solid #FFB86F; 
+    border-radius: 1.5rem;
+    text-align: center;
+    margin-top: 5rem;
+    width: 38rem;  
+    line-height: 4rem; 
+    color: #805300; ">
+    ⚠️ <br>若有需要使用此班表程式者<br>，請洽桃園區臺洪柜峰申請<br>，謝謝。TEL：03-3985081<br>⚠️
+    </div> -->
+</body>
+</html>

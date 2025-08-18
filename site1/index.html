@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <link href="styles.css" rel="stylesheet">
+  <title>Last Updated: 2024-11-26</title>
+  <script type="speculationrules">
+    { 
+      "prerender": [
+        {
+          "urls": ["/", "/site1/index.html", "/site2/index.html", "/site3/index.html", "/site4/index.html", "/site5/index.html"],
+          "eagerness": "eager"
+        }
+      ]
+    }
+</script>
+
+  <script defer src="script.js"></script>
+
+</head>
+
+
+<body>
+  <div class="picker-container">
+    <div class="display">    
+      <div class="button" id="toggle"></div>
+    </div>
+    <div id="header"></div> 
+    <div class="picker-body" id="namePicker"></div>
+    <button id="scrollToMeButton">🐧Me</button>
+  </div>
+ 
+  <div id="calendar"></div>
+  <div id="tooltip" class="tooltip"></div>
+
+
+  <script type="module">
+    // Import Firebase modules
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
+    import { getDatabase, ref, get, set, update, remove, child } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-database.js";
+    
+    // Initialize Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyB09LglfIXHfUGUWI5cFRzQvyz8D90dlGc",
+      authDomain: "on-duty-calenadar.firebaseapp.com",
+      projectId: "on-duty-calenadar",
+      storageBucket: "on-duty-calenadar.firebasestorage.app",
+      messagingSenderId: "1048788052024",
+      appId: "1:1048788052024:web:ea80ce1666c99ebc429ecd",
+      measurementId: "G-CHLW1GSW19",
+      databaseURL: "https://on-duty-calenadar-default-rtdb.asia-southeast1.firebasedatabase.app"
+    };
+    
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    
+    // Expose Firebase functions and database to the global scope
+    window.firebaseDB = db;
+    window.firebaseRef = ref;
+    window.firebaseSet = set;
+    window.firebaseGet = get;
+    window.firebaseUpdate = update;
+    window.firebaseRemove = remove;
+    window.firebaseChild = child;
+    
+  
+  </script>
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link id="favicon" rel="icon" href="favicon1.ico" type="image/x-icon">
+    <title>Last Updated: 2025-08-08</title>
+    <style>
+        html {
+                font-size: 62.5%; /* 1rem = 10px */
+                margin: 0;
+                padding: 0;
+                overflow: hidden !important;  /* Disable scrolling */
+                height: 100%;      /* Ensure body takes full height */
+                width: 100%;       /* Ensure body takes full width */
+                -webkit-overflow-scrolling: none; /* For iOS */
+                overscroll-behavior: none; /* Prevents pull-to-refresh and bounce effects */
+                touch-action: none;
+             }
+        iframe {
+            width: 100%;
+            height: 100vh;
+            border: none;
+        }
+        #switchWebsite {
+            width:5rem;
+            height:5rem;
+            font-size: 2.2rem;
+            text-align: center;
+            position: fixed;
+            bottom: 2rem;
+            right: 8rem;
+            padding: 1rem;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            box-shadow: 0px 0.4rem 0.6rem rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+	    z-index: 1;
+            
+        }
+        #logout-btn {
+            width:5rem;
+            height:5rem;
+            font-size: 2.3rem;
+            text-align: center;
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            padding: 1.3rem;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            box-shadow: 0px 0.4rem 0.6rem rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            z-index: 1;
+            
+        }
+        button:active {
+            background-color: #0056b3;
+        }
+    </style>
+    <script type="speculationrules">
+        {
+          "prerender": [
+            {
+              "urls": ["/", "/site1/index.html", "/site2/index.html", "/site3/index.html"],
+              "eagerness": "eager"
+            }
+          ]
+        }
+    </script>
+	<script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+
+        // Initialize Firebase
+        const firebaseConfig = {
+         apiKey: "AIzaSyB09LglfIXHfUGUWI5cFRzQvyz8D90dlGc",
+         authDomain: "on-duty-calenadar.firebaseapp.com",
+         projectId: "on-duty-calenadar",
+         storageBucket: "on-duty-calenadar.firebasestorage.app",
+         messagingSenderId: "1048788052024",
+         appId: "1:1048788052024:web:ea80ce1666c99ebc429ecd",
+         measurementId: "G-CHLW1GSW19"
+        };
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        
+        onAuthStateChanged(auth, (user) => {
+        // if (!user) {
+        // window.location.href = "login.html"; 
+        // return;
+        // }
+        
+        const iframe = document.getElementById('website-frame');
+        iframe.src = `site1/index.html?userEmail=${encodeURIComponent(user.email)}`;
+        });
+    window.logout = function() {
+
+        
+        clearTimeout(Timer); // auto logout
+        clearInterval(logInterval); // auto logout
+
+        // Change SVG content when logging out
+        const svgElement = document.querySelector("button#logout-btn svg");
+
+        svgElement.innerHTML = `
+         <rect x="5" y="11" width="14" height="10" rx="2" ry="2" fill="white" stroke="white" stroke-width="1" />
+         <path d="M8 11V7c0-2.2 -1.8 -4 -4 -4s-4 1.8 -4 4v1" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" />
+         <circle cx="12" cy="16" r="1.5" fill="#007BFF" />
+          <path d="M12 16v2" stroke="#007BFF" stroke-width="1" stroke-linecap="round" />
+        `;
+    
+            signOut(auth).then(() => {
+            //alert("Logged out successfully!");
+            window.location.href = "login.html"; // Redirect to login page
+            }).catch(error => {
+             alert("Error logging out: " + error.message);
+        });
+    }
+
+
+        //auto logout 
+let countDown = 86400000; // 24hrs in milliseconds
+let Timer;
+let logInterval; // For logging time remaining
+
+// Function to reset the timer
+function resetTimer() {
+    // Clear existing timers
+    clearTimeout(Timer);
+    clearInterval(logInterval);
+    
+    // Set new timeout for logout
+    const startTime = Date.now();
+    Timer = setTimeout(logout, countDown);
+    
+    // Set interval to log remaining time every 1 seconds
+    logInterval = setInterval(() => {
+        const elapsedTime = Date.now() - startTime;
+        const remainingTime = countDown - elapsedTime;
+        
+        if (remainingTime > 0) {
+            const seconds = Math.floor(remainingTime / 1000);
+            console.log(`Time until logout: ${seconds} seconds`);
+        }
+    }, 1000); // Log every 1 seconds
+}
+
+// Initialize the timer when the page loads
+if (document.readyState === 'complete' || document.readyState === 'interactive') {
+    // Document already loaded, initialize immediately
+    initializeInactivityTimer();
+} else {
+    // Wait for the document to load
+    document.addEventListener('DOMContentLoaded', initializeInactivityTimer);
+}
+
+function initializeInactivityTimer() {
+    // Start the timer when the page loads
+    console.log("Initializing inactivity timer: 30 minutes until logout");
+    resetTimer();
+    
+    // Reset the timer on user activity
+    document.addEventListener('mousemove', resetTimer);
+    document.addEventListener('mousedown', resetTimer);
+    document.addEventListener('keypress', resetTimer);
+    document.addEventListener('touchmove', resetTimer);
+    document.addEventListener('touchstart', resetTimer);
+    
+    
+    // Also add event listener to the iframe to detect activity inside it
+    const iframe = document.getElementById('website-frame');
+    iframe.addEventListener('load', function() {
+        try {
+            // Add event listeners to the iframe content if same-origin
+            iframe.contentDocument.addEventListener('mousemove', resetTimer);
+            iframe.contentDocument.addEventListener('mousedown', resetTimer);
+            iframe.contentDocument.addEventListener('keypress', resetTimer);
+            iframe.contentDocument.addEventListener('touchmove', resetTimer);
+            iframe.contentDocument.addEventListener('touchstart', resetTimer);
+           
+        } catch (e) {
+            // If cross-origin, we cannot access the iframe content directly
+            console.log("Cannot add events to iframe content: same-origin policy");
+        }
+    });
+}
+
+
+
+    </script>
+</head>
+<body>
+    <iframe id="website-frame" src="site1/index.html"></iframe>
+    <button id="switchWebsite"onclick="switchWebsite()">⇄</button>
+    <button id="logout-btn" onclick="logout()">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20">
+            <rect x="5" y="11" width="14" height="10" rx="2" ry="2" fill="white" stroke="white" stroke-width="1" />
+            <path d="M8 11V7c0-2.2 1.8 -4 4 -4s4 1.8 4 4v1" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" />
+            <circle cx="12" cy="16" r="1.5" fill="#007BFF" />
+            <path d="M12 16v2" stroke="#007BFF" stroke-width="1" stroke-linecap="round" />
+        </svg>
+    </button>
+
+    <script>
+        const sites = [
+            { src: 'site1/index.html', favicon: 'favicon1.ico' },
+            { src: 'site2/index.html', favicon: 'favicon2.ico' },
+            { src: 'site3/index.html', favicon: 'favicon3.ico' },
+            { src: 'site4/index.html', favicon: 'favicon4.ico' },
+            { src: 'site5/index.html', favicon: 'favicon5.ico' },
+        ];
+        let currentSiteIndex = 0;
+
+        function switchWebsite() {
+            // Increment the index and reset if it exceeds the array length
+            currentSiteIndex = (currentSiteIndex + 1) % sites.length;
+
+            // Update iframe source and favicon
+            const frame = document.getElementById('website-frame');
+            const favicon = document.getElementById('favicon');
+            frame.src = sites[currentSiteIndex].src;
+            favicon.href = sites[currentSiteIndex].favicon;
+        }
+
+    </script>
+</body>
+</html>

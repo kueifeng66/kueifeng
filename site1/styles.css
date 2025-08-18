@@ -1,0 +1,857 @@
+html, body {  
+  font-size: 62.5%; 
+  margin: 0;
+  padding: 0;
+  overflow: hidden !important;  
+  height: 100%;     
+  width: 100%;      
+  -webkit-overflow-scrolling: none;
+  overscroll-behavior: none;
+  touch-action: none;
+  }
+
+
+body {
+  font-family:  Arial, Helvetica, sans-serif;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+  height: 100vh;
+  width:100vw;
+  margin: 0;
+  overflow: hidden !important;
+  background-image: url('cozy.png');
+  background-size: cover; 
+  background-position: center center;
+  background-repeat: no-repeat; 
+  position: fixed;
+  
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  transition: 0.1s;
+}
+
+#calendar {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.1rem;
+  position: relative;
+  z-index: auto;
+  
+}
+
+
+.header-cell {
+  border-radius: 0.5rem;
+  height: 7.8rem;
+  width: 9.8rem;
+  display: flex;
+  justify-content: center; 
+  align-items: center; 
+  text-align: center;
+  flex-direction: column; 
+  user-select: none;  
+  -webkit-user-select: none;  
+  -moz-user-select: none;    
+  -ms-user-select: none;      
+  -webkit-touch-callout: none;  
+
+  margin: 0 auto;
+}
+
+
+
+#header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 0.1rem solid #ffffff;
+  height: 7.8rem;
+  width: 9.8rem;
+  font-weight: bold;
+  padding: 0rem;
+  background-color: #3498db;
+  text-align: center;
+  color: #fff;
+  font-size:  1.8rem;
+  border-radius: 0.5rem;
+  position: relative;
+  z-index: 5;
+  text-shadow:
+  0 0 0.8rem rgba(173, 216, 230, 0.8),
+  0 0 1rem rgba(173, 216, 230, 0.7), 
+  0 0 3rem rgba(173, 216, 230, 0.6), 
+  0 0 4rem rgba(173, 216, 230, 0.5), 
+  0 0 5rem rgba(135, 206, 250, 0.4);
+
+  margin: 0 auto;
+}
+#header::before{
+  content: '';
+  position: absolute;
+  height: 7.8rem;
+  width: 9.8rem;
+  background: #3498db;
+  top: 50%;
+  left: 50%;
+  translate: -50% -50%; 
+  padding: 0rem;
+  border-radius: 0.5rem;
+  animation: 5s spin linear infinite;
+  z-index: 4;
+ }
+
+#header::after{
+  content: '';
+  position: absolute;
+  height: 7.8rem;
+  width: 9.8rem;
+  background-image: conic-gradient(from var(--angle), transparent 70%, #ff4545, #00ff99, #006aff, #ff0095, #ff4545);
+  top: 50%;
+  left: 50%;
+  translate: -50% -50%;
+  padding: 0.4rem;
+  border-radius: 0.5rem;
+  animation: 5s spin linear infinite;
+  z-index: 3;
+ }
+ 
+#header-selected::before, 
+#header-selected::after {
+  animation: none; 
+  background: transparent;
+}
+
+
+/* Common card styles for all modes */
+.card {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 4.2rem;
+  height: 4.3rem;
+  perspective: 1000px;
+  position: relative;
+  z-index: 0;
+
+  transition: transform 0.5s;
+}
+
+.card, .back {
+  backface-visibility: hidden;
+}
+
+
+.card:hover {
+  z-index: 100;
+}
+
+/* Inner card container */
+.inner-card {
+  width: 100%;
+  height: 100%;
+  transition: transform 0.6s;
+  transform-style: preserve-3d;
+  position: relative;
+}
+
+/* Remove hover transform effect */
+.card:hover .inner-card {
+  transform: none;
+}
+
+/* Card flipped state - works for all modes because no mode selectors are used */
+.card.flipped {
+  z-index: 100;
+  position: relative;
+}
+
+.card.flipped .back {
+  transform: translate(-50%, -50%) rotateY(180deg);
+}
+
+.card.flipped .inner-card {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotateY(180deg) scale(2);
+  z-index: 100;
+}
+
+.light .card.flipped .inner-card {
+ 
+  box-shadow: 0 0 15px rgba(100, 100, 255, 0.6);
+}
+
+.neutral .card.flipped .inner-card {
+ 
+  box-shadow: 0 0 15px rgba(70, 130, 180, 0.7);
+}
+
+.dark .card.flipped .inner-card {
+ 
+  box-shadow: 0 0 15px rgba(40, 40, 40, 0.8);
+}
+
+/* Overlay for when card is flipped */
+.overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 99;
+}
+
+.overlay.active {
+  display: block;
+}
+
+/* Card face styling */
+.card-face {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  display: flex;
+  border: 0.1rem solid #ffffff;
+  box-sizing: border-box;
+  cursor: pointer;
+  user-select: none;          /* Standard syntax */
+  -webkit-user-select: none;  /* Safari, Chrome, and Opera */
+  -moz-user-select: none;     /* Firefox */
+  -ms-user-select: none;      /* Internet Explorer/Edge */
+  -webkit-touch-callout: none;  /* iOS Safari */
+}
+
+/* Back face of card needs to be rotated initially */
+.card-face.back {
+  transform: rotateY(180deg);
+}
+
+/* Front face - day number */
+.day {
+  justify-content: center;
+  align-items: center;
+  font-size: 1.8rem;
+  font-weight: bold;
+  padding: 1rem;
+  text-align: center;
+  background-color: #ffffff;
+}
+
+
+
+.day:hover {
+  transform: scale(1.7); 
+  background: linear-gradient(to right, orange, yellow , #ffff99,lightyellow, #ffffff);
+  box-shadow: 0 0 0.5rem #0066cc;
+  border-radius: 0.5rem;
+  z-index: 100;
+  transition: 0.3s;
+}
+
+.note-dot {
+  display: block;
+  width: 6px;
+  height: 6px;
+  background-color: #c71585;
+  border-radius: 50%;
+  position: absolute;
+  bottom: 4px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.card-face.day {
+  position: relative;
+}
+
+
+.back {
+
+  width: 20rem; 
+  height: 15rem; 
+  max-width: 150px; 
+  max-height: 40vh;
+  padding:0.5rem;
+  flex-direction: column;
+  transform: rotateY(180deg);
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #f7c6d9;
+  box-shadow: 0 0 0.5rem #0066cc;
+  z-index: auto;
+  padding: 0.2rem;
+  box-sizing: border-box;
+  border-radius: 1rem;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+  -webkit-overflow-scrolling: touch; /* Smooth scrolling for iOS */
+  touch-action: pan-y;                /* Enables vertical swipe scrolling */
+  overscroll-behavior: contain;      /* Prevent scroll chaining */
+}
+
+
+
+.card:hover .back {
+
+  width: 20rem; 
+  height: 15rem; 
+  position: fixed; /* Fix position to center on the screen */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotateY(180deg); /* Center it */
+  /* box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); */
+  box-shadow: 0 0 0.5rem #0066cc;
+  z-index: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 0.5rem;
+}
+
+
+.note-content {
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch; /* Smooth scrolling for iOS */
+  touch-action: pan-y;                /* Enables vertical swipe scrolling */
+  overscroll-behavior: contain;      /* Prevent scroll chaining */
+  margin-bottom: 0rem;
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-size: 1.2rem;
+  color: black;
+  font-weight: bold; 
+  flex-direction: column;
+  text-align: left; 
+  display: flex;
+  align-items: flex-start;
+  justify-content:  flex-start;
+  padding:0.5rem;
+}
+
+
+.note-editor {
+  display: none;
+  width: 100%;
+  height: 100%;
+  max-width: 150px; 
+  max-height: 40vh;
+  flex-direction: column;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #f7c6d9;
+  z-index: 20;
+  padding: 0.2rem;
+  box-sizing: border-box;
+  border-radius: 1rem;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Larger textarea for easier typing */
+
+.note-editor textarea {
+  width: 100%;
+  height: 100%;
+  flex-grow: 1;
+  flex-direction: column;
+  padding: 0.2rem;
+  border: none;
+  border-radius: 0.5rem;
+  resize: none;
+  font-size: 1rem;
+  
+  
+}
+
+
+.note-editor-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1rem;
+  width: 100%; /* Important */
+  flex-wrap: nowrap; /* Important */
+  box-sizing: border-box;
+  gap: 0.1rem;
+}
+
+.btn {
+  flex: 1;
+  padding: 0.4rem 0.2rem;
+  border: 0.1rem solid #ffffff;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 1rem; 
+  height: 2.5rem;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-width: 3rem;
+  max-width: 10rem;
+}
+
+
+
+.save-btn {
+  background-color: #4caf50;
+  color: white;
+}
+
+.cancel-btn {
+  background-color: #f44336;
+  color: white;
+}
+
+.delete-btn {
+  background-color: #f44336;
+  color: white;
+}
+
+/* Special day styles */
+.weekend {
+  background-color: #f8f8f8;
+  color: #ff6347;
+}
+
+
+
+.today {
+  margin: 0 auto;
+  width: 4.2rem;
+  height: 4.3rem;
+  font-weight: bold;
+  background: transparent;
+  text-align: center;
+  position: relative;
+  z-index:auto;
+ }
+
+
+ .today {
+  background: linear-gradient(to right, orange, yellow, #ffff99, lightyellow, #ffffff); 
+  color: #cc6600;
+  box-shadow: 0 0 0.5rem orange;
+  animation: breathing-glow 3s ease-in-out infinite;
+}
+
+
+
+@keyframes breathing-glow {
+  0%, 100% {
+    box-shadow:
+      0 0 0.5rem rgba(255, 165, 0, 0.7),   /* orange */
+      0 0 1rem rgba(255, 255, 153, 0.4);  /* pale yellow */
+  }
+  50% {
+    box-shadow:
+      0 0 1rem rgba(255, 200, 0, 0.9),    /* golden yellow */
+      0 0 2rem rgba(255, 255, 153, 0.6),  /* light yellow */
+      0 0 3rem rgba(255, 255, 255, 0.3);  /* white glow */
+  }
+}
+
+ @property --angle{
+    syntax: "<angle>";
+    initial-value: 0deg;
+    inherits: false;
+ }
+
+.today::after{
+ content: '';
+ position: absolute;
+ height: 100%;
+ width: 100%;
+ background-image: conic-gradient(from var(--angle), transparent 70%, #ff4545, #00ff99, #006aff, #ff0095, #ff4545);
+ top: 50%;
+ left: 50%;
+ translate: -50% -50%;
+ z-index: -2;
+ padding: 0.3rem;
+ animation: 5s spin linear infinite;
+ border-radius: 0.3rem;
+}
+ .today::before{
+  content: '';
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  background-image: linear-gradient(to right, #D3D3D3, #A9A9A9);
+  /* background-image: conic-gradient(from var(--angle), transparent , #ff4545, #00ff99, #006aff, #ff0095, #ff4545); */
+  top: 50%;
+  left: 50%;
+  translate: -50% -50%; 
+  z-index: -1;
+  padding: 0rem;
+  animation: 5s spin linear infinite;
+  border-radius: 0.3rem;
+ }
+
+@keyframes spin {
+  from{
+    --angle: 0deg;
+  }
+  to{
+    --angle: 360deg;
+  }
+}
+
+.selected {
+  background-image: linear-gradient(to right, turquoise, lightblue);
+}
+
+.selected2 {
+  background-image: linear-gradient(to right, #B2FF9E, lightgreen);
+}
+
+.selected3 {
+  background-image: linear-gradient(to right, #EBD9AA, lightyellow);
+}
+
+
+
+.today-selected::before, 
+.today-selected::after {
+  animation: none; /* Stop the spinning animation */
+  background: transparent; /* Hide the background image if needed */
+}
+
+
+.weekday {
+  width: 4.2rem;
+  height: 4.3rem;
+  font-weight: bold;
+  border: 0.1rem solid #ffffff;
+  background-color: #3498db;
+  color: #fff;
+  font-size: 1.8rem;
+  padding: 1rem;
+  font-weight: bold;
+  position: relative;
+  cursor: pointer;
+  text-align: center;
+  z-index: auto;
+  user-select: none;          /* Standard syntax */
+  -webkit-user-select: none;  /* Safari, Chrome, and Opera */
+  -moz-user-select: none;     /* Firefox */
+  -ms-user-select: none;      /* Internet Explorer/Edge */
+  -webkit-touch-callout: none;  /* iOS Safari */
+}
+.weekend {
+  width: 4.2rem;
+  height: 4.3rem;
+  color: red;
+  font-weight: bold;
+  text-align: center;
+}
+
+#tooltip {
+  white-space: pre-line; 
+  width: 10rem;
+  height: 30rem;
+  font-size: 1.6rem;
+  text-align: left;
+  font-weight: bold;
+  position: fixed;
+  background-color: rgba(51, 51, 51, 0.75); 
+  color: white;
+  padding: 1rem;
+  display: none;
+  z-index: 10;
+  border-radius: 2rem;
+  box-shadow: 0.5rem 0.5rem 0.5rem  rgba(0, 0, 0, 0.5); /* Add box shadow for a subtle lift */
+  transition: 0.1s ease-in-out; /* Add transition for smooth appearance */
+  cursor: move; 
+
+  user-select: none;          /* Standard syntax */
+  -webkit-user-select: none;  /* Safari, Chrome, and Opera */
+  -moz-user-select: none;     /* Firefox */
+  -ms-user-select: none;      /* Internet Explorer/Edge */
+  -webkit-touch-callout: none;  /* iOS Safari */
+}
+
+.tooltip-day {
+  font-size: 1.6rem;
+  text-align: center; /* Align text to the left */
+  display: block; 
+}
+.tooltip-duty {
+  font-size: 1.6rem;
+  text-align: left; /* Align text to the left */
+  display: block; 
+}
+
+.tooltip-weather {
+  font-size: 1.4rem; /* Adjust this value as needed */
+  text-align: left; /* Align text to the left */
+  display: block;   /* Ensure it behaves like a block element */
+}
+
+.lunar-name {
+  display: block;       /* Forces the lunar name to appear on a new line */
+  font-size: 0.7rem;    /* Smaller font size */
+  text-align: center;   /* Centers the lunar name */
+  margin-top: 0.7rem;   /* Optional: Add some space between day and lunar name */
+   /* Avoid wrapping the text */
+}
+
+
+
+.display {
+  width: 10rem;
+  height: 4rem;
+  border-radius: 20rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative; /* Ensure z-index works */
+  z-index: auto; /* Lower than header::after */
+}
+
+
+.button.dark {
+  background-color: #2ecc71;
+  box-shadow: 0.1rem 0.1rem 0.4rem rgba(0, 0, 0, 0.5) inset;
+  background-image: url('nextmonth.png');
+}
+.button.light {
+  background-color: #b0b0b0;
+  box-shadow: 0.1rem 0.1rem 0.4rem rgba(0, 0, 0, 0.5) inset;
+  background-image: url('lastmonth.png');
+}
+.button.neutral {
+  background-color: #f0d78c;
+  box-shadow: 0.1rem 0.1rem 0.4rem rgba(0, 0, 0, 0.5) inset;
+  background-image: url('currentmonth.png');
+}
+
+
+.button {
+  background-color:  #f0d78c;
+  width: 10rem;
+  height: 4rem;
+  border-radius: 3rem;
+  box-shadow: 0.1rem 0.1rem 0.4rem rgba(0, 0, 0, 0.5) inset;
+  cursor: pointer;
+  position: relative;
+  transition: 0.3s ease-in-out;
+  background-image: url('currentmonth.png');
+}
+
+.button::before {
+  content: "";
+  position: absolute;
+  background-color: rgba(255, 255, 255, 0.82);
+  box-shadow: 0.1rem 0.1rem 0.4rem rgba(0, 0, 0, 0.5) ;
+  width: 4rem;
+  height: 4rem;
+  border-radius: 50%;
+  top: 0rem;
+  left: 3rem; /* Start in the center */
+  transition: transform 0.3s ease-in-out;
+  
+}
+
+
+
+.button.light::before {
+  transform: translateX(-3rem);
+  
+}
+
+.button.dark::before {
+  transform: translateX(3rem);
+}
+
+
+
+
+.picker-container {
+  margin-right: auto;
+  border: 0.1rem solid #ffffff;
+  width: 10.2rem;
+  margin: 0.3rem;
+  background-color: #ccc;
+  box-shadow: 0 0 1rem rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  border-radius: 0.5rem;
+  text-align: center;
+  position:relative;
+  z-index: auto;
+
+  user-select: none;          /* Standard syntax */
+  -webkit-user-select: none;  /* Safari, Chrome, and Opera */
+  -moz-user-select: none;     /* Firefox */
+  -ms-user-select: none;      /* Internet Explorer/Edge */
+  -webkit-touch-callout: none;  /* iOS Safari */
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+  
+.picker-body {
+  border-radius: 0.5rem;
+  padding: 0.1rem;
+  background-color: lightgrey;
+  font-weight: bold;
+  font-size: 1.8rem;
+  font-weight: bold;
+  overflow: auto;
+  text-align: center;
+  height: 15rem;
+  position: relative;
+  z-index: auto;
+
+   user-select: none;          /* Standard syntax */
+  -webkit-user-select: none;  /* Safari, Chrome, and Opera */
+  -moz-user-select: none;     /* Firefox */
+  -ms-user-select: none;      /* Internet Explorer/Edge */
+  -webkit-touch-callout: none;  /* iOS Safari */
+
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.picker-item {
+  margin-bottom: 1rem;
+  transition: transform 0.3s ease;
+  margin: 0.3rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center; 
+  position: relative;
+  width: auto;
+  padding: 0px 3px;
+  border-radius: 0.5rem;
+  opacity: 0.85;
+  filter: drop-shadow(0 2px 2px #555);
+  will-change: transform, opacity;
+
+   user-select: none;          /* Standard syntax */
+  -webkit-user-select: none;  /* Safari, Chrome, and Opera */
+  -moz-user-select: none;     /* Firefox */
+  -ms-user-select: none;      /* Internet Explorer/Edge */
+  -webkit-touch-callout: none;  /* iOS Safari */
+}
+
+.picker-item:hover {
+  background-color: #f2f2f2;
+  transform: scale(1.5);
+  overflow-x: hidden;
+  /* text-decoration: underline; */
+}
+
+#namePicker {
+  overflow-x: hidden;
+}
+
+#scrollingText {
+  white-space: nowrap; /* Prevents the text from wrapping */
+  overflow: hidden; /* Hides the overflow text */
+}
+
+#scrollingText p {
+  display: inline-block; /* Makes the text inline but allows it to be treated as a block element */
+  margin-right: 100%; /* Moves the text off-screen initially */
+  animation: marquee 20s linear infinite; /* Define the animation */
+}
+
+
+
+
+/* @media (width <= 400px) {
+
+  .day {
+    width: 4rem;
+    height: 4.32rem;
+  }
+  .weekday {
+    width: 4rem;
+    height: 4.32rem;
+  }
+  .weekend {
+    width: 4rem;
+    height: 4.32rem;
+  }
+
+} */
+
+
+.trail {
+  position: absolute;
+  width: 0.7rem;
+  height: 0.7rem;
+  background-color: #f032e6;
+  border-radius: 50%;
+  pointer-events: none;
+  animation: fade 2s forwards;
+  z-index: 101;
+}
+
+@keyframes fade {
+  0% {
+    opacity:1;
+    transform:scale(1);
+  }
+  25%{
+    opacity:0.75;
+    transform:scale(0.75);
+  }
+  50%{
+    opacity:0.5;
+    transform:scale(0.5);
+  }
+  75%{
+    opacity:0.25;
+    transform:scale(0.25);
+
+  }
+  100% {
+    opacity:0;
+    transform:scale(0);
+  }
+}
+
+
+
+#scrollToMeButton {
+  
+  height: 7.8rem;
+  width: 10.1rem;
+  margin-top: 10px;
+  padding: 10px 20px;
+  background-color: #3498db; 
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 2rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s ease, transform 0.3s ease;
+
+  margin-top: 0.2rem;
+  margin-bottom: 0.2rem;
+  
+}
+
+#scrollToMeButton:active {
+  transform: scale(1.2);
+  background: linear-gradient(to right, #345bdb, #2e4d8f);
+}
