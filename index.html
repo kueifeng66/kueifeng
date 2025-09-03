@@ -91,11 +91,11 @@
 
         
         onAuthStateChanged(auth, (user) => {
-        // if (!user) {
-        // window.location.href = "login.html"; 
-        // return;
-        // }
-        
+        if (!user) {
+        window.location.href = "login.html"; 
+        return;
+        }
+       
         const iframe = document.getElementById('website-frame');
         iframe.src = `site1/index.html?userEmail=${encodeURIComponent(user.email)}`;
         });
@@ -216,16 +216,19 @@ function initializeInactivityTimer() {
             { src: 'site5/index.html', favicon: 'favicon5.ico' },
         ];
         let currentSiteIndex = 0;
+        let username = null; 
 
+       
         function switchWebsite() {
             // Increment the index and reset if it exceeds the array length
             currentSiteIndex = (currentSiteIndex + 1) % sites.length;
-
+           
             // Update iframe source and favicon
             const frame = document.getElementById('website-frame');
             const favicon = document.getElementById('favicon');
             frame.src = sites[currentSiteIndex].src;
             favicon.href = sites[currentSiteIndex].favicon;
+
         }
 
     </script>

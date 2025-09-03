@@ -1,4 +1,4 @@
-var username;
+
 const calendar = document.getElementById('calendar');
 const tooltip = document.getElementById('tooltip');
 const btn = document.querySelector('#toggle');
@@ -14,6 +14,7 @@ let mode = "neutral";
 const currentDay = new Date().getDate();
 let clickCount = 1;
 
+ let username = null; 
 
 const now = new Date();
 var year = now.getFullYear();
@@ -1896,6 +1897,7 @@ setInterval(fetchWeather, 600000);
 window.onload = function() {
   const headerCells = document.querySelectorAll(".header-cell");
 
+
   headerCells.forEach(function(cell) {
     setTimeout(function() {
       cell.click();
@@ -2164,6 +2166,8 @@ namePicker.addEventListener('scroll', () => {
 
 
 
+
+
 document.addEventListener('DOMContentLoaded', () => {
   const urlParams = new URLSearchParams(window.location.search);
   userEmail = urlParams.get('userEmail');
@@ -2187,13 +2191,15 @@ document.addEventListener('DOMContentLoaded', () => {
     'folra679@gmail.com':'官郁庭',
     'jihyaos@gmail.com':'張日曜'
   };
-  
+ 
   const targetName = emailNameMap[userEmail];
   username = targetName;
 
+
+
   if (username) {    
     const items = document.querySelectorAll('.picker-item');
-    const nameElement = Array.from(items).find(item => item.textContent.trim() === targetName);
+    const nameElement = Array.from(items).find(item => item.textContent.trim() === username);
     if (nameElement) {
       nameElement.scrollIntoView({
           behavior: 'smooth',
@@ -2203,14 +2209,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-
   const button = document.getElementById('scrollToMeButton');
 
   button.addEventListener('click', () => {
+
    
-    if (targetName) {    
+    if (username) {    
     const items = document.querySelectorAll('.picker-item');
-    const nameElement = Array.from(items).find(item => item.textContent.trim() === targetName);
+    const nameElement = Array.from(items).find(item => item.textContent.trim() === username);
     if (nameElement) {
       nameElement.scrollIntoView({
           behavior: 'smooth',
@@ -2223,7 +2229,11 @@ document.addEventListener('DOMContentLoaded', () => {
    });
 
 
+
 });
+
+
+
 
 function setupCardFlip() {
   // Get all calendar cards

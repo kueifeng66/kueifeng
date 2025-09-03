@@ -55,6 +55,7 @@
     // Initialize Firebase
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
+    let username = null; 
     
     // Expose Firebase functions and database to the global scope
     window.firebaseDB = db;
