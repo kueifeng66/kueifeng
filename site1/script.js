@@ -2191,10 +2191,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const targetName = emailNameMap[userEmail];
   username = targetName;
 
-
-
-
-  if (targetName) {    
+  if (username) {    
     const items = document.querySelectorAll('.picker-item');
     const nameElement = Array.from(items).find(item => item.textContent.trim() === targetName);
     if (nameElement) {
