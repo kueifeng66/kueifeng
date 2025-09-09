@@ -245,9 +245,6 @@ const dutySchedule = {
 
 
 
-
-
-
 };
 
 const holiday = {
