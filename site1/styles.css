@@ -855,3 +855,24 @@ body {
   transform: scale(1.2);
   background: linear-gradient(to right, #345bdb, #2e4d8f);
 }
+
+
+.main-container {
+      font-family:  Arial, Helvetica, sans-serif;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+  height: 100vh;
+  width:100vw;
+  margin: 0;
+  
+ 
+      animation: fadeIn 1.2s ease-in-out;
+}
+
+@keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-30px); }
+      to { opacity: 1; transform: translateY(0); }
+}
