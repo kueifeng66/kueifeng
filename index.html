@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link id="favicon" rel="icon" href="favicon1.ico" type="image/x-icon">
-    <title>Last Updated: 2025-09-24</title>
+    <title>Last Updated: 2025-09-03</title>
     <style>
         html {
               font-size: 62.5%; /* 1rem = 10px */
@@ -89,17 +89,33 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
 
+        // inside your module after successful login:
+onAuthStateChanged(auth, (user) => {
+  if (!user) {
+    window.location.href = "login.html";
+    return;
+  }
+
+  // expose email to non-module scripts
+  window.currentUserEmail = user.email;
+
+  const iframe = document.getElementById('website-frame');
+  iframe.src = `site1/index.html?userEmail=${encodeURIComponent(user.email)}`;
+
+  // When iframe loads, tell it to try scrolling (useful on first login)
+  iframe.addEventListener('load', () => {
+    try {
+      iframe.contentWindow.postMessage({ type: 'scrollToUser', userEmail: window.currentUserEmail }, '*');
+    } catch (e) {
+      console.warn('postMessage failed', e);
+    }
+  }, { once: true });
+});
+
         
-        onAuthStateChanged(auth, (user) => {
-        if (!user) {
-        window.location.href = "login.html"; 
-        return;
-        }
-       
-        const iframe = document.getElementById('website-frame');
-        iframe.src = `site1/index.html?userEmail=${encodeURIComponent(user.email)}`;
-        });
-    window.logout = function() {
+
+
+window.logout = function() {
 
         
         clearTimeout(Timer); // auto logout
@@ -216,20 +232,37 @@ function initializeInactivityTimer() {
             { src: 'site5/index.html', favicon: 'favicon5.ico' },
         ];
         let currentSiteIndex = 0;
-        let username = null; 
+       
 
        
-        function switchWebsite() {
-            // Increment the index and reset if it exceeds the array length
-            currentSiteIndex = (currentSiteIndex + 1) % sites.length;
-           
-            // Update iframe source and favicon
-            const frame = document.getElementById('website-frame');
-            const favicon = document.getElementById('favicon');
-            frame.src = sites[currentSiteIndex].src;
-            favicon.href = sites[currentSiteIndex].favicon;
+function switchWebsite() {
+  currentSiteIndex = (currentSiteIndex + 1) % sites.length;
+  const frame = document.getElementById('website-frame');
+  const favicon = document.getElementById('favicon');
 
-        }
+  // build src and append userEmail if we have it
+  let src = sites[currentSiteIndex].src;
+  if (window.currentUserEmail) {
+    src += (src.includes('?') ? '&' : '?') + 'userEmail=' + encodeURIComponent(window.currentUserEmail);
+  }
+
+  // set src (this will reload the iframe)
+  frame.src = src;
+  favicon.href = sites[currentSiteIndex].favicon;
+
+  // After it loads, ask it to scroll (postMessage)
+  const onLoad = () => {
+    try {
+      frame.contentWindow.postMessage({ type: 'scrollToUser', userEmail: window.currentUserEmail }, '*');
+    } catch (e) {
+      console.warn('postMessage to iframe failed', e);
+    }
+    frame.removeEventListener('load', onLoad);
+  };
+  frame.addEventListener('load', onLoad);
+}
+
+
 
     </script>
 </body>

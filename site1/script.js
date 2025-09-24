@@ -2226,12 +2226,8 @@ namePicker.addEventListener('scroll', () => {
 
 
 
-
-document.addEventListener('DOMContentLoaded', () => {
-  const urlParams = new URLSearchParams(window.location.search);
-  userEmail = urlParams.get('userEmail');
-
-
+// Put this in site1's script (replace your existing DOMContentLoaded block)
+(function () {
   const emailNameMap = {
     'kueifeng7166@gmail.com': '洪柜峰',
     'kueifeng.eo94g@g2.nctu.edu.tw': '洪柜峰',
@@ -2250,47 +2246,65 @@ document.addEventListener('DOMContentLoaded', () => {
     'folra679@gmail.com':'官郁庭',
     'jihyaos@gmail.com':'張日曜'
   };
- 
-  const targetName = emailNameMap[userEmail];
-  username = targetName;
 
-
-
-  if (username) {    
-    const items = document.querySelectorAll('.picker-item');
-    const nameElement = Array.from(items).find(item => item.textContent.trim() === username);
-    if (nameElement) {
-      nameElement.scrollIntoView({
-          behavior: 'smooth',
-          block: 'center'
-      });
-      nameElement.click();
+  function getUserEmailFromQueryOrParent(ev) {
+    const urlParams = new URLSearchParams(window.location.search);
+    const fromQuery = urlParams.get('userEmail');
+    if (fromQuery) return fromQuery;
+    // try parent (works if same-origin)
+    try {
+      if (window.parent && window.parent.currentUserEmail) return window.parent.currentUserEmail;
+    } catch (e) {
+      // cross-origin -> ignore
     }
+    // try message payload
+    if (ev && ev.data && ev.data.userEmail) return ev.data.userEmail;
+    return null;
   }
 
-  const button = document.getElementById('scrollToMeButton');
-
-  button.addEventListener('click', () => {
-
-   
-    if (username) {    
-    const items = document.querySelectorAll('.picker-item');
-    const nameElement = Array.from(items).find(item => item.textContent.trim() === username);
-    if (nameElement) {
-      nameElement.scrollIntoView({
-          behavior: 'smooth',
-          block: 'center'
-      });
-      nameElement.click();
-    }
+  function scrollToUserWithRetry(userEmail) {
+    if (!userEmail) return;
+    const targetName = emailNameMap[userEmail];
+    if (!targetName) return;
+    let attempts = 0;
+    const maxAttempts = 40; // 40 * 100ms = 4s max wait
+    const interval = setInterval(() => {
+      attempts++;
+      const items = document.querySelectorAll('.picker-item');
+      const nameElement = Array.from(items).find(item => item.textContent.trim() === targetName);
+      if (nameElement) {
+        // scroll + click
+        nameElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        nameElement.click();
+        clearInterval(interval);
+      } else if (attempts >= maxAttempts) {
+        clearInterval(interval);
+      }
+    }, 100);
   }
-  
-   });
 
+  // On DOMContentLoaded — try to scroll using query or parent
+  document.addEventListener('DOMContentLoaded', () => {
+    const email = getUserEmailFromQueryOrParent();
+    scrollToUserWithRetry(email);
 
+    // hook up your manual button
+    const button = document.getElementById('scrollToMeButton');
+    if (button) {
+      button.addEventListener('click', () => {
+        const emailNow = getUserEmailFromQueryOrParent();
+        scrollToUserWithRetry(emailNow);
+      });
+    }
+  });
 
-});
-
+  // Listen for postMessage from parent (parent will send {type:'scrollToUser', userEmail:...})
+  window.addEventListener('message', (ev) => {
+    if (!ev.data || ev.data.type !== 'scrollToUser') return;
+    const email = getUserEmailFromQueryOrParent(ev) || ev.data.userEmail;
+    scrollToUserWithRetry(email);
+  });
+})();
 
 
 
