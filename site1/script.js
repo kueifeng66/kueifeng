@@ -2226,7 +2226,6 @@ namePicker.addEventListener('scroll', () => {
 
 
 
-// Put this in site1's script (replace your existing DOMContentLoaded block)
 (function () {
   const emailNameMap = {
     'kueifeng7166@gmail.com': '洪柜峰',

@@ -96,7 +96,7 @@ onAuthStateChanged(auth, (user) => {
     return;
   }
 
-  // expose email to non-module scripts
+  //  store globally
   window.currentUserEmail = user.email;
 
   const iframe = document.getElementById('website-frame');
