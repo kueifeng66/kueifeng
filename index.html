@@ -89,15 +89,22 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
 
+const noAutoLogoutUsers = [
+  "kueifeng7166@gmail.com",
+  "shinchir46@gmail.com",
+  "qqcats0901@mail.post.gov.tw"
+];
+
         // inside your module after successful login:
 onAuthStateChanged(auth, (user) => {
   if (!user) {
     window.location.href = "login.html";
     return;
   }
-
+  
   //  store globally
   window.currentUserEmail = user.email;
+  resetTimer();
 
   const iframe = document.getElementById('website-frame');
   iframe.src = `site1/index.html?userEmail=${encodeURIComponent(user.email)}`;
@@ -147,6 +154,15 @@ let logInterval; // For logging time remaining
 
 // Function to reset the timer
 function resetTimer() {
+
+    const user = auth.currentUser;
+    if (noAutoLogoutUsers.includes(window.currentUserEmail)) {
+        console.log(`Auto logout disabled for ${window.currentUserEmail}`);
+        // Make sure no timers are running
+        clearTimeout(Timer);
+        clearInterval(logInterval);
+        return; // Skip starting auto logout
+    }
     // Clear existing timers
     clearTimeout(Timer);
     clearInterval(logInterval);
