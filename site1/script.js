@@ -759,7 +759,7 @@ function createheadercell(year, month, day) {
   const headerCell = document.createElement('div');
   headerCell.classList.add('header-cell');
    
-  headerCell.innerHTML = `${year} 年 &nbsp;&nbsp;&nbsp&nbsp;&nbsp${month} 月&nbsp;&nbsp&nbsp;&nbsp&nbsp;&nbsp ${day} 日 &nbsp;`; 
+  headerCell.innerHTML = `${year} 年 &nbsp;&nbsp&nbsp;&nbsp${month} 月&nbsp&nbsp;&nbsp&nbsp;&nbsp ${day} 日 &nbsp;`; 
 
   header.appendChild(headerCell);
   headerCell.style.zIndex = '20';
@@ -1371,7 +1371,7 @@ function setMode(newMode) {
     createCalendar(year,month);
     
     const headerCells = document.querySelector('.header-cell');
-    headerCells.innerHTML = `${year} 年 &nbsp;&nbsp;&nbsp&nbsp;&nbsp${month} 月&nbsp;`;  
+    headerCells.innerHTML = `${year} 年 &nbsp;&nbsp;&nbsp${month} 月&nbsp;`;  
     
     
     let header = document.getElementById('header');
@@ -1409,7 +1409,7 @@ function setMode(newMode) {
   
     
     const headerCells = document.querySelector('.header-cell');
-    headerCells.innerHTML = `${year} 年 &nbsp;&nbsp;&nbsp&nbsp;&nbsp${month} 月&nbsp;&nbsp&nbsp;&nbsp&nbsp;&nbsp ${day} 日 &nbsp;`;  
+    headerCells.innerHTML = `${year} 年 &nbsp;&nbsp;&nbsp${month} 月&nbsp;&nbsp;&nbsp;&nbsp;&nbsp ${day} 日 &nbsp;`;  
     showTooltip(formattedDate); 
     fetchWeather();
     AddWeekDay();
