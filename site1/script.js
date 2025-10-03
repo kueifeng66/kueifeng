@@ -2264,7 +2264,8 @@ namePicker.addEventListener('scroll', () => {
 
   function scrollToUserWithRetry(userEmail) {
     if (!userEmail) return;
-    const targetName = emailNameMap[userEmail];
+    const targetName = emailNameMap[userEmail]
+    username = targetName; //for firebase storage.Don't delete it or otherwise the Notes will be useless. it is a global parameters.
     if (!targetName) return;
     let attempts = 0;
     const maxAttempts = 40; // 40 * 100ms = 4s max wait

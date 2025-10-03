@@ -43,6 +43,7 @@ body {
   gap: 0.1rem;
   position: relative;
   z-index: auto;
+   animation: fadeIn 1.2s ease-in-out;
   
 }
 
@@ -702,6 +703,8 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
+
+   animation: fadeIn 1.2s ease-in-out;
 }
   
 .picker-body {
@@ -857,7 +860,7 @@ body {
 }
 
 
-.main-container {
+/* .main-container {
   font-family:  Arial, Helvetica, sans-serif;
   display: flex;
   flex-wrap: wrap;
@@ -868,7 +871,7 @@ body {
   width:100vw;
   margin: 0;
   animation: fadeIn 1.2s ease-in-out;
-}
+} */
 
 @keyframes fadeIn {
       from { opacity: 0; transform: translateY(-30px); }
