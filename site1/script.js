@@ -2122,7 +2122,8 @@ namePicker.addEventListener('scroll', () => {
     'sct@anws.gov.tw':'孫景泰',
     'folra679@gmail.com':'官郁庭',
     'jihyaos@gmail.com':'張日曜',
-    'allen99lo@gmail.com':'羅應順'
+    'allen99lo@gmail.com':'羅應順',
+    'chihung24@gmail.com':'張啟鴻',
   };
 
   function getUserEmailFromQueryOrParent(ev) {
