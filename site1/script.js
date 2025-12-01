@@ -1341,9 +1341,8 @@ function setMode(newMode) {
     calendar.innerHTML = '';
 
     month = (now.getMonth() + 1);
-    if (month === 12) {
-      year--;
-    }
+    year = now.getFullYear();
+
     createCalendar(year,month);
     let header = document.getElementById('header');
     header.style.color = '';
