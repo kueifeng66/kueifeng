@@ -1666,7 +1666,7 @@ names.forEach((name) => {
       const photoUrl = photos[selectedName];
 
       if (photoUrl) {
-        window.open(photoUrl, "_blank");
+        window.location.href = photoUrl;
       } else {
         alert("No photo available.");
       }
