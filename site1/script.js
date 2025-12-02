@@ -1468,6 +1468,39 @@ const names = [
   "．．．",
   "．．．",
 ];
+
+const photos = {
+  "詹文欽": "images/詹文欽.jpg",
+  "黃榮國": "images/黃榮國.jpg",
+  "范振宇": "images/范振宇.jpg",
+  "王金誠":"images/王金誠.jpg",
+  "許敦智":"images/許敦智.jpg",
+  "劉暐丞":"images/劉暐丞.jpg",
+  "彭偉慎":"images/彭偉慎.jpg",
+  "王瑞發":"images/王瑞發.jpg",
+  "柯正和":"images/柯正和.jpg",
+  "張日曜":"images/張日曜.jpg",
+  "秦桔萬":"images/秦桔萬.jpg",
+  "邱冠霖":"images/邱冠霖.jpg",
+  "孫景泰":"images/孫景泰.jpg",
+  "官郁庭":"images/官郁庭.jpg",
+  "方振彬":"images/方振彬.jpg",
+  "林森發":"images/林森發.jpg",
+  "黃煜森":"images/黃煜森.jpg",
+  "劉錦郎":"images/劉錦郎.jpg",
+  "林厚運":"images/林厚運.jpg",
+  "張哲維":"images/張哲維.jpg",
+  "余金原":"images/余金原.jpg",
+  "陳志偉":"images/陳志偉.jpg",
+  "黃經洲":"images/黃經洲.jpg",
+  "許世勳":"images/許世勳.jpg",
+  "洪柜峰":"images/洪柜峰.jpg",
+  "周育稔":"images/周育稔.jpg",
+  "林宏儒":"images/林宏儒.jpg",
+  "羅應順":"images/羅應順.jpg",
+  "呂明峯":"images/呂明峯.jpg"
+ 
+};
 const namePicker = document.getElementById("namePicker");
 let currentIndex = 0;
 
@@ -1629,6 +1662,14 @@ names.forEach((name) => {
 
     
     item.addEventListener("dblclick", () => {
+
+      const photoUrl = photos[selectedName];
+
+      if (photoUrl) {
+        window.open(photoUrl, "_blank");
+      } else {
+        alert("No photo available.");
+      }
      
       if (isLineBrowser()) {
        
