@@ -1660,13 +1660,34 @@ names.forEach((name) => {
     highlightSelectedName(selectedName);
   });
 
-    
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+
+   if (isIOS) {
+    let pressTimer = null;
+
+    item.addEventListener("touchstart", () => {
+      pressTimer = setTimeout(() => {
+        const photoUrl = photos[selectedName];
+        if (photoUrl) {
+          window.location.href = photoUrl;  // Safari safe
+        } else {
+          alert("No photo available.");
+        }
+      }, 500);   // 0.5 second press triggers
+    });
+
+    item.addEventListener("touchend", () => {
+      clearTimeout(pressTimer);
+    });
+  }
+
+  if (!isIOS) {
     item.addEventListener("dblclick", () => {
 
       const photoUrl = photos[selectedName];
 
       if (photoUrl) {
-        window.location.href = photoUrl;
+        window.open(photoUrl, "_blank");
       } else {
         alert("No photo available.");
       }
@@ -1679,7 +1700,7 @@ names.forEach((name) => {
         window.location.href = 'line://nv/chat';
       }
     });
-
+  }
   namePicker.appendChild(item);
 });
 
