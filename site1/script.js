@@ -1719,44 +1719,44 @@ function fetchWeather() {
 
      
       if (weatherCondition ==='Rain') {
-        document.body.style.background = 'url(cozy.png)';
+        document.body.style.background = 'url(bg.png)';
         document.body.style.backgroundSize= 'cover';
         document.body.style.backgroundPosition= 'center';
         ch_weather='雨天';
         
       } else if (weatherCondition === 'Clouds' && humidity > 80) {
-        document.body.style.background = 'url(cozy.png)';
+        document.body.style.background = 'url(bg.png)';
         document.body.style.backgroundSize= 'cover';
         document.body.style.backgroundPosition= 'center';
         ch_weather='陰天';
         
       } else if (weatherCondition === 'Drizzle') {
-        document.body.style.background = 'url(cozy.png)';
+        document.body.style.background = 'url(bg.png)';
         document.body.style.backgroundSize= 'cover';
         document.body.style.backgroundPosition= 'center';
         ch_weather='毛毛雨';
         
       } else if (weatherCondition === 'Thunderstorm') {
-        document.body.style.background = 'url(cozy.png)';
+        document.body.style.background = 'url(bg.png)';
         document.body.style.backgroundSize= 'cover';
         document.body.style.backgroundPosition= 'center';
         ch_weather='雷雨';
         
       } else if (weatherCondition === 'Squall') {
-        document.body.style.background = 'url(cozy.png)';
+        document.body.style.background = 'url(bg.png)';
         document.body.style.backgroundSize= 'cover';
         document.body.style.backgroundPosition= 'center';
         ch_weather='狂風暴雨';
         
       } else if (weatherCondition === 'Mist') {
-        document.body.style.background = 'url(cozy.png)';
+        document.body.style.background = 'url(bg.png)';
         document.body.style.backgroundSize= 'cover';
         document.body.style.backgroundPosition= 'center';
         ch_weather='濛濛有霧';
         
       } else {
       
-        document.body.style.background = 'url(cozy.png)';
+        document.body.style.background = 'url(bg.png)';
         document.body.style.backgroundSize= 'cover';
         document.body.style.backgroundPosition= 'center';
         ch_weather='晴天';
