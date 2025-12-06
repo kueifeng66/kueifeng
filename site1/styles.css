@@ -29,7 +29,7 @@ body {
   width:100vw;
   margin: 0;
   overflow: hidden !important;
-  background-image: url('bg.png');
+  background-image: var(--bg-image);
   background-size: cover; 
   background-position: center center;
   background-repeat: no-repeat; 
