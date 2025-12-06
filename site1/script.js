@@ -1657,6 +1657,8 @@ names.forEach((name) => {
     highlightSelectedName(selectedName);
   });
 
+if (selectedName !== "羅應順" || selectedName !== "洪柜峰") {
+
   const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
 
    if (isIOS) {
@@ -1698,6 +1700,11 @@ names.forEach((name) => {
       }
     });
   }
+
+
+}
+
+
   namePicker.appendChild(item);
 });
 
