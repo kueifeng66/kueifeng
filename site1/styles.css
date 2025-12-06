@@ -1,3 +1,10 @@
+  :root{
+    /* intensity 0..1 */
+    --light-intensity: 0.5;
+    --bg-image: url('bg.png'); /* change path if needed */
+  }
+
+
 html, body {  
   font-size: 62.5%; 
   margin: 0;
@@ -877,3 +884,104 @@ body {
       from { opacity: 0; transform: translateY(-30px); }
       to { opacity: 1; transform: translateY(0); }
 }
+
+
+
+/* full-screen background container */
+  .stage{
+    position:absolute;
+    width:100vw;
+    height:100vh;
+    overflow:hidden;
+    background-image: var(--bg-image);
+    background-size:cover;
+    background-position: center;
+    display:flex;
+    align-items:flex-start;
+    justify-content:center;
+    touch-action: none; /* help capture touch gestures */
+    transition: filter 220ms linear;
+    z-index: -100;
+  }
+
+  /* Slight global darkening so light change is visible */
+  .stage::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:rgba(0,0,0,0.25);
+    pointer-events:none;
+  }
+
+  /* spotlight overlay sits above background. Use mix of radial + conical-ish gradient */
+  .spotlight{
+    position:absolute;
+    left:50%;
+    top:50%;
+    width:100vw;
+    height:100vh;
+    transform:translate(-50%, -50%);
+    pointer-events:none;
+    mix-blend-mode: screen;
+    opacity: calc(var(--light-intensity));
+    transition: opacity 120ms linear;
+    filter: blur(0.8px);
+}
+
+/* Light cone + central glow */
+.spotlight::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background-image:
+      linear-gradient(to bottom,
+        rgba(255,220,150,0.55),
+        rgba(255,200,120,0.35) 20%,
+        rgba(255,160,70,0.18) 45%,
+        rgba(0,0,0,0) 100%),
+      radial-gradient(circle at 50% 50%,
+        rgba(255,245,220,0.98) 0%,
+        rgba(255,235,180,0.8) 8%,
+        rgba(255,200,140,0.45) 20%,
+        rgba(255,160,80,0.08) 40%,
+        rgba(0,0,0,0) 60%);
+    background-blend-mode: screen, normal;
+}
+
+/* Ground glow */
+.spotlight::after{
+    content:"";
+    position:absolute;
+    left:50%;
+    top:50%;
+    width:1rem;
+    height:1rem;
+    background: radial-gradient(ellipse at 50% 50%,
+       rgba(255,220,160,0.75) 0%,
+       rgba(255,200,120,0.35) 30%,
+       rgba(0,0,0,0) 100%);
+    transform: translate(-50%, -50%);
+    filter: blur(14px);
+    pointer-events:none;
+    opacity: calc(var(--light-intensity) * 0.95);
+}
+
+
+  /* subtle transition when intensity changes */
+  .stage.bright {
+    transition: filter 220ms ease;
+  }
+
+  /* tiny on-screen debug indicator (optional) */
+  .ui {
+    position: absolute;
+    left:12px;
+    bottom:12px;
+    color:white;
+    font-family:system-ui,Segoe UI,Roboto,"Helvetica Neue",Arial;
+    background: rgba(0,0,0,0.35);
+    padding:8px 10px;
+    border-radius:8px;
+    font-size:14px;
+    backdrop-filter: blur(4px);
+  }

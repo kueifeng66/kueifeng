@@ -2580,3 +2580,105 @@ function setupCardFlip() {
     })(window, document, navigator);
   }
 }
+
+
+(function(){
+  const stage = document.getElementById('stage');
+  const spot = document.getElementById('spot');
+  const uiVal = document.getElementById('val');
+
+  // initial intensity read from CSS variable
+  const style = getComputedStyle(document.documentElement);
+  let intensity = parseFloat(style.getPropertyValue('--light-intensity')) || 0.5;
+
+  // helpers
+  function clamp(v, a=0, b=1){ return Math.max(a, Math.min(b, v)); }
+  function setIntensity(v){
+    intensity = clamp(v, 0, 1);
+    document.documentElement.style.setProperty('--light-intensity', intensity.toFixed(3));
+    uiVal.textContent = intensity.toFixed(2);
+  }
+
+  // Update UI at start
+  setIntensity(intensity);
+
+  /*********************
+   * Mouse wheel (desktop)
+   * Use wheel.deltaY: negative = scroll up -> brighten; positive = scroll down -> dim
+   *********************/
+  let wheelTimeout;
+  stage.addEventListener('wheel', function(e){
+    // prevent page scrolling if inside stage
+    e.preventDefault();
+
+    // sensitivity factor - tune as desired
+    const factor = 0.0015; // small -> smooth change
+    // deltaY is positive when wheel scrolls down (away from user)
+    const delta = -e.deltaY * factor;
+    setIntensity(intensity + delta);
+
+    // optional: add a class for subtle transition while user scrolls
+    stage.classList.add('bright');
+    clearTimeout(wheelTimeout);
+    wheelTimeout = setTimeout(()=> stage.classList.remove('bright'), 220);
+  }, {passive:false});
+
+  /*********************
+   * Touch swipe (mobile)
+   * We interpret vertical swipe distance to adjust intensity continuously
+   *********************/
+  let touchStartY = null;
+  let startIntensity = null;
+
+  stage.addEventListener('touchstart', (e) => {
+    if (e.touches.length !== 1) return;
+    touchStartY = e.touches[0].clientY;
+    startIntensity = intensity;
+  }, {passive:true});
+
+  stage.addEventListener('touchmove', (e) => {
+    if (touchStartY === null) return;
+    const ty = e.touches[0].clientY;
+    const dy = touchStartY - ty; // positive when swipe up
+    // Map dy pixels to intensity change. Sensitivity tuned for natural swipe.
+    const sens = 0.006; // change per pixel
+    setIntensity(startIntensity + dy * sens);
+    // no preventDefault so native scroll may still happen; you can block if you want stable gesture
+  }, {passive:true});
+
+  stage.addEventListener('touchend', () => {
+    touchStartY = null;
+    startIntensity = null;
+  });
+
+  /*********************
+   * Optionally allow keyboard +/- for accessibility
+   *********************/
+  window.addEventListener('keydown', (e) => {
+    if (e.key === '+' || e.key === '=' ){
+      setIntensity(intensity + 0.05);
+    } else if (e.key === '-' || e.key === '_'){
+      setIntensity(intensity - 0.05);
+    }
+  });
+
+  /*********************
+   * Nice: animate small pulses when intensity changes quickly (optional)
+   *********************/
+  let raf;
+  let lastIntensity = intensity;
+  function animate() {
+    if (Math.abs(lastIntensity - intensity) > 0.0001){
+      // subtle global brightness change for the whole stage to emphasize effect
+      const stageFilter = 1 + (intensity - 0.5) * 0.25; // mild brightness adjustment
+      stage.style.filter = `brightness(${stageFilter})`;
+      lastIntensity = intensity;
+    }
+    raf = requestAnimationFrame(animate);
+  }
+  animate();
+
+  // expose for debug in console
+  window.__lamp = { get intensity(){ return intensity; }, setIntensity };
+
+})();
