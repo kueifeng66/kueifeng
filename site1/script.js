@@ -14,7 +14,8 @@ let mode = "neutral";
 const currentDay = new Date().getDate();
 let clickCount = 1;
 
- let username = null; 
+ let username = null;
+ let targetName = null;
 
 const now = new Date();
 var year = now.getFullYear();
@@ -1633,80 +1634,7 @@ function isLineBrowser() {
 }
 
 
-names.forEach((name) => {
-  const selectedName = name;
-  const item = document.createElement("div");
-  item.className = "picker-item";
-  item.textContent = name;
-  item.style.color = "gray";
- 
 
- item.addEventListener("click", () => {
-    updateSelection();
-    const items = document.querySelectorAll('.picker-item');
-    items.forEach((item) => {
-      item.style.transform = 'scale(1)';
-      item.style.color = 'gray';
-      item.style.opacity = '0.85';
-    });
-    item.style.transform = 'scale(1.5)';
-    item.style.color = '';
-    item.style.backgroundColor = "turquoise";
-   item.style.opacity = '1';
-    temp_name=selectedName;
-    highlightSelectedName(selectedName);
-  });
-
-if (selectedName !== "羅應順" || selectedName !== "洪柜峰") {
-
-  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-
-   if (isIOS) {
-    let pressTimer = null;
-
-    item.addEventListener("touchstart", () => {
-      pressTimer = setTimeout(() => {
-        const photoUrl = photos[selectedName];
-        if (photoUrl) {
-          window.location.href = photoUrl;  // Safari safe
-        } else {
-          alert("No photo available.");
-        }
-      }, 500);   // 0.5 second press triggers
-    });
-
-    item.addEventListener("touchend", () => {
-      clearTimeout(pressTimer);
-    });
-  }
-
-  if (!isIOS) {
-    item.addEventListener("dblclick", () => {
-
-      const photoUrl = photos[selectedName];
-
-      if (photoUrl) {
-        window.open(photoUrl, "_blank");
-      } else {
-        alert("No photo available.");
-      }
-     
-      if (isLineBrowser()) {
-       
-        alert('Use a Regular Browser, like chrome, to open LINE since it is in LINE now');
-      } else {
-       
-        window.location.href = 'line://nv/chat';
-      }
-    });
-  }
-
-
-}
-
-
-  namePicker.appendChild(item);
-});
 
 function clearSelectedClass() {
   const days = document.querySelectorAll('.day');
@@ -2272,7 +2200,7 @@ namePicker.addEventListener('scroll', () => {
 
   function scrollToUserWithRetry(userEmail) {
     if (!userEmail) return;
-    const targetName = emailNameMap[userEmail]
+    targetName = emailNameMap[userEmail]
     username = targetName; //for firebase storage.Don't delete it or otherwise the Notes will be useless. it is a global parameters.
     if (!targetName) return;
     let attempts = 0;
@@ -2305,6 +2233,76 @@ namePicker.addEventListener('scroll', () => {
         scrollToUserWithRetry(emailNow);
       });
     }
+
+      names.forEach((name) => {
+        const selectedName = name;
+        const item = document.createElement("div");
+        item.className = "picker-item";
+        item.textContent = name;
+        item.style.color = "gray";
+ 
+
+        item.addEventListener("click", () => {
+        updateSelection();
+        const items = document.querySelectorAll('.picker-item');
+        items.forEach((item) => {
+          item.style.transform = 'scale(1)';
+          item.style.color = 'gray';
+          item.style.opacity = '0.85';
+          });
+        item.style.transform = 'scale(1.5)';
+        item.style.color = '';
+        item.style.backgroundColor = "turquoise";
+        item.style.opacity = '1';
+        temp_name=selectedName;
+        highlightSelectedName(selectedName);
+      });
+
+        if (username !== "羅應順" && username !== "洪柜峰") {
+
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+
+          if (isIOS) {
+            let pressTimer = null;
+
+            item.addEventListener("touchstart", () => {
+              pressTimer = setTimeout(() => {
+              const photoUrl = photos[selectedName];
+              if (photoUrl) {
+                window.location.href = photoUrl;  // Safari safe
+              } else {
+                alert("No photo available.");
+              }
+              }, 1500);   // 0.5 second press triggers
+            });
+
+            item.addEventListener("touchend", () => {
+              clearTimeout(pressTimer);
+            });
+          }
+
+          if (!isIOS) {
+            item.addEventListener("dblclick", () => {
+            const photoUrl = photos[selectedName];
+            if (photoUrl) {
+              window.open(photoUrl, "_blank");
+            } else {
+              alert("No photo available.");
+            }
+     
+            if (isLineBrowser()) {
+              alert('Use a Regular Browser, like chrome, to open LINE since it is in LINE now');
+            } else {
+              window.location.href = 'line://nv/chat';
+            }
+            });
+          }
+        }
+  namePicker.appendChild(item);
+});
+
+
+
   });
 
   // Listen for postMessage from parent (parent will send {type:'scrollToUser', userEmail:...})
