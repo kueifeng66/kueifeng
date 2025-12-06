@@ -2258,7 +2258,7 @@ namePicker.addEventListener('scroll', () => {
         highlightSelectedName(selectedName);
       });
 
-        if (username !== "羅應順" && username !== "洪柜峰") {
+        if (username !== "詹文欽" && username !== "羅應順" && username !== "張啟鴻" && username !== "張日曜" && username !== "孫景泰") {
 
             const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
 
