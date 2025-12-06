@@ -1489,7 +1489,7 @@ const photos = {
   "張哲維":"images/張哲維.jpg",
   "余金原":"images/余金原.jpg",
   "陳志偉":"images/陳志偉.jpg",
-  "黃經洲":"images/黃經洲.jpg",
+  "黃經洲":"images/dog.png",
   "許世勳":"images/許世勳.jpg",
   "洪柜峰":"images/洪柜峰.jpg",
   "周育稔":"images/周育稔.jpg",
