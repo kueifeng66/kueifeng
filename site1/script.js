@@ -1,4 +1,3 @@
-
 const calendar = document.getElementById('calendar');
 const tooltip = document.getElementById('tooltip');
 const btn = document.querySelector('#toggle');
