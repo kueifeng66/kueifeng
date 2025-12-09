@@ -570,8 +570,10 @@ const bgMusic = document.getElementById("bgMusic");
 
    function initMusicOnce() {
     startMusic();
-    document.removeEventListener("click", initMusicOnce);
-    document.removeEventListener("touchstart", initMusicOnce);
+    header.removeEventListener("click", initMusicOnce);
+    header.removeEventListener("touchstart", initMusicOnce);
+    scrollToMeButton.removeEventListener("click", initMusicOnce);
+    scrollToMeButton.removeEventListener("touchstart", initMusicOnce);
   }
 
 
@@ -2236,10 +2238,10 @@ namePicker.addEventListener('scroll', () => {
 
   // On DOMContentLoaded — try to scroll using query or parent
   document.addEventListener('DOMContentLoaded', () => {
-    document.addEventListener("click", initMusicOnce);
-    document.addEventListener("touchstart", initMusicOnce);
-    
-
+    header.addEventListener("click", initMusicOnce);
+    header.addEventListener("touchstart", initMusicOnce);
+    scrollToMeButton.addEventListener("click", initMusicOnce);
+    scrollToMeButton.addEventListener("touchstart", initMusicOnce);
 
     const email = getUserEmailFromQueryOrParent();
     scrollToUserWithRetry(email);
