@@ -568,8 +568,7 @@ const bgMusic = document.getElementById("bgMusic");
     });
   }
 
-
-
+   
 
 
 function checkDayChange() {
@@ -2232,6 +2231,10 @@ namePicker.addEventListener('scroll', () => {
 
   // On DOMContentLoaded — try to scroll using query or parent
   document.addEventListener('DOMContentLoaded', () => {
+
+    startMusic();
+
+
     const email = getUserEmailFromQueryOrParent();
     scrollToUserWithRetry(email);
 
