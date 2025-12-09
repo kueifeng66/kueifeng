@@ -2331,7 +2331,6 @@ namePicker.addEventListener('scroll', () => {
     scrollToUserWithRetry(email);
   });
 
-  startMusic();
 })();
 
 
