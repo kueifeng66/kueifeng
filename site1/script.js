@@ -557,10 +557,20 @@ const holiday = {
 "2026-1-30": "【十二】",
 "2026-1-31": "【十三】【放假日】",
 
-
-
-
 };
+
+const bgMusic = document.getElementById("bgMusic");
+
+  function startMusic() {
+    bgMusic.currentTime = 0;
+    bgMusic.play().catch(e => {
+      console.log("Audio play failed:", e);
+    });
+  }
+
+
+
+
 
 function checkDayChange() {
   const now = new Date();
