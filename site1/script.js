@@ -568,7 +568,12 @@ const bgMusic = document.getElementById("bgMusic");
     });
   }
 
-   
+   function initMusicOnce() {
+    startMusic();
+    document.removeEventListener("click", initMusicOnce);
+    document.removeEventListener("touchstart", initMusicOnce);
+  }
+
 
 
 function checkDayChange() {
@@ -2231,8 +2236,9 @@ namePicker.addEventListener('scroll', () => {
 
   // On DOMContentLoaded — try to scroll using query or parent
   document.addEventListener('DOMContentLoaded', () => {
-
-    startMusic();
+    document.addEventListener("click", initMusicOnce);
+    document.addEventListener("touchstart", initMusicOnce);
+    
 
 
     const email = getUserEmailFromQueryOrParent();
@@ -2324,6 +2330,8 @@ namePicker.addEventListener('scroll', () => {
     const email = getUserEmailFromQueryOrParent(ev) || ev.data.userEmail;
     scrollToUserWithRetry(email);
   });
+
+  startMusic();
 })();
 
 
