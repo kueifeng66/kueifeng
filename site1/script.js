@@ -562,19 +562,34 @@ const holiday = {
 
 const bgMusic = document.getElementById("bgMusic");
 
-  function startMusic() {
+  let hasPlayed = false;
+  let isLocked = false;
+
+function handleMusicClick() {
+  if (isLocked) return;
+
+  if (!hasPlayed) {
+    bgMusic.play().catch(e => console.log(e));
+    hasPlayed = true;
+  } else {
+    bgMusic.pause();
     bgMusic.currentTime = 0;
-    bgMusic.play().catch(e => {
-      console.log("Audio play failed:", e);
-    });
+    isLocked = true; // 🔒 never play again
   }
+}
+
 
    function initMusicOnce() {
-    startMusic();
+    handleMusicClick();
     header.removeEventListener("click", initMusicOnce);
     header.removeEventListener("touchstart", initMusicOnce);
     scrollToMeButton.removeEventListener("click", initMusicOnce);
     scrollToMeButton.removeEventListener("touchstart", initMusicOnce);
+    header.addEventListener("click", handleMusicClick);
+    header.addEventListener("touchstart", handleMusicClick);
+    scrollToMeButton.addEventListener("click", handleMusicClick);
+    scrollToMeButton.addEventListener("touchstart", handleMusicClick);
+
   }
 
 
