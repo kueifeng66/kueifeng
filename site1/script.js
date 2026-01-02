@@ -1393,8 +1393,9 @@ function setMode(newMode) {
     calendar.innerHTML = '';
 
     month--;
-    if (month === 12) {
+    if (month === 1) {
       year--;
+      month = 12;
     }
     createCalendar(year,month);
     let header = document.getElementById('header');
