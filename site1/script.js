@@ -1391,11 +1391,15 @@ function setMode(newMode) {
     clearSelectedClass();
 
     calendar.innerHTML = '';
-
-    month--;
+    month = (now.getMonth() + 1);
+    year = now.getFullYear();
+   
     if (month === 1) {
       year--;
       month = 12;
+    } else {
+       month--;
+
     }
     createCalendar(year,month);
     let header = document.getElementById('header');
