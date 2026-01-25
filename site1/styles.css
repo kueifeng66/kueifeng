@@ -606,6 +606,23 @@ body {
   display: block; 
 }
 
+.tooltip-duty span {
+  display: block;   /* each role on its own line */
+  margin: 2px 0;
+  font-weight: 600;
+}
+
+
+.duty-s { color: #FFFFFF; }
+.duty-a { color: #C77DFF; }
+.duty-n { color: #FF5A5F; }
+.duty-c { color: #3DFF8A; }
+.duty-r { color: #4DA3FF; }
+.duty-t { color: #FFD84D; }
+
+
+
+
 .tooltip-weather {
   font-size: 1.4rem; /* Adjust this value as needed */
   text-align: left; /* Align text to the left */

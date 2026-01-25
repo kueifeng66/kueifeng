@@ -1307,13 +1307,24 @@ function positionTooltip() {
   tooltip.style.top = `${headerRect.bottom + 4}px`;
   tooltip.style.left = `${headerRect.left}px`; 
 }
+function colorizeDuty(dutyText) {
+  return dutyText
+    .replace(/S:\s*([^A-Z]+)/g, '<span class="duty-s">S: $1</span>')
+    .replace(/A:\s*([^A-Z]+)/g, '<span class="duty-a">A: $1</span>')
+    .replace(/N:\s*([^A-Z]+)/g, '<span class="duty-n">N: $1</span>')
+    .replace(/C:\s*([^A-Z]+)/g, '<span class="duty-c">C: $1</span>')
+    .replace(/R:\s*([^A-Z]+)/g, '<span class="duty-r">R: $1</span>')
+    .replace(/T:\s*([^A-Z]+)/g, '<span class="duty-t">T: $1</span>');
+}
+
+
 
 function showTooltip(date) {
   
   const [year, month, day] = date.split('-');
   const formattedDate =  `${month}月${day}日`
-  const dutyInfo = dutySchedule[date] || "None";
-
+  const rawDutyInfo = dutySchedule[date] || "None";
+  const dutyInfo = colorizeDuty(rawDutyInfo);
   
   if (weatherData[date]) {
    
