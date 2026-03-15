@@ -1,7 +1,7 @@
   :root {
     /* intensity 0..1 */
     --light-intensity: 0.5;
-    --bg-image: url('bg.png'); /* change path if needed */
+    --bg-image: url('bg.jpg'); /* change path if needed */
   }
 
 
