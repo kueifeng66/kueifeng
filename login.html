@@ -184,7 +184,14 @@
       transition: 0.3s;
     }
 
-    
+     .error-message {
+	      min-height: 2rem;
+	      margin-top: 1rem;
+	      color: #ffdddd;
+	      font-size: 1.4rem;
+	      text-shadow: 0 0 0.3rem rgba(0, 0, 0, 0.5);
+	    }
+
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(-30px); }
       to { opacity: 1; transform: translateY(0); }
@@ -212,22 +219,34 @@
         const auth = getAuth(app);
 
 document.addEventListener("DOMContentLoaded", () => {
-    const loginButton = document.getElementById("login");
-    let holdTimer;
+   const loginButton = document.getElementById("login");
+        const errorMessage = document.getElementById("error-message");
+	    let holdTimer;
 
-    loginButton.addEventListener("click", () => {
-        const email = document.getElementById("email").value.trim();
-        const password = document.getElementById("password").value.trim();
+	    loginButton.addEventListener("click", () => {
+	        const email = document.getElementById("email").value.trim();
+	        const password = document.getElementById("password").value.trim();
+            errorMessage.textContent = "";
 
-        // Only attempt login if both fields are filled
-        if (email && password) {
-            signInWithEmailAndPassword(auth, email, password)
-                .then(() => {
-                    window.location.href = "index.html"; // Redirect to main page
-                })
-                .catch(error => alert("Please Enter Valid Email and Password"));
-        }
-    });
+	        // Only attempt login if both fields are filled
+	        if (email && password) {
+                loginButton.disabled = true;
+                loginButton.textContent = "Logging in...";
+	            signInWithEmailAndPassword(auth, email, password)
+	                .then(() => {
+	                    window.location.href = "index.html"; // Redirect to main page
+	                })
+	                .catch(error => {
+                        errorMessage.textContent = "Login failed. Please check your email and password.";
+                    })
+                    .finally(() => {
+                        loginButton.disabled = false;
+                        loginButton.textContent = "Login";
+                    });
+	        } else {
+                errorMessage.textContent = "Please enter both email and password.";
+	        }
+	    });
 
    
 });
@@ -239,9 +258,12 @@ document.addEventListener("DOMContentLoaded", () => {
 <div class="login-container">
     <h2>On Duty Calendar</h2>
     
-    <input type="email" id="email" placeholder="Enter email">
-    <input type="password" id="password" placeholder="Enter password">
-    <button class="btn-login" id="login">Login</button>
+   
+	
+	<input type="email" id="email" placeholder="Enter email" aria-label="Email">
+    <input type="password" id="password" placeholder="Enter password" aria-label="Password">
+    <button class="btn-login" id="login" aria-label="Log in">Login</button>
+    <div id="error-message" class="error-message" aria-live="polite"></div>
     
 </div>
     
