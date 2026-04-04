@@ -466,11 +466,15 @@ const holiday = {
 const bgMusic = document.getElementById("bgMusic");
 
 
+let isPlaying = false;
+
 function toggleMusic() {
-  if (bgMusic.paused) {
+  if (!isPlaying) {
     bgMusic.play().catch(e => console.log(e));
+    isPlaying = true;
   } else {
     bgMusic.pause();
+    isPlaying = false;
   }
 }
 
