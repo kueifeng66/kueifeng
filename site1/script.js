@@ -467,36 +467,16 @@ const holiday = {
 
 const bgMusic = document.getElementById("bgMusic");
 
-  let hasPlayed = false;
-  let isLocked = false;
 
-function handleMusicClick() {
-  if (isLocked) return;
-
-  if (!hasPlayed) {
+function toggleMusic() {
+  if (bgMusic.paused) {
     bgMusic.play().catch(e => console.log(e));
-    hasPlayed = true;
   } else {
     bgMusic.pause();
-    bgMusic.currentTime = 0;
-    isLocked = true; // 🔒 never play again
   }
 }
 
-
-   function initMusicOnce() {
-    handleMusicClick();
-    header.removeEventListener("click", initMusicOnce);
-    header.removeEventListener("touchstart", initMusicOnce);
-    scrollToMeButton.removeEventListener("click", initMusicOnce);
-    scrollToMeButton.removeEventListener("touchstart", initMusicOnce);
-    header.addEventListener("click", handleMusicClick);
-    header.addEventListener("touchstart", handleMusicClick);
-    scrollToMeButton.addEventListener("click", handleMusicClick);
-    scrollToMeButton.addEventListener("touchstart", handleMusicClick);
-
-  }
-
+  
 
 
 function checkDayChange() {
@@ -2173,10 +2153,10 @@ namePicker.addEventListener('scroll', () => {
 
   // On DOMContentLoaded — try to scroll using query or parent
   document.addEventListener('DOMContentLoaded', () => {
-    header.addEventListener("click", initMusicOnce);
-    header.addEventListener("touchstart", initMusicOnce);
-    scrollToMeButton.addEventListener("click", initMusicOnce);
-    scrollToMeButton.addEventListener("touchstart", initMusicOnce);
+    header.addEventListener("click", toggleMusic);
+    header.addEventListener("touchstart", toggleMusic);
+    scrollToMeButton.addEventListener("click", toggleMusic);
+    scrollToMeButton.addEventListener("touchstart", toggleMusic);
 
     const email = getUserEmailFromQueryOrParent();
     scrollToUserWithRetry(email);
