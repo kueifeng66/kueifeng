@@ -2154,8 +2154,8 @@ namePicker.addEventListener('scroll', () => {
     header.addEventListener("click", toggleMusic);
     header.addEventListener("touchstart", toggleMusic);
     scrollToMeButton.addEventListener("click", toggleMusic);
-    //scrollToMeButton.addEventListener("touchstart", toggleMusic);
-    scrollToMeButton.addEventListener("pointerdown", toggleMusic);
+    scrollToMeButton.addEventListener("touchstart", toggleMusic);
+    
 
     const email = getUserEmailFromQueryOrParent();
     scrollToUserWithRetry(email);
