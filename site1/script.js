@@ -468,7 +468,12 @@ const bgMusic = document.getElementById("bgMusic");
 
 let isPlaying = false;
 
+let lastTouchTime = 0;
+
 function toggleMusic() {
+  const now = Date.now();
+  if (now - lastTouchTime < 300) return;
+  lastTouchTime = now;
   if (!isPlaying) {
     bgMusic.play().catch(e => console.log(e));
     isPlaying = true;
