@@ -1029,7 +1029,7 @@ let controls;
 
 const cityList = [
   // Asia
-  "Taipei", "Beijing", "Tokyo",
+  "Taipei", "Dayuan", "Taoyuan", "Beijing", "Tokyo",
   "Shanghai", "Hong Kong", "Seoul", "Bangkok", "Singapore",
   "Dubai", 
 
