@@ -2123,6 +2123,7 @@ namePicker.addEventListener('scroll', () => {
     'jihyaos@gmail.com':'張日曜',
     'chihung24@gmail.com':'張啟鴻',
     'dick710209@gmail.com':'陳鈞緯',
+    'allen99lo@gmail.com':'羅應順',
   };
 
   function getUserEmailFromQueryOrParent(ev) {
@@ -2206,7 +2207,7 @@ namePicker.addEventListener('scroll', () => {
         highlightSelectedName(selectedName);
       });
 
-        if (username !== "詹文欽"  && username !== "張啟鴻" && username !== "張日曜" && username !== "孫景泰" && username !== "張哲維" && username !== "陳鈞緯") {
+        if (username !== "詹文欽"  && username !== "張啟鴻" && username !== "羅應順" && username !== "張日曜" && username !== "孫景泰" && username !== "張哲維" && username !== "陳鈞緯") {
 
             const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
 
