@@ -1284,7 +1284,7 @@ function addRipple(lat, lon) {
     }
 
     // Expand ripple
-    const scale = 1 + elapsed * 2; // grow speed
+    const scale = 1 + elapsed * 1.5; // grow speed
     ripple.scale.set(scale, scale, scale);
 
     // Fade out
