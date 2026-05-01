@@ -1248,6 +1248,52 @@ function addMarker(lat, lon, color) {
   );
   marker.position.copy(pos);
   earth.add(marker); // attach to Earth
+
+  addRipple(lat, lon);  // Add ripple effect
+}
+
+function addRipple(lat, lon) {
+  const pos = getVectorFromLatLon(lat, lon, 1.02);
+
+  const geometry = new THREE.RingGeometry(0.01, 0.012, 32);
+  const material = new THREE.MeshBasicMaterial({
+    color: 0xFFD700,
+    transparent: true,
+    opacity: 0.8,
+    side: THREE.DoubleSide
+  });
+
+  const ripple = new THREE.Mesh(geometry, material);
+  ripple.position.copy(pos);
+
+  // Make ripple face outward from globe
+  ripple.lookAt(0, 0, 0);
+
+  earth.add(ripple);
+
+  let start = performance.now();
+
+  function animateRipple(time) {
+    const elapsed = (time - start) / 1000; // seconds
+
+    if (elapsed > 5) {
+      earth.remove(ripple);
+      geometry.dispose();
+      material.dispose();
+      return;
+    }
+
+    // Expand ripple
+    const scale = 1 + elapsed * 2; // grow speed
+    ripple.scale.set(scale, scale, scale);
+
+    // Fade out
+    material.opacity = 0.8 * (1 - elapsed / 5);
+
+    requestAnimationFrame(animateRipple);
+  }
+
+  requestAnimationFrame(animateRipple);
 }
 
 // Test markers
