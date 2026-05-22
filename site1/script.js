@@ -2212,46 +2212,46 @@ namePicker.addEventListener('scroll', () => {
         highlightSelectedName(selectedName);
       });
 
-        if (username !== "詹文欽"  && username !== "張啟鴻" && username !== "羅應順" && username !== "張日曜" && username !== "孫景泰" && username !== "張哲維" && username !== "陳鈞緯") {
+        // if (username !== "詹文欽"  && username !== "張啟鴻" && username !== "羅應順" && username !== "張日曜" && username !== "孫景泰" && username !== "張哲維" && username !== "陳鈞緯") {
 
-            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+        //     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
 
-          if (isIOS) {
-            let pressTimer = null;
+        //   if (isIOS) {
+        //     let pressTimer = null;
 
-            item.addEventListener("touchstart", () => {
-              pressTimer = setTimeout(() => {
-              const photoUrl = photos[selectedName];
-              if (photoUrl) {
-                window.location.href = photoUrl;  // Safari safe
-              } else {
-                alert("No photo available.");
-              }
-              }, 1500);   // 0.5 second press triggers
-            });
+        //     item.addEventListener("touchstart", () => {
+        //       pressTimer = setTimeout(() => {
+        //       const photoUrl = photos[selectedName];
+        //       if (photoUrl) {
+        //         window.location.href = photoUrl;  
+        //       } else {
+        //         alert("No photo available.");
+        //       }
+        //       }, 1500);   
+        //     });
 
-            item.addEventListener("touchend", () => {
-              clearTimeout(pressTimer);
-            });
-          }
+        //     item.addEventListener("touchend", () => {
+        //       clearTimeout(pressTimer);
+        //     });
+        //   }
 
-          if (!isIOS) {
-            item.addEventListener("dblclick", () => {
-            const photoUrl = photos[selectedName];
-            if (photoUrl) {
-              window.open(photoUrl, "_blank");
-            } else {
-              alert("No photo available.");
-            }
+        //   if (!isIOS) {
+        //     item.addEventListener("dblclick", () => {
+        //     const photoUrl = photos[selectedName];
+        //     if (photoUrl) {
+        //       window.open(photoUrl, "_blank");
+        //     } else {
+        //       alert("No photo available.");
+        //     }
      
-            if (isLineBrowser()) {
-              alert('Use a Regular Browser, like chrome, to open LINE since it is in LINE now');
-            } else {
-              window.location.href = 'line://nv/chat';
-            }
-            });
-          }
-        }
+        //     if (isLineBrowser()) {
+        //       alert('Use a Regular Browser, like chrome, to open LINE since it is in LINE now');
+        //     } else {
+        //       window.location.href = 'line://nv/chat';
+        //     }
+        //     });
+        //   }
+        // }
   namePicker.appendChild(item);
 });
 
