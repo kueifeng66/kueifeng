@@ -100,11 +100,11 @@ const dutySchedule = {
 "2026-6-9": "S: 黃經洲 A: 許敦智 N: 劉暐丞 C: 孫景泰 R: 余金原 T: 呂明峯",
 "2026-6-10": "S: 林森發 A: 洪柜峰 N: 王瑞發 C: 官郁庭 R: 陳志偉 T: 羅應順",
 "2026-6-11": "S: 黃榮國 A: 黃煜森 N: 王金誠 C: 秦桔萬 R: 劉錦郎 T: 呂明峯",
-"2026-6-12": "S: 詹文欽 A: 周育稔 N: 范振宇 C: 邱冠霖 R: 余金原 T: 許世勳",
+"2026-6-12": "S: 詹文欽 A: 周育稔 N: 范振宇 C: 邱冠霖 R: 余金原 T: 洪柜峰_許世勳",
 "2026-6-13": "S: 林森發 A: 官郁庭 N: 許敦智 C: 方振彬 R: 陳志偉 T: 洪柜峰",
 "2026-6-14": "S: 張日曜 A: 劉暐丞 N: 彭偉慎 C: 秦桔萬 R: 張哲維 T: 羅應順",
-"2026-6-15": "S: 范振宇 A: 周育稔 N: 王瑞發 C: 方振彬 R: 劉錦郎 T: 洪柜峰",
-"2026-6-16": "S: 林森發 A: 許世勳 N: 王金誠 C: 邱冠霖 R: 張哲維 T: 呂明峯",
+"2026-6-15": "S: 范振宇 A: 周育稔 N: 王瑞發 C: 方振彬 R: 劉錦郎 T: 許世勳_洪柜峰",
+"2026-6-16": "S: 林森發 A: 許世勳 N: 王金誠 C: 秦桔萬 R: 張哲維 T: 呂明峯",
 "2026-6-17": "S: 黃經洲 A: 孫景泰 N: 劉暐丞 C: 官郁庭 R: 陳志偉 T: 羅應順",
 "2026-6-18": "S: 黃榮國 A: 許敦智 N: 王瑞發 C: 秦桔萬 R: 劉錦郎 T: 洪柜峰",
 "2026-6-19": "S: 張日曜 A: 林森發 N: 彭偉慎 C: 孫景泰 R: 張哲維 T: 周育稔",
@@ -115,10 +115,11 @@ const dutySchedule = {
 "2026-6-24": "S: 黃榮國 A: 林森發 N: 王金誠 C: 邱冠霖 R: 黃煜森 T: 羅應順",
 "2026-6-25": "S: 范振宇 A: 許世勳 N: 彭偉慎 C: 孫景泰 R: 陳志偉 T: 周育稔",
 "2026-6-26": "S: 黃經洲 A: 林宏儒 N: 王瑞發 C: 邱冠霖 R: 張哲維 T: 呂明峯",
-"2026-6-27": "S: 詹文欽 A: 彭偉慎 N: 范振宇 C: 張日曜 R: 劉錦郎 T: 羅應順",
+"2026-6-27": "S: 詹文欽 A: 范振宇 N: 彭偉慎 C: 張日曜 R: 劉錦郎 T: 羅應順",
 "2026-6-28": "S: 黃榮國 A: 洪柜峰 N: 劉暐丞 C: 孫景泰 R: 陳志偉 T: 林宏儒",
-"2026-6-29": "S: 張日曜 A: 呂明峯 N: 王金誠 C: 秦桔萬 R: 余金原 T: 許世勳",
-"2026-6-30": "S: 林森發 A: 王瑞發 N: 許敦智 C: 邱冠霖 R: 張哲維 T: 周育稔",
+"2026-6-29": "S: 林森發 A: 呂明峯 N: 王金誠 C: 秦桔萬 R: 余金原 T: 許世勳",
+"2026-6-30": "S: 張日曜 A: 王瑞發 N: 許敦智 C: 邱冠霖 R: 張哲維 T: 周育稔",
+
 
 
 
@@ -589,34 +590,34 @@ function addEventListeners(dayElement, btn, day, month, year, date) {
 }
 function addEventListener_toHideToolTipandShowToday(headerCell) {
   headerCell.addEventListener('click', () => {
-    const days =document.querySelectorAll('.day');
+    const days = document.querySelectorAll('.day');
     if (clickCount % 2 === 0) {
       hideTooltip();
    
       highlightSelectedName(temp_name);
       const items = document.querySelectorAll('.picker-item');
       items.forEach((item) => {
-      if (temp_name === item.textContent && temp_name != "．．．"){
-      item.style.transform = 'scale(1.5)';
-      item.style.backgroundColor = "turquoise";
-      }
+        if (temp_name === item.textContent && temp_name != "．．．"){
+          item.style.transform = 'scale(1.5)';
+          item.style.backgroundColor = "turquoise";
+        }
       });
    
       headerCell.style.backgroundColor="#3498db";
       headerCell.style.backgroundImage ="";
      
     } else {
-          days.forEach(dayElement => {
-            dayElement.classList.remove(selectedClassName);
-            dayElement.classList.remove(selectedClassName2);
-            dayElement.classList.remove(selectedClassName3);
-            dayElement.classList.remove('today-selected');
-          });
+      days.forEach(dayElement => {
+        // Remove the original classes plus all the new top/bottom split classes
+        dayElement.classList.remove(
+          'selected', 'selected-top', 'selected-bottom',
+          'selected2', 'selected2-top', 'selected2-bottom',
+          'selected3', 'selected3-top', 'selected3-bottom',
+          'today-selected'
+        );
+      });
 
-    
-      
       headerCell.style.backgroundImage = "linear-gradient(to right, #345bdb, #2e4d8f)";
-
 
       showTooltip(formattedDate);
       positionTooltip();
@@ -626,7 +627,6 @@ function addEventListener_toHideToolTipandShowToday(headerCell) {
     }
     clickCount++;
   });
-  
 }
 
 function createheadercell(year, month, day) {
@@ -1455,86 +1455,101 @@ const selectedClassName3 = 'selected3';
 
 function highlightSelectedName(selectedName) {
   const days = document.querySelectorAll('.day');
+  
   days.forEach(dayElement => {
+    // Clear all previous highlight classes, including our new split variants
+    dayElement.classList.remove(
+      'selected', 'selected-top', 'selected-bottom',
+      'selected2', 'selected2-top', 'selected2-bottom',
+      'selected3', 'selected3-top', 'selected3-bottom',
+      'today-selected'
+    );
+
     const dayText = dayElement.textContent.split('\n')[0].trim();
+    if (!dayText) return; // Skip empty blocks
+    
     const date = `${year}-${month}-${dayText}`;
     const scheduleForDay = dutySchedule[date] || '';
-    
-   
     const scheduleParts = scheduleForDay.split(' ');
 
-   
-    const namesForSelectedClassName = [];
-    const namesForSelectedClassName2 = [];
-    const namesForSelectedClassName3 = [];
+    let currentCat = 1; // 1 = N/C/R/T (default), 2 = A, 3 = S
+    let match1 = 'none', match2 = 'none', match3 = 'none';
 
-   
-    let shouldCategorizeToClassName2 = false;
-    let shouldCategorizeToClassName3 = false;
-   
     scheduleParts.forEach(part => {
-     
-      if (part.startsWith('S:')) {
-       
-        shouldCategorizeToClassName3 = true;
-      } else if (part.startsWith('A:')) {
-        shouldCategorizeToClassName2 = true;
-      } else if (shouldCategorizeToClassName2) {
-        
-        const name = part.trim();
-        namesForSelectedClassName2.push(name);
-        shouldCategorizeToClassName2 = false;
-      } else if (shouldCategorizeToClassName3) {
-        
-        const name = part.trim();
-        namesForSelectedClassName3.push(name);
-        shouldCategorizeToClassName3 = false;
+      let text = part.trim();
+      if (!text) return;
+
+      if (text === 'S:') {
+        currentCat = 3;
+      } else if (text === 'A:') {
+        currentCat = 2;
+      } else if (text.match(/^[A-Z]:$/)) { 
+        // Matches N:, C:, R:, T:, etc.
+        currentCat = 1;
       } else {
-       
-        const name = part.trim();
-        namesForSelectedClassName.push(name);
+        // It's a name node. Check for a split shift:
+        if (text.includes('_')) {
+          let [topName, bottomName] = text.split('_');
+          
+          if (topName === selectedName) {
+            if (currentCat === 3) match3 = 'top';
+            else if (currentCat === 2) match2 = 'top';
+            else match1 = 'top';
+          }
+          if (bottomName === selectedName) {
+            if (currentCat === 3) match3 = 'bottom';
+            else if (currentCat === 2) match2 = 'bottom';
+            else match1 = 'bottom';
+          }
+        } else {
+          // Full shift
+          if (text === selectedName) {
+            if (currentCat === 3) match3 = 'full';
+            else if (currentCat === 2) match2 = 'full';
+            else match1 = 'full';
+          }
+        }
+        // Reset category back to default after processing a name
+        currentCat = 1; 
       }
     });
 
+    // Apply the corresponding classes based on our match results
+    if (match3 !== 'none') {
+      if (match3 === 'full') dayElement.classList.add('selected3');
+      if (match3 === 'top') dayElement.classList.add('selected3-top');
+      if (match3 === 'bottom') dayElement.classList.add('selected3-bottom');
+    }
+    if (match2 !== 'none') {
+      if (match2 === 'full') dayElement.classList.add('selected2');
+      if (match2 === 'top') dayElement.classList.add('selected2-top');
+      if (match2 === 'bottom') dayElement.classList.add('selected2-bottom');
+    }
+    if (match1 !== 'none') {
+      if (match1 === 'full') dayElement.classList.add('selected');
+      if (match1 === 'top') dayElement.classList.add('selected-top');
+      if (match1 === 'bottom') dayElement.classList.add('selected-bottom');
+    }
+
+    // Handle the "today" overlapping glow logic
     const isToday = dayElement.classList.contains('today');
-    
-
-    if (namesForSelectedClassName3.includes(selectedName)) {
-      dayElement.classList.add(selectedClassName3);
-    } else {
-      dayElement.classList.remove(selectedClassName3);
-    }
-
-    if (namesForSelectedClassName2.includes(selectedName)) {
-      dayElement.classList.add(selectedClassName2);
-    } else {
-      dayElement.classList.remove(selectedClassName2);
-    }
-
-    if (namesForSelectedClassName.includes(selectedName)) {
-      dayElement.classList.add(selectedClassName);
-    } else {
-      dayElement.classList.remove(selectedClassName);
-    }
-
-    
-    if (isToday && (dayElement.classList.contains('selected') || dayElement.classList.contains('selected2') || dayElement.classList.contains('selected3'))) {
-      dayElement.classList.add('today-selected'); 
-    } else if (isToday) {
-      dayElement.classList.remove('today-selected');
+    if (isToday && (match1 !== 'none' || match2 !== 'none' || match3 !== 'none')) {
+      dayElement.classList.add('today-selected');
     }
   });
 
-    
-    days.forEach(dayElement => {
-      dayElement.addEventListener('mouseover', () => {
-        days.forEach(day => {
-          day.classList.remove(selectedClassName);
-          day.classList.remove(selectedClassName2);
-          day.classList.remove(selectedClassName3);
-        });
+  // Maintain your existing hover clearing behavior
+  days.forEach(dayElement => {
+    dayElement.addEventListener('mouseover', () => {
+      days.forEach(day => {
+        day.classList.remove(
+          'selected', 'selected-top', 'selected-bottom',
+          'selected2', 'selected2-top', 'selected2-bottom',
+          'selected3', 'selected3-top', 'selected3-bottom'
+        );
       });
     });
+  });
 }
 
 
@@ -1586,7 +1601,11 @@ function isLineBrowser() {
 function clearSelectedClass() {
   const days = document.querySelectorAll('.day');
   days.forEach(dayElement => {
-    dayElement.classList.remove(selectedClassName);
+    dayElement.classList.remove(
+      'selected', 'selected-top', 'selected-bottom',
+      'selected2', 'selected2-top', 'selected2-bottom',
+      'selected3', 'selected3-top', 'selected3-bottom'
+    );
   });
 }
 
@@ -1633,9 +1652,11 @@ function updateScale() {
 function ClearSelectedName() {
   const days = document.querySelectorAll('.day');
   days.forEach(dayElement => {        
-    dayElement.classList.remove(selectedClassName);
-    dayElement.classList.remove(selectedClassName2);
-    dayElement.classList.remove(selectedClassName3);
+    dayElement.classList.remove(
+      'selected', 'selected-top', 'selected-bottom',
+      'selected2', 'selected2-top', 'selected2-bottom',
+      'selected3', 'selected3-top', 'selected3-bottom'
+    );
   });
 }
 

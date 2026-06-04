@@ -534,6 +534,50 @@ body {
 }
 
 
+/* --- TOP HALF HIGHLIGHTS --- */
+.selected-top {
+  background-image: linear-gradient(to right, turquoise, lightblue);
+  background-size: 100% 50%;
+  background-position: top;
+  background-repeat: no-repeat;
+}
+
+.selected2-top {
+  background-image: linear-gradient(to right, #B2FF9E, lightgreen);
+  background-size: 100% 50%;
+  background-position: top;
+  background-repeat: no-repeat;
+}
+
+.selected3-top {
+  background-image: linear-gradient(to right, #EBD9AA, lightyellow);
+  background-size: 100% 50%;
+  background-position: top;
+  background-repeat: no-repeat;
+}
+
+/* --- BOTTOM HALF HIGHLIGHTS --- */
+.selected-bottom {
+  background-image: linear-gradient(to right, turquoise, lightblue);
+  background-size: 100% 50%;
+  background-position: bottom;
+  background-repeat: no-repeat;
+}
+
+.selected2-bottom {
+  background-image: linear-gradient(to right, #B2FF9E, lightgreen);
+  background-size: 100% 50%;
+  background-position: bottom;
+  background-repeat: no-repeat;
+}
+
+.selected3-bottom {
+  background-image: linear-gradient(to right, #EBD9AA, lightyellow);
+  background-size: 100% 50%;
+  background-position: bottom;
+  background-repeat: no-repeat;
+}
+
 
 .today-selected::before, 
 .today-selected::after {
