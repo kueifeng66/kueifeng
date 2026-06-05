@@ -501,7 +501,7 @@ body {
   position: absolute;
   height: 100%;
   width: 100%;
-  background-image: linear-gradient(to right, #D3D3D3, #A9A9A9);
+  background-image: linear-gradient(to right, #ffffff, #ffffff);
   /* background-image: conic-gradient(from var(--angle), transparent , #ff4545, #00ff99, #006aff, #ff0095, #ff4545); */
   top: 50%;
   left: 50%;
@@ -579,11 +579,7 @@ body {
 }
 
 
-.today-selected::before, 
-.today-selected::after {
-  animation: none; /* Stop the spinning animation */
-  background: transparent; /* Hide the background image if needed */
-}
+
 
 
 .weekday {

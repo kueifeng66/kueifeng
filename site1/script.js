@@ -1532,10 +1532,10 @@ function highlightSelectedName(selectedName) {
     }
 
     // Handle the "today" overlapping glow logic
-    const isToday = dayElement.classList.contains('today');
-    if (isToday && (match1 !== 'none' || match2 !== 'none' || match3 !== 'none')) {
-      dayElement.classList.add('today-selected');
-    }
+    // const isToday = dayElement.classList.contains('today');
+    // if (isToday && (match1 !== 'none' || match2 !== 'none' || match3 !== 'none')) {
+    //   dayElement.classList.add('today-selected');
+    // }
   });
 
   // Maintain your existing hover clearing behavior
