@@ -27,6 +27,11 @@ body {
   box-shadow: 0 0.3rem 0.6rem rgba(0, 0, 0, 0.1);
 }
 
+.timer.expired .display {
+  background-color: red;    /* 設定背景為紅色 */
+  color: white;             /* 設定文字為白色 */
+}
+
 .display {
   font-size: 4rem;
   font-family: monospace;

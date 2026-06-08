@@ -1,5 +1,8 @@
 const timersContainer = document.getElementById("timers-container");
 
+const originalTitle = document.title;
+let titleBlinkInterval = null;
+
 class CountdownTimer {
 
   constructor(index) {
@@ -105,6 +108,7 @@ class CountdownTimer {
         alarm.currentTime = 0;
         }
     this.wrapper.classList.remove("blink-border");
+    stopTitleBlink();
 
   }
 
@@ -119,7 +123,7 @@ class CountdownTimer {
         alarm.currentTime = 0;
     }
     this.wrapper.classList.remove("blink-border");
-
+    stopTitleBlink();
   }
 
   update() {
@@ -133,7 +137,9 @@ class CountdownTimer {
       if (navigator.vibrate) {
         navigator.vibrate([300, 100, 300]); 
       }
+      
       this.wrapper.classList.add("blink-border");
+      startTitleBlink(this.index);
       return;
     }
 
@@ -150,6 +156,26 @@ class CountdownTimer {
     this.display.textContent = `${hours}:${minutes}:${seconds}:${milliseconds}`;
     
   }
+}
+
+function startTitleBlink(timerNo) {
+    if (titleBlinkInterval) return;
+
+    let showAlert = true;
+
+    titleBlinkInterval = setInterval(() => {
+        document.title = showAlert
+            ? `🔴 TIMER ${timerNo + 1} TIME UP!`
+            : originalTitle;
+
+        showAlert = !showAlert;
+    }, 1000);
+}
+
+function stopTitleBlink() {
+    clearInterval(titleBlinkInterval);
+    titleBlinkInterval = null;
+    document.title = originalTitle;
 }
 
 // Create 5 timers
