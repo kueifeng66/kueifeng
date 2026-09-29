@@ -1895,22 +1895,37 @@ window.onload = function() {
 
 
 
-
-
+// Throttled: Limits creation to at most 1 element every 40ms (~25 fps)
+let lastTrailTime = 0;
 
 document.addEventListener('mousemove', (e) => {
+  const cur = performance.now();
+  if (cur - lastTrailTime < 40) return;
+  lastTrailTime = cur;
+
   const trail = document.createElement('div');
   trail.classList.add('trail');
+  trail.style.left = `${e.pageX}px`;
+  trail.style.top = `${e.pageY}px`;
   document.body.appendChild(trail);
 
-  trail.style.left = e.pageX + 'px';
-  trail.style.top = e.pageY + 'px';
-
-  setTimeout(() => {
-    trail.remove();
-  },500);
-
+  setTimeout(() => trail.remove(), 600);
 });
+
+
+// document.addEventListener('mousemove', (e) => {
+//   const trail = document.createElement('div');
+//   trail.classList.add('trail');
+//   document.body.appendChild(trail);
+
+//   trail.style.left = e.pageX + 'px';
+//   trail.style.top = e.pageY + 'px';
+
+//   setTimeout(() => {
+//     trail.remove();
+//   },500);
+
+// });
 
 
 
