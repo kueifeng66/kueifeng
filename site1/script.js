@@ -527,8 +527,6 @@ const holiday = {
 "2026-12-30": "【廿二】",
 "2026-12-31": "【廿三】",
 
-
-
 };
 
 const bgMusic = document.getElementById("bgMusic");
