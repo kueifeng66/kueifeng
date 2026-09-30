@@ -680,7 +680,7 @@ body {
 
 .display {
   width: 9.8rem;
-  min-height: 4.4rem;
+  min-height: 7rem;
   padding: 0.2rem 0;
   display: flex;
   justify-content: center;
@@ -690,37 +690,59 @@ body {
 }
 
 .month-picker-controls {
-  display: flex;
+ 
+ display: flex;
   flex-direction: column;
-  gap: 0.2rem;
+  gap: 0rem;
   width: 100%;
+  height: 100%;             /* Let it stretch to the container height */
+  padding: 0rem;   /* Fills out the grey margins cleanly */
 }
 
 .month-picker-row,
 .month-nav-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  
+ display: flex;
+  justify-content: stretch;
+  align-items: stretch;
   gap: 0.2rem;
   width: 100%;
+  flex: 1; /* Distributes vertical height evenly across all 3 rows */
 }
 
 #yearSelect,
 #monthSelect {
-  height: 2.1rem;
+  width: 100%;             /* Fills the full row */
+  flex: 1;
+  min-height: 2.6rem;
   border: 0.1rem solid #ffffff;
   border-radius: 0.4rem;
   background-color: #3498db;
   color: #ffffff;
   font-weight: bold;
-  font-size: 1.2rem;
+  font-size: 1.3rem;
   text-align: center;
   cursor: pointer;
   outline: none;
-  padding: 0 0.1rem;
+  padding: 0rem;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
-
+.month-nav-btn {
+  flex: 1;
+  height: auto;
+  min-height: 2.6rem;
+  border: 0.1rem solid #ffffff;
+  border-radius: 0.4rem;
+  background-color: #2980b9;
+  color: #ffffff;
+  font-size: 1.2rem;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
 #yearSelect {
   flex: 1.3;
 }
@@ -737,7 +759,8 @@ body {
 
 .month-nav-btn {
   flex: 1;
-  height: 2rem;
+  height: auto;             /* Removed 'height: 2rem' so it stretches */
+  min-height: 3rem;         /* Expands touch target */
   border: 0.1rem solid #ffffff;
   border-radius: 0.4rem;
   background-color: #2980b9;
