@@ -678,17 +678,89 @@ body {
 }
 
 
-
 .display {
-  width: 10rem;
-  height: 4rem;
-  border-radius: 20rem;
+  width: 9.8rem;
+  min-height: 4.4rem;
+  padding: 0.2rem 0;
   display: flex;
   justify-content: center;
   align-items: center;
-  position: relative; /* Ensure z-index works */
-  z-index: auto; /* Lower than header::after */
+  position: relative;
+  z-index: 6;
 }
+
+.month-picker-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  width: 100%;
+}
+
+.month-picker-row,
+.month-nav-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.2rem;
+  width: 100%;
+}
+
+#yearSelect,
+#monthSelect {
+  height: 2.1rem;
+  border: 0.1rem solid #ffffff;
+  border-radius: 0.4rem;
+  background-color: #3498db;
+  color: #ffffff;
+  font-weight: bold;
+  font-size: 1.2rem;
+  text-align: center;
+  cursor: pointer;
+  outline: none;
+  padding: 0 0.1rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+#yearSelect {
+  flex: 1.3;
+}
+
+#monthSelect {
+  flex: 1;
+}
+
+#yearSelect option,
+#monthSelect option {
+  background-color: #ffffff;
+  color: #333333;
+}
+
+.month-nav-btn {
+  flex: 1;
+  height: 2rem;
+  border: 0.1rem solid #ffffff;
+  border-radius: 0.4rem;
+  background-color: #2980b9;
+  color: #ffffff;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.month-nav-btn.today-btn {
+  background-color: #f0d78c;
+  color: #333333;
+  flex: 1.3;
+}
+
+.month-nav-btn:active {
+  transform: scale(0.95);
+}
+
 
 
 .button.dark {

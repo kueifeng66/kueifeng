@@ -23,6 +23,8 @@ var day = now.getDate();
 var temp_name;
 const formattedDate = `${year}-${month}-${day}`;
 
+const MIN_YEAR = 2026;
+const MAX_YEAR = 2036;				  
 
 const dutySchedule = {
 
@@ -647,7 +649,7 @@ function addEventListener_toHideToolTipandShowToday(headerCell) {
 
       showTooltip(formattedDate);
       positionTooltip();
-      if (btn.checked){
+      if (btn && btn.checked){
         hideTooltip();
       }
     }
@@ -1251,121 +1253,147 @@ function hideTooltip() {
   document.title = lastUpdated;
 }
 
-function setMode(newMode) {
+/**
+ * Selects any month & year (e.g., 2026-01 through 2036-12) and applies
+ * all the same calendar, header, holiday, lunar, and on-duty highlight effects.
+ */
+function selectYearMonth(targetYear, targetMonth) {
+  let y = parseInt(targetYear, 10);
+  let m = parseInt(targetMonth, 10);
 
+  if (m > 12) {
+    m = 1;
+    y++;
+  } else if (m < 1) {
+    m = 12;
+    y--;
+  }
 
-  
+  if (y < MIN_YEAR) {
+    y = MIN_YEAR;
+    m = 1;
+  } else if (y > MAX_YEAR) {
+    y = MAX_YEAR;
+    m = 12;
+  }
+
+  year = y;
+  month = m;
+						 
+				  
+
+  const yearSelect = document.getElementById('yearSelect');
+  const monthSelect = document.getElementById('monthSelect');
+  if (yearSelect) yearSelect.value = String(year);
+  if (monthSelect) monthSelect.value = String(month);
+
+  const nowYear = now.getFullYear();
+  const nowMonth = now.getMonth() + 1;
+					 
+				
+			 
+	 
+							   
+	
+															   
+																				
+	
+	
+												   
+								 
+	
+								 
+									
+
+  if (year === nowYear && month === nowMonth) {
+    mode = "neutral";
+  } else if (year < nowYear || (year === nowYear && month < nowMonth)) {
+    mode = "light";
+  } else {
+    mode = "dark";
+  }
+
   body.classList.remove("light", "neutral", "dark");
-  toggle.classList.remove("light", "neutral", "dark");
+  body.classList.add(mode);
+														 
+															 
+	 
+				  
+								 
+  if (btn) {
+    btn.classList.remove("light", "neutral", "dark");
+    btn.classList.add(mode);
+  }
 
+  updateSelection();
+  clearSelectedClass();
+  hideTooltip();
+
+  calendar.innerHTML = '';
+  createCalendar(year, month);
+
+  const headerCells = document.querySelector('.header-cell');
+  let headerEl = document.getElementById('header');
+
+  if (mode === "neutral") {
+												   
+    if (headerEl) headerEl.style.color = '';
   
-  body.classList.add(newMode);
-  toggle.classList.add(newMode);
-
-  let reloadDivs = document.getElementsByClassName("weekday"); 
-  let pressTimer;
-  
-
-  if (newMode === "dark"){
-    updateSelection();
-    clearSelectedClass();
-    hideTooltip();
-
-    calendar.innerHTML = '';
-
-    month++;
-    
-    if (month > 12) {
-      month = 1;
-      year++;
+	
+    if (headerCells) {
+      headerCells.innerHTML = `${year} 年 &nbsp;&nbsp;&nbsp${month} 月&nbsp;&nbsp;&nbsp;&nbsp;&nbsp ${day} 日 &nbsp;`;
     }
-    createCalendar(year,month);
-    
-    const headerCells = document.querySelector('.header-cell');
-    headerCells.innerHTML = `${year} 年 &nbsp;&nbsp;&nbsp${month} 月&nbsp;`;  
-    
-    
-    let header = document.getElementById('header');
-    header.style.color = 'white';
-    
-    for (let i = 0; i < 7; i++) {
-      let reloadDiv = reloadDivs[i];
-
-      
-      reloadDiv.addEventListener("mousedown", startTimer);
-      reloadDiv.addEventListener("mouseup", clearTimer);
-      reloadDiv.addEventListener("mouseleave", clearTimer);
-
-      
-      reloadDiv.addEventListener("touchstart", startTimer);
-      reloadDiv.addEventListener("touchend", clearTimer);
-      reloadDiv.addEventListener("touchcancel", clearTimer); 
-    }
-    hideTooltip();
-    highlightAdditionalHoliday();
-  } else if (mode === "neutral"){
-    updateSelection();
-    clearSelectedClass();
-
-
-    calendar.innerHTML = '';
-
-    month = (now.getMonth() + 1);
-    year = now.getFullYear();
-
-    createCalendar(year,month);
-    let header = document.getElementById('header');
-    header.style.color = '';
-  
-    
-    const headerCells = document.querySelector('.header-cell');
-    headerCells.innerHTML = `${year} 年 &nbsp;&nbsp;&nbsp${month} 月&nbsp;&nbsp;&nbsp;&nbsp;&nbsp ${day} 日 &nbsp;`;  
-    showTooltip(formattedDate); 
+    showTooltip(formattedDate);
     fetchWeather();
     AddWeekDay();
     highlightAdditionalHoliday();
-  } else if (mode === "light"){
-    updateSelection();
-    clearSelectedClass();
-
-    calendar.innerHTML = '';
-    month = (now.getMonth() + 1);
-    year = now.getFullYear();
+  } else if (mode === "dark") {
+    if (headerEl) headerEl.style.color = 'white';
+    if (headerCells) {
+      headerCells.innerHTML = `${year} 年 &nbsp;&nbsp;&nbsp${month} 月&nbsp;`;
+							
+								 
+							 
    
-    if (month === 1) {
-      year--;
-      month = 12;
-    } else {
-       month--;
+					  
+			 
+				 
+			
+			   
 
     }
-    createCalendar(year,month);
-    let header = document.getElementById('header');
-    header.style.color = '';
-    
-    
-    const headerCells = document.querySelector('.header-cell');
-    headerCells.innerHTML = `${year} 年 &nbsp;&nbsp;&nbsp&nbsp;&nbsp${month} 月&nbsp;`;  
-    showTooltip(formattedDate); 
+    hideTooltip();
+    highlightAdditionalHoliday();
+  } else {
+    if (headerEl) headerEl.style.color = '';
+	
+	
+    if (headerCells) {
+      headerCells.innerHTML = `${year} 年 &nbsp;&nbsp;&nbsp&nbsp;&nbsp${month} 月&nbsp;`;
+    }
     fetchWeather();
     hideTooltip();
     highlightAdditionalHoliday();
   }
-  
+
+  // Re-apply on-duty markings for the selected person on the newly selected month
   highlightSelectedName(temp_name);
   const items = document.querySelectorAll('.picker-item');
   items.forEach((item) => {
-    if (temp_name === item.textContent && temp_name != "．．．"){
+    if (temp_name === item.textContent && temp_name != "．．．") {
       item.style.transform = 'scale(1.5)';
       item.style.backgroundColor = "turquoise";
     }
   });
  
   
-  for (let i = 0; i < 7; i++) {
-    let reloadDiv = reloadDivs[i];
+							   
+								  
 
-    
+  // Re-attach weekday long-press reload handlers
+  let reloadDivs = document.getElementsByClassName("weekday");
+  for (let i = 0; i < reloadDivs.length; i++) {
+    let reloadDiv = reloadDivs[i];
     reloadDiv.addEventListener("mousedown", startTimer);
     reloadDiv.addEventListener("mouseup", clearTimer);
     reloadDiv.addEventListener("mouseleave", clearTimer);
@@ -1376,13 +1404,77 @@ function setMode(newMode) {
     reloadDiv.addEventListener("touchcancel", clearTimer);
   }
 
+  makeCardDraggable();
+}
 
-   makeCardDraggable();
+					   
 
+function setMode(newMode) {
+  mode = newMode;
+  if (newMode === "dark") {
+    selectYearMonth(year, month + 1);
+  } else if (newMode === "neutral") {
+    selectYearMonth(now.getFullYear(), now.getMonth() + 1);
+  } else if (newMode === "light") {
+    selectYearMonth(year, month - 1);
+  }
+}
 
-}//setMode ends here
+function initMonthPickerControls() {
+  const yearSelect = document.getElementById('yearSelect');
+  const monthSelect = document.getElementById('monthSelect');
+  const prevMonthBtn = document.getElementById('prevMonthBtn');
+  const nextMonthBtn = document.getElementById('nextMonthBtn');
+  const currentMonthBtn = document.getElementById('currentMonthBtn');
 
+  if (yearSelect && monthSelect) {
+    yearSelect.innerHTML = '';
+    for (let y = MIN_YEAR; y <= MAX_YEAR; y++) {
+      const opt = document.createElement('option');
+      opt.value = String(y);
+      opt.textContent = `${y}年`;
+      yearSelect.appendChild(opt);
+    }
 
+    monthSelect.innerHTML = '';
+    for (let m = 1; m <= 12; m++) {
+      const opt = document.createElement('option');
+      opt.value = String(m);
+      opt.textContent = `${m}月`;
+      monthSelect.appendChild(opt);
+    }
+
+    const initialYear = Math.min(MAX_YEAR, Math.max(MIN_YEAR, year));
+    yearSelect.value = String(initialYear);
+    monthSelect.value = String(month);
+
+    yearSelect.addEventListener('change', () => {
+      selectYearMonth(parseInt(yearSelect.value, 10), parseInt(monthSelect.value, 10));
+    });
+
+    monthSelect.addEventListener('change', () => {
+      selectYearMonth(parseInt(yearSelect.value, 10), parseInt(monthSelect.value, 10));
+    });
+  }
+
+  if (prevMonthBtn) {
+    prevMonthBtn.addEventListener('click', () => {
+      selectYearMonth(year, month - 1);
+    });
+  }
+
+  if (nextMonthBtn) {
+    nextMonthBtn.addEventListener('click', () => {
+      selectYearMonth(year, month + 1);
+    });
+  }
+
+  if (currentMonthBtn) {
+    currentMonthBtn.addEventListener('click', () => {
+      selectYearMonth(now.getFullYear(), now.getMonth() + 1);
+    });
+  }
+}
 
 function scroll(info) {
   var result = ''; 
@@ -1557,11 +1649,7 @@ function highlightSelectedName(selectedName) {
       if (match1 === 'bottom') dayElement.classList.add('selected-bottom');
     }
 
-    // Handle the "today" overlapping glow logic
-    // const isToday = dayElement.classList.contains('today');
-    // if (isToday && (match1 !== 'none' || match2 !== 'none' || match3 !== 'none')) {
-    //   dayElement.classList.add('today-selected');
-    // }
+   
   });
 
   // Maintain your existing hover clearing behavior
@@ -1583,39 +1671,49 @@ function highlightAdditionalHoliday() {
   const days = document.querySelectorAll('.day');
   days.forEach(dayElement => {
     const dayText = dayElement.textContent.split('\n')[0].trim();
+    if (!dayText) return;
     const date = `${year}-${month}-${dayText}`;
-    const namesForHoliday = (holiday[date] || '').split(' ');
+    const holidayInfo = holiday[date];
     
-    if (namesForHoliday.some(name => name.includes('放假日'))) {
+    if (holidayInfo) {
+      const namesForHoliday = holidayInfo.split(' ');
+      if (namesForHoliday.some(name => name.includes('放假日'))) {
 
         dayElement.style.color = 'red';
-      
-    }
-    if (namesForHoliday.some(name => !name.includes('放假日'))) {
+      } else {
+	 
+																	
         dayElement.style.color = 'black';
+      }
+    } else {
+      // Fallback for any month in 2026-2036 not explicitly in `holiday`:
+      // keep weekends red and weekdays black
+      if (dayElement.classList.contains('weekend')) {
+        dayElement.style.color = 'red';
+      } else {
+        dayElement.style.color = 'black';
+      }
     }
-     
+	 
   });
 
   AddLunar();
  
 }
-
-
-
 function AddLunar() { 
   const days = document.querySelectorAll('.day');
   days.forEach(dayElement => {
-    const date = `${year}-${month}-${dayElement.textContent.trim()}`;
-    const lunarName = (holiday[date] || '').split('】')[0].replace('【', '');
+    const dayText = dayElement.textContent.split('\n')[0].trim();
+    if (!dayText) return;
+    const date = `${year}-${month}-${dayText}`;
+    let lunarName = (holiday[date] || '').split('】')[0].replace('【', '');
+
     
     if (lunarName) {
-      dayElement.innerHTML = `${dayElement.textContent}\n<span class="lunar-name">${lunarName}</span>`;
+      dayElement.innerHTML = `${dayText}\n<span class="lunar-name">${lunarName}</span>`;
     }
   });
 }
-
-
 function isLineBrowser() {
   const ua = navigator.userAgent || navigator.vendor || window.opera;
   return ua.indexOf('Line') > -1;
@@ -1854,8 +1952,9 @@ function fetchWeatherForecast() {
 
 
 function AddWeekDay() {
-  if (!btn.checked) {
+  if (!btn || !btn.checked) {
     const headerCell = document.querySelector('.header-cell');
+	if (!headerCell) return;				   
     dayOfWeek = Zellercongruence(day, month, year);
    if (dayOfWeek === 1) {
       headerCell.textContent += `(一)`;
@@ -1913,22 +2012,8 @@ document.addEventListener('mousemove', (e) => {
 });
 
 
-// document.addEventListener('mousemove', (e) => {
-//   const trail = document.createElement('div');
-//   trail.classList.add('trail');
-//   document.body.appendChild(trail);
 
-//   trail.style.left = e.pageX + 'px';
-//   trail.style.top = e.pageY + 'px';
-
-//   setTimeout(() => {
-//     trail.remove();
-//   },500);
-
-// });
-
-
-
+if (btn) {
 
 btn.addEventListener("click", function (event) {
   const rect = btn.getBoundingClientRect(); 
@@ -1966,7 +2051,10 @@ btn.addEventListener("click", function (event) {
   }
 });
 
+}
 
+
+initMonthPickerControls();	
 createheadercell(year, month, day);
 createCalendar(year, month);
 highlightAdditionalHoliday(); 

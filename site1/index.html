@@ -26,6 +26,17 @@
   
   <div class="picker-container">
     <div class="display">    
+      <div class="month-picker-controls">
+        <div class="month-picker-row">
+          <select id="yearSelect" aria-label="Select Year"></select>
+          <select id="monthSelect" aria-label="Select Month"></select>
+        </div>
+        <div class="month-nav-row">
+          <button type="button" id="prevMonthBtn" class="month-nav-btn" title="Previous Month">◀</button>
+          <button type="button" id="currentMonthBtn" class="month-nav-btn today-btn" title="Current Month">本月</button>
+          <button type="button" id="nextMonthBtn" class="month-nav-btn" title="Next Month">▶</button>
+        </div>
+      </div>										  	
       <div class="button" id="toggle"></div>
     </div>
     <div id="header"></div> 
