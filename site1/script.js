@@ -24,7 +24,7 @@ var temp_name;
 const formattedDate = `${year}-${month}-${day}`;
 
 const MIN_YEAR = 1960;
-const MAX_YEAR = 2040;				  
+const MAX_YEAR = 2050;				  
 
 const dutySchedule = {
 
