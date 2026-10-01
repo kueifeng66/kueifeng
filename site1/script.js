@@ -23,8 +23,8 @@ var day = now.getDate();
 var temp_name;
 const formattedDate = `${year}-${month}-${day}`;
 
-const MIN_YEAR = 2026;
-const MAX_YEAR = 2036;				  
+const MIN_YEAR = 1960;
+const MAX_YEAR = 2040;				  
 
 const dutySchedule = {
 
@@ -159,375 +159,328 @@ const dutySchedule = {
 
 };
 
-const holiday = {
+// ============================================================================
+// Dynamic Holiday & Lunar Generation System (農曆與節氣演算法)
+// Calculates accurate 24 Solar Terms (二十四節氣) via Sun's apparent longitude,
+// lunar dates (農曆日期與閏月) via 1900-2100 astronomical tables (定朔法),
+// traditional festivals, and official public holiday / compensatory rules.
+// ============================================================================
 
-"2026-1-1": "【十三】【放假日】",
-"2026-1-2": "【十四】",
-"2026-1-3": "【十五】【放假日】",
-"2026-1-4": "【十六】【放假日】",
-"2026-1-5": "【小寒】",
-"2026-1-6": "【十八】",
-"2026-1-7": "【十九】",
-"2026-1-8": "【二十】",
-"2026-1-9": "【廿一】",
-"2026-1-10": "【廿二】【放假日】",
-"2026-1-11": "【廿三】【放假日】",
-"2026-1-12": "【廿四】",
-"2026-1-13": "【廿五】",
-"2026-1-14": "【廿六】",
-"2026-1-15": "【廿七】",
-"2026-1-16": "【廿八】",
-"2026-1-17": "【廿九】【放假日】",
-"2026-1-18": "【三十】【放假日】",
-"2026-1-19": "【十二月小】",
-"2026-1-20": "【大寒】",
-"2026-1-21": "【初三】",
-"2026-1-22": "【初四】",
-"2026-1-23": "【初五】",
-"2026-1-24": "【初六】【放假日】",
-"2026-1-25": "【初七】【放假日】",
-"2026-1-26": "【初八】",
-"2026-1-27": "【初九】",
-"2026-1-28": "【初十】",
-"2026-1-29": "【十一】",
-"2026-1-30": "【十二】",
-"2026-1-31": "【十三】【放假日】",
-"2026-2-1": "【十四】【放假日】",
-"2026-2-2": "【十五】",
-"2026-2-3": "【十六】",
-"2026-2-4": "【立春】",
-"2026-2-5": "【十八】",
-"2026-2-6": "【十九】",
-"2026-2-7": "【二十】【放假日】",
-"2026-2-8": "【廿一】【放假日】",
-"2026-2-9": "【廿二】",
-"2026-2-10": "【廿三】",
-"2026-2-11": "【廿四】",
-"2026-2-12": "【廿五】",
-"2026-2-13": "【廿六】",
-"2026-2-14": "【廿七】【放假日】",
-"2026-2-15": "【廿八】【放假日】",
-"2026-2-16": "【廿九】【放假日】",
-"2026-2-17": "【正月大】【放假日】",
-"2026-2-18": "【雨水】【放假日】",
-"2026-2-19": "【初三】【放假日】",
-"2026-2-20": "【初四】【放假日】",
-"2026-2-21": "【初五】【放假日】",
-"2026-2-22": "【初六】【放假日】",
-"2026-2-23": "【初七】",
-"2026-2-24": "【初八】",
-"2026-2-25": "【初九】",
-"2026-2-26": "【初十】",
-"2026-2-27": "【十一】【放假日】",
-"2026-2-28": "【十二】【放假日】",
-"2026-3-1": "【十三】【放假日】",
-"2026-3-2": "【十四】",
-"2026-3-3": "【十五】",
-"2026-3-4": "【十六】",
-"2026-3-5": "【驚蟄】",
-"2026-3-6": "【十八】",
-"2026-3-7": "【十九】【放假日】",
-"2026-3-8": "【二十】【放假日】",
-"2026-3-9": "【廿一】",
-"2026-3-10": "【廿二】",
-"2026-3-11": "【廿三】",
-"2026-3-12": "【廿四】",
-"2026-3-13": "【廿五】",
-"2026-3-14": "【廿六】【放假日】",
-"2026-3-15": "【廿七】【放假日】",
-"2026-3-16": "【廿八】",
-"2026-3-17": "【廿九】",
-"2026-3-18": "【三十】",
-"2026-3-19": "【二月小】",
-"2026-3-20": "【春分】",
-"2026-3-21": "【初三】【放假日】",
-"2026-3-22": "【初四】【放假日】",
-"2026-3-23": "【初五】",
-"2026-3-24": "【初六】",
-"2026-3-25": "【初七】",
-"2026-3-26": "【初八】",
-"2026-3-27": "【初九】",
-"2026-3-28": "【初十】【放假日】",
-"2026-3-29": "【十一】【放假日】",
-"2026-3-30": "【十二】",
-"2026-3-31": "【十三】",
-"2026-4-1": "【十四】",
-"2026-4-2": "【十五】",
-"2026-4-3": "【十六】【放假日】",
-"2026-4-4": "【兒童節】【放假日】",
-"2026-4-5": "【清明】【放假日】",
-"2026-4-6": "【十九】【放假日】",
-"2026-4-7": "【二十】",
-"2026-4-8": "【廿一】",
-"2026-4-9": "【廿二】",
-"2026-4-10": "【廿三】",
-"2026-4-11": "【廿四】【放假日】",
-"2026-4-12": "【廿五】【放假日】",
-"2026-4-13": "【廿六】",
-"2026-4-14": "【廿七】",
-"2026-4-15": "【廿八】",
-"2026-4-16": "【廿九】",
-"2026-4-17": "【三月大】",
-"2026-4-18": "【初二】【放假日】",
-"2026-4-19": "【初三】【放假日】",
-"2026-4-20": "【穀雨】",
-"2026-4-21": "【初五】",
-"2026-4-22": "【初六】",
-"2026-4-23": "【初七】",
-"2026-4-24": "【初八】",
-"2026-4-25": "【初九】【放假日】",
-"2026-4-26": "【初十】【放假日】",
-"2026-4-27": "【十一】",
-"2026-4-28": "【十二】",
-"2026-4-29": "【十三】",
-"2026-4-30": "【十四】",
-"2026-5-1": "【十五】【放假日】",
-"2026-5-2": "【十六】【放假日】",
-"2026-5-3": "【十七】【放假日】",
-"2026-5-4": "【十八】",
-"2026-5-5": "【立夏】",
-"2026-5-6": "【二十】",
-"2026-5-7": "【廿一】",
-"2026-5-8": "【廿二】",
-"2026-5-9": "【廿三】【放假日】",
-"2026-5-10": "【廿四】【放假日】",
-"2026-5-11": "【廿五】",
-"2026-5-12": "【廿六】",
-"2026-5-13": "【廿七】",
-"2026-5-14": "【廿八】",
-"2026-5-15": "【廿九】",
-"2026-5-16": "【三十】【放假日】",
-"2026-5-17": "【四月小】【放假日】",
-"2026-5-18": "【初二】",
-"2026-5-19": "【初三】",
-"2026-5-20": "【初四】",
-"2026-5-21": "【小滿】",
-"2026-5-22": "【初六】",
-"2026-5-23": "【初七】【放假日】",
-"2026-5-24": "【初八】【放假日】",
-"2026-5-25": "【初九】",
-"2026-5-26": "【初十】",
-"2026-5-27": "【十一】",
-"2026-5-28": "【十二】",
-"2026-5-29": "【十三】",
-"2026-5-30": "【十四】【放假日】",
-"2026-5-31": "【十五】【放假日】",
-"2026-6-1": "【十六】",
-"2026-6-2": "【十七】",
-"2026-6-3": "【十八】",
-"2026-6-4": "【十九】",
-"2026-6-5": "【芒種】",
-"2026-6-6": "【廿一】【放假日】",
-"2026-6-7": "【廿二】【放假日】",
-"2026-6-8": "【廿三】",
-"2026-6-9": "【廿四】",
-"2026-6-10": "【廿五】",
-"2026-6-11": "【廿六】",
-"2026-6-12": "【廿七】",
-"2026-6-13": "【廿八】【放假日】",
-"2026-6-14": "【廿九】【放假日】",
-"2026-6-15": "【五月小】",
-"2026-6-16": "【初二】",
-"2026-6-17": "【初三】",
-"2026-6-18": "【初四】",
-"2026-6-19": "【端午節】【放假日】",
-"2026-6-20": "【初六】【放假日】",
-"2026-6-21": "【夏至】【放假日】",
-"2026-6-22": "【初八】",
-"2026-6-23": "【初九】",
-"2026-6-24": "【初十】",
-"2026-6-25": "【十一】",
-"2026-6-26": "【十二】",
-"2026-6-27": "【十三】【放假日】",
-"2026-6-28": "【十四】【放假日】",
-"2026-6-29": "【十五】",
-"2026-6-30": "【十六】",
-"2026-7-1": "【十七】",
-"2026-7-2": "【十八】",
-"2026-7-3": "【十九】",
-"2026-7-4": "【二十】【放假日】",
-"2026-7-5": "【廿一】【放假日】",
-"2026-7-6": "【廿二】",
-"2026-7-7": "【小暑】",
-"2026-7-8": "【廿四】",
-"2026-7-9": "【廿五】",
-"2026-7-10": "【廿六】",
-"2026-7-11": "【廿七】【放假日】",
-"2026-7-12": "【廿八】【放假日】",
-"2026-7-13": "【廿九】",
-"2026-7-14": "【六月大】",
-"2026-7-15": "【初二】",
-"2026-7-16": "【初三】",
-"2026-7-17": "【初四】",
-"2026-7-18": "【初五】【放假日】",
-"2026-7-19": "【初六】【放假日】",
-"2026-7-20": "【初七】",
-"2026-7-21": "【初八】",
-"2026-7-22": "【初九】",
-"2026-7-23": "【大暑】",
-"2026-7-24": "【十一】",
-"2026-7-25": "【十二】【放假日】",
-"2026-7-26": "【十三】【放假日】",
-"2026-7-27": "【十四】",
-"2026-7-28": "【十五】",
-"2026-7-29": "【十六】",
-"2026-7-30": "【十七】",
-"2026-7-31": "【十八】",
-"2026-8-1": "【十九】【放假日】",
-"2026-8-2": "【二十】【放假日】",
-"2026-8-3": "【廿一】",
-"2026-8-4": "【廿二】",
-"2026-8-5": "【廿三】",
-"2026-8-6": "【廿四】",
-"2026-8-7": "【立秋】",
-"2026-8-8": "【廿六】【放假日】",
-"2026-8-9": "【廿七】【放假日】",
-"2026-8-10": "【廿八】",
-"2026-8-11": "【廿九】",
-"2026-8-12": "【三十】",
-"2026-8-13": "【七月小】",
-"2026-8-14": "【初二】",
-"2026-8-15": "【初三】【放假日】",
-"2026-8-16": "【初四】【放假日】",
-"2026-8-17": "【初五】",
-"2026-8-18": "【初六】",
-"2026-8-19": "【初七】",
-"2026-8-20": "【初八】",
-"2026-8-21": "【初九】",
-"2026-8-22": "【初十】【放假日】",
-"2026-8-23": "【處暑】【放假日】",
-"2026-8-24": "【十二】",
-"2026-8-25": "【十三】",
-"2026-8-26": "【十四】",
-"2026-8-27": "【十五】",
-"2026-8-28": "【十六】",
-"2026-8-29": "【十七】【放假日】",
-"2026-8-30": "【十八】【放假日】",
-"2026-8-31": "【十九】",
-"2026-9-1": "【二十】",
-"2026-9-2": "【廿一】",
-"2026-9-3": "【廿二】",
-"2026-9-4": "【廿三】",
-"2026-9-5": "【廿四】【放假日】",
-"2026-9-6": "【廿五】【放假日】",
-"2026-9-7": "【白露】",
-"2026-9-8": "【廿七】",
-"2026-9-9": "【廿八】",
-"2026-9-10": "【廿九】",
-"2026-9-11": "【八月小】",
-"2026-9-12": "【初二】【放假日】",
-"2026-9-13": "【初三】【放假日】",
-"2026-9-14": "【初四】",
-"2026-9-15": "【初五】",
-"2026-9-16": "【初六】",
-"2026-9-17": "【初七】",
-"2026-9-18": "【初八】",
-"2026-9-19": "【初九】【放假日】",
-"2026-9-20": "【初十】【放假日】",
-"2026-9-21": "【十一】",
-"2026-9-22": "【十二】",
-"2026-9-23": "【秋分】",
-"2026-9-24": "【十四】",
-"2026-9-25": "【中秋節】【放假日】",
-"2026-9-26": "【十六】【放假日】",
-"2026-9-27": "【十七】【放假日】",
-"2026-9-28": "【十八】【放假日】",
-"2026-9-29": "【十九】",
-"2026-9-30": "【二十】",
-"2026-10-1": "【廿一】",
-"2026-10-2": "【廿二】",
-"2026-10-3": "【廿三】【放假日】",
-"2026-10-4": "【廿四】【放假日】",
-"2026-10-5": "【廿五】",
-"2026-10-6": "【廿六】",
-"2026-10-7": "【廿七】",
-"2026-10-8": "【寒露】",
-"2026-10-9": "【廿九】【放假日】",
-"2026-10-10": "【九月大】【放假日】",
-"2026-10-11": "【初二】【放假日】",
-"2026-10-12": "【初三】",
-"2026-10-13": "【初四】",
-"2026-10-14": "【初五】",
-"2026-10-15": "【初六】",
-"2026-10-16": "【初七】",
-"2026-10-17": "【初八】【放假日】",
-"2026-10-18": "【初九】【放假日】",
-"2026-10-19": "【初十】",
-"2026-10-20": "【十一】",
-"2026-10-21": "【十二】",
-"2026-10-22": "【十三】",
-"2026-10-23": "【霜降】",
-"2026-10-24": "【十五】【放假日】",
-"2026-10-25": "【十六】【放假日】",
-"2026-10-26": "【十七】【放假日】",
-"2026-10-27": "【十八】",
-"2026-10-28": "【十九】",
-"2026-10-29": "【二十】",
-"2026-10-30": "【廿一】",
-"2026-10-31": "【廿二】【放假日】",
-"2026-11-1": "【廿三】【放假日】",
-"2026-11-2": "【廿四】",
-"2026-11-3": "【廿五】",
-"2026-11-4": "【廿六】",
-"2026-11-5": "【廿七】",
-"2026-11-6": "【廿八】",
-"2026-11-7": "【立冬】【放假日】",
-"2026-11-8": "【三十】【放假日】",
-"2026-11-9": "【十月大】",
-"2026-11-10": "【初二】",
-"2026-11-11": "【初三】",
-"2026-11-12": "【初四】",
-"2026-11-13": "【初五】",
-"2026-11-14": "【初六】【放假日】",
-"2026-11-15": "【初七】【放假日】",
-"2026-11-16": "【初八】",
-"2026-11-17": "【初九】",
-"2026-11-18": "【初十】",
-"2026-11-19": "【十一】",
-"2026-11-20": "【十二】",
-"2026-11-21": "【十三】【放假日】",
-"2026-11-22": "【小雪】【放假日】",
-"2026-11-23": "【十五】",
-"2026-11-24": "【十六】",
-"2026-11-25": "【十七】",
-"2026-11-26": "【十八】",
-"2026-11-27": "【十九】",
-"2026-11-28": "【二十】【放假日】",
-"2026-11-29": "【廿一】【放假日】",
-"2026-11-30": "【廿二】",
-"2026-12-1": "【廿三】",
-"2026-12-2": "【廿四】",
-"2026-12-3": "【廿五】",
-"2026-12-4": "【廿六】",
-"2026-12-5": "【廿七】【放假日】",
-"2026-12-6": "【廿八】【放假日】",
-"2026-12-7": "【大雪】",
-"2026-12-8": "【三十】",
-"2026-12-9": "【十一月大】",
-"2026-12-10": "【初二】",
-"2026-12-11": "【初三】",
-"2026-12-12": "【初四】【放假日】",
-"2026-12-13": "【初五】【放假日】",
-"2026-12-14": "【初六】",
-"2026-12-15": "【初七】",
-"2026-12-16": "【初八】",
-"2026-12-17": "【初九】",
-"2026-12-18": "【初十】",
-"2026-12-19": "【十一】【放假日】",
-"2026-12-20": "【十二】【放假日】",
-"2026-12-21": "【十三】",
-"2026-12-22": "【冬至】",
-"2026-12-23": "【十五】",
-"2026-12-24": "【十六】",
-"2026-12-25": "【十七】【放假日】",
-"2026-12-26": "【十八】【放假日】",
-"2026-12-27": "【十九】【放假日】",
-"2026-12-28": "【二十】",
-"2026-12-29": "【廿一】",
-"2026-12-30": "【廿二】",
-"2026-12-31": "【廿三】",
+function getSunLongitude(jd) {
+  const T = (jd - 2451545.0) / 36525.0;
+  let L0 = 280.46646 + 36000.76983 * T + 0.0003032 * T * T;
+  let M = 357.52911 + 35999.05029 * T - 0.0001537 * T * T;
+  let Mrad = M * Math.PI / 180.0;
+  let C = (1.914602 - 0.004817 * T - 0.000014 * T * T) * Math.sin(Mrad)
+        + (0.019993 - 0.000101 * T) * Math.sin(2 * Mrad)
+        + 0.000289 * Math.sin(3 * Mrad);
+  let trueLong = L0 + C;
+  let omega = 125.04 - 1934.136 * T;
+  let lambda = trueLong - 0.00569 - 0.00478 * Math.sin(omega * Math.PI / 180.0);
+  lambda = lambda % 360;
+  if (lambda < 0) lambda += 360;
+  return lambda;
+}
 
-};
+function dateToJD(date) {
+  return (date.getTime() / 86400000.0) + 2440587.5;
+}
+
+const SOLAR_TERMS = [
+  { name: '小寒', angle: 285 }, { name: '大寒', angle: 300 },
+  { name: '立春', angle: 315 }, { name: '雨水', angle: 330 },
+  { name: '驚蟄', angle: 345 }, { name: '春分', angle: 0 },
+  { name: '清明', angle: 15 },  { name: '穀雨', angle: 30 },
+  { name: '立夏', angle: 45 },  { name: '小滿', angle: 60 },
+  { name: '芒種', angle: 75 },  { name: '夏至', angle: 90 },
+  { name: '小暑', angle: 105 }, { name: '大暑', angle: 120 },
+  { name: '立秋', angle: 135 }, { name: '處暑', angle: 150 },
+  { name: '白露', angle: 165 }, { name: '秋分', angle: 180 },
+  { name: '寒露', angle: 195 }, { name: '霜降', angle: 210 },
+  { name: '立冬', angle: 225 }, { name: '小雪', angle: 240 },
+  { name: '大雪', angle: 255 }, { name: '冬至', angle: 270 }
+];
+
+function getYearSolarTerms(targetYear) {
+  const result = {};
+  for (let m = 0; m < 12; m++) {
+    const daysInMonth = new Date(targetYear, m + 1, 0).getDate();
+    for (let d = 1; d <= daysInMonth; d++) {
+      // Midnight to midnight in UTC+8
+      const dtStart = new Date(Date.UTC(targetYear, m, d, -8, 0, 0));
+      const dtEnd = new Date(Date.UTC(targetYear, m, d, 16, 0, 0));
+      const l1 = getSunLongitude(dateToJD(dtStart));
+      const l2 = getSunLongitude(dateToJD(dtEnd));
+      for (const term of SOLAR_TERMS) {
+        const crossed = term.angle === 0
+          ? (l1 > 350 && l2 < 10)
+          : (l1 <= term.angle && l2 > term.angle);
+        if (crossed) {
+          result[`${targetYear}-${m + 1}-${d}`] = term.name;
+        }
+      }
+    }
+  }
+  return result;
+}
+
+const LUNAR_DAY_NAMES = [
+  '', '初一', '初二', '初三', '初四', '初五', '初六', '初七', '初八', '初九', '初十',
+  '十一', '十二', '十三', '十四', '十五', '十六', '十七', '十八', '十九', '二十',
+  '廿一', '廿二', '廿三', '廿四', '廿五', '廿六', '廿七', '廿八', '廿九', '三十'
+];
+
+const LUNAR_MONTH_NAMES = [
+  '', '正月', '二月', '三月', '四月', '五月', '六月',
+  '七月', '八月', '九月', '十月', '十一月', '十二月'
+];
+
+// 1900-2100 權威天文農曆數據表（依據紫金山天文台/中央氣象署精準定朔法編制）
+const lunarInfo = [
+  0x04bd8, 0x04ae0, 0x0a570, 0x054d5, 0x0d260, 0x0d950, 0x16554, 0x056a0, 0x09ad0, 0x055d2, // 1900-1909
+  0x04ae0, 0x0a5b6, 0x0a4d0, 0x0d250, 0x1d255, 0x0b540, 0x0d6a0, 0x0ada2, 0x095b0, 0x14977, // 1910-1919
+  0x04970, 0x0a4b0, 0x0b4b5, 0x06a50, 0x06d40, 0x1ab54, 0x02b60, 0x09570, 0x052f2, 0x04970, // 1920-1929
+  0x06566, 0x0d4a0, 0x0ea50, 0x06e95, 0x05ad0, 0x02b60, 0x186e3, 0x092e0, 0x1c8d7, 0x0c950, // 1930-1939
+  0x0d4a0, 0x1d8a6, 0x0b550, 0x056a0, 0x1a5b4, 0x025d0, 0x092d0, 0x0d2b2, 0x0a950, 0x0b557, // 1940-1949
+  0x06ca0, 0x0b550, 0x15355, 0x04da0, 0x0a5b0, 0x14573, 0x052b0, 0x0a9a8, 0x0e950, 0x06aa0, // 1950-1959
+  0x0aea6, 0x0ab50, 0x04b60, 0x0aae4, 0x0a570, 0x05260, 0x0f263, 0x0d950, 0x05b57, 0x056a0, // 1960-1969
+  0x096d0, 0x04dd5, 0x04ad0, 0x0a4d0, 0x0d4d4, 0x0d250, 0x0d558, 0x0b540, 0x0b6a0, 0x195a6, // 1970-1979
+  0x095b0, 0x049b0, 0x0a974, 0x0a4b0, 0x0b27a, 0x06a50, 0x06d40, 0x0af46, 0x0ab60, 0x09570, // 1980-1989
+  0x04af5, 0x04970, 0x064b0, 0x074a3, 0x0ea50, 0x06b58, 0x05ac0, 0x0ab60, 0x096d5, 0x092e0, // 1990-1999
+  0x0c960, 0x0d954, 0x0d4a0, 0x0da50, 0x07552, 0x056a0, 0x0abb7, 0x025d0, 0x092d0, 0x0cab5, // 2000-2009
+  0x0a950, 0x0b4a0, 0x0baa4, 0x0ad50, 0x055d9, 0x04ba0, 0x0a5b0, 0x15176, 0x052b0, 0x0a930, // 2010-2019
+  0x07954, 0x06aa0, 0x0ad50, 0x05b52, 0x04b60, 0x0a6e6, 0x0a4e0, 0x0d260, 0x0ea65, 0x0d530, // 2020-2029
+  0x05aa0, 0x076a3, 0x096d0, 0x04afb, 0x04ad0, 0x0a4d0, 0x1d0b6, 0x0d250, 0x0d520, 0x0dd45, // 2030-2039
+  0x0b5a0, 0x056d0, 0x055b2, 0x049b0, 0x0a577, 0x0a4b0, 0x0aa50, 0x1b255, 0x06d20, 0x0ada0, // 2040-2049
+  0x14b63, 0x09370, 0x049f8, 0x04970, 0x064b0, 0x168a6, 0x0ea50, 0x06b20, 0x1a6c4, 0x0aae0, // 2050-2059
+  0x092e0, 0x0d2e3, 0x0c960, 0x0d557, 0x0d4a0, 0x0da50, 0x05d55, 0x056a0, 0x0a6d0, 0x055d4, // 2060-2069
+  0x052d0, 0x0a9b8, 0x0a950, 0x0b4a0, 0x0b6a6, 0x0ad50, 0x055a0, 0x0aba4, 0x0a5b0, 0x052b0, // 2070-2079
+  0x0b273, 0x06930, 0x07337, 0x06aa0, 0x0ad50, 0x14b55, 0x04b60, 0x0a570, 0x054e4, 0x0d160, // 2080-2089
+  0x0e968, 0x0d520, 0x0daa0, 0x16aa6, 0x056d0, 0x04ae0, 0x0a9d4, 0x0a4d0, 0x0d150, 0x0f252, // 2090-2099
+  0x0d520 // 2100
+];
+
+function lYearDays(y) {
+  let sum = 348;
+  const info = lunarInfo[y - 1900];
+  for (let i = 0x8000; i > 0x8; i >>= 1) {
+    sum += (info & i) ? 1 : 0;
+  }
+  return sum + leapDays(y);
+}
+
+function leapMonth(y) {
+  return lunarInfo[y - 1900] & 0xf;
+}
+
+function leapDays(y) {
+  if (leapMonth(y)) {
+    return (lunarInfo[y - 1900] & 0x10000) ? 30 : 29;
+  }
+  return 0;
+}
+
+function monthDays(y, m) {
+  if (m > 12 || m < 1) return -1;
+  return (lunarInfo[y - 1900] & (0x10000 >> m)) ? 30 : 29;
+}
+
+/**
+ * 公曆轉農曆核心計算（定朔法）
+ * @param {number} y - 公曆年
+ * @param {number} m - 公曆月 (1-12)
+ * @param {number} d - 公曆日 (1-31)
+ * @returns {{ lYear: number, lMonth: number, lDay: number, isLeap: boolean, isBig: boolean }}
+ */
+function solar2lunar(y, m, d) {
+  if (y < 1900 || y > 2100) return null;
+  let offset = (Date.UTC(y, m - 1, d) - Date.UTC(1900, 0, 31)) / 86400000;
+  let temp = 0;
+  let i;
+  for (i = 1900; i < 2101 && offset > 0; i++) {
+    temp = lYearDays(i);
+    offset -= temp;
+  }
+  if (offset < 0) {
+    offset += temp;
+    i--;
+  }
+  const lYear = i;
+  const leap = leapMonth(lYear);
+  let isLeap = false;
+
+  for (i = 1; i < 13 && offset > 0; i++) {
+    if (leap > 0 && i === (leap + 1) && !isLeap) {
+      --i;
+      isLeap = true;
+      temp = leapDays(lYear);
+    } else {
+      temp = monthDays(lYear, i);
+    }
+    if (isLeap && i === (leap + 1)) isLeap = false;
+    offset -= temp;
+  }
+
+  if (offset === 0 && leap > 0 && i === leap + 1) {
+    if (isLeap) {
+      isLeap = false;
+    } else {
+      isLeap = true;
+      --i;
+    }
+  }
+  if (offset < 0) {
+    offset += temp;
+    --i;
+  }
+  const lMonth = i;
+  const lDay = Math.floor(offset + 1);
+  const mDays = isLeap ? leapDays(lYear) : monthDays(lYear, lMonth);
+  return { lYear, lMonth, lDay, isLeap, isBig: mDays === 30 };
+}
+
+/**
+ * Generates raw holiday and lunar data for any given year in the exact format
+ * of the `holiday` data: { "YYYY-M-D": "【lunarName】" + (isHoliday ? "【放假日】" : "") }
+ *
+ * @param {number|string} [targetYear=year] - The target year (e.g. 2026, 2027, etc.)
+ * @returns {Object.<string, string>} Complete dictionary of date keys to raw holiday strings
+ */
+function generateHolidayData(targetYear = year) {
+  const y = parseInt(targetYear, 10);
+  if (isNaN(y)) return {};
+
+  const solarTerms = getYearSolarTerms(y);
+  const daysMeta = [];
+  const result = {};
+
+  for (let m = 1; m <= 12; m++) {
+    const daysInMonth = new Date(y, m, 0).getDate();
+    for (let d = 1; d <= daysInMonth; d++) {
+      const dt = new Date(y, m - 1, d);
+      const dateKey = `${y}-${m}-${d}`;
+      const lunar = solar2lunar(y, m, d);
+      const dayOfWeek = dt.getDay(); // 0: Sun, 6: Sat
+
+      let name = '';
+      if (m === 4 && d === 4) {
+        name = '兒童節';
+      } else if (solarTerms[dateKey]) {
+        name = solarTerms[dateKey];
+      } else if (lunar && lunar.lMonth === 5 && lunar.lDay === 5 && !lunar.isLeap) {
+        name = '端午節';
+      } else if (lunar && lunar.lMonth === 8 && lunar.lDay === 15 && !lunar.isLeap) {
+        name = '中秋節';
+      } else if (lunar && lunar.lDay === 1) {
+        const monthPrefix = (lunar.isLeap ? '閏' : '') + (LUNAR_MONTH_NAMES[lunar.lMonth] || `${lunar.lMonth}月`);
+        name = `${monthPrefix}${lunar.isBig ? '大' : '小'}`;
+      } else if (lunar) {
+        name = LUNAR_DAY_NAMES[lunar.lDay] || `初${lunar.lDay}`;
+      }
+
+      // Check holidays
+      let isHoliday = (dayOfWeek === 0 || dayOfWeek === 6);
+      let isFixedHoliday = false;
+
+      // Fixed calendar statutory holidays (Taiwan)
+      if (m === 1 && d === 1) isFixedHoliday = true;   // 元旦
+      if (m === 2 && d === 28) isFixedHoliday = true;  // 和平紀念日
+      if (m === 4 && d === 4) isFixedHoliday = true;   // 兒童節
+      if (solarTerms[dateKey] === '清明') isFixedHoliday = true; // 清明節
+      if (m === 5 && d === 1) isFixedHoliday = true;   // 勞動節
+      if (lunar && lunar.lMonth === 5 && lunar.lDay === 5 && !lunar.isLeap) isFixedHoliday = true;  // 端午節
+      if (lunar && lunar.lMonth === 8 && lunar.lDay === 15 && !lunar.isLeap) isFixedHoliday = true; // 中秋節
+      if (m === 9 && d === 28) isFixedHoliday = true;  // 孔子誕辰 / 教師節
+      if (m === 10 && d === 10) isFixedHoliday = true; // 國慶日
+      if (m === 10 && d === 25) isFixedHoliday = true; // 光復節
+      if (m === 12 && d === 25) isFixedHoliday = true; // 行憲紀念日
+
+      // Spring Festival: 除夕 (day before 正月初一), 初一, 初二, 初三, 初四
+      const tomorrow = new Date(y, m - 1, d + 1);
+      const lTomorrow = solar2lunar(tomorrow.getFullYear(), tomorrow.getMonth() + 1, tomorrow.getDate());
+      if (lTomorrow && lTomorrow.lMonth === 1 && lTomorrow.lDay === 1 && !lTomorrow.isLeap) {
+        isFixedHoliday = true; // 除夕（無論是臘月廿九或三十，正月初一前一日即為除夕）
+      }
+      if (lunar && lunar.lMonth === 1 && !lunar.isLeap && [1, 2, 3, 4].includes(lunar.lDay)) {
+        isFixedHoliday = true; // 初一, 初二, 初三, 初四
+      }
+
+      daysMeta.push({
+        dateKey,
+        dayOfWeek,
+        name,
+        isWeekend: (dayOfWeek === 0 || dayOfWeek === 6),
+        isFixedHoliday,
+        isHoliday: isHoliday || isFixedHoliday
+      });
+    }
+  }
+
+  // Weekend makeup / substitute holidays (Saturday -> preceding Friday, Sunday -> following Monday)
+  daysMeta.forEach((dm, idx) => {
+    if (dm.isFixedHoliday && dm.isWeekend) {
+      if (dm.dayOfWeek === 6) {
+        if (idx > 0 && !daysMeta[idx - 1].isHoliday) {
+          daysMeta[idx - 1].isHoliday = true;
+        }
+      } else if (dm.dayOfWeek === 0) {
+        let nextIdx = idx + 1;
+        while (nextIdx < daysMeta.length && daysMeta[nextIdx].isHoliday) {
+          nextIdx++;
+        }
+        if (nextIdx < daysMeta.length) {
+          daysMeta[nextIdx].isHoliday = true;
+        }
+      }
+    }
+  });
+
+  daysMeta.forEach(dm => {
+    result[dm.dateKey] = `【${dm.name}】` + (dm.isHoliday ? '【放假日】' : '');
+  });
+
+  return result;
+}
+
+// Dynamic holiday & lunar data generated on demand via Lunar Generation System
+const holiday = new Proxy({}, {
+  get(cache, date) {
+    if (typeof date === 'string' && /^\d{4}-\d{1,2}-\d{1,2}$/.test(date)) {
+      if (!(date in cache)) {
+   
+										
+        const y = parseInt(date.split('-')[0], 10);
+        if (!isNaN(y)) Object.assign(cache, generateHolidayData(y));
+								  
+											 
+										   
+      }
+    }
+    return cache[date];
+  },
+  has(cache, date) {
+					 
+    if (typeof date === 'string' && /^\d{4}-\d{1,2}-\d{1,2}$/.test(date)) {
+      if (!(date in cache)) {
+        const y = parseInt(date.split('-')[0], 10);
+        if (!isNaN(y)) Object.assign(cache, generateHolidayData(y));
+							 
+      }
+    }
+    return date in cache;
+  }
+});
+
+function ensureHolidayData(targetYear) {
+  if (targetYear) holiday[`${targetYear}-1-1`];
+}
+
+if (typeof window !== 'undefined') {
+  window.generateHolidayData = generateHolidayData;
+  window.generateHoliday = generateHolidayData;
+  window.ensureHolidayData = ensureHolidayData;
+  window.holiday = holiday;
+}
 
 const bgMusic = document.getElementById("bgMusic");
 
@@ -1307,8 +1260,7 @@ function selectYearMonth(targetYear, targetMonth) {
 
   year = y;
   month = m;
-						 
-				  
+						  
 
   const yearSelect = document.getElementById('yearSelect');
   const monthSelect = document.getElementById('monthSelect');
@@ -1696,6 +1648,7 @@ function highlightSelectedName(selectedName) {
 
 
 function highlightAdditionalHoliday() {
+						  
   const days = document.querySelectorAll('.day');
   days.forEach(dayElement => {
     const dayText = dayElement.textContent.split('\n')[0].trim();
@@ -1714,7 +1667,7 @@ function highlightAdditionalHoliday() {
         dayElement.style.color = 'black';
       }
     } else {
-      // Fallback for any month in 2026-2036 not explicitly in `holiday`:
+      // Fallback for any month not explicitly in `holiday`:
       // keep weekends red and weekdays black
       if (dayElement.classList.contains('weekend')) {
         dayElement.style.color = 'red';
@@ -1729,6 +1682,7 @@ function highlightAdditionalHoliday() {
  
 }
 function AddLunar() { 
+						  
   const days = document.querySelectorAll('.day');
   days.forEach(dayElement => {
     const dayText = dayElement.textContent.split('\n')[0].trim();
