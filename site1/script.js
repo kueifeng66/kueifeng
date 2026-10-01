@@ -23,7 +23,7 @@ var day = now.getDate();
 var temp_name;
 const formattedDate = `${year}-${month}-${day}`;
 
-const MIN_YEAR = 1960;
+const MIN_YEAR = 1950;
 const MAX_YEAR = 2050;				  
 
 const dutySchedule = {
