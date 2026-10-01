@@ -826,9 +826,36 @@ function createheadercell(year, month, day) {
   header.appendChild(headerCell);
   headerCell.style.zIndex = '20';
   addEventListener_toHideToolTipandShowToday(headerCell);
-  
 }
 
+function ensureNoteDot(card) {
+  if (!card) return;
+  const frontFace = card.querySelector('.day');
+  if (!frontFace) return;
+  const noteContent = card.querySelector('.note-content');
+  
+  const contentText = noteContent ? noteContent.textContent.trim() : '';
+  const isDefaultPlaceholder = !contentText || 
+    contentText === 'Loading...' || 
+    contentText.endsWith('Click to edit note') || 
+    contentText.includes('\nClick to edit note');
+
+  const hasNote = frontFace.dataset.hasNote === 'true' || 
+    (contentText !== '' && !isDefaultPlaceholder);
+
+  const existingDot = frontFace.querySelector('.note-dot');
+
+  if (hasNote && frontFace.dataset.hasNote !== 'false') {
+    frontFace.dataset.hasNote = 'true';
+    if (!existingDot) {
+      const dot = document.createElement('span');
+      dot.className = 'note-dot';
+      frontFace.appendChild(dot);
+    }
+  } else if (!hasNote && existingDot) {
+    frontFace.removeChild(existingDot);
+  }
+}
 
 function createCalendar(year, month) {
   const daysInMonth = new Date(year, month, 0).getDate();
@@ -925,7 +952,7 @@ function createCalendar(year, month) {
       
       const frontFace = document.createElement('div');
       frontFace.classList.add('card-face', 'day');
-      frontFace.textContent = day;
+      frontFace.textContent = `${day}\n`;
       
       const backFace = document.createElement('div');
       backFace.classList.add('card-face', 'back');
@@ -1133,12 +1160,15 @@ function createCalendar(year, month) {
 
 
         if (text && text.trim() !== '') {
+          frontFace.dataset.hasNote = "true";
           if (!existingDot) {
             const dot = document.createElement('span');
             dot.className = 'note-dot';
             frontFace.appendChild(dot);
           }
         } else {
+          frontFace.dataset.hasNote = "false";
+          delete frontFace.dataset.hasNote;
           if (existingDot) {
             frontFace.removeChild(existingDot);
           }
@@ -1308,8 +1338,9 @@ function createCalendar(year, month) {
     .then((snapshot) => {
       if (snapshot && snapshot.exists()) {
         const noteData = snapshot.val();
-        if (noteData && noteData.Content) {
+        if (noteData && noteData.Content && noteData.Content.trim() !== '') {
           noteContent.textContent = noteData.Content;
+          frontFace.dataset.hasNote = "true";
 
           // Add dot if not already there
           if (!frontFace.querySelector('.note-dot')) {
@@ -1322,6 +1353,7 @@ function createCalendar(year, month) {
         } else {
           console.log(`Empty note content for ${date}`);
           noteContent.textContent = `${date}\nClick to edit note`;
+          delete frontFace.dataset.hasNote;
           // Remove dot if note is empty
           const existingDot = frontFace.querySelector('.note-dot');
           if (existingDot) {
@@ -1331,6 +1363,7 @@ function createCalendar(year, month) {
       } else {
         console.log(`No note found for ${date}`);
         noteContent.textContent = `${date}\nClick to edit note`;
+        delete frontFace.dataset.hasNote;
 
         const existingDot = frontFace.querySelector('.note-dot');
         if (existingDot) {
@@ -1742,8 +1775,9 @@ function highlightSelectedName(selectedName) {
       'today-selected'
     );
 
-    const dayText = dayElement.textContent.split('\n')[0].trim();
-    if (!dayText) return; // Skip empty blocks
+    const dayMatch = dayElement.textContent.match(/^\s*(\d+)/);
+    if (!dayMatch) return; // Skip empty blocks
+    const dayText = dayMatch[1];
     
     const date = `${year}-${month}-${dayText}`;
     const scheduleForDay = dutySchedule[date] || '';
@@ -1830,8 +1864,9 @@ function highlightAdditionalHoliday() {
 						  
   const days = document.querySelectorAll('.day');
   days.forEach(dayElement => {
-    const dayText = dayElement.textContent.split('\n')[0].trim();
-    if (!dayText) return;
+    const dayMatch = dayElement.textContent.match(/^\s*(\d+)/);
+    if (!dayMatch) return;
+    const dayText = dayMatch[1];
     const date = `${year}-${month}-${dayText}`;
     const holidayInfo = holiday[date];
     
@@ -1864,14 +1899,36 @@ function AddLunar() {
 						  
   const days = document.querySelectorAll('.day');
   days.forEach(dayElement => {
-    const dayText = dayElement.textContent.split('\n')[0].trim();
-    if (!dayText) return;
+    const dayMatch = dayElement.textContent.match(/^\s*(\d+)/);
+    if (!dayMatch) return;
+    const dayText = dayMatch[1];
     const date = `${year}-${month}-${dayText}`;
     let lunarName = (holiday[date] || '').split('】')[0].replace('【', '');
 
-    
     if (lunarName) {
-      dayElement.innerHTML = `${dayText}\n<span class="lunar-name">${lunarName}</span>`;
+      const existingLunar = dayElement.querySelector('.lunar-name');
+      const existingDot = dayElement.querySelector('.note-dot');
+      
+      if (existingLunar) {
+        if (existingLunar.textContent !== lunarName) {
+          existingLunar.textContent = lunarName;
+        }
+      } else {
+        const lunarSpan = document.createElement('span');
+        lunarSpan.className = 'lunar-name';
+        lunarSpan.textContent = lunarName;
+        if (existingDot) {
+          dayElement.insertBefore(lunarSpan, existingDot);
+        } else {
+          dayElement.appendChild(lunarSpan);
+        }
+      }
+    }
+
+    if (dayElement.dataset.hasNote === "true" && !dayElement.querySelector('.note-dot')) {
+      const dot = document.createElement('span');
+      dot.className = 'note-dot';
+      dayElement.appendChild(dot);
     }
   });
 }
@@ -2338,6 +2395,7 @@ function makeCardDraggable() {
       // If card was flipped but now is not, reset to original position
       if (wasFlipped && !isFlipped) {
        resetPosition();
+       ensureNoteDot(card);
       }
     }
   
@@ -2585,10 +2643,12 @@ namePicker.addEventListener('scroll', () => {
 function setupCardFlip() {
   // Get all calendar cards
   const cards = document.querySelectorAll('.card');
-  const overlay = document.createElement('div');
-  
-  overlay.className = 'overlay';
-  document.body.appendChild(overlay);
+  let overlay = document.querySelector('.overlay');
+  if (!overlay) {
+    overlay = document.createElement('div');
+    overlay.className = 'overlay';
+    document.body.appendChild(overlay);
+  }
 
   // Define smooth infinite scroll function
   function smoothInfiniteScrollNoteContent(noteContent, scrollSpeed) {
@@ -2687,6 +2747,7 @@ function setupCardFlip() {
           stopScrolling();
           activeScrollProcesses.delete(card);
         }
+        ensureNoteDot(card);
       }
   
       // Stop propagation to prevent issues
@@ -2711,6 +2772,7 @@ function setupCardFlip() {
         stopScrolling();
         activeScrollProcesses.delete(flippedCard);
       }
+      ensureNoteDot(flippedCard);
     }
   
     // Hide overlay
@@ -2733,7 +2795,7 @@ function setupCardFlip() {
           stopScrolling();
           activeScrollProcesses.delete(card);
         }
-        
+        ensureNoteDot(card);
         overlay.classList.remove('active');
       }
     });
