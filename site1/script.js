@@ -1418,7 +1418,7 @@ function positionTooltip() {
   
   
   tooltip.style.top = `${headerRect.bottom + 4}px`;
-  tooltip.style.left = `${headerRect.left}px`; 
+  tooltip.style.left = `${headerRect.left - 4}px`; 
 }
 function colorizeDuty(dutyText) {
   return dutyText
