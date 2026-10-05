@@ -751,13 +751,9 @@ function addEventListeners(dayElement, btn, day, month, year, date) {
 
   function handleMouseOut() {
     highlightSelectedName(temp_name);
-    const items = document.querySelectorAll('.picker-item');
-    items.forEach((item) => {
-      if (temp_name === item.textContent && temp_name != "．．．") {
-        item.style.transform = 'scale(1.5)';
-        item.style.backgroundColor = "turquoise";
-      }
-    });
+    if (window.nameWheelPicker && temp_name) {
+      window.nameWheelPicker.setValue(temp_name, false);
+    }
     highlightAdditionalHoliday();
     hideTooltip();
   }
@@ -777,24 +773,47 @@ function addEventListeners(dayElement, btn, day, month, year, date) {
     event.preventDefault();
   });
 }
+function renderHeaderCellContent(y, m, d, showFullDate = true) {
+  const headerCell = document.querySelector('.header-cell');
+  if (!headerCell) return;
+
+  if (showFullDate && d) {
+    let weekText = '';
+    if (typeof Zellercongruence === 'function') {
+      const dow = Zellercongruence(d, m, y);
+      const weekMap = { 1: '(一)', 2: '(二)', 3: '(三)', 4: '(四)', 5: '(五)', 6: '(六)', 0: '(日)', 7: '(日)' };
+      weekText = weekMap[dow] || '(日)';
+    }
+
+    headerCell.innerHTML = `
+      <span class="header-cell-year">${y} 年</span>
+      <span class="header-cell-date">${m}月 ${d}日</span>
+      <span class="header-cell-weekday">${weekText}</span>
+    `;
+  } else {
+    headerCell.innerHTML = `
+      <span class="header-cell-year">${y} 年</span>
+      <span class="header-cell-date">${m} 月</span>
+    `;
+  }
+}
+
 function addEventListener_toHideToolTipandShowToday(headerCell) {
   headerCell.addEventListener('click', () => {
+    const headerEl = document.getElementById('header');
     const days = document.querySelectorAll('.day');
     if (clickCount % 2 === 0) {
       hideTooltip();
    
       highlightSelectedName(temp_name);
-      const items = document.querySelectorAll('.picker-item');
-      items.forEach((item) => {
-        if (temp_name === item.textContent && temp_name != "．．．"){
-          item.style.transform = 'scale(1.5)';
-          item.style.backgroundColor = "turquoise";
-        }
-      });
+      if (window.nameWheelPicker && temp_name) {
+        window.nameWheelPicker.setValue(temp_name, false);
+      }
    
-      headerCell.style.backgroundColor="#3498db";
-      headerCell.style.backgroundImage ="";
-     
+      headerCell.classList.remove('active');
+      if (headerEl) headerEl.classList.remove('active');
+      headerCell.style.backgroundColor = "";
+      headerCell.style.backgroundImage = "";
     } else {
       days.forEach(dayElement => {
         // Remove the original classes plus all the new top/bottom split classes
@@ -806,7 +825,10 @@ function addEventListener_toHideToolTipandShowToday(headerCell) {
         );
       });
 
-      headerCell.style.backgroundImage = "linear-gradient(to right, #345bdb, #2e4d8f)";
+      headerCell.classList.add('active');
+      if (headerEl) headerEl.classList.add('active');
+      headerCell.style.backgroundColor = "";
+      headerCell.style.backgroundImage = "";
 
       showTooltip(formattedDate);
       positionTooltip();
@@ -819,14 +841,15 @@ function addEventListener_toHideToolTipandShowToday(headerCell) {
 }
 
 function createheadercell(year, month, day) {
-  const headerCell = document.createElement('div');
-  headerCell.classList.add('header-cell');
-   
-  headerCell.innerHTML = `${year} 年 &nbsp;&nbsp&nbsp;&nbsp${month} 月&nbsp&nbsp;&nbsp&nbsp;&nbsp ${day} 日 &nbsp;`; 
-
-  header.appendChild(headerCell);
-  headerCell.style.zIndex = '20';
-  addEventListener_toHideToolTipandShowToday(headerCell);
+  let headerCell = document.querySelector('.header-cell');
+  if (!headerCell) {
+    headerCell = document.createElement('div');
+    headerCell.classList.add('header-cell');
+    header.appendChild(headerCell);
+    headerCell.style.zIndex = '20';
+    addEventListener_toHideToolTipandShowToday(headerCell);
+  }
+  renderHeaderCellContent(year, month, day, true);
 }
 
 function ensureNoteDot(card) {
@@ -876,6 +899,8 @@ function createCalendar(year, month) {
   for (let i=0; i < 7; i++){
     const weekdayElement = document.createElement('div');
     weekdayElement.classList.add('weekday');
+    if (i === 5) weekdayElement.classList.add('saturday');
+    if (i === 6) weekdayElement.classList.add('sunday');
     weekdayElement.textContent = weekdays[i];
     calendar.appendChild(weekdayElement);
     weekdayElement.addEventListener('dblclick', function() {
@@ -888,57 +913,29 @@ function createCalendar(year, month) {
   }
 
     dayOfWeek = Zellercongruence(1, month, year);
-    
     if (dayOfWeek === 1) {
-      counter=0;
+      counter = 0;
     } else if (dayOfWeek === 2) {
-      counter=1;
-      for (let i = 0; i < counter; i++) {
-        const dayElement = document.createElement('div');
-        dayElement.classList.add('day');
-        dayElement.textContent = "";
-        calendar.appendChild(dayElement);
-      }
+      counter = 1;
     } else if (dayOfWeek === 3) {
-      counter=2;
-      for (let i = 0; i < counter; i++) {
-        const dayElement = document.createElement('div');
-        dayElement.classList.add('day');
-        dayElement.textContent = "";
-        calendar.appendChild(dayElement);
-      }
+      counter = 2;
     } else if (dayOfWeek === 4) {
-      counter=3;
-      for (let i = 0; i < counter; i++) {
-        const dayElement = document.createElement('div');
-        dayElement.classList.add('day');
-        dayElement.textContent = "";
-        calendar.appendChild(dayElement);
-      }
+      counter = 3;
     } else if (dayOfWeek === 5) {
-      counter=4;
-      for (let i = 0; i < counter; i++) {
-        const dayElement = document.createElement('div');
-        dayElement.classList.add('day');
-        dayElement.textContent = "";
-        calendar.appendChild(dayElement);
-      }
+      counter = 4;
     } else if (dayOfWeek === 6) {
-      counter=5;
-      for (let i = 0; i < counter; i++) {
-        const dayElement = document.createElement('div');
-        dayElement.classList.add('day');
-        dayElement.textContent = "";
-        calendar.appendChild(dayElement);
-      }
+      counter = 5;
     } else {
-      counter=6;
-      for (let i = 0; i < counter; i++) {
-        const dayElement = document.createElement('div');
-        dayElement.classList.add('day');
-        dayElement.textContent = "";
-        calendar.appendChild(dayElement);
-      }
+      counter = 6;
+    }
+
+    for (let i = 0; i < counter; i++) {
+      const dayElement = document.createElement('div');
+      dayElement.classList.add('day', 'empty-day');
+      if (i === 5) dayElement.classList.add('saturday');
+      if (i === 6) dayElement.classList.add('sunday');
+      dayElement.textContent = "";
+      calendar.appendChild(dayElement);
     }
 
     for (let day = 1; day <= daysInMonth; day++) {
@@ -1003,8 +1000,17 @@ function createCalendar(year, month) {
       calendar.appendChild(card);
       
     
-      if (Zellercongruence(day, month, year) === 0 || Zellercongruence(day, month, year) === 6) {
+      const dow = Zellercongruence(day, month, year);
+      if (dow === 0 || dow === 6) {
         frontFace.classList.add('weekend');
+      }
+      if (dow === 6) {
+        frontFace.classList.add('saturday');
+        card.classList.add('saturday');
+      }
+      if (dow === 0) {
+        frontFace.classList.add('sunday');
+        card.classList.add('sunday');
       }
       
     
@@ -1021,6 +1027,22 @@ function createCalendar(year, month) {
       
       fetchNote(card, date);
       
+    }
+
+    // Complete the grid by filling trailing empty cells in the final week row
+    const totalFilled = counter + daysInMonth;
+    const remainder = totalFilled % 7;
+    if (remainder !== 0) {
+      const trailingCount = 7 - remainder;
+      for (let i = 0; i < trailingCount; i++) {
+        const trailingElement = document.createElement('div');
+        trailingElement.classList.add('day', 'empty-day');
+        const colIndex = remainder + i;
+        if (colIndex === 5) trailingElement.classList.add('saturday');
+        if (colIndex === 6) trailingElement.classList.add('sunday');
+        trailingElement.textContent = "";
+        calendar.appendChild(trailingElement);
+      }
     }
   
     function setupNoteEventListeners(card, date) {
@@ -1451,7 +1473,7 @@ function hideTooltip() {
  * Selects any month & year (e.g., 2026-01 through 2036-12) and applies
  * all the same calendar, header, holiday, lunar, and on-duty highlight effects.
  */
-function selectYearMonth(targetYear, targetMonth) {
+function selectYearMonth(targetYear, targetMonth, options) {
   let y = parseInt(targetYear, 10);
   let m = parseInt(targetMonth, 10);
 
@@ -1479,6 +1501,10 @@ function selectYearMonth(targetYear, targetMonth) {
   const monthSelect = document.getElementById('monthSelect');
   if (yearSelect) yearSelect.value = String(year);
   if (monthSelect) monthSelect.value = String(month);
+
+  if (window.iosWheelPicker) {
+    window.iosWheelPicker.setValue(year, month, !options?.fromWheel);
+  }
 
   const nowYear = now.getFullYear();
   const nowMonth = now.getMonth() + 1;
@@ -1534,7 +1560,7 @@ function selectYearMonth(targetYear, targetMonth) {
   
 	
     if (headerCells) {
-      headerCells.innerHTML = `${year} 年 &nbsp;&nbsp;&nbsp${month} 月&nbsp;&nbsp;&nbsp;&nbsp;&nbsp ${day} 日 &nbsp;`;
+      renderHeaderCellContent(year, month, day, true);
     }
     showTooltip(formattedDate);
     fetchWeather();
@@ -1543,17 +1569,7 @@ function selectYearMonth(targetYear, targetMonth) {
   } else if (mode === "dark") {
     if (headerEl) headerEl.style.color = 'white';
     if (headerCells) {
-      headerCells.innerHTML = `${year} 年 &nbsp;&nbsp;&nbsp${month} 月&nbsp;`;
-							
-								 
-							 
-   
-					  
-			 
-				 
-			
-			   
-
+      renderHeaderCellContent(year, month, null, false);
     }
     hideTooltip();
     highlightAdditionalHoliday();
@@ -1562,7 +1578,7 @@ function selectYearMonth(targetYear, targetMonth) {
 	
 	
     if (headerCells) {
-      headerCells.innerHTML = `${year} 年 &nbsp;&nbsp;&nbsp&nbsp;&nbsp${month} 月&nbsp;`;
+      renderHeaderCellContent(year, month, null, false);
     }
     fetchWeather();
     hideTooltip();
@@ -1571,13 +1587,9 @@ function selectYearMonth(targetYear, targetMonth) {
 
   // Re-apply on-duty markings for the selected person on the newly selected month
   highlightSelectedName(temp_name);
-  const items = document.querySelectorAll('.picker-item');
-  items.forEach((item) => {
-    if (temp_name === item.textContent && temp_name != "．．．") {
-      item.style.transform = 'scale(1.5)';
-      item.style.backgroundColor = "turquoise";
-    }
-  });
+  if (window.nameWheelPicker && temp_name) {
+    window.nameWheelPicker.setValue(temp_name, false);
+  }
  
   
 							   
@@ -1610,6 +1622,659 @@ function setMode(newMode) {
     selectYearMonth(now.getFullYear(), now.getMonth() + 1);
   } else if (newMode === "light") {
     selectYearMonth(year, month - 1);
+  }
+}
+
+/**
+ * iOS-style 3D Cylinder Drum Wheel Picker for Year & Month
+ */
+class IosWheelPicker {
+  constructor(options) {
+    this.container = options.container;
+    this.yearColumn = options.yearColumn;
+    this.monthColumn = options.monthColumn;
+    this.minYear = options.minYear || 1950;
+    this.maxYear = options.maxYear || 2050;
+    this.onSelect = options.onSelect || (() => {});
+
+    this.itemHeight = 26; // matches 2.6rem
+    this.cylinderRadius = 48; // cylinder radius in px
+    this.angleStep = 26; // degrees per item
+
+    this.lastReportedYear = options.initialYear || this.minYear;
+    this.lastReportedMonth = options.initialMonth || 1;
+
+    this.yearList = [];
+    for (let y = this.minYear; y <= this.maxYear; y++) {
+      this.yearList.push({ value: y, label: `${y}年` });
+    }
+
+    this.monthList = [];
+    for (let m = 1; m <= 12; m++) {
+      this.monthList.push({ value: m, label: `${m}月` });
+    }
+
+    this.yearWheel = this.setupColumn(this.yearColumn, this.yearList, 'year');
+    this.monthWheel = this.setupColumn(this.monthColumn, this.monthList, 'month');
+
+    this.setValue(this.lastReportedYear, this.lastReportedMonth, false);
+  }
+
+  setupColumn(colEl, items, type) {
+    const wheelEl = colEl.querySelector('.ios-picker-wheel');
+    wheelEl.innerHTML = '';
+
+    const domItems = items.map((item, idx) => {
+      const div = document.createElement('div');
+      div.className = 'ios-picker-item';
+      div.textContent = item.label;
+      div.dataset.index = String(idx);
+      wheelEl.appendChild(div);
+      return div;
+    });
+
+    const state = {
+      type,
+      colEl,
+      wheelEl,
+      items,
+      domItems,
+      currentIndex: 0,
+      floatIndex: 0,
+      isDragging: false,
+      startY: 0,
+      startFloatIndex: 0,
+      lastY: 0,
+      lastTime: 0,
+      velocity: 0,
+      dragDistance: 0,
+      animId: null,
+      wheelDebounceTimer: null
+    };
+
+    const rad = Math.PI / 180;
+    const clamp = (val, min, max) => Math.max(min, Math.min(max, val));
+
+    const updateVisuals = (fIndex) => {
+      const nearestInt = Math.round(fIndex);
+      state.floatIndex = fIndex;
+
+      // Haptic feedback tick when passing an item
+      if (nearestInt !== state.currentIndex && nearestInt >= 0 && nearestInt < items.length) {
+        state.currentIndex = nearestInt;
+        if (navigator.vibrate) {
+          try { navigator.vibrate(4); } catch (e) {}
+        }
+      }
+
+      for (let i = 0; i < domItems.length; i++) {
+        const delta = i - fIndex;
+        const dom = domItems[i];
+        if (Math.abs(delta) > 2.3) {
+          dom.style.display = 'none';
+          dom.classList.remove('active');
+        } else {
+          dom.style.display = 'flex';
+          const thetaDeg = delta * this.angleStep;
+          const thetaRad = thetaDeg * rad;
+          const y = this.cylinderRadius * Math.sin(thetaRad);
+          const z = this.cylinderRadius * (Math.cos(thetaRad) - 1);
+          const rotX = -thetaDeg;
+          const opacity = Math.max(0.12, Math.pow(Math.cos(thetaRad), 2.4));
+          const scale = 1 - (1 - Math.cos(thetaRad)) * 0.45;
+
+          dom.style.transform = `translate3d(0, ${y.toFixed(2)}px, ${z.toFixed(2)}px) rotateX(${rotX.toFixed(2)}deg) scale(${scale.toFixed(3)})`;
+          dom.style.opacity = opacity.toFixed(3);
+
+          if (Math.abs(delta) < 0.35) {
+            dom.classList.add('active');
+          } else {
+            dom.classList.remove('active');
+          }
+        }
+      }
+
+      const activeItem = items[state.currentIndex];
+      if (activeItem) {
+        colEl.setAttribute('aria-valuenow', activeItem.value);
+        colEl.setAttribute('aria-valuetext', activeItem.label);
+      }
+    };
+
+    const snapTo = (targetIdx, duration = 220) => {
+      if (state.animId) cancelAnimationFrame(state.animId);
+      targetIdx = clamp(targetIdx, 0, items.length - 1);
+      const startF = state.floatIndex;
+      const change = targetIdx - startF;
+      const startTime = performance.now();
+
+      const easeOutCubic = (t) => 1 - Math.pow(1 - t, 3);
+
+      const step = (now) => {
+        const elapsed = now - startTime;
+        const t = Math.min(1, elapsed / duration);
+        const currentF = startF + change * easeOutCubic(t);
+        updateVisuals(currentF);
+
+        if (t < 1) {
+          state.animId = requestAnimationFrame(step);
+        } else {
+          updateVisuals(targetIdx);
+          state.floatIndex = targetIdx;
+          state.currentIndex = targetIdx;
+          this.notifySelection();
+        }
+      };
+
+      state.animId = requestAnimationFrame(step);
+    };
+
+    const onPointerDown = (e) => {
+      if (state.animId) cancelAnimationFrame(state.animId);
+      state.isDragging = true;
+      const clientY = e.clientY ?? (e.touches && e.touches[0].clientY) ?? 0;
+      state.startY = clientY;
+      state.startFloatIndex = state.floatIndex;
+      state.lastY = clientY;
+      state.lastTime = performance.now();
+      state.velocity = 0;
+      state.dragDistance = 0;
+
+      window.addEventListener('pointermove', onPointerMove);
+      window.addEventListener('pointerup', onPointerUp);
+      window.addEventListener('pointercancel', onPointerUp);
+      if (e.pointerId && colEl.setPointerCapture) {
+        try { colEl.setPointerCapture(e.pointerId); } catch (err) {}
+      }
+    };
+
+    const onPointerMove = (e) => {
+      if (!state.isDragging) return;
+      const clientY = e.clientY ?? (e.touches && e.touches[0].clientY) ?? 0;
+      const deltaY = clientY - state.startY;
+      state.dragDistance += Math.abs(clientY - state.lastY);
+
+      const deltaIndex = -deltaY / this.itemHeight;
+      let candidate = state.startFloatIndex + deltaIndex;
+      const min = 0;
+      const max = items.length - 1;
+
+      // Elastic rubber-band resistance
+      if (candidate < min) {
+        candidate = min + (candidate - min) * 0.25;
+      } else if (candidate > max) {
+        candidate = max + (candidate - max) * 0.25;
+      }
+
+      const now = performance.now();
+      const dt = now - state.lastTime;
+      if (dt > 10) {
+        state.velocity = (-(clientY - state.lastY) / this.itemHeight) / (dt / 16.67);
+        state.lastY = clientY;
+        state.lastTime = now;
+      }
+
+      updateVisuals(candidate);
+    };
+
+    const onPointerUp = (e) => {
+      if (!state.isDragging) return;
+      state.isDragging = false;
+
+      window.removeEventListener('pointermove', onPointerMove);
+      window.removeEventListener('pointerup', onPointerUp);
+      window.removeEventListener('pointercancel', onPointerUp);
+
+      const min = 0;
+      const max = items.length - 1;
+
+      // Tap detection
+      if (state.dragDistance < 5) {
+        const itemEl = e.target.closest('.ios-picker-item');
+        if (itemEl && itemEl.dataset.index !== undefined) {
+          const clickedIdx = parseInt(itemEl.dataset.index, 10);
+          snapTo(clickedIdx, 220);
+          return;
+        }
+      }
+
+      // Check boundary rubber-band return
+      if (state.floatIndex < min) {
+        snapTo(min, 200);
+        return;
+      }
+      if (state.floatIndex > max) {
+        snapTo(max, 200);
+        return;
+      }
+
+      // Momentum flick
+      if (Math.abs(state.velocity) > 0.08) {
+        let currentF = state.floatIndex;
+        let v = state.velocity;
+        const decay = 0.92;
+
+        const momentumStep = () => {
+          v *= decay;
+          currentF += v;
+
+          if (currentF < min - 0.5 || currentF > max + 0.5 || Math.abs(v) < 0.02) {
+            snapTo(Math.round(clamp(currentF, min, max)), 200);
+          } else {
+            updateVisuals(currentF);
+            state.animId = requestAnimationFrame(momentumStep);
+          }
+        };
+
+        state.animId = requestAnimationFrame(momentumStep);
+      } else {
+        const target = Math.round(clamp(state.floatIndex, min, max));
+        snapTo(target, 180);
+      }
+    };
+
+    colEl.addEventListener('pointerdown', onPointerDown);
+
+    // Mouse wheel scrolling
+    colEl.addEventListener('wheel', (e) => {
+      e.preventDefault();
+      if (state.animId) cancelAnimationFrame(state.animId);
+      const deltaIndex = (e.deltaY / this.itemHeight) * 0.6;
+      let candidate = clamp(state.floatIndex + deltaIndex, 0, items.length - 1);
+      updateVisuals(candidate);
+
+      clearTimeout(state.wheelDebounceTimer);
+      state.wheelDebounceTimer = setTimeout(() => {
+        snapTo(Math.round(state.floatIndex), 160);
+      }, 100);
+    }, { passive: false });
+
+    // Keyboard support
+    colEl.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        snapTo(state.currentIndex - 1, 150);
+      } else if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        snapTo(state.currentIndex + 1, 150);
+      } else if (e.key === 'PageUp') {
+        e.preventDefault();
+        snapTo(state.currentIndex - 5, 200);
+      } else if (e.key === 'PageDown') {
+        e.preventDefault();
+        snapTo(state.currentIndex + 5, 200);
+      }
+    });
+
+    state.updateVisuals = updateVisuals;
+    state.snapTo = snapTo;
+    return state;
+  }
+
+  notifySelection() {
+    const selYear = this.yearList[this.yearWheel.currentIndex].value;
+    const selMonth = this.monthList[this.monthWheel.currentIndex].value;
+    if (selYear !== this.lastReportedYear || selMonth !== this.lastReportedMonth) {
+      this.lastReportedYear = selYear;
+      this.lastReportedMonth = selMonth;
+      this.onSelect(selYear, selMonth);
+    }
+  }
+
+  setValue(targetYear, targetMonth, animate = true) {
+    this.lastReportedYear = targetYear;
+    this.lastReportedMonth = targetMonth;
+
+    const yIdx = this.yearList.findIndex(item => item.value === targetYear);
+    const mIdx = this.monthList.findIndex(item => item.value === targetMonth);
+
+    if (yIdx !== -1) {
+      if (animate && Math.abs(this.yearWheel.currentIndex - yIdx) <= 5) {
+        this.yearWheel.snapTo(yIdx, 240);
+      } else {
+        if (this.yearWheel.animId) cancelAnimationFrame(this.yearWheel.animId);
+        this.yearWheel.updateVisuals(yIdx);
+        this.yearWheel.floatIndex = yIdx;
+        this.yearWheel.currentIndex = yIdx;
+      }
+    }
+
+    if (mIdx !== -1) {
+      if (animate && Math.abs(this.monthWheel.currentIndex - mIdx) <= 5) {
+        this.monthWheel.snapTo(mIdx, 240);
+      } else {
+        if (this.monthWheel.animId) cancelAnimationFrame(this.monthWheel.animId);
+        this.monthWheel.updateVisuals(mIdx);
+        this.monthWheel.floatIndex = mIdx;
+        this.monthWheel.currentIndex = mIdx;
+      }
+    }
+  }
+}
+
+/**
+ * iOS-style 3D Cylinder Drum Wheel Picker for Staff Names
+ */
+class IosNameWheelPicker {
+  constructor(options) {
+    this.container = options.container;
+    this.wheelEl = options.wheelEl;
+    this.names = options.names || [];
+    this.onSelect = options.onSelect || (() => {});
+
+    this.itemHeight = 30; // 3.0rem
+    this.cylinderRadius = 85; // 8.5rem
+    this.angleStep = 20; // degrees per item
+
+    this.currentIndex = 0;
+    this.floatIndex = 0;
+    this.isDragging = false;
+    this.startY = 0;
+    this.startFloatIndex = 0;
+    this.lastY = 0;
+    this.lastTime = 0;
+    this.velocity = 0;
+    this.dragDistance = 0;
+    this.animId = null;
+    this.wheelDebounceTimer = null;
+    this.lastReportedName = null;
+
+    this.initDOM();
+
+    const initialName = options.initialName || (this.names.includes('洪柜峰') ? '洪柜峰' : this.names[0]);
+    this.setValue(initialName, false);
+  }
+
+  initDOM() {
+    this.wheelEl.innerHTML = '';
+    this.domItems = this.names.map((name, idx) => {
+      const div = document.createElement('div');
+      div.className = 'name-picker-item picker-item';
+      div.textContent = name;
+      div.dataset.index = String(idx);
+      div.dataset.name = name;
+      this.wheelEl.appendChild(div);
+      return div;
+    });
+
+    const clamp = (val, min, max) => Math.max(min, Math.min(max, val));
+
+    // Pointer events (touch and mouse)
+    const onPointerDown = (e) => {
+      if (this.animId) cancelAnimationFrame(this.animId);
+      this.isDragging = true;
+      const clientY = e.clientY ?? (e.touches && e.touches[0].clientY) ?? 0;
+      this.startY = clientY;
+      this.startFloatIndex = this.floatIndex;
+      this.lastY = clientY;
+      this.lastTime = performance.now();
+      this.velocity = 0;
+      this.dragDistance = 0;
+
+      window.addEventListener('pointermove', onPointerMove);
+      window.addEventListener('pointerup', onPointerUp);
+      window.addEventListener('pointercancel', onPointerUp);
+      if (e.pointerId && this.container.setPointerCapture) {
+        try { this.container.setPointerCapture(e.pointerId); } catch (err) {}
+      }
+    };
+
+    const onPointerMove = (e) => {
+      if (!this.isDragging) return;
+      const clientY = e.clientY ?? (e.touches && e.touches[0].clientY) ?? 0;
+      const deltaY = clientY - this.startY;
+      this.dragDistance += Math.abs(clientY - this.lastY);
+
+      const deltaIndex = -deltaY / this.itemHeight;
+      let candidate = this.startFloatIndex + deltaIndex;
+      const min = 0;
+      const max = this.names.length - 1;
+
+      // Elastic rubber-band resistance
+      if (candidate < min) {
+        candidate = min + (candidate - min) * 0.25;
+      } else if (candidate > max) {
+        candidate = max + (candidate - max) * 0.25;
+      }
+
+      const now = performance.now();
+      const dt = now - this.lastTime;
+      if (dt > 10) {
+        this.velocity = (-(clientY - this.lastY) / this.itemHeight) / (dt / 16.67);
+        this.lastY = clientY;
+        this.lastTime = now;
+      }
+
+      this.updateVisuals(candidate);
+    };
+
+    const onPointerUp = (e) => {
+      if (!this.isDragging) return;
+      this.isDragging = false;
+
+      window.removeEventListener('pointermove', onPointerMove);
+      window.removeEventListener('pointerup', onPointerUp);
+      window.removeEventListener('pointercancel', onPointerUp);
+
+      const min = 0;
+      const max = this.names.length - 1;
+
+      // Tap / click item detection
+      if (this.dragDistance < 5) {
+        const itemEl = e.target.closest('.picker-item');
+        if (itemEl && itemEl.dataset.index !== undefined) {
+          const clickedIdx = parseInt(itemEl.dataset.index, 10);
+          this.snapTo(clickedIdx, 220, true);
+          return;
+        }
+      }
+
+      // Rubber-band return past boundary
+      if (this.floatIndex < min) {
+        this.snapTo(min, 200);
+        return;
+      }
+      if (this.floatIndex > max) {
+        this.snapTo(max, 200);
+        return;
+      }
+
+      // Momentum flick
+      if (Math.abs(this.velocity) > 0.08) {
+        let currentF = this.floatIndex;
+        let v = this.velocity;
+        const decay = 0.92;
+
+        const momentumStep = () => {
+          v *= decay;
+          currentF += v;
+
+          if (currentF < min - 0.5 || currentF > max + 0.5 || Math.abs(v) < 0.02) {
+            this.snapTo(Math.round(clamp(currentF, min, max)), 200);
+          } else {
+            this.updateVisuals(currentF);
+            this.animId = requestAnimationFrame(momentumStep);
+          }
+        };
+
+        this.animId = requestAnimationFrame(momentumStep);
+      } else {
+        const target = Math.round(clamp(this.floatIndex, min, max));
+        this.snapTo(target, 180);
+      }
+    };
+
+    this.container.addEventListener('pointerdown', onPointerDown);
+
+    // Mouse wheel scrolling
+    this.container.addEventListener('wheel', (e) => {
+      e.preventDefault();
+      if (this.animId) cancelAnimationFrame(this.animId);
+      const deltaIndex = (e.deltaY / this.itemHeight) * 0.6;
+      let candidate = clamp(this.floatIndex + deltaIndex, 0, this.names.length - 1);
+      this.updateVisuals(candidate);
+
+      clearTimeout(this.wheelDebounceTimer);
+      this.wheelDebounceTimer = setTimeout(() => {
+        this.snapTo(Math.round(this.floatIndex), 160);
+      }, 100);
+    }, { passive: false });
+
+    // Keyboard support
+    this.container.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        this.snapTo(this.currentIndex - 1, 150);
+      } else if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        this.snapTo(this.currentIndex + 1, 150);
+      } else if (e.key === 'PageUp') {
+        e.preventDefault();
+        this.snapTo(this.currentIndex - 5, 200);
+      } else if (e.key === 'PageDown') {
+        e.preventDefault();
+        this.snapTo(this.currentIndex + 5, 200);
+      }
+    });
+  }
+
+  updateVisuals(fIndex) {
+    const nearestInt = Math.round(fIndex);
+    this.floatIndex = fIndex;
+
+    // Haptic feedback tick when passing a name
+    if (nearestInt !== this.currentIndex && nearestInt >= 0 && nearestInt < this.names.length) {
+      this.currentIndex = nearestInt;
+      if (navigator.vibrate) {
+        try { navigator.vibrate(4); } catch (e) {}
+      }
+    }
+
+    const rad = Math.PI / 180;
+    for (let i = 0; i < this.domItems.length; i++) {
+      const delta = i - fIndex;
+      const dom = this.domItems[i];
+      if (Math.abs(delta) > 2.6) {
+        dom.style.display = 'none';
+        dom.classList.remove('active');
+      } else {
+        dom.style.display = 'flex';
+        const thetaDeg = delta * this.angleStep;
+        const thetaRad = thetaDeg * rad;
+        const y = this.cylinderRadius * Math.sin(thetaRad);
+        const z = this.cylinderRadius * (Math.cos(thetaRad) - 1);
+        const rotX = -thetaDeg;
+        const opacity = Math.max(0.15, Math.pow(Math.cos(thetaRad), 2.4));
+        const scale = 1 - (1 - Math.cos(thetaRad)) * 0.45;
+
+        dom.style.transform = `translate3d(0, ${y.toFixed(2)}px, ${z.toFixed(2)}px) rotateX(${rotX.toFixed(2)}deg) scale(${scale.toFixed(3)})`;
+        dom.style.opacity = opacity.toFixed(3);
+
+        if (Math.abs(delta) < 0.35) {
+          dom.classList.add('active');
+        } else {
+          dom.classList.remove('active');
+        }
+      }
+    }
+
+    const activeName = this.names[this.currentIndex];
+    if (activeName) {
+      this.container.setAttribute('aria-valuenow', String(this.currentIndex));
+      this.container.setAttribute('aria-valuetext', activeName);
+    }
+  }
+
+  snapTo(targetIdx, duration = 220, forceNotify = false) {
+    if (this.animId) cancelAnimationFrame(this.animId);
+    const clamp = (val, min, max) => Math.max(min, Math.min(max, val));
+    targetIdx = clamp(targetIdx, 0, this.names.length - 1);
+    const startF = this.floatIndex;
+    const change = targetIdx - startF;
+
+    if (Math.abs(change) < 0.001) {
+      this.updateVisuals(targetIdx);
+      this.floatIndex = targetIdx;
+      this.currentIndex = targetIdx;
+      this.notifySelection(forceNotify);
+      return;
+    }
+
+    const startTime = performance.now();
+    const easeOutCubic = (t) => 1 - Math.pow(1 - t, 3);
+
+    const step = (now) => {
+      const elapsed = now - startTime;
+      const t = Math.min(1, elapsed / duration);
+      const currentF = startF + change * easeOutCubic(t);
+      this.updateVisuals(currentF);
+
+      if (t < 1) {
+        this.animId = requestAnimationFrame(step);
+      } else {
+        this.updateVisuals(targetIdx);
+        this.floatIndex = targetIdx;
+        this.currentIndex = targetIdx;
+        this.notifySelection(forceNotify);
+      }
+    };
+
+    this.animId = requestAnimationFrame(step);
+  }
+
+  notifySelection(force = false) {
+    const selName = this.names[this.currentIndex];
+    if (selName && (force || selName !== this.lastReportedName)) {
+      this.lastReportedName = selName;
+      if (typeof this.onSelect === 'function') {
+        this.onSelect(selName);
+      }
+    }
+  }
+
+  setValue(targetName, animate = true) {
+    if (!targetName) return;
+    const target = String(targetName).trim();
+    let idx = this.names.findIndex(n => n.trim() === target);
+    if (idx === -1) {
+      idx = this.names.findIndex(n => target.includes(n.trim()) || n.trim().includes(target));
+    }
+    if (idx === -1) return;
+
+    if (animate) {
+      const dist = Math.abs(this.currentIndex - idx);
+      // Realistic iOS drum rolling duration: smooth across both near and far distances
+      const duration = dist === 0 ? 50 : Math.min(650, Math.max(200, 160 + dist * 18));
+      this.snapTo(idx, duration, true);
+    } else {
+      if (this.animId) cancelAnimationFrame(this.animId);
+      this.updateVisuals(idx);
+      this.floatIndex = idx;
+      this.currentIndex = idx;
+      this.notifySelection(true);
+    }
+  }
+}
+
+function initNamePickerWheel() {
+  if (window.nameWheelPicker) return;
+  const namePickerEl = document.getElementById("namePicker");
+  const namePickerWheelEl = document.getElementById("namePickerWheel") || namePickerEl;
+
+  if (typeof names === 'undefined' || !Array.isArray(names)) return;
+  const staffNames = names.filter(n => n && n !== "．．．" && n !== "……" && n.trim().length > 0);
+
+  if (namePickerEl && namePickerWheelEl) {
+    window.nameWheelPicker = new IosNameWheelPicker({
+      container: namePickerEl,
+      wheelEl: namePickerWheelEl,
+      names: staffNames,
+      initialName: targetName || username || "洪柜峰",
+      onSelect: (selectedName) => {
+        temp_name = selectedName;
+        highlightSelectedName(selectedName);
+      }
+    });
   }
 }
 
@@ -1647,6 +2312,26 @@ function initMonthPickerControls() {
 
     monthSelect.addEventListener('change', () => {
       selectYearMonth(parseInt(yearSelect.value, 10), parseInt(monthSelect.value, 10));
+    });
+  }
+
+  // Initialize iOS 3D Cylinder Wheel Picker
+  const iosContainer = document.getElementById('iosMonthWheelPicker');
+  const yearColumn = document.getElementById('iosYearColumn');
+  const monthColumn = document.getElementById('iosMonthColumn');
+
+  if (iosContainer && yearColumn && monthColumn) {
+    window.iosWheelPicker = new IosWheelPicker({
+      container: iosContainer,
+      yearColumn: yearColumn,
+      monthColumn: monthColumn,
+      minYear: MIN_YEAR,
+      maxYear: MAX_YEAR,
+      initialYear: year,
+      initialMonth: month,
+      onSelect: (selectedYear, selectedMonth) => {
+        selectYearMonth(selectedYear, selectedMonth, { fromWheel: true });
+      }
     });
   }
 
@@ -2172,24 +2857,14 @@ function fetchWeatherForecast() {
 
 function AddWeekDay() {
   if (!btn || !btn.checked) {
-    const headerCell = document.querySelector('.header-cell');
-	if (!headerCell) return;				   
+    const weekdayEl = document.querySelector('.header-cell-weekday');
     dayOfWeek = Zellercongruence(day, month, year);
-   if (dayOfWeek === 1) {
-      headerCell.textContent += `(一)`;
-      
-    } else if (dayOfWeek === 2) {
-      headerCell.textContent += `(二)`;
-    } else if (dayOfWeek === 3) {
-     headerCell.textContent += `(三)`;
-    } else if (dayOfWeek === 4) {
-      headerCell.textContent += `(四)`;
-    } else if (dayOfWeek === 5) {
-      headerCell.textContent += `(五)`;
-    } else if (dayOfWeek === 6) {
-      headerCell.textContent += `(六)`;
+    const weekMap = { 1: '(一)', 2: '(二)', 3: '(三)', 4: '(四)', 5: '(五)', 6: '(六)', 0: '(日)', 7: '(日)' };
+    const weekStr = weekMap[dayOfWeek] || '(日)';
+    if (weekdayEl) {
+      weekdayEl.textContent = weekStr;
     } else {
-     headerCell.textContent += `(日)`;
+      renderHeaderCellContent(year, month, day, true);
     }
   }
 }
@@ -2274,8 +2949,13 @@ btn.addEventListener("click", function (event) {
 
 
 initMonthPickerControls();	
+initNamePickerWheel();
 createheadercell(year, month, day);
 createCalendar(year, month);
+if (!temp_name) {
+  temp_name = targetName || username || "洪柜峰";
+}
+highlightSelectedName(temp_name);
 highlightAdditionalHoliday(); 
 AddWeekDay();
 setInterval(checkDayChange, 60000);
@@ -2467,14 +3147,6 @@ function makeCardDraggable() {
 
 makeCardDraggable();
 
-namePicker.addEventListener('scroll', () => {
-  const itemHeight = namePicker.querySelector(".picker-item").offsetHeight;
-  currentIndex = Math.floor(namePicker.scrollTop / itemHeight);
-  updateSelection();
-  clearSelectedClass();
-  updateScale();
-});
-
 
 
 
@@ -2502,139 +3174,163 @@ namePicker.addEventListener('scroll', () => {
     'lmfcool@anws.gov.tw':'呂明峯'
   };
 
+  function getStoredUserEmail() {
+    try {
+      return sessionStorage.getItem('currentUserEmail');
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function saveUserEmail(email) {
+    if (!email) return;
+    try {
+      sessionStorage.setItem('currentUserEmail', email);
+    } catch (e) {}
+  }
+
   function getUserEmailFromQueryOrParent(ev) {
+    // 1. URL search params
     const urlParams = new URLSearchParams(window.location.search);
     const fromQuery = urlParams.get('userEmail');
-    if (fromQuery) return fromQuery;
-    // try parent (works if same-origin)
+    if (fromQuery) {
+      saveUserEmail(fromQuery);
+      return fromQuery;
+    }
+
+    // 2. Parent window currentUserEmail (when loaded inside kueifeng/index.html iframe)
     try {
-      if (window.parent && window.parent.currentUserEmail) return window.parent.currentUserEmail;
+      if (window.parent && window.parent.currentUserEmail) {
+        saveUserEmail(window.parent.currentUserEmail);
+        return window.parent.currentUserEmail;
+      }
     } catch (e) {
       // cross-origin -> ignore
     }
-    // try message payload
-    if (ev && ev.data && ev.data.userEmail) return ev.data.userEmail;
+
+    // 3. PostMessage payload
+    if (ev && ev.data && ev.data.userEmail) {
+      saveUserEmail(ev.data.userEmail);
+      return ev.data.userEmail;
+    }
+
+    // 4. SessionStorage cache
+    const stored = getStoredUserEmail();
+    if (stored) return stored;
+
     return null;
   }
 
-  function scrollToUserWithRetry(userEmail) {
-    if (!userEmail) return;
-    targetName = emailNameMap[userEmail]
-    username = targetName; //for firebase storage.Don't delete it or otherwise the Notes will be useless. it is a global parameters.
-    if (!targetName) return;
-    let attempts = 0;
-    const maxAttempts = 40; // 40 * 100ms = 4s max wait
-    const interval = setInterval(() => {
-      attempts++;
-      const items = document.querySelectorAll('.picker-item');
-      const nameElement = Array.from(items).find(item => item.textContent.trim() === targetName);
-      if (nameElement) {
-        // scroll + click
-        nameElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        nameElement.click();
-        clearInterval(interval);
-      } else if (attempts >= maxAttempts) {
-        clearInterval(interval);
-      }
-    }, 100);
+  function resolveNameToEmail(userEmail) {
+    if (!userEmail) return null;
+    const cleanEmail = String(userEmail).trim().toLowerCase();
+    let name = emailNameMap[cleanEmail];
+    if (!name) {
+      name = emailNameMap[userEmail];
+    }
+    if (!name) {
+      const matchKey = Object.keys(emailNameMap).find(k => k.toLowerCase() === cleanEmail);
+      if (matchKey) name = emailNameMap[matchKey];
+    }
+    return name || null;
   }
 
-  // On DOMContentLoaded — try to scroll using query or parent
-  document.addEventListener('DOMContentLoaded', () => {
-    header.addEventListener("click", toggleMusic);
-    header.addEventListener("touchstart", toggleMusic);
-    scrollToMeButton.addEventListener("click", toggleMusic);
-    scrollToMeButton.addEventListener("touchstart", toggleMusic);
-    
+  function scrollToUserWithRetry(userEmail, isManualClick = false) {
+    if (!userEmail) return;
+    const foundName = resolveNameToEmail(userEmail);
+    if (!foundName) return;
 
-    const email = getUserEmailFromQueryOrParent();
-    scrollToUserWithRetry(email);
+    targetName = foundName;
+    username = foundName; // for firebase storage. Don't delete it or otherwise the Notes will be useless.
+    temp_name = foundName;
 
-    // hook up your manual button
-    const button = document.getElementById('scrollToMeButton');
-    if (button) {
-      button.addEventListener('click', () => {
+    let attempts = 0;
+    const maxAttempts = 60; // 60 * 80ms = 4.8s max wait
+    const checkAndScroll = () => {
+      attempts++;
+      const days = document.querySelectorAll('.day');
+      const picker = window.nameWheelPicker;
+
+      if (picker && picker.names && picker.names.length > 0 && days.length > 0) {
+        if (isManualClick) {
+          // Manual click: smooth scroll immediately and highlight duty days
+          picker.setValue(foundName, true);
+          highlightSelectedName(foundName);
+        } else {
+          // Login / auto-scroll: brief visual pause so user sees the wheel roll into their name
+          setTimeout(() => {
+            if (window.nameWheelPicker) {
+              window.nameWheelPicker.setValue(foundName, true);
+            }
+            highlightSelectedName(foundName);
+          }, 180);
+        }
+        return;
+      }
+
+      if (attempts < maxAttempts) {
+        setTimeout(checkAndScroll, 80);
+      } else {
+        if (window.nameWheelPicker) {
+          window.nameWheelPicker.setValue(foundName, false);
+        }
+        highlightSelectedName(foundName);
+      }
+    };
+
+    checkAndScroll();
+  }
+
+  function setupScrollToMeAndAutoScroll() {
+    const headerEl = document.getElementById('header');
+    if (headerEl) {
+      headerEl.addEventListener("click", toggleMusic);
+      headerEl.addEventListener("touchstart", toggleMusic);
+    }
+
+    const scrollToMeBtn = document.getElementById('scrollToMeButton');
+    if (scrollToMeBtn) {
+      scrollToMeBtn.addEventListener("click", toggleMusic);
+      scrollToMeBtn.addEventListener("touchstart", toggleMusic);
+
+      scrollToMeBtn.addEventListener('click', () => {
         const emailNow = getUserEmailFromQueryOrParent();
-        scrollToUserWithRetry(emailNow);
+        let nameToUse = resolveNameToEmail(emailNow);
+        if (!nameToUse) {
+          nameToUse = targetName || username || "洪柜峰";
+        }
+        targetName = nameToUse;
+        username = nameToUse;
+        temp_name = nameToUse;
+
+        if (window.nameWheelPicker) {
+          window.nameWheelPicker.setValue(nameToUse, true);
+        }
+        highlightSelectedName(nameToUse);
       });
     }
 
-      names.forEach((name) => {
-        const selectedName = name;
-        const item = document.createElement("div");
-        item.className = "picker-item";
-        item.textContent = name;
-        item.style.color = "gray";
- 
+    initNamePickerWheel();
 
-        item.addEventListener("click", () => {
-        updateSelection();
-        const items = document.querySelectorAll('.picker-item');
-        items.forEach((item) => {
-          item.style.transform = 'scale(1)';
-          item.style.color = 'gray';
-          item.style.opacity = '0.85';
-          });
-        item.style.transform = 'scale(1.5)';
-        item.style.color = '';
-        item.style.backgroundColor = "turquoise";
-        item.style.opacity = '1';
-        temp_name=selectedName;
-        highlightSelectedName(selectedName);
-      });
+    const email = getUserEmailFromQueryOrParent();
+    if (email) {
+      scrollToUserWithRetry(email, false);
+    }
+  }
 
-        // if (username !== "詹文欽"  && username !== "張啟鴻" && username !== "羅應順" && username !== "張日曜" && username !== "孫景泰" && username !== "張哲維" && username !== "陳鈞緯") {
-
-        //     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-
-        //   if (isIOS) {
-        //     let pressTimer = null;
-
-        //     item.addEventListener("touchstart", () => {
-        //       pressTimer = setTimeout(() => {
-        //       const photoUrl = photos[selectedName];
-        //       if (photoUrl) {
-        //         window.location.href = photoUrl;  
-        //       } else {
-        //         alert("No photo available.");
-        //       }
-        //       }, 1500);   
-        //     });
-
-        //     item.addEventListener("touchend", () => {
-        //       clearTimeout(pressTimer);
-        //     });
-        //   }
-
-        //   if (!isIOS) {
-        //     item.addEventListener("dblclick", () => {
-        //     const photoUrl = photos[selectedName];
-        //     if (photoUrl) {
-        //       window.open(photoUrl, "_blank");
-        //     } else {
-        //       alert("No photo available.");
-        //     }
-     
-        //     if (isLineBrowser()) {
-        //       alert('Use a Regular Browser, like chrome, to open LINE since it is in LINE now');
-        //     } else {
-        //       window.location.href = 'line://nv/chat';
-        //     }
-        //     });
-        //   }
-        // }
-  namePicker.appendChild(item);
-});
-
-
-
-  });
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setupScrollToMeAndAutoScroll);
+  } else {
+    setupScrollToMeAndAutoScroll();
+  }
 
   // Listen for postMessage from parent (parent will send {type:'scrollToUser', userEmail:...})
   window.addEventListener('message', (ev) => {
     if (!ev.data || ev.data.type !== 'scrollToUser') return;
     const email = getUserEmailFromQueryOrParent(ev) || ev.data.userEmail;
-    scrollToUserWithRetry(email);
+    if (email) {
+      scrollToUserWithRetry(email, false);
+    }
   });
 
 })();

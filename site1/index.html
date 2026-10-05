@@ -27,12 +27,19 @@
   <div class="picker-container">
     <div class="display">    
       <div class="month-picker-controls">
-        <div class="month-picker-row">
-          <select id="yearSelect" aria-label="Select Year"></select>
+        <div class="ios-wheel-picker" id="iosMonthWheelPicker" aria-label="Year and Month Picker">
+          <div class="ios-picker-highlight"></div>
+          <div class="ios-picker-column" id="iosYearColumn" data-type="year" tabindex="0" role="spinbutton" aria-label="Select Year">
+            <div class="ios-picker-wheel" id="iosYearWheel"></div>
+          </div>
+          <div class="ios-picker-separator"></div>
+          <div class="ios-picker-column" id="iosMonthColumn" data-type="month" tabindex="0" role="spinbutton" aria-label="Select Month">
+            <div class="ios-picker-wheel" id="iosMonthWheel"></div>
+          </div>
         </div>
-        <div class="month-picker-row">
-          <select id="monthSelect" aria-label="Select Month"></select>
-        </div>
+        <!-- Hidden select elements to maintain full API / DOM backwards compatibility -->
+        <select id="yearSelect" class="sr-only" aria-label="Select Year" tabindex="-1"></select>
+        <select id="monthSelect" class="sr-only" aria-label="Select Month" tabindex="-1"></select>
         <div class="month-nav-row">
           <button type="button" id="prevMonthBtn" class="month-nav-btn" title="Previous Month">◀</button>
           <button type="button" id="currentMonthBtn" class="month-nav-btn today-btn" title="Current Month">本月</button>
@@ -42,7 +49,10 @@
       
     </div>
     <div id="header"></div> 
-    <div class="picker-body" id="namePicker"></div>
+    <div class="picker-body" id="namePicker" tabindex="0" role="spinbutton" aria-label="Select Staff Member">
+      <div class="name-picker-highlight"></div>
+      <div class="name-picker-wheel" id="namePickerWheel"></div>
+    </div>
     <button id="scrollToMeButton">🐧Me</button>
   </div>
  
