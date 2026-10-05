@@ -875,7 +875,7 @@ body {
 /* Sunday (日) - Warm terracotta / cinnamon wood accent */
 .weekday:nth-child(7),
 .weekday.sunday {
-  background: linear-gradient(180deg, #5a2815 0%, #441c0d 50%, #301308 100%);
+  background: linear-gradient(180deg, #4f2a15 0%, #3e1f0e 50%, #2e1509 100%);
   border-color: #744224;
   color: #ffffff;
   text-shadow: 0 0.1rem 0.2rem rgba(0, 0, 0, 0.9), 0 0 0.5rem rgba(252, 168, 143, 0.45);
