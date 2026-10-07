@@ -814,7 +814,8 @@ body {
   font-weight: 800;
   border: 0.12rem solid #744224;
   border-radius: 0.5rem;
-  background: linear-gradient(180deg, #482613 0%, #3a1d0e 50%, #2b1509 100%);
+  /* background: linear-gradient(180deg, #482613 0%, #3a1d0e 50%, #2b1509 100%); */
+  background: linear-gradient(135deg, #442413 0%, #5d331b 50%, #442413 100%);
   color: #ffffff;
   position: relative;
   cursor: pointer;
