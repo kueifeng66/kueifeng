@@ -542,6 +542,16 @@ function generateHolidayData(targetYear = year) {
       const lunar = solar2lunar(y, m, d);
       const dayOfWeek = dt.getDay(); // 0: Sun, 6: Sat
 
+      // Lookahead dates for 除夕 and 小年夜
+      const tomorrow = new Date(y, m - 1, d + 1);
+      const lTomorrow = solar2lunar(tomorrow.getFullYear(), tomorrow.getMonth() + 1, tomorrow.getDate());
+
+      const twoDaysLater = new Date(y, m - 1, d + 2);
+      const lTwoDaysLater = solar2lunar(twoDaysLater.getFullYear(), twoDaysLater.getMonth() + 1, twoDaysLater.getDate());
+
+      const isSpringEve = lTomorrow && lTomorrow.lMonth === 1 && lTomorrow.lDay === 1 && !lTomorrow.isLeap;
+      const isLittleSpringEve = lTwoDaysLater && lTwoDaysLater.lMonth === 1 && lTwoDaysLater.lDay === 1 && !lTwoDaysLater.isLeap;
+
       let name = '';
       if (m === 4 && d === 4) {
         name = '兒童節';
@@ -551,6 +561,13 @@ function generateHolidayData(targetYear = year) {
         name = '端午節';
       } else if (lunar && lunar.lMonth === 8 && lunar.lDay === 15 && !lunar.isLeap) {
         name = '中秋節';
+      } else if (isLittleSpringEve) {
+        name = '小年夜';
+      } else if (isSpringEve) {
+        name = '除夕';
+      } else if (lunar && lunar.lMonth === 1 && !lunar.isLeap && [1, 2, 3, 4].includes(lunar.lDay)) {
+        const springDayNames = { 1: '初一', 2: '初二', 3: '初三', 4: '初四' };
+        name = springDayNames[lunar.lDay];
       } else if (lunar && lunar.lDay === 1) {
         const monthPrefix = (lunar.isLeap ? '閏' : '') + (LUNAR_MONTH_NAMES[lunar.lMonth] || `${lunar.lMonth}月`);
         name = `${monthPrefix}${lunar.isBig ? '大' : '小'}`;
@@ -575,12 +592,9 @@ function generateHolidayData(targetYear = year) {
       if (m === 10 && d === 25) isFixedHoliday = true; // 光復節
       if (m === 12 && d === 25) isFixedHoliday = true; // 行憲紀念日
 
-      // Spring Festival: 除夕 (day before 正月初一), 初一, 初二, 初三, 初四
-      const tomorrow = new Date(y, m - 1, d + 1);
-      const lTomorrow = solar2lunar(tomorrow.getFullYear(), tomorrow.getMonth() + 1, tomorrow.getDate());
-      if (lTomorrow && lTomorrow.lMonth === 1 && lTomorrow.lDay === 1 && !lTomorrow.isLeap) {
-        isFixedHoliday = true; // 除夕（無論是臘月廿九或三十，正月初一前一日即為除夕）
-      }
+      // Spring Festival: 小年夜, 除夕, 初一, 初二, 初三, 初四
+      if (isLittleSpringEve) isFixedHoliday = true; // 小年夜 (正月初一前兩日)
+      if (isSpringEve) isFixedHoliday = true;       // 除夕 (正月初一前一日)
       if (lunar && lunar.lMonth === 1 && !lunar.isLeap && [1, 2, 3, 4].includes(lunar.lDay)) {
         isFixedHoliday = true; // 初一, 初二, 初三, 初四
       }
@@ -621,6 +635,7 @@ function generateHolidayData(targetYear = year) {
 
   return result;
 }
+
 
 // Dynamic holiday & lunar data generated on demand via Lunar Generation System
 const holiday = new Proxy({}, {
