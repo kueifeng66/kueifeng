@@ -3187,7 +3187,8 @@ makeCardDraggable();
     'chihung24@gmail.com':'張啟鴻',
     'dick710209@gmail.com':'陳鈞緯',
     'allen99lo@gmail.com':'羅應順',
-    'lmfcool@anws.gov.tw':'呂明峯'
+    'lmfcool@anws.gov.tw':'呂明峯',
+    'senfa6526@gmail.com':'林森發',
   };
 
   function getStoredUserEmail() {
