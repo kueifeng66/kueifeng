@@ -784,10 +784,32 @@ function addEventListeners(dayElement, btn, day, month, year, date) {
   });
 
   dayElement.addEventListener('touchend', (event) => {
-    handleMouseOut();
     event.preventDefault();
   });
 }
+
+// On mobile, hide the tooltip and restore highlights when tapping outside date cells
+document.addEventListener('touchstart', (event) => {
+  // Ignore touches inside date cards, the tooltip itself, or the header cell (which has its own toggle)
+  if (
+    event.target.closest('.card') ||
+    event.target.closest('#tooltip') ||
+    event.target.closest('#header') ||
+    event.target.closest('.header-cell')
+  ) {
+    return;
+  }
+
+  if (tooltip && tooltip.style.display === 'block') {
+    highlightSelectedName(temp_name);
+    if (window.nameWheelPicker && temp_name) {
+      window.nameWheelPicker.setValue(temp_name, false);
+    }
+    highlightAdditionalHoliday();
+    hideTooltip();
+  }
+}, { passive: true });
+
 function renderHeaderCellContent(y, m, d, showFullDate = true) {
   const headerCell = document.querySelector('.header-cell');
   if (!headerCell) return;
