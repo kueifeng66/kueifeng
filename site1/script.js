@@ -3470,7 +3470,26 @@ function setupCardFlip() {
   
     // Add both event listeners for desktop and mobile support
     card.addEventListener('dblclick', toggleFlip);  // Desktop double-click
-    card.addEventListener('touchend', toggleFlip);  // Mobile tap
+    //card.addEventListener('touchend', toggleFlip);  // Mobile tap
+        // Add both event listeners for desktop and mobile support
+    card.addEventListener('dblclick', toggleFlip);  // Desktop double-click
+
+    let lastCardTapTime = 0;
+    card.addEventListener('touchend', function(e) { // Mobile double-tap
+      const currentTime = Date.now();
+      const tapLength = currentTime - lastCardTapTime;
+      if (tapLength > 0 && tapLength < 300) {
+        lastCardTapTime = 0;
+        toggleFlip.call(this, e);
+      } else {
+        lastCardTapTime = currentTime;
+      }
+    });
+
+
+
+
+
   });
 
   // Click on overlay to close flipped card
