@@ -755,16 +755,44 @@ function Zellercongruence(day, month, year)
         }
 }
 
+function highlightWeekdayForDate(day, month, year) {
+  const weekdays = document.querySelectorAll('#calendar .weekday');
+  weekdays.forEach(el => el.classList.remove('active-weekday'));
+  if (!day || !month || !year) return;
+
+  const dow = Zellercongruence(day, month, year);
+  // Zellercongruence returns 1..6 for Mon..Sat, and 0 for Sun.
+  // The weekday elements in #calendar are ordered: 0:'一', 1:'二', 2:'三', 3:'四', 4:'五', 5:'六', 6:'日'
+  const colIndex = dow === 0 ? 6 : dow - 1;
+  if (weekdays[colIndex]) {
+    weekdays[colIndex].classList.add('active-weekday');
+  }
+}
+
+function clearWeekdayHighlight() {
+  const weekdays = document.querySelectorAll('#calendar .weekday');
+  weekdays.forEach(el => el.classList.remove('active-weekday'));
+}
+
 function addEventListeners(dayElement, btn, day, month, year, date) {
+  const frontFace = dayElement.querySelector ? dayElement.querySelector('.card-face.day') : null;
+
   function handleMouseOver() {
     showTooltip(date);
     if (date == '999') {
       hideTooltip();
+      clearWeekdayHighlight();
+    } else {
+      highlightWeekdayForDate(day, month, year);
     }
     highlightAdditionalHoliday();
   }
 
   function handleMouseOut() {
+    clearWeekdayHighlight();
+    document.querySelectorAll('.card-face.day.active-day, .card.active-card').forEach(el => {
+      el.classList.remove('active-day', 'active-card');
+    });
     highlightSelectedName(temp_name);
     if (window.nameWheelPicker && temp_name) {
       window.nameWheelPicker.setValue(temp_name, false);
@@ -779,12 +807,19 @@ function addEventListeners(dayElement, btn, day, month, year, date) {
 
   // Touch events (for mobile)
   dayElement.addEventListener('touchstart', (event) => {
+    document.querySelectorAll('.card-face.day.active-day, .card.active-card').forEach(el => {
+      el.classList.remove('active-day', 'active-card');
+    });
+    if (frontFace && date != '999') {
+      frontFace.classList.add('active-day');
+      dayElement.classList.add('active-card');
+    }
     handleMouseOver();
     event.preventDefault();  // Prevents triggering mouse events after touch
   });
 
   dayElement.addEventListener('touchend', (event) => {
-    event.preventDefault();
+    event.preventDefault();  // Prevents synthetic mouse events on mobile while keeping tooltip visible
   });
 }
 
@@ -800,6 +835,11 @@ document.addEventListener('touchstart', (event) => {
     return;
   }
 
+  clearWeekdayHighlight();
+  document.querySelectorAll('.card-face.day.active-day, .card.active-card').forEach(el => {
+    el.classList.remove('active-day', 'active-card');
+  });
+
   if (tooltip && tooltip.style.display === 'block') {
     highlightSelectedName(temp_name);
     if (window.nameWheelPicker && temp_name) {
@@ -809,7 +849,6 @@ document.addEventListener('touchstart', (event) => {
     hideTooltip();
   }
 }, { passive: true });
-
 function renderHeaderCellContent(y, m, d, showFullDate = true) {
   const headerCell = document.querySelector('.header-cell');
   if (!headerCell) return;
@@ -3492,9 +3531,6 @@ function setupCardFlip() {
   
     // Add both event listeners for desktop and mobile support
     card.addEventListener('dblclick', toggleFlip);  // Desktop double-click
-    //card.addEventListener('touchend', toggleFlip);  // Mobile tap
-        // Add both event listeners for desktop and mobile support
-    card.addEventListener('dblclick', toggleFlip);  // Desktop double-click
 
     let lastCardTapTime = 0;
     card.addEventListener('touchend', function(e) { // Mobile double-tap
@@ -3507,11 +3543,6 @@ function setupCardFlip() {
         lastCardTapTime = currentTime;
       }
     });
-
-
-
-
-
   });
 
   // Click on overlay to close flipped card
