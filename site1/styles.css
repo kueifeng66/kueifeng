@@ -1,7 +1,7 @@
   :root {
     /* intensity 0..1 */
     --light-intensity: 0.5;
-    --bg-image: url('bg.jpg'); /* change path if needed */
+    --bg-image: none;
   }
 
 
@@ -1597,4 +1597,15 @@ body {
     border-radius:8px;
     font-size:14px;
     backdrop-filter: blur(4px);
+  }
+
+
+  .airport-bg-frame {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+    pointer-events: none;
+    z-index: 0;
   }

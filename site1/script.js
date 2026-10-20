@@ -318,7 +318,7 @@ const dutySchedule = {
 "2026-10-16": "S: 黃榮國 A: 呂明峯 N: 王金誠 C: 官郁庭 R: 陳志偉 T: 林宏儒",
 "2026-10-17": "S: 詹文欽 A: 洪柜峰 N: 許敦智 C: 方振彬 R: 林森發 T: 羅應順",
 "2026-10-18": "S: 黃榮國 A: 劉暐丞 N: 彭偉慎 C: 秦桔萬 R: 余金原 T: 黃經洲",
-"2026-10-19": "S: 范振宇 A: 呂明峯 N: 黃金暄_王瑞發 C: 張日曜 R: 劉錦郎 T: 林宏儒",
+"2026-10-19": "S: 范振宇 A: 呂明峯 N: 王瑞發 C: 張日曜 R: 劉錦郎 T: 林宏儒",
 "2026-10-20": "S: 黃經洲 A: 劉暐丞 N: 許敦智 C: 方振彬 R: 余金原 T: 羅應順",
 "2026-10-21": "S: 黃榮國 A: 邱冠霖 N: 王金誠 C: 陳信憲 R: 陳志偉 T: 洪柜峰",
 "2026-10-22": "S: 許敦智 A: 林宏儒 N: 黃金暄 C: 秦桔萬 R: 劉錦郎 T: 呂明峯",
@@ -2791,50 +2791,50 @@ function fetchWeather() {
 
      
       if (weatherCondition ==='Rain') {
-        document.body.style.background = 'url(bg.png)';
+        // Keep airport.html 3D background visible
         document.body.style.backgroundSize= 'cover';
         document.body.style.backgroundPosition= 'center';
         ch_weather='雨天';
         
       } else if (weatherCondition === 'Clouds' && humidity > 80) {
-        document.body.style.background = 'url(bg.png)';
+        // Keep airport.html 3D background visible
         document.body.style.backgroundSize= 'cover';
         document.body.style.backgroundPosition= 'center';
         ch_weather='陰天';
         
       } else if (weatherCondition === 'Drizzle') {
-        document.body.style.background = 'url(bg.png)';
+        // Keep airport.html 3D background visible
         document.body.style.backgroundSize= 'cover';
         document.body.style.backgroundPosition= 'center';
         ch_weather='毛毛雨';
         
       } else if (weatherCondition === 'Thunderstorm') {
-        document.body.style.background = 'url(bg.png)';
+        // Keep airport.html 3D background visible
         document.body.style.backgroundSize= 'cover';
         document.body.style.backgroundPosition= 'center';
         ch_weather='雷雨';
         
       } else if (weatherCondition === 'Squall') {
-        document.body.style.background = 'url(bg.png)';
+        // Keep airport.html 3D background visible
         document.body.style.backgroundSize= 'cover';
         document.body.style.backgroundPosition= 'center';
         ch_weather='狂風暴雨';
         
       } else if (weatherCondition === 'Mist') {
-        document.body.style.background = 'url(bg.png)';
+        // Keep airport.html 3D background visible
         document.body.style.backgroundSize= 'cover';
         document.body.style.backgroundPosition= 'center';
         ch_weather='濛濛有霧';
         
       } else {
       
-        document.body.style.background = 'url(bg.png)';
+        // Keep airport.html 3D background visible
         document.body.style.backgroundSize= 'cover';
         document.body.style.backgroundPosition= 'center';
         ch_weather='晴天';
       }
       if(windSpeed > 63) {
-        document.body.style.background = 'url(typhoon.png)';
+        // Keep airport.html 3D background visible
         document.body.style.backgroundSize= 'cover';
         document.body.style.backgroundPosition= 'center';
         ch_weather='颱風天';

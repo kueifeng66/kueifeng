@@ -1,0 +1,1810 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Taiwan Taoyuan International Airport New ATC Tower Project - Realistic 3D Visualization</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      background-color: #87b5d8;
+      font-family: 'Inter', sans-serif;
+      user-select: none;
+    }
+    .mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .glass-panel {
+      background: rgba(15, 23, 42, 0.78);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+    }
+    @keyframes pulse-ring {
+      0% { transform: scale(0.85); opacity: 0.9; }
+      70% { transform: scale(1.75); opacity: 0; }
+      100% { transform: scale(1.75); opacity: 0; }
+    }
+    .pulse-dot::before {
+      content: '';
+      position: absolute;
+      inset: -4px;
+      border-radius: 9999px;
+      background-color: #38bdf8;
+      animation: pulse-ring 2s infinite;
+    }
+    body.bg-only header,
+    body.bg-only #wind-diagram,
+    body.bg-only #info-card,
+    body.bg-only footer {
+      display: none !important;
+    }
+  </style>
+
+  <!-- Import Map for Three.js & Addons -->
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+      }
+    }
+  </script>
+</head>
+<body class="text-slate-100 antialiased">
+  <script>
+    if (window.self !== window.top || new URLSearchParams(window.location.search).has('bg')) {
+      document.body.classList.add('bg-only');
+    }
+  </script>
+
+  <!-- 3D WebGL Canvas Container -->
+  <div id="canvas-container" class="fixed inset-0 z-0"></div>
+
+  <!-- Top Telemetry & ANWS Project Header -->
+  <header class="fixed top-4 left-4 right-4 z-10 flex flex-wrap items-center justify-between gap-3 pointer-events-none">
+    <!-- Left Location Badge -->
+    <div class="glass-panel rounded-2xl px-5 py-3 pointer-events-auto flex items-center gap-4">
+      <div class="relative flex items-center justify-center w-3.5 h-3.5">
+        <span class="pulse-dot relative inline-flex rounded-full h-3 w-3 bg-sky-400"></span>
+      </div>
+      <div>
+        <div class="flex items-center gap-2.5">
+          <span class="mono text-[11px] font-semibold uppercase tracking-widest px-2 py-0.5 rounded bg-sky-500/25 text-sky-300 border border-sky-400/30">ANWS • CAA MOTC</span>
+          <h1 class="text-sm sm:text-base md:text-lg font-bold tracking-tight text-white">Taiwan Taoyuan Int'l Airport New ATC Tower Complex</h1>
+        </div>
+        <div class="mono text-[11px] text-slate-300 mt-0.5 flex flex-wrap items-center gap-x-4 gap-y-0.5">
+          <span>桃園國際機場新塔臺園區</span>
+          <span>HEIGHT: <strong class="text-sky-300">65.0m (Cab 360°)</strong></span>
+          <span>DESIGN: <strong class="text-amber-300">Yehliu "Queen's Head"</strong></span>
+          <span id="metar-readout" class="hidden xl:inline text-emerald-300">RCTP 05012KT 9999 FEW025 26/18 Q1015</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Interactive Controls -->
+    <div class="glass-panel rounded-2xl p-2 pointer-events-auto flex flex-wrap items-center gap-2">
+      <!-- Lighting Mode Selector -->
+      <div class="flex items-center bg-slate-950/70 rounded-xl p-1 border border-slate-700/60">
+        <button data-mode="day" class="mode-btn px-3 py-1.5 rounded-lg text-xs font-semibold transition-all bg-sky-500/30 text-sky-200 border border-sky-400/40">
+          ☀️ Daylight (Video)
+        </button>
+        <button data-mode="golden" class="mode-btn px-3 py-1.5 rounded-lg text-xs font-semibold transition-all text-slate-300 hover:text-white">
+          🌅 Sunset Glow
+        </button>
+        <button data-mode="night" class="mode-btn px-3 py-1.5 rounded-lg text-xs font-semibold transition-all text-slate-300 hover:text-white">
+          🌃 Night Ops
+        </button>
+      </div>
+
+      <!-- Top-View Cross-Section Diagram Overlay Toggle (from YouTube 1:18) -->
+      <button id="toggle-diagram" class="px-3 py-2 rounded-xl text-xs font-semibold bg-slate-800/80 text-slate-200 border border-slate-600/60 hover:bg-slate-700 transition-all flex items-center gap-1.5" title="Show Monsoon Aerodynamic Design Overlay from Video">
+        💨 Wind Design
+      </button>
+
+      <!-- Radar Sweep Toggle -->
+      <button id="toggle-radar" class="px-3 py-2 rounded-xl text-xs font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-400/40 opacity-60 hover:opacity-100 transition-all flex items-center gap-1.5">
+        <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+        ASDE Beam
+      </button>
+
+      <!-- Auto-Orbit Toggle -->
+      <button id="toggle-orbit" class="px-3 py-2 rounded-xl text-xs font-semibold bg-sky-500/20 text-sky-300 border border-sky-400/40 hover:bg-sky-500/30 transition-all">
+        🔄 Orbit
+      </button>
+
+      <!-- Reset Camera -->
+      <button id="reset-cam" class="px-3 py-2 rounded-xl text-xs font-semibold bg-slate-800/80 text-slate-200 border border-slate-700 hover:bg-slate-700 transition-all" title="Reset Camera View">
+        🎯 Reset
+      </button>
+    </div>
+  </header>
+
+  <!-- Aerodynamic "Queen's Head" Cross-Section Overlay (Matches YouTube Video 1:18 Diagram) -->
+  <div id="wind-diagram" class="fixed top-24 left-4 z-10 w-80 glass-panel rounded-2xl p-4 transition-all duration-300 hidden pointer-events-auto">
+    <div class="flex items-center justify-between border-b border-slate-700/70 pb-2 mb-3">
+      <span class="mono text-xs font-semibold text-sky-300 uppercase tracking-wider">ATC Tower Top View • Monsoon Shield</span>
+      <button id="close-diagram" class="text-slate-400 hover:text-white text-xs">✕</button>
+    </div>
+    <div class="flex items-center justify-between gap-3 bg-slate-900/80 rounded-xl p-3 border border-slate-800">
+      <svg viewBox="0 0 220 110" class="w-full h-24">
+        <!-- Center dashed axis -->
+        <line x1="90" y1="8" x2="90" y2="102" stroke="#94a3b8" stroke-width="1" stroke-dasharray="3,3" />
+        <!-- Grey West Cladding Crescent -->
+        <path d="M90,15 A40,40 0 0,0 90,95 Z" fill="#78828e" stroke="#f59e0b" stroke-width="2.5" />
+        <!-- White East Cladding Crescent -->
+        <path d="M90,22 A33,33 0 0,1 90,88 Z" fill="#f8fafc" />
+        <!-- Red Structural Core Shaft -->
+        <circle cx="90" cy="55" r="20" fill="#991b1b" />
+        <!-- Outer White Deflection Arc -->
+        <path d="M88,8 A47,47 0 0,1 88,102" fill="none" stroke="#ffffff" stroke-width="3.5" stroke-linecap="round" />
+        <!-- Prevailing Wind Arrows from East/Northeast -->
+        <path d="M205,30 Q175,36 150,24" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round" />
+        <polygon points="145,21 156,20 151,30" fill="#ffffff" />
+        <line x1="205" y1="55" x2="146" y2="55" stroke="#ffffff" stroke-width="3" stroke-linecap="round" />
+        <polygon points="140,55 151,49 151,61" fill="#ffffff" />
+        <path d="M205,80 Q175,74 150,86" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round" />
+        <polygon points="145,89 151,80 156,90" fill="#ffffff" />
+      </svg>
+    </div>
+    <p class="text-[11px] text-slate-300 mt-2.5 leading-relaxed">
+      As shown in the ANWS video: the eccentric upper design above the 6th floor streamlines the northeast monsoon windward side (white shell) while minimizing window mullion glare on the metallic-grey side.
+    </p>
+  </div>
+
+  <!-- Right Side Landmark Info Card Overlay -->
+  <aside id="info-card" class="fixed top-24 right-4 z-10 w-80 sm:w-96 glass-panel rounded-2xl p-5 transition-all duration-300 transform translate-x-0 opacity-100 pointer-events-auto">
+    <div class="flex items-start justify-between gap-2 border-b border-slate-700/70 pb-3">
+      <div>
+        <span id="card-badge" class="mono text-[11px] uppercase tracking-widest px-2 py-0.5 rounded bg-sky-500/25 text-sky-300 border border-sky-400/30">
+          ANWS Documentary View
+        </span>
+        <h2 id="card-title" class="text-lg font-bold text-white mt-1.5">New 65m ATC Tower ("Queen's Head")</h2>
+      </div>
+      <button id="close-card" class="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800/60 transition">
+        ✕
+      </button>
+    </div>
+
+    <p id="card-desc" class="text-xs sm:text-sm text-slate-200 leading-relaxed mt-3">
+      Inspired by Yehliu Geopark's "Queen's Head", the 65-meter New ATC Tower features a pure white east shell (facing T1) and a metallic grey west shell (facing T2) sculpted via slip-form construction, rising above the curved ANWS operations podium complex.
+    </p>
+
+    <div id="card-stats" class="grid grid-cols-2 gap-2.5 mt-4 pt-3 border-t border-slate-700/70 mono text-xs">
+      <div class="bg-slate-900/75 p-2.5 rounded-xl border border-slate-800">
+        <span class="text-slate-400 block text-[10px]">TOWER HEIGHT</span>
+        <span id="stat-1" class="text-sky-300 font-semibold text-sm">65.0 Meters</span>
+      </div>
+      <div class="bg-slate-900/75 p-2.5 rounded-xl border border-slate-800">
+        <span class="text-slate-400 block text-[10px]">10F CAB AREA</span>
+        <span id="stat-2" class="text-emerald-300 font-semibold text-sm">Ø 14m (360° View)</span>
+      </div>
+      <div class="bg-slate-900/75 p-2.5 rounded-xl border border-slate-800">
+        <span class="text-slate-400 block text-[10px]">DESIGN MOTIF</span>
+        <span id="stat-3" class="text-amber-300 font-semibold text-sm">Yehliu Queen's Head</span>
+      </div>
+      <div class="bg-slate-900/75 p-2.5 rounded-xl border border-slate-800">
+        <span class="text-slate-400 block text-[10px]">AUTOMATION</span>
+        <span id="stat-4" class="text-purple-300 font-semibold text-sm">15 TAS Systems</span>
+      </div>
+    </div>
+
+    <div class="mt-4 flex items-center justify-between text-[11px] text-slate-300">
+      <span>💡 Click any 3D structure or camera preset below</span>
+      <span class="mono text-sky-400">PBR REALTIME</span>
+    </div>
+  </aside>
+
+  <!-- Bottom Quick-Select Camera & Landmark Bar -->
+  <footer class="fixed bottom-4 left-4 right-4 z-10 flex flex-wrap items-center justify-between gap-3 pointer-events-none">
+    <div class="glass-panel rounded-2xl p-2 pointer-events-auto flex items-center gap-1.5 overflow-x-auto max-w-full">
+      <span class="mono text-[11px] text-slate-300 px-2.5 hidden md:inline">CAMERA SHOTS:</span>
+      <button data-target="hero" class="landmark-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-sky-500/30 text-sky-200 border border-sky-400/40 transition whitespace-nowrap">
+        🎬 Video Hero Shot (Entrance)
+      </button>
+      <button data-target="newTower" class="landmark-btn px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-200 hover:bg-slate-800/70 transition whitespace-nowrap">
+        🗼 New 65m Queen's Head
+      </button>
+      <button data-target="baseBuilding" class="landmark-btn px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-200 hover:bg-slate-800/70 transition whitespace-nowrap">
+        🏢 ANWS Podium & Courtyard
+      </button>
+      <button data-target="aerial" class="landmark-btn px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-200 hover:bg-slate-800/70 transition whitespace-nowrap">
+        🚁 Aerial Campus & T2 Apron
+      </button>
+      <button data-target="cabInterior" class="landmark-btn px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-200 hover:bg-slate-800/70 transition whitespace-nowrap">
+        👁️ 10F 360° Cab View
+      </button>
+    </div>
+
+    <div class="glass-panel rounded-xl px-3.5 py-2 pointer-events-auto hidden xl:flex items-center gap-4 mono text-xs text-slate-300">
+      <span>LMB: Rotate</span>
+      <span>RMB: Pan</span>
+      <span>Scroll: Zoom</span>
+      <span>Click 3D Building: Inspect</span>
+    </div>
+  </footer>
+
+  <!-- Main Three.js Application Script -->
+  <script type="module">
+    import * as THREE from 'three';
+    import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+    // --- LANDMARK & VIDEO SHOT METADATA ---
+    const LANDMARKS = {
+      hero: {
+        badge: 'Hero Shot • YouTube 1:02',
+        title: 'New 65m ATC Tower ("Queen\'s Head")',
+        desc: 'Framed from the ANWS Campus entrance: the 65-meter New ATC Tower rises above the curved white and warm terracotta-louvered operations podium complex, serving as the modern guardian of Taiwan\'s gateway.',
+        stats: ['65.0 Meters', 'Dec 16, 2019', 'Yehliu Queen\'s Head', 'Slip-Form Shaft'],
+        camPos: new THREE.Vector3(-4, 11.5, 64),
+        lookAt: new THREE.Vector3(2, 32, 4)
+      },
+      newTower: {
+        badge: 'Aerodynamic Architecture • YouTube 1:18',
+        title: 'New ATC Tower (Dual-Tone Cladding)',
+        desc: 'Designed by Habitech Architects & ADPi, the upper shaft flares eccentrically above the 6th floor. The pure white eastern shell deflects strong northeast monsoon winds, while the metallic iron-grey western shell houses multi-tier observation windows and supports the 14m-diameter 10F control cab.',
+        stats: ['65.0m Total Height', 'Dual-Tone Cladding', 'Ø 14m Control Cab', '15 TAS Systems'],
+        camPos: new THREE.Vector3(38, 48, 52),
+        lookAt: new THREE.Vector3(0, 44, 0)
+      },
+      baseBuilding: {
+        badge: 'ANWS Campus • YouTube 1:02 & 1:48',
+        title: 'ANWS Operations Podium & Courtyard',
+        desc: 'The 11,726 m² low-rise podium wraps around a landscaped inner courtyard featuring geometric stone-and-lawn pathways, the "Guardian of the Sky" public art sculpture, and a covered walkway. Its curved white facade with warm terracotta vertical sun-louvers houses administration, meteorology, redundant power/HVAC, and the 360° Tower Simulator.',
+        stats: ['11,726 m² Podium', '360° VR Simulator', 'Courtyard Garden', '24/7 Dual Power'],
+        camPos: new THREE.Vector3(28, 32, 46),
+        lookAt: new THREE.Vector3(4, 7, 12)
+      },
+      aerial: {
+        badge: 'Masterplan Overview • YouTube 1:52 & 3:28',
+        title: 'Aerial Campus, Parking & Terminal 2 Apron',
+        desc: 'High-angle overview of the ATC Tower Park: showing the 65m Queen\'s Head tower, podium wings, landscaped courtyard, tree-lined staff parking lots, Terminal 2 concourses with parked wide-body airliners, and parallel runways 05L/23R & 05R/23L.',
+        stats: ['05L/23R & 05R/23L', '626K+ Annual Flights', 'Central Spine Site', '360° Unobstructed'],
+        camPos: new THREE.Vector3(-68, 78, 98),
+        lookAt: new THREE.Vector3(-12, 12, -10)
+      },
+      cabInterior: {
+        badge: '10th Floor Operations • YouTube 2:15 & 3:12',
+        title: '360° Control Cab & TAS Workstations',
+        desc: 'Inside the 10th-floor 360° ATC cab at 55 meters above ground: controllers operate the integrated Tower Automation System (TAS), controlling airfield ground lighting, ILS, A-CDM flight strips, and surface movement radar on unified displays.',
+        stats: ['55m Eye Level', '360° Slanted Glass', 'Integrated TAS', 'Zero Blind Spots'],
+        camPos: new THREE.Vector3(2.5, 55.2, 3.8),
+        lookAt: new THREE.Vector3(-45, 24, -65)
+      }
+    };
+
+    // --- SCENE, CAMERA & RENDERER SETUP ---
+    const container = document.getElementById('canvas-container');
+    const scene = new THREE.Scene();
+    scene.fog = new THREE.FogExp2(0xc8dff0, 0.00095);
+
+    const camera = new THREE.PerspectiveCamera(42, window.innerWidth / window.innerHeight, 0.4, 1800);
+    camera.position.copy(LANDMARKS.hero.camPos);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.08;
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+    container.appendChild(renderer.domElement);
+
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.05;
+    controls.maxPolarAngle = Math.PI / 2 - 0.012;
+    controls.minDistance = 2.0;
+    controls.maxDistance = 460;
+    controls.target.copy(LANDMARKS.hero.lookAt);
+    controls.autoRotate = document.body.classList.contains('bg-only');
+    controls.autoRotateSpeed = 0.35;
+
+    // --- PROCEDURAL ENVIRONMENT MAP (IBL FOR REALISTIC GLASS & METALS) ---
+    function generateEnvironmentMap(topHex, horizonHex, groundHex) {
+      const pmrem = new THREE.PMREMGenerator(renderer);
+      const envScene = new THREE.Scene();
+      const envGeo = new THREE.SphereGeometry(50, 32, 16);
+      const envMat = new THREE.ShaderMaterial({
+        side: THREE.BackSide,
+        uniforms: {
+          uTop: { value: new THREE.Color(topHex) },
+          uHorizon: { value: new THREE.Color(horizonHex) },
+          uGround: { value: new THREE.Color(groundHex) }
+        },
+        vertexShader: `
+          varying vec3 vPos;
+          void main() {
+            vPos = position;
+            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+          }
+        `,
+        fragmentShader: `
+          uniform vec3 uTop;
+          uniform vec3 uHorizon;
+          uniform vec3 uGround;
+          varying vec3 vPos;
+          void main() {
+            float h = normalize(vPos).y;
+            vec3 col = h >= 0.0
+              ? mix(uHorizon, uTop, pow(h, 0.6))
+              : mix(uHorizon, uGround, min(abs(h) * 3.0, 1.0));
+            gl_FragColor = vec4(col, 1.0);
+          }
+        `
+      });
+      envScene.add(new THREE.Mesh(envGeo, envMat));
+      const rt = pmrem.fromScene(envScene, 0.04);
+      pmrem.dispose();
+      envGeo.dispose();
+      envMat.dispose();
+      return rt.texture;
+    }
+
+    // --- PROCEDURAL ARCHITECTURAL & AIRFIELD TEXTURES ---
+    function createCladdingTexture(baseHex, seamHex, isWeathered = false) {
+      const canvas = document.createElement('canvas');
+      canvas.width = 512;
+      canvas.height = 512;
+      const ctx = canvas.getContext('2d');
+      ctx.fillStyle = baseHex;
+      ctx.fillRect(0, 0, 512, 512);
+
+      // Subtle architectural panel grid / slip-form horizontal lift marks
+      ctx.strokeStyle = seamHex;
+      ctx.lineWidth = 1;
+      for (let y = 0; y < 512; y += 32) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(512, y);
+        ctx.stroke();
+      }
+      for (let x = 0; x < 512; x += 64) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, 512);
+        ctx.stroke();
+      }
+
+      if (isWeathered) {
+        for (let i = 0; i < 600; i++) {
+          ctx.fillStyle = i % 2 === 0 ? 'rgba(0,0,0,0.025)' : 'rgba(255,255,255,0.025)';
+          ctx.fillRect(Math.random() * 512, Math.random() * 512, 3 + Math.random() * 10, 8 + Math.random() * 24);
+        }
+      }
+
+      const tex = new THREE.CanvasTexture(canvas);
+      tex.wrapS = THREE.RepeatWrapping;
+      tex.wrapT = THREE.RepeatWrapping;
+      tex.repeat.set(3, 6);
+      tex.colorSpace = THREE.SRGBColorSpace;
+      return tex;
+    }
+
+    function createRibbonWindowTexture() {
+      const canvas = document.createElement('canvas');
+      canvas.width = 1024;
+      canvas.height = 256;
+      const ctx = canvas.getContext('2d');
+      // Dark reflective glass base
+      const grad = ctx.createLinearGradient(0, 0, 0, 256);
+      grad.addColorStop(0, '#1e293b');
+      grad.addColorStop(0.5, '#334155');
+      grad.addColorStop(1, '#0f172a');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, 1024, 256);
+
+      // Vertical mullions
+      ctx.fillStyle = '#94a3b8';
+      for (let x = 0; x < 1024; x += 32) {
+        ctx.fillRect(x, 0, 4, 256);
+      }
+      // Horizontal transoms
+      ctx.fillRect(0, 0, 1024, 8);
+      ctx.fillRect(0, 124, 1024, 6);
+      ctx.fillRect(0, 248, 1024, 8);
+
+      const tex = new THREE.CanvasTexture(canvas);
+      tex.wrapS = THREE.RepeatWrapping;
+      tex.wrapT = THREE.ClampToEdgeWrapping;
+      tex.colorSpace = THREE.SRGBColorSpace;
+      return tex;
+    }
+
+    function createCourtyardTexture() {
+      // Matches frame_1_2_2.jpg: geometric diagonal stone & grass stripes in the ANWS inner courtyard
+      const canvas = document.createElement('canvas');
+      canvas.width = 512;
+      canvas.height = 512;
+      const ctx = canvas.getContext('2d');
+      ctx.fillStyle = '#3f6a34';
+      ctx.fillRect(0, 0, 512, 512);
+
+      // Natural grass variation
+      for (let i = 0; i < 1500; i++) {
+        ctx.fillStyle = i % 2 === 0 ? 'rgba(85, 135, 55, 0.35)' : 'rgba(45, 85, 35, 0.35)';
+        ctx.fillRect(Math.random() * 512, Math.random() * 512, 6, 6);
+      }
+
+      // Striped stone walkways (characteristic of the ANWS courtyard in the video)
+      ctx.save();
+      ctx.strokeStyle = '#d6d3c4';
+      ctx.lineWidth = 6;
+      for (let offset = -256; offset < 768; offset += 16) {
+        ctx.beginPath();
+        ctx.moveTo(offset, 220);
+        ctx.lineTo(offset + 180, 512);
+        ctx.stroke();
+      }
+      ctx.restore();
+
+      // Secondary curved stone path
+      ctx.strokeStyle = '#e5e2d5';
+      ctx.lineWidth = 28;
+      ctx.beginPath();
+      ctx.moveTo(40, 80);
+      ctx.quadraticCurveTo(250, 200, 480, 320);
+      ctx.stroke();
+
+      const tex = new THREE.CanvasTexture(canvas);
+      tex.colorSpace = THREE.SRGBColorSpace;
+      return tex;
+    }
+
+    function createRunwayTexture() {
+      const canvas = document.createElement('canvas');
+      canvas.width = 2048;
+      canvas.height = 256;
+      const ctx = canvas.getContext('2d');
+      // Realistic weathered asphalt-concrete surface
+      ctx.fillStyle = '#363b42';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Concrete slab joints & subtle noise
+      ctx.strokeStyle = 'rgba(20, 24, 30, 0.35)';
+      ctx.lineWidth = 1;
+      for (let x = 0; x < canvas.width; x += 32) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, canvas.height);
+        ctx.stroke();
+      }
+
+      // Rubber tire touchdown skid marks
+      const skidGrad = ctx.createLinearGradient(0, 0, canvas.width, 0);
+      skidGrad.addColorStop(0, 'rgba(15,17,20,0.1)');
+      skidGrad.addColorStop(0.18, 'rgba(15,17,20,0.65)');
+      skidGrad.addColorStop(0.5, 'rgba(15,17,20,0.22)');
+      skidGrad.addColorStop(0.82, 'rgba(15,17,20,0.65)');
+      skidGrad.addColorStop(1, 'rgba(15,17,20,0.1)');
+      ctx.fillStyle = skidGrad;
+      ctx.fillRect(0, 68, canvas.width, 40);
+      ctx.fillRect(0, 148, canvas.width, 40);
+
+      // Crisp aviation white markings
+      ctx.fillStyle = '#f1f5f9';
+      // Side edge stripes
+      ctx.fillRect(0, 12, canvas.width, 5);
+      ctx.fillRect(0, 239, canvas.width, 5);
+
+      // Centerline dashes
+      for (let x = 180; x < canvas.width - 180; x += 90) {
+        ctx.fillRect(x, 124, 52, 8);
+      }
+
+      // Threshold piano keys (both ends)
+      for (let y = 26; y < 230; y += 18) {
+        if (Math.abs(y - 128) < 12) continue;
+        ctx.fillRect(36, y, 75, 10);
+        ctx.fillRect(canvas.width - 111, y, 75, 10);
+      }
+
+      // Aiming point blocks (1000ft markers)
+      ctx.fillRect(310, 48, 95, 34);
+      ctx.fillRect(310, 174, 95, 34);
+      ctx.fillRect(canvas.width - 405, 48, 95, 34);
+      ctx.fillRect(canvas.width - 405, 174, 95, 34);
+
+      // Touchdown zone bars
+      for (const dx of [175, 235, 445, 510]) {
+        ctx.fillRect(dx, 58, 42, 18);
+        ctx.fillRect(dx, 180, 42, 18);
+        ctx.fillRect(canvas.width - dx - 42, 58, 42, 18);
+        ctx.fillRect(canvas.width - dx - 42, 180, 42, 18);
+      }
+
+      const tex = new THREE.CanvasTexture(canvas);
+      tex.anisotropy = 16;
+      tex.colorSpace = THREE.SRGBColorSpace;
+      return tex;
+    }
+
+    function createHighwaySignTexture() {
+      // Matches the green Taiwan highway sign in the foreground of frame_0_1.jpg
+      const canvas = document.createElement('canvas');
+      canvas.width = 256;
+      canvas.height = 160;
+      const ctx = canvas.getContext('2d');
+      ctx.fillStyle = '#047857';
+      ctx.fillRect(0, 0, 256, 160);
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = 6;
+      ctx.strokeRect(6, 6, 244, 148);
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 22px sans-serif';
+      ctx.fillText('↑ 航站北路 Term. N. Rd', 20, 48);
+      ctx.fillText('← 第二航廈 Terminal 2', 20, 92);
+      ctx.fillText('→ 塔臺園區 ATC Complex', 20, 134);
+      const tex = new THREE.CanvasTexture(canvas);
+      tex.colorSpace = THREE.SRGBColorSpace;
+      return tex;
+    }
+
+    // --- REALISTIC SKY DOME WITH VOLUMETRIC-STYLE CUMULUS CLOUDS ---
+    const skyGeo = new THREE.SphereGeometry(950, 48, 32);
+    const skyMat = new THREE.ShaderMaterial({
+      side: THREE.BackSide,
+      uniforms: {
+        topColor: { value: new THREE.Color(0x165b9e) },
+        horizonColor: { value: new THREE.Color(0xa6d1f2) },
+        bottomColor: { value: new THREE.Color(0x6b7c85) },
+        cloudColor: { value: new THREE.Color(0xffffff) },
+        cloudShadowColor: { value: new THREE.Color(0x8da9c4) },
+        sunDir: { value: new THREE.Vector3(0.55, 0.65, 0.45).normalize() },
+        uTime: { value: 0.0 },
+        cloudOpacity: { value: 0.92 }
+      },
+      vertexShader: `
+        varying vec3 vWorldPos;
+        void main() {
+          vec4 wp = modelMatrix * vec4(position, 1.0);
+          vWorldPos = wp.xyz;
+          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+        }
+      `,
+      fragmentShader: `
+        uniform vec3 topColor;
+        uniform vec3 horizonColor;
+        uniform vec3 bottomColor;
+        uniform vec3 cloudColor;
+        uniform vec3 cloudShadowColor;
+        uniform vec3 sunDir;
+        uniform float uTime;
+        uniform float cloudOpacity;
+        varying vec3 vWorldPos;
+
+        float hash(vec2 p) {
+          return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453123);
+        }
+        float noise(vec2 p) {
+          vec2 i = floor(p);
+          vec2 f = fract(p);
+          f = f * f * (3.0 - 2.0 * f);
+          float a = hash(i);
+          float b = hash(i + vec2(1.0, 0.0));
+          float c = hash(i + vec2(0.0, 1.0));
+          float d = hash(i + vec2(1.0, 1.0));
+          return mix(mix(a, b, f.x), mix(c, d, f.x), f.y);
+        }
+        float fbm(vec2 p) {
+          float v = 0.0;
+          float a = 0.5;
+          for (int i = 0; i < 5; i++) {
+            v += a * noise(p);
+            p *= 2.03;
+            a *= 0.5;
+          }
+          return v;
+        }
+
+        void main() {
+          vec3 dir = normalize(vWorldPos);
+          float h = dir.y;
+          vec3 col = mix(horizonColor, topColor, pow(clamp(h, 0.0, 1.0), 0.58));
+          if (h < 0.0) {
+            col = mix(horizonColor, bottomColor, min(abs(h) * 5.0, 1.0));
+          }
+
+          // Subtle solar halo
+          float sunAmt = max(dot(dir, sunDir), 0.0);
+          col += vec3(1.0, 0.95, 0.85) * pow(sunAmt, 18.0) * 0.25;
+          col += vec3(1.0, 0.98, 0.92) * smoothstep(0.9985, 0.9998, sunAmt) * 1.4;
+
+          // Cumulus cloud band near horizon & mid-sky (like thumb_max.jpg & frame_1_2.jpg)
+          if (h > 0.01 && h < 0.55) {
+            vec2 uv = dir.xz / (h + 0.14) * 1.35 + vec2(uTime * 0.008, 0.0);
+            float n = fbm(uv);
+            float n2 = fbm(uv * 2.4 - vec2(0.0, 0.35));
+            float cloudMask = smoothstep(0.46, 0.72, n * 0.75 + n2 * 0.35);
+            // Fade clouds softly at very low horizon and high zenith
+            cloudMask *= smoothstep(0.01, 0.08, h) * (1.0 - smoothstep(0.22, 0.52, h));
+            float lightGrad = smoothstep(0.35, 0.75, n2 + h * 0.6);
+            vec3 cCol = mix(cloudShadowColor, cloudColor, lightGrad);
+            col = mix(col, cCol, cloudMask * cloudOpacity);
+          }
+
+          gl_FragColor = vec4(col, 1.0);
+        }
+      `
+    });
+    const skyDome = new THREE.Mesh(skyGeo, skyMat);
+    scene.add(skyDome);
+
+    // --- LIGHTING SETUP ---
+    const ambientLight = new THREE.AmbientLight(0xdbeafe, 0.85);
+    scene.add(ambientLight);
+
+    const hemiLight = new THREE.HemisphereLight(0xe0f2fe, 0x4b5563, 0.75);
+    hemiLight.position.set(0, 150, 0);
+    scene.add(hemiLight);
+
+    const sunLight = new THREE.DirectionalLight(0xfffbeb, 3.2);
+    sunLight.position.set(120, 145, 95);
+    sunLight.castShadow = true;
+    sunLight.shadow.mapSize.width = 2048;
+    sunLight.shadow.mapSize.height = 2048;
+    sunLight.shadow.camera.near = 10;
+    sunLight.shadow.camera.far = 420;
+    const d = 145;
+    sunLight.shadow.camera.left = -d;
+    sunLight.shadow.camera.right = d;
+    sunLight.shadow.camera.top = d;
+    sunLight.shadow.camera.bottom = -d;
+    sunLight.shadow.bias = -0.0004;
+    scene.add(sunLight);
+
+    // Subtle interior light inside the 10F Cab
+    const cabPointLight = new THREE.PointLight(0xe0f2fe, 1.2, 35);
+    cabPointLight.position.set(0, 55.2, 0);
+    scene.add(cabPointLight);
+
+    // --- SHARED REALISTIC PBR MATERIALS ---
+    const whitePanelTex = createCladdingTexture('#f4f6f9', 'rgba(148, 163, 184, 0.22)', false);
+    const greyPanelTex = createCladdingTexture('#6c7582', 'rgba(30, 41, 59, 0.28)', false);
+    const ribbonWinTex = createRibbonWindowTexture();
+
+    const whiteCladdingMat = new THREE.MeshStandardMaterial({
+      map: whitePanelTex,
+      color: 0xffffff,
+      roughness: 0.32,
+      metalness: 0.12
+    });
+
+    const greyCladdingMat = new THREE.MeshStandardMaterial({
+      map: greyPanelTex,
+      color: 0xffffff,
+      roughness: 0.36,
+      metalness: 0.48
+    });
+
+    const darkFrameMat = new THREE.MeshStandardMaterial({
+      color: 0x262f3d,
+      roughness: 0.4,
+      metalness: 0.65
+    });
+
+    const ribbonWindowMat = new THREE.MeshStandardMaterial({
+      map: ribbonWinTex,
+      roughness: 0.15,
+      metalness: 0.75,
+      emissive: 0x38bdf8,
+      emissiveIntensity: 0.05
+    });
+
+    const cabGlassMat = new THREE.MeshPhysicalMaterial({
+      color: 0x1e3a4c,
+      emissive: 0x0284c7,
+      emissiveIntensity: 0.08,
+      roughness: 0.06,
+      metalness: 0.15,
+      transmission: 0.62,
+      ior: 1.52,
+      reflectivity: 0.9,
+      transparent: true,
+      opacity: 0.82
+    });
+
+    const warmLouverMat = new THREE.MeshStandardMaterial({
+      color: 0xb86b35, // Warm wood/terracotta sun-louvers seen in frame_3_2.jpg
+      roughness: 0.45,
+      metalness: 0.25
+    });
+
+    // --- INTERACTIVE GROUPS REGISTRY ---
+    const interactiveMeshes = [];
+    function registerInteractive(group, key) {
+      group.traverse((child) => {
+        if (child.isMesh) {
+          child.userData.landmarkKey = key;
+          interactiveMeshes.push(child);
+        }
+      });
+    }
+
+    // --- GROUND, APRONS, ROADS & LANDSCAPING ---
+    // 1. Outer Grass & Taoyuan Coastal Plain Base
+    const groundGeo = new THREE.CircleGeometry(850, 64);
+    const groundMat = new THREE.MeshStandardMaterial({
+      color: 0x456338,
+      roughness: 0.95,
+      metalness: 0.02
+    });
+    const ground = new THREE.Mesh(groundGeo, groundMat);
+    ground.rotation.x = -Math.PI / 2;
+    ground.receiveShadow = true;
+    scene.add(ground);
+
+    // 2. Concrete Apron Spine & Service Tarmac
+    const tarmacGeo = new THREE.PlaneGeometry(540, 155);
+    const tarmacMat = new THREE.MeshStandardMaterial({
+      color: 0x7b8187,
+      roughness: 0.82,
+      metalness: 0.05
+    });
+    const tarmac = new THREE.Mesh(tarmacGeo, tarmacMat);
+    tarmac.rotation.x = -Math.PI / 2;
+    tarmac.position.set(0, 0.04, 0);
+    tarmac.receiveShadow = true;
+    scene.add(tarmac);
+
+    // 3. ANWS Campus Green Grounds & Asphalt Perimeter Road
+    const campusRoadGeo = new THREE.PlaneGeometry(118, 86);
+    const asphaltMat = new THREE.MeshStandardMaterial({
+      color: 0x333942,
+      roughness: 0.85
+    });
+    const campusRoad = new THREE.Mesh(campusRoadGeo, asphaltMat);
+    campusRoad.rotation.x = -Math.PI / 2;
+    campusRoad.position.set(-10, 0.07, 14);
+    campusRoad.receiveShadow = true;
+    scene.add(campusRoad);
+
+    // Inner Courtyard Grass & Striped Stone Walkways (frame_1_2_2.jpg)
+    const courtyardTex = createCourtyardTexture();
+    const courtyardGeo = new THREE.PlaneGeometry(78, 56);
+    const courtyardMat = new THREE.MeshStandardMaterial({
+      map: courtyardTex,
+      roughness: 0.88
+    });
+    const courtyardMesh = new THREE.Mesh(courtyardGeo, courtyardMat);
+    courtyardMesh.rotation.x = -Math.PI / 2;
+    courtyardMesh.position.set(-8, 0.12, 14);
+    courtyardMesh.receiveShadow = true;
+    scene.add(courtyardMesh);
+
+    // Helper to create realistic lush trees around the campus & parking lots (frame_1_2_3.jpg)
+    const treeGroup = new THREE.Group();
+    scene.add(treeGroup);
+    const trunkMat = new THREE.MeshStandardMaterial({ color: 0x5c4033, roughness: 0.9 });
+    const foliageMat1 = new THREE.MeshStandardMaterial({ color: 0x2e5a27, roughness: 0.85 });
+    const foliageMat2 = new THREE.MeshStandardMaterial({ color: 0x3d7032, roughness: 0.85 });
+
+    function addTree(x, z, scale = 1.0) {
+      const t = new THREE.Group();
+      const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.18 * scale, 0.28 * scale, 1.8 * scale, 7), trunkMat);
+      trunk.position.y = 0.9 * scale;
+      trunk.castShadow = true;
+      t.add(trunk);
+
+      const crown1 = new THREE.Mesh(new THREE.DodecahedronGeometry(1.45 * scale, 1), foliageMat1);
+      crown1.position.set(0, 2.3 * scale, 0);
+      crown1.scale.set(1.1, 0.85, 1.1);
+      crown1.castShadow = true;
+      t.add(crown1);
+
+      const crown2 = new THREE.Mesh(new THREE.DodecahedronGeometry(1.05 * scale, 1), foliageMat2);
+      crown2.position.set(0.4 * scale, 2.9 * scale, 0.3 * scale);
+      crown2.castShadow = true;
+      t.add(crown2);
+
+      t.position.set(x, 0.1, z);
+      treeGroup.add(t);
+    }
+
+    // Populate courtyard, entrance road, and parking lot tree rows (matching frame_0_1 & frame_1_2_3)
+    const treeCoords = [
+      [-4, 18, 1.1], [5, 16, 0.95], [-16, 22, 1.2], [-22, 16, 1.0], [-32, 14, 1.1],
+      [-20, 38, 1.25], [-12, 42, 1.1], [2, 42, 1.0], [18, 38, 1.2], [-34, 34, 1.15]
+    ];
+    treeCoords.forEach(([x, z, s]) => addTree(x, z, s));
+    // Tree rows in the East & West Staff Parking Lots (seen in frame_1_2_3.jpg)
+    for (let z = -28; z <= 12; z += 8) {
+      addTree(32, z, 0.9);
+      addTree(44, z, 0.95);
+      addTree(-48, z, 0.9);
+    }
+
+    // --- 1. NEW ATC TOWER ("QUEEN'S HEAD" 65m - EXACT DUAL-TONE SCULPTED GEOMETRY) ---
+    // Matches thumb_max.jpg ("ATC Tower Top View"), frame_0_1.jpg, frame_3_2.jpg, frame_1_2_1.jpg
+    const newTowerGroup = new THREE.Group();
+    newTowerGroup.position.set(0, 0, 0);
+    scene.add(newTowerGroup);
+
+    // Helper: Build custom sculpted cylindrical-to-eccentric-chalice shell mesh
+    // thetaStart..thetaEnd defines the angular sector; profileFn(t) returns { r, xOff, zOff, y }
+    function buildSculptedShell(profileSteps, radialSegs, thetaStart, thetaLength, material, radiusOffset = 0) {
+      const geo = new THREE.BufferGeometry();
+      const positions = [];
+      const uvs = [];
+      const indices = [];
+
+      for (let iy = 0; iy <= profileSteps.length - 1; iy++) {
+        const p = profileSteps[iy];
+        const v = iy / (profileSteps.length - 1);
+        for (let ix = 0; ix <= radialSegs; ix++) {
+          const u = ix / radialSegs;
+          const theta = thetaStart + u * thetaLength;
+          // Eccentric flare modulation (matches top-view diagram in thumb_max.jpg)
+          const r = p.r + radiusOffset + (p.asymR || 0) * Math.cos(theta - (p.asymAngle || 0));
+          const x = p.xOff + r * Math.cos(theta);
+          const z = p.zOff + r * Math.sin(theta);
+          positions.push(x, p.y, z);
+          uvs.push(u, v);
+        }
+      }
+
+      const rowVerts = radialSegs + 1;
+      for (let iy = 0; iy < profileSteps.length - 1; iy++) {
+        for (let ix = 0; ix < radialSegs; ix++) {
+          const a = iy * rowVerts + ix;
+          const b = a + 1;
+          const c = (iy + 1) * rowVerts + ix;
+          const d = c + 1;
+          indices.push(a, c, b);
+          indices.push(b, c, d);
+        }
+      }
+
+      geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+      geo.setAttribute('uv', new THREE.Float32BufferAttribute(uvs, 2));
+      geo.setIndex(indices);
+      geo.computeVertexNormals();
+      const mesh = new THREE.Mesh(geo, material);
+      mesh.castShadow = true;
+      mesh.receiveShadow = true;
+      return mesh;
+    }
+
+    // Tower vertical profile from ground (0m) to top of Queen's Head chalice (50.0m)
+    const towerProfile = [
+      { y: 0.0,  r: 4.05, xOff: 0.0,   zOff: 0.0, asymR: 0.0,  asymAngle: Math.PI },
+      { y: 12.0, r: 3.95, xOff: 0.0,   zOff: 0.0, asymR: 0.0,  asymAngle: Math.PI },
+      { y: 25.0, r: 3.90, xOff: 0.0,   zOff: 0.0, asymR: 0.05, asymAngle: Math.PI },
+      { y: 30.0, r: 4.15, xOff: -0.15, zOff: 0.0, asymR: 0.25, asymAngle: Math.PI },
+      { y: 34.5, r: 5.05, xOff: -0.45, zOff: 0.0, asymR: 0.55, asymAngle: Math.PI },
+      { y: 38.5, r: 6.35, xOff: -0.75, zOff: 0.0, asymR: 0.70, asymAngle: Math.PI },
+      { y: 40.8, r: 6.95, xOff: -0.85, zOff: 0.0, asymR: 0.65, asymAngle: Math.PI },
+      { y: 44.5, r: 7.05, xOff: -0.80, zOff: 0.0, asymR: 0.55, asymAngle: Math.PI },
+      { y: 48.2, r: 6.90, xOff: -0.65, zOff: 0.0, asymR: 0.40, asymAngle: Math.PI },
+      { y: 50.2, r: 6.75, xOff: -0.55, zOff: 0.0, asymR: 0.30, asymAngle: Math.PI }
+    ];
+
+    // Core inner dark glass/framing cylinder & chalice
+    const innerCoreMesh = buildSculptedShell(towerProfile, 48, 0, Math.PI * 2, ribbonWindowMat, -0.14);
+    newTowerGroup.add(innerCoreMesh);
+
+    // A) Pure White Cladding Outer Shell (East / South-East / North-East side facing Terminal 1)
+    const lowerWhiteProfile = towerProfile.slice(0, 7);
+    const lowerWhiteShell = buildSculptedShell(lowerWhiteProfile, 36, -Math.PI * 0.68, Math.PI * 1.42, whiteCladdingMat, 0.04);
+    newTowerGroup.add(lowerWhiteShell);
+
+    // Lower shaft full-circumference base collar
+    const baseWhiteProfile = [
+      { y: 0.0,  r: 4.08, xOff: 0, zOff: 0 },
+      { y: 13.5, r: 3.98, xOff: 0, zOff: 0 }
+    ];
+    const baseWhiteShell = buildSculptedShell(baseWhiteProfile, 40, 0, Math.PI * 2, whiteCladdingMat, 0.05);
+    newTowerGroup.add(baseWhiteShell);
+
+    // B) Metallic Iron-Grey Cladding Shell on the West/T2 side
+    const lowerGreyProfile = [
+      { y: 13.5, r: 3.95, xOff: 0.0,   zOff: 0.0, asymR: 0.0,  asymAngle: Math.PI },
+      { y: 25.0, r: 3.90, xOff: 0.0,   zOff: 0.0, asymR: 0.05, asymAngle: Math.PI },
+      { y: 30.0, r: 4.15, xOff: -0.15, zOff: 0.0, asymR: 0.25, asymAngle: Math.PI },
+      { y: 34.5, r: 5.05, xOff: -0.45, zOff: 0.0, asymR: 0.55, asymAngle: Math.PI },
+      { y: 38.5, r: 6.35, xOff: -0.75, zOff: 0.0, asymR: 0.70, asymAngle: Math.PI },
+      { y: 40.5, r: 6.92, xOff: -0.85, zOff: 0.0, asymR: 0.65, asymAngle: Math.PI }
+    ];
+    const lowerGreyShell = buildSculptedShell(lowerGreyProfile, 28, Math.PI * 0.70, Math.PI * 0.64, greyCladdingMat, 0.01);
+    newTowerGroup.add(lowerGreyShell);
+
+    // C) Upper Head Bands
+    const midHeadWhiteProfile = [
+      { y: 42.1, r: 7.00, xOff: -0.82, zOff: 0.0, asymR: 0.60, asymAngle: Math.PI },
+      { y: 46.8, r: 6.96, xOff: -0.72, zOff: 0.0, asymR: 0.48, asymAngle: Math.PI }
+    ];
+    const midHeadWhite = buildSculptedShell(midHeadWhiteProfile, 28, -Math.PI * 0.52, Math.PI * 1.12, whiteCladdingMat, 0.06);
+    newTowerGroup.add(midHeadWhite);
+
+    const midHeadGreySpandrel = buildSculptedShell([
+      { y: 43.9, r: 7.04, xOff: -0.80, zOff: 0.0, asymR: 0.56, asymAngle: Math.PI },
+      { y: 45.2, r: 7.00, xOff: -0.76, zOff: 0.0, asymR: 0.52, asymAngle: Math.PI }
+    ], 24, Math.PI * 0.58, Math.PI * 0.92, greyCladdingMat, 0.05);
+    newTowerGroup.add(midHeadGreySpandrel);
+
+    // 2. Top Collar Band of the Queen's Head
+    const topCollarProfile = [
+      { y: 47.9, r: 6.92, xOff: -0.66, zOff: 0.0, asymR: 0.42, asymAngle: Math.PI },
+      { y: 50.4, r: 6.75, xOff: -0.55, zOff: 0.0, asymR: 0.30, asymAngle: Math.PI }
+    ];
+    const topCollarWhite = buildSculptedShell(topCollarProfile, 30, -Math.PI * 0.62, Math.PI * 1.32, whiteCladdingMat, 0.07);
+    newTowerGroup.add(topCollarWhite);
+    const topCollarGrey = buildSculptedShell(topCollarProfile, 24, Math.PI * 0.70, Math.PI * 0.68, greyCladdingMat, 0.06);
+    newTowerGroup.add(topCollarGrey);
+
+    // Flat top deck cap at y = 50.4m with catwalk safety railing
+    const deckCapGeo = new THREE.CylinderGeometry(6.85, 6.85, 0.35, 40);
+    const deckCap = new THREE.Mesh(deckCapGeo, whiteCladdingMat);
+    deckCap.position.set(-0.65, 50.35, 0);
+    newTowerGroup.add(deckCap);
+
+    // Catwalk perimeter handrail at y = 50.9m
+    const railRingGeo = new THREE.TorusGeometry(6.65, 0.06, 8, 48);
+    const railRing = new THREE.Mesh(railRingGeo, darkFrameMat);
+    railRing.rotation.x = Math.PI / 2;
+    railRing.position.set(-0.65, 51.05, 0);
+    newTowerGroup.add(railRing);
+
+    // D) Recessed Neck below 10F Control Cab (y = 50.4m to 52.0m)
+    const cabNeckGeo = new THREE.CylinderGeometry(5.85, 5.85, 1.8, 36);
+    const cabNeck = new THREE.Mesh(cabNeckGeo, darkFrameMat);
+    cabNeck.position.set(-0.45, 51.2, 0);
+    newTowerGroup.add(cabNeck);
+
+    // Cantilevered Cab Floor Soffit Ring (y = 52.0m)
+    const cabFloorGeo = new THREE.CylinderGeometry(6.25, 5.9, 0.55, 36);
+    const cabFloor = new THREE.Mesh(cabFloorGeo, greyCladdingMat);
+    cabFloor.position.set(-0.45, 52.15, 0);
+    newTowerGroup.add(cabFloor);
+
+    // E) 10th Floor 360° ATC Control Cab (y = 52.4m to 56.4m, 14m diameter)
+    const cabRBottom = 6.2;
+    const cabRTop = 7.15;
+    const cabHeight = 4.0;
+    const cabCenterY = 54.4;
+    const cabCenterX = -0.45;
+
+    const cabGeo = new THREE.CylinderGeometry(cabRTop, cabRBottom, cabHeight, 36, 1, true);
+    const cabMesh = new THREE.Mesh(cabGeo, cabGlassMat);
+    cabMesh.position.set(cabCenterX, cabCenterY, 0);
+    newTowerGroup.add(cabMesh);
+
+    // Perfectly aligned angled structural window mullions along the frustum slope
+    const slopeAngle = Math.atan2(cabRTop - cabRBottom, cabHeight);
+    const mullionLen = Math.hypot(cabRTop - cabRBottom, cabHeight);
+    const mullionRMid = (cabRBottom + cabRTop) * 0.5;
+    const mullionCount = 18;
+
+    for (let i = 0; i < mullionCount; i++) {
+      const angle = (i / mullionCount) * Math.PI * 2;
+      const pivot = new THREE.Group();
+      pivot.position.set(cabCenterX, cabCenterY, 0);
+      pivot.rotation.y = angle;
+
+      const mGeo = new THREE.BoxGeometry(0.14, mullionLen, 0.16);
+      const mMesh = new THREE.Mesh(mGeo, whiteCladdingMat);
+      mMesh.position.set(mullionRMid, 0, 0);
+      mMesh.rotation.z = -slopeAngle;
+      pivot.add(mMesh);
+      newTowerGroup.add(pivot);
+    }
+
+    // Inside 10F Control Cab: 360° Controller Console Ring + TAS Radar Screens
+    const cabInteriorGroup = new THREE.Group();
+    cabInteriorGroup.position.set(cabCenterX, 52.4, 0);
+    newTowerGroup.add(cabInteriorGroup);
+
+    const cabFloorDisk = new THREE.Mesh(new THREE.CylinderGeometry(6.1, 6.1, 0.2, 32), darkFrameMat);
+    cabFloorDisk.position.y = 0.1;
+    cabInteriorGroup.add(cabFloorDisk);
+
+    const consoleDeskGeo = new THREE.CylinderGeometry(5.1, 4.9, 0.85, 24, 1, true);
+    const consoleDesk = new THREE.Mesh(consoleDeskGeo, darkFrameMat);
+    consoleDesk.position.y = 0.55;
+    cabInteriorGroup.add(consoleDesk);
+
+    const screenMat = new THREE.MeshBasicMaterial({ color: 0x38bdf8 });
+    for (let i = 0; i < 12; i++) {
+      const a = (i / 12) * Math.PI * 2;
+      const scr = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.42, 0.68), screenMat);
+      scr.position.set(Math.cos(a) * 4.85, 1.18, Math.sin(a) * 4.85);
+      scr.rotation.y = -a;
+      scr.rotation.z = -0.25;
+      cabInteriorGroup.add(scr);
+    }
+
+    // F) Thick Cylindrical White Crown Roof Fascia
+    const crownFasciaGeo = new THREE.CylinderGeometry(7.35, 7.35, 1.85, 40);
+    const crownFascia = new THREE.Mesh(crownFasciaGeo, whiteCladdingMat);
+    crownFascia.position.set(cabCenterX, 57.3, 0);
+    crownFascia.castShadow = true;
+    newTowerGroup.add(crownFascia);
+
+    // Dark trim ring under the crown fascia
+    const crownTrimGeo = new THREE.CylinderGeometry(7.22, 7.15, 0.28, 40);
+    const crownTrim = new THREE.Mesh(crownTrimGeo, darkFrameMat);
+    crownTrim.position.set(cabCenterX, 56.3, 0);
+    newTowerGroup.add(crownTrim);
+
+    // G) Rooftop Radar Housing Block, ASDE Surface Radar & 65m Antenna Spire
+    const roofBlockGeo = new THREE.BoxGeometry(2.6, 1.9, 2.6);
+    const roofBlock = new THREE.Mesh(roofBlockGeo, whiteCladdingMat);
+    roofBlock.position.set(cabCenterX - 0.3, 59.1, 0);
+    newTowerGroup.add(roofBlock);
+
+    // Spinning ASDE Surface Movement Radar
+    const radarGroup = new THREE.Group();
+    radarGroup.position.set(cabCenterX - 0.3, 60.4, 0);
+    newTowerGroup.add(radarGroup);
+
+    const radarBarGeo = new THREE.BoxGeometry(4.4, 0.48, 0.65);
+    const radarBar = new THREE.Mesh(radarBarGeo, whiteCladdingMat);
+    radarGroup.add(radarBar);
+
+    // Optional Volumetric Radar Sweep Beam
+    const beamGeo = new THREE.ConeGeometry(38, 105, 32, 1, true);
+    beamGeo.translate(0, -52.5, 0);
+    beamGeo.rotateZ(Math.PI / 2);
+    const beamMat = new THREE.MeshBasicMaterial({
+      color: 0x10b981,
+      transparent: true,
+      opacity: 0.11,
+      side: THREE.DoubleSide,
+      depthWrite: false,
+      blending: THREE.AdditiveBlending
+    });
+    const radarBeam = new THREE.Mesh(beamGeo, beamMat);
+    radarBeam.rotation.z = -0.18;
+    radarBeam.visible = false;
+    radarGroup.add(radarBeam);
+
+    // Communications Masts & 65m Lightning Arrestor Spire
+    const spireGeo = new THREE.CylinderGeometry(0.06, 0.18, 4.8, 8);
+    const spire = new THREE.Mesh(spireGeo, greyCladdingMat);
+    spire.position.set(cabCenterX + 1.2, 62.6, 0);
+    newTowerGroup.add(spire);
+
+    const beaconGeo = new THREE.SphereGeometry(0.32, 12, 12);
+    const beaconMat = new THREE.MeshBasicMaterial({ color: 0xff2222 });
+    const topBeacon = new THREE.Mesh(beaconGeo, beaconMat);
+    topBeacon.position.set(cabCenterX + 1.2, 65.0, 0);
+    newTowerGroup.add(topBeacon);
+
+    registerInteractive(newTowerGroup, 'newTower');
+
+    // --- 2. ANWS BASE OPERATIONS COMPLEX, COURTYARD & "GUARDIAN OF THE SKY" PLAZA ---
+    const baseBuildingGroup = new THREE.Group();
+    scene.add(baseBuildingGroup);
+
+    // "Guardian of the Sky" (《天空守護者》) Public Art Sculpture in Campus Plaza
+    const sculptureGroup = new THREE.Group();
+    sculptureGroup.position.set(-15, 0, 26);
+    baseBuildingGroup.add(sculptureGroup);
+
+    const chromeMat = new THREE.MeshStandardMaterial({
+      color: 0xe2e8f0,
+      metalness: 0.92,
+      roughness: 0.12
+    });
+    const ring1 = new THREE.Mesh(new THREE.TorusGeometry(3.2, 0.34, 16, 48, Math.PI * 1.35), chromeMat);
+    ring1.position.y = 2.6;
+    ring1.rotation.z = -0.35;
+    ring1.castShadow = true;
+    sculptureGroup.add(ring1);
+
+    const ring2 = new THREE.Mesh(new THREE.TorusGeometry(2.5, 0.28, 16, 48, Math.PI * 1.25), chromeMat);
+    ring2.position.set(0.6, 2.2, 0.5);
+    ring2.rotation.y = 0.55;
+    ring2.rotation.z = -0.2;
+    ring2.castShadow = true;
+    sculptureGroup.add(ring2);
+
+    // Helper: Create rounded-corner architectural building block
+    function createRoundedBuilding(width, depth, height, radius, mat) {
+      const shape = new THREE.Shape();
+      const hw = width / 2;
+      const hd = depth / 2;
+      const r = Math.min(radius, hw, hd);
+      shape.moveTo(-hw + r, -hd);
+      shape.lineTo(hw - r, -hd);
+      shape.quadraticCurveTo(hw, -hd, hw, -hd + r);
+      shape.lineTo(hw, hd - r);
+      shape.quadraticCurveTo(hw, hd, hw - r, hd);
+      shape.lineTo(-hw + r, hd);
+      shape.quadraticCurveTo(-hw, hd, -hw, hd - r);
+      shape.lineTo(-hw, -hd + r);
+      shape.quadraticCurveTo(-hw, -hd, -hw + r, -hd);
+
+      const extrudeGeo = new THREE.ExtrudeGeometry(shape, {
+        depth: height,
+        bevelEnabled: true,
+        bevelSegments: 3,
+        steps: 1,
+        bevelSize: 0.15,
+        bevelThickness: 0.15
+      });
+      extrudeGeo.rotateX(-Math.PI / 2);
+      const mesh = new THREE.Mesh(extrudeGeo, mat);
+      mesh.castShadow = true;
+      mesh.receiveShadow = true;
+      return mesh;
+    }
+
+    // A) Main Front Curved White Podium Wing
+    const frontWing = new THREE.Group();
+    frontWing.position.set(9, 0, 22);
+    frontWing.rotation.y = -0.24;
+    baseBuildingGroup.add(frontWing);
+
+    // Ground floor glass lobby recess
+    const groundLobby = createRoundedBuilding(32, 15, 4.2, 4.5, ribbonWindowMat);
+    frontWing.add(groundLobby);
+
+    // Upper 2nd-3rd floor cantilevered white curved fascia
+    const upperCurvedBody = createRoundedBuilding(34, 16.5, 7.2, 5.2, whiteCladdingMat);
+    upperCurvedBody.position.y = 4.0;
+    frontWing.add(upperCurvedBody);
+
+    // Recessed glazing + Signature Warm Wood/Terracotta Vertical Louvers on the front facade
+    const louverBayGlass = new THREE.Mesh(new THREE.BoxGeometry(19.5, 4.2, 0.4), ribbonWindowMat);
+    louverBayGlass.position.set(-2.0, 7.6, 8.2);
+    frontWing.add(louverBayGlass);
+
+    for (let lx = -11.2; lx <= 7.2; lx += 0.75) {
+      const louverBlade = new THREE.Mesh(new THREE.BoxGeometry(0.18, 4.1, 0.55), warmLouverMat);
+      louverBlade.position.set(lx, 7.6, 8.35);
+      frontWing.add(louverBlade);
+    }
+
+    // B) North/East Multi-Story TRACON & Technical Wing
+    const northWing = new THREE.Group();
+    northWing.position.set(-4, 0, -9);
+    baseBuildingGroup.add(northWing);
+
+    const northBody = createRoundedBuilding(38, 17, 15.5, 4.8, whiteCladdingMat);
+    northWing.add(northBody);
+
+    // Multi-story recessed window bands with terracotta sunshades
+    for (const wy of [3.5, 7.2, 10.9, 14.0]) {
+      const winStrip = new THREE.Mesh(new THREE.BoxGeometry(28, 2.1, 17.3), ribbonWindowMat);
+      winStrip.position.set(0, wy, 0);
+      northWing.add(winStrip);
+
+      // Warm terracotta vertical sunshade accents inside window bays
+      for (let wx = -12; wx <= 12; wx += 3.0) {
+        const shade = new THREE.Mesh(new THREE.BoxGeometry(0.9, 2.0, 17.5), warmLouverMat);
+        shade.position.set(wx, wy, 0);
+        northWing.add(shade);
+      }
+    }
+
+    // Rooftop Mechanical Penthouse, HVAC Chiller Plant & Dual Power Station
+    const rooftopPlant = new THREE.Mesh(new THREE.BoxGeometry(18, 2.8, 9), greyCladdingMat);
+    rooftopPlant.position.set(-3, 16.9, 0);
+    rooftopPlant.castShadow = true;
+    northWing.add(rooftopPlant);
+
+    // C) West Simulator & Administration Pavilion
+    const westPavilion = createRoundedBuilding(24, 15, 7.5, 3.0, whiteCladdingMat);
+    westPavilion.position.set(-25, 0, 22);
+    westPavilion.rotation.y = 0.15;
+    baseBuildingGroup.add(westPavilion);
+
+    const westWindows = new THREE.Mesh(new THREE.BoxGeometry(18, 3.8, 15.3), ribbonWindowMat);
+    westWindows.position.set(-25, 3.8, 22);
+    westWindows.rotation.y = 0.15;
+    baseBuildingGroup.add(westWindows);
+
+    // D) Covered Courtyard Walkway Canopy
+    const canopyGroup = new THREE.Group();
+    canopyGroup.position.set(-8, 0, 8);
+    baseBuildingGroup.add(canopyGroup);
+
+    const canopyRoof = new THREE.Mesh(new THREE.BoxGeometry(4.2, 0.35, 26), whiteCladdingMat);
+    canopyRoof.position.y = 3.6;
+    canopyRoof.rotation.y = 0.38;
+    canopyRoof.castShadow = true;
+    canopyGroup.add(canopyRoof);
+
+    for (let cz = -10; cz <= 10; cz += 5) {
+      const colL = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.14, 3.6, 8), whiteCladdingMat);
+      colL.position.set(cz * Math.sin(0.38) - 1.6, 1.8, cz * Math.cos(0.38));
+      canopyGroup.add(colL);
+    }
+
+    // E) Foreground Security Gatehouse & Green Highway Directional Sign
+    const signTex = createHighwaySignTexture();
+    const signBoard = new THREE.Mesh(
+      new THREE.BoxGeometry(4.6, 2.9, 0.18),
+      new THREE.MeshStandardMaterial({ map: signTex, roughness: 0.4 })
+    );
+    signBoard.position.set(-6, 3.2, 46);
+    baseBuildingGroup.add(signBoard);
+
+    const signPost = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.14, 3.2, 8), greyCladdingMat);
+    signPost.position.set(-6, 1.6, 46);
+    baseBuildingGroup.add(signPost);
+
+    // Staff Parking Lot Cars
+    const carColors = [0xf8fafc, 0x94a3b8, 0x334155, 0x1e293b, 0xdbeafe, 0x64748b];
+    for (let rowX of [28, 38, -42, -52]) {
+      for (let z = -26; z <= 10; z += 4.2) {
+        if (Math.random() < 0.2) continue;
+        const carMat = new THREE.MeshStandardMaterial({
+          color: carColors[Math.floor(Math.random() * carColors.length)],
+          roughness: 0.25,
+          metalness: 0.6
+        });
+        const car = new THREE.Mesh(new THREE.BoxGeometry(3.8, 1.35, 1.85), carMat);
+        car.position.set(rowX, 0.75, z);
+        car.castShadow = true;
+        baseBuildingGroup.add(car);
+      }
+    }
+
+    registerInteractive(baseBuildingGroup, 'baseBuilding');
+
+    // --- 4. TERMINAL 2, CONCOURSES & APRON INFRASTRUCTURE ---
+    const terminalGroup = new THREE.Group();
+    terminalGroup.position.set(-108, 0, -8);
+    scene.add(terminalGroup);
+
+    const terminalBodyGeo = new THREE.BoxGeometry(42, 13.5, 118);
+    const terminalBodyMat = new THREE.MeshStandardMaterial({
+      map: ribbonWinTex,
+      color: 0xdbeafe,
+      emissive: 0x38bdf8,
+      emissiveIntensity: 0.08,
+      roughness: 0.18,
+      metalness: 0.72
+    });
+    const terminalBody = new THREE.Mesh(terminalBodyGeo, terminalBodyMat);
+    terminalBody.position.y = 6.75;
+    terminalBody.castShadow = true;
+    terminalBody.receiveShadow = true;
+    terminalGroup.add(terminalBody);
+
+    // Metallic Space-Frame Wave Roof over Terminal 2
+    const waveRoofGeo = new THREE.CylinderGeometry(25, 25, 124, 28, 1, false, -Math.PI / 3, (2 * Math.PI) / 3);
+    const waveRoofMat = new THREE.MeshStandardMaterial({
+      color: 0xe2e8f0,
+      metalness: 0.45,
+      roughness: 0.35,
+      side: THREE.DoubleSide
+    });
+    const waveRoof = new THREE.Mesh(waveRoofGeo, waveRoofMat);
+    waveRoof.rotation.x = Math.PI / 2;
+    waveRoof.position.y = 2.8;
+    waveRoof.castShadow = true;
+    terminalGroup.add(waveRoof);
+
+    // Articulated Aerobridges (Jetways) & High-Mast Apron Floodlights
+    for (let z = -48; z <= 48; z += 24) {
+      const bridge = new THREE.Mesh(new THREE.BoxGeometry(16, 2.1, 2.4), whiteCladdingMat);
+      bridge.position.set(27, 5.2, z);
+      bridge.rotation.y = 0.2;
+      bridge.castShadow = true;
+      terminalGroup.add(bridge);
+
+      const rotunda = new THREE.Mesh(new THREE.CylinderGeometry(1.8, 1.8, 5.5, 12), greyCladdingMat);
+      rotunda.position.set(34, 2.75, z - 1.5);
+      terminalGroup.add(rotunda);
+    }
+
+    registerInteractive(terminalGroup, 'aerial');
+
+    // --- 5. PARALLEL RUNWAYS (05L/23R & 05R/23L) & TAXIWAY NETWORK ---
+    const runwaysGroup = new THREE.Group();
+    scene.add(runwaysGroup);
+
+    const runwayTex = createRunwayTexture();
+    const runwayMat = new THREE.MeshStandardMaterial({
+      map: runwayTex,
+      roughness: 0.78,
+      metalness: 0.06
+    });
+
+    const taxiwayMat = new THREE.MeshStandardMaterial({
+      color: 0x454c54,
+      roughness: 0.82
+    });
+
+    const runwayPositionsZ = [-108, 108]; // North Runway (05L/23R) & South Runway (05R/23L)
+    const runwayEdgeLightMeshes = [];
+
+    runwayPositionsZ.forEach((zPos) => {
+      const rwyGeo = new THREE.PlaneGeometry(560, 32);
+      const rwy = new THREE.Mesh(rwyGeo, runwayMat);
+      rwy.rotation.x = -Math.PI / 2;
+      rwy.position.set(0, 0.14, zPos);
+      rwy.receiveShadow = true;
+      runwaysGroup.add(rwy);
+
+      // Parallel Taxiway alongside each runway
+      const pTaxiZ = zPos > 0 ? zPos - 28 : zPos + 28;
+      const pTaxi = new THREE.Mesh(new THREE.PlaneGeometry(540, 14), taxiwayMat);
+      pTaxi.rotation.x = -Math.PI / 2;
+      pTaxi.position.set(0, 0.11, pTaxiZ);
+      pTaxi.receiveShadow = true;
+      runwaysGroup.add(pTaxi);
+
+      // Yellow taxiway centerline stripe
+      const yellowLine = new THREE.Mesh(
+        new THREE.PlaneGeometry(530, 0.45),
+        new THREE.MeshBasicMaterial({ color: 0xfacc15 })
+      );
+      yellowLine.rotation.x = -Math.PI / 2;
+      yellowLine.position.set(0, 0.13, pTaxiZ);
+      runwaysGroup.add(yellowLine);
+
+      // High-Speed Exit Taxiways
+      for (const xPos of [-140, -50, 50, 140]) {
+        const exitTaxi = new THREE.Mesh(new THREE.PlaneGeometry(11, 34), taxiwayMat);
+        exitTaxi.rotation.x = -Math.PI / 2;
+        exitTaxi.position.set(xPos, 0.12, (zPos + pTaxiZ) * 0.5);
+        exitTaxi.rotation.z = zPos > 0 ? 0.42 : -0.42;
+        runwaysGroup.add(exitTaxi);
+      }
+
+      // Runway Edge & Threshold Lights
+      const lightSphereGeo = new THREE.SphereGeometry(0.28, 8, 8);
+      const edgeLightMat = new THREE.MeshBasicMaterial({ color: 0xfef08a });
+      const greenLightMat = new THREE.MeshBasicMaterial({ color: 0x22c55e });
+
+      for (let x = -260; x <= 260; x += 16) {
+        const l1 = new THREE.Mesh(lightSphereGeo, edgeLightMat);
+        l1.position.set(x, 0.32, zPos - 16.2);
+        runwaysGroup.add(l1);
+        runwayEdgeLightMeshes.push(l1);
+
+        const l2 = new THREE.Mesh(lightSphereGeo, edgeLightMat);
+        l2.position.set(x, 0.32, zPos + 16.2);
+        runwaysGroup.add(l2);
+        runwayEdgeLightMeshes.push(l2);
+      }
+
+      for (let z = zPos - 14; z <= zPos + 14; z += 2.8) {
+        const g1 = new THREE.Mesh(lightSphereGeo, greenLightMat);
+        g1.position.set(-268, 0.32, z);
+        runwaysGroup.add(g1);
+
+        const g2 = new THREE.Mesh(lightSphereGeo, greenLightMat);
+        g2.position.set(268, 0.32, z);
+        runwaysGroup.add(g2);
+      }
+    });
+
+    registerInteractive(runwaysGroup, 'aerial');
+
+    // --- 6. REALISTIC WIDE-BODY AIRLINERS (CHINA AIRLINES & EVA AIR MOTIFS) ---
+    function createRealisticAircraft(tailColor = 0xe11d48, accentColor = 0x2563eb) {
+      const plane = new THREE.Group();
+
+      const fuselageMat = new THREE.MeshStandardMaterial({
+        color: 0xf8fafc,
+        roughness: 0.2,
+        metalness: 0.25
+      });
+      const wingMat = new THREE.MeshStandardMaterial({
+        color: 0xe2e8f0,
+        roughness: 0.3,
+        metalness: 0.35
+      });
+      const tailMat = new THREE.MeshStandardMaterial({
+        color: tailColor,
+        roughness: 0.25,
+        metalness: 0.3
+      });
+      const accentMat = new THREE.MeshStandardMaterial({
+        color: accentColor,
+        roughness: 0.25,
+        metalness: 0.3
+      });
+
+      // Main Cylindrical Fuselage
+      const fuselageGeo = new THREE.CylinderGeometry(1.25, 1.25, 13.5, 20);
+      fuselageGeo.rotateZ(Math.PI / 2);
+      const fuselage = new THREE.Mesh(fuselageGeo, fuselageMat);
+      fuselage.position.y = 2.1;
+      fuselage.castShadow = true;
+      plane.add(fuselage);
+
+      // Sculpted Nose Cone & Cockpit Windows
+      const noseGeo = new THREE.SphereGeometry(1.25, 20, 14);
+      noseGeo.scale(1.9, 0.95, 1.0);
+      const nose = new THREE.Mesh(noseGeo, fuselageMat);
+      nose.position.set(6.75, 2.04, 0);
+      plane.add(nose);
+
+      const cockpit = new THREE.Mesh(new THREE.BoxGeometry(1.1, 0.42, 1.35), darkFrameMat);
+      cockpit.position.set(7.6, 2.48, 0);
+      cockpit.rotation.z = -0.25;
+      plane.add(cockpit);
+
+      // Tapered Tailcone
+      const tailConeGeo = new THREE.CylinderGeometry(0.35, 1.25, 4.8, 16);
+      tailConeGeo.rotateZ(-Math.PI / 2);
+      const tailCone = new THREE.Mesh(tailConeGeo, fuselageMat);
+      tailCone.position.set(-9.1, 2.25, 0);
+      plane.add(tailCone);
+
+      // Swept Main Wings (Left & Right) + Winglets
+      for (const side of [-1, 1]) {
+        const wing = new THREE.Mesh(new THREE.BoxGeometry(3.0, 0.22, 10.5), wingMat);
+        wing.position.set(-0.6, 1.85, side * 5.6);
+        wing.rotation.y = side * -0.32;
+        wing.rotation.x = side * -0.04;
+        wing.castShadow = true;
+        plane.add(wing);
+
+        // Winglet
+        const winglet = new THREE.Mesh(new THREE.BoxGeometry(1.2, 1.3, 0.14), tailMat);
+        winglet.position.set(-2.3, 2.45, side * 10.5);
+        winglet.rotation.x = side * 0.2;
+        plane.add(winglet);
+
+        // Under-wing Turbofan Engine Nacelle
+        const nacelleGroup = new THREE.Group();
+        nacelleGroup.position.set(0.8, 1.2, side * 4.2);
+        const cowl = new THREE.Mesh(new THREE.CylinderGeometry(0.68, 0.62, 2.5, 16), accentMat);
+        cowl.rotation.z = Math.PI / 2;
+        cowl.castShadow = true;
+        nacelleGroup.add(cowl);
+
+        const intake = new THREE.Mesh(new THREE.CylinderGeometry(0.55, 0.55, 2.55, 12), darkFrameMat);
+        intake.rotation.z = Math.PI / 2;
+        nacelleGroup.add(intake);
+        plane.add(nacelleGroup);
+
+        // Swept Horizontal Stabilizer
+        const hStab = new THREE.Mesh(new THREE.BoxGeometry(1.8, 0.15, 4.2), wingMat);
+        hStab.position.set(-9.8, 2.4, side * 2.1);
+        hStab.rotation.y = side * -0.35;
+        plane.add(hStab);
+      }
+
+      // Swept Vertical Tail Fin
+      const vFinShape = new THREE.Shape();
+      vFinShape.moveTo(0, 0);
+      vFinShape.lineTo(3.8, 0);
+      vFinShape.lineTo(1.2, 4.4);
+      vFinShape.lineTo(-0.6, 4.4);
+      vFinShape.closePath();
+      const vFinGeo = new THREE.ExtrudeGeometry(vFinShape, { depth: 0.24, bevelEnabled: true, bevelSize: 0.04, bevelThickness: 0.04 });
+      vFinGeo.translate(-1.5, 0, -0.12);
+      const vFin = new THREE.Mesh(vFinGeo, tailMat);
+      vFin.position.set(-8.6, 2.9, 0);
+      vFin.castShadow = true;
+      plane.add(vFin);
+
+      // Landing Gear Struts & Wheels
+      for (const gx of [5.8, -0.8, -0.8]) {
+        const gz = gx > 0 ? 0 : 1.65;
+        for (const s of (gx > 0 ? [0] : [-1, 1])) {
+          const strut = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.1, 1.4, 8), greyCladdingMat);
+          strut.position.set(gx, 0.85, s * gz);
+          plane.add(strut);
+          const wheel = new THREE.Mesh(new THREE.CylinderGeometry(0.35, 0.35, 0.35, 12), darkFrameMat);
+          wheel.rotation.x = Math.PI / 2;
+          wheel.position.set(gx, 0.35, s * gz);
+          plane.add(wheel);
+        }
+      }
+
+      // Navigation Lights
+      const navGeo = new THREE.SphereGeometry(0.22, 8, 8);
+      const redNav = new THREE.Mesh(navGeo, new THREE.MeshBasicMaterial({ color: 0xff2222 }));
+      redNav.position.set(-2.2, 2.1, 10.6);
+      plane.add(redNav);
+
+      const greenNav = new THREE.Mesh(navGeo, new THREE.MeshBasicMaterial({ color: 0x22c55e }));
+      greenNav.position.set(-2.2, 2.1, -10.6);
+      plane.add(greenNav);
+
+      return plane;
+    }
+
+    // Active Takeoff & Landing Aircraft on Parallel Runways
+    const aircraftTakeoff = createRealisticAircraft(0xdb2777, 0x1d4ed8); // China Airlines Plum Blossom motif
+    scene.add(aircraftTakeoff);
+
+    const aircraftLanding = createRealisticAircraft(0x059669, 0x047857); // EVA Air Green motif
+    aircraftLanding.rotation.y = Math.PI;
+    scene.add(aircraftLanding);
+
+    // Parked Wide-Body Aircraft at Terminal 2 Apron Gates
+    const gateConfigs = [
+      { z: -48, tail: 0xdb2777, eng: 0x1d4ed8 },
+      { z: -24, tail: 0x059669, eng: 0x047857 },
+      { z: 0,   tail: 0xdb2777, eng: 0x1d4ed8 },
+      { z: 24,  tail: 0x0284c7, eng: 0x0369a1 }
+    ];
+    gateConfigs.forEach((cfg) => {
+      const parked = createRealisticAircraft(cfg.tail, cfg.eng);
+      parked.scale.setScalar(0.92);
+      parked.position.set(-64, 0.1, cfg.z - 8);
+      parked.rotation.y = Math.PI;
+      scene.add(parked);
+    });
+
+    // Taxiing Aircraft moving along North Parallel Taxiway
+    const aircraftTaxi = createRealisticAircraft(0xdb2777, 0x1d4ed8);
+    aircraftTaxi.scale.setScalar(0.95);
+    scene.add(aircraftTaxi);
+
+    // --- LIGHTING PRESETS (REALISTIC DAYLIGHT DEFAULT / GOLDEN SUNSET / NIGHT OPS) ---
+    const LIGHTING_MODES = {
+      day: {
+        topColor: 0x15589c,
+        horizonColor: 0xaad3f5,
+        bottomColor: 0x6b7c85,
+        cloudColor: 0xffffff,
+        cloudShadow: 0x90aec9,
+        cloudOpacity: 0.92,
+        fogColor: 0xc2ddf2,
+        fogDensity: 0.00085,
+        sunColor: 0xfffef5,
+        sunIntensity: 3.3,
+        sunPos: new THREE.Vector3(120, 145, 95),
+        ambientColor: 0xdbeafe,
+        ambientIntensity: 0.95,
+        hemiIntensity: 0.85,
+        cabGlow: 0.8,
+        emissiveMult: 0.06,
+        exposure: 1.08,
+        metar: 'RCTP 05012KT 9999 FEW025 26/18 Q1015 • DAYLIGHT VFR'
+      },
+      golden: {
+        topColor: 0x1e293b,
+        horizonColor: 0xea580c,
+        bottomColor: 0x1f242d,
+        cloudColor: 0xfed7aa,
+        cloudShadow: 0x7c2d12,
+        cloudOpacity: 0.85,
+        fogColor: 0xd98a5f,
+        fogDensity: 0.0012,
+        sunColor: 0xffa04d,
+        sunIntensity: 2.9,
+        sunPos: new THREE.Vector3(-155, 34, -80),
+        ambientColor: 0xfed7aa,
+        ambientIntensity: 0.65,
+        hemiIntensity: 0.6,
+        cabGlow: 2.4,
+        emissiveMult: 0.45,
+        exposure: 1.05,
+        metar: 'RCTP 05010KT 9999 SCT030 24/18 Q1014 • SUNSET OPS'
+      },
+      night: {
+        topColor: 0x020617,
+        horizonColor: 0x0f172a,
+        bottomColor: 0x02040a,
+        cloudColor: 0x1e293b,
+        cloudShadow: 0x090d16,
+        cloudOpacity: 0.45,
+        fogColor: 0x070c18,
+        fogDensity: 0.0018,
+        sunColor: 0x60a5fa,
+        sunIntensity: 0.35,
+        sunPos: new THREE.Vector3(-80, 110, 80),
+        ambientColor: 0x1e293b,
+        ambientIntensity: 0.45,
+        hemiIntensity: 0.35,
+        cabGlow: 4.8,
+        emissiveMult: 1.25,
+        exposure: 1.15,
+        metar: 'RCTP 06008KT 9999 SCT025 22/18 Q1016 • NIGHT CAT-II'
+      }
+    };
+
+    function applyLightingMode(modeKey) {
+      const m = LIGHTING_MODES[modeKey];
+      if (!m) return;
+
+      skyMat.uniforms.topColor.value.setHex(m.topColor);
+      skyMat.uniforms.horizonColor.value.setHex(m.horizonColor);
+      skyMat.uniforms.bottomColor.value.setHex(m.bottomColor);
+      skyMat.uniforms.cloudColor.value.setHex(m.cloudColor);
+      skyMat.uniforms.cloudShadowColor.value.setHex(m.cloudShadow);
+      skyMat.uniforms.cloudOpacity.value = m.cloudOpacity;
+      skyMat.uniforms.sunDir.value.copy(m.sunPos).normalize();
+
+      scene.fog.color.setHex(m.fogColor);
+      scene.fog.density = m.fogDensity;
+
+      if (scene.environment) scene.environment.dispose();
+      scene.environment = generateEnvironmentMap(m.topColor, m.horizonColor, m.bottomColor);
+
+      sunLight.color.setHex(m.sunColor);
+      sunLight.intensity = m.sunIntensity;
+      sunLight.position.copy(m.sunPos);
+
+      ambientLight.color.setHex(m.ambientColor);
+      ambientLight.intensity = m.ambientIntensity;
+      hemiLight.intensity = m.hemiIntensity;
+      renderer.toneMappingExposure = m.exposure;
+
+      cabPointLight.intensity = m.cabGlow;
+      cabGlassMat.emissiveIntensity = m.emissiveMult;
+      ribbonWindowMat.emissiveIntensity = m.emissiveMult * 0.85;
+      terminalBodyMat.emissiveIntensity = m.emissiveMult * 0.55;
+
+      const metarEl = document.getElementById('metar-readout');
+      if (metarEl) metarEl.textContent = m.metar;
+
+      document.querySelectorAll('.mode-btn').forEach((btn) => {
+        if (btn.dataset.mode === modeKey) {
+          btn.className = 'mode-btn px-3 py-1.5 rounded-lg text-xs font-semibold transition-all bg-sky-500/30 text-sky-200 border border-sky-400/40';
+        } else {
+          btn.className = 'mode-btn px-3 py-1.5 rounded-lg text-xs font-semibold transition-all text-slate-300 hover:text-white';
+        }
+      });
+    }
+
+    // --- CAMERA SMOOTH TRANSITION & UI CARD LOGIC ---
+    let cameraGoalPos = null;
+    let targetGoalPos = null;
+
+    function selectLandmark(key) {
+      const data = LANDMARKS[key];
+      if (!data) return;
+
+      document.getElementById('card-badge').textContent = data.badge;
+      document.getElementById('card-title').textContent = data.title;
+      document.getElementById('card-desc').textContent = data.desc;
+      document.getElementById('stat-1').textContent = data.stats[0];
+      document.getElementById('stat-2').textContent = data.stats[1];
+      document.getElementById('stat-3').textContent = data.stats[2];
+      document.getElementById('stat-4').textContent = data.stats[3];
+
+      const card = document.getElementById('info-card');
+      card.classList.remove('translate-x-full', 'opacity-0', 'pointer-events-none');
+      card.classList.add('translate-x-0', 'opacity-100', 'pointer-events-auto');
+
+      document.querySelectorAll('.landmark-btn').forEach((btn) => {
+        if (btn.dataset.target === key) {
+          btn.className = 'landmark-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-sky-500/30 text-sky-200 border border-sky-400/40 transition whitespace-nowrap';
+        } else {
+          btn.className = 'landmark-btn px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-200 hover:bg-slate-800/70 transition whitespace-nowrap';
+        }
+      });
+
+      cameraGoalPos = data.camPos.clone();
+      targetGoalPos = data.lookAt.clone();
+    }
+
+    // --- RAYCASTER FOR CLICKING 3D LANDMARKS ---
+    const raycaster = new THREE.Raycaster();
+    const pointer = new THREE.Vector2();
+    let pointerDownPos = { x: 0, y: 0 };
+
+    renderer.domElement.addEventListener('pointerdown', (e) => {
+      pointerDownPos.x = e.clientX;
+      pointerDownPos.y = e.clientY;
+      cameraGoalPos = null;
+      targetGoalPos = null;
+    });
+
+    renderer.domElement.addEventListener('pointerup', (e) => {
+      if (document.body.classList.contains('bg-only')) return;
+      const dist = Math.hypot(e.clientX - pointerDownPos.x, e.clientY - pointerDownPos.y);
+      if (dist > 6) return;
+
+      pointer.x = (e.clientX / window.innerWidth) * 2 - 1;
+      pointer.y = -(e.clientY / window.innerHeight) * 2 + 1;
+
+      raycaster.setFromCamera(pointer, camera);
+      const hits = raycaster.intersectObjects(interactiveMeshes, false);
+      if (hits.length > 0) {
+        const key = hits[0].object.userData.landmarkKey;
+        if (key) selectLandmark(key);
+      }
+    });
+
+    // --- UI EVENT LISTENERS ---
+    document.querySelectorAll('.mode-btn').forEach((btn) => {
+      btn.addEventListener('click', () => applyLightingMode(btn.dataset.mode));
+    });
+
+    document.querySelectorAll('.landmark-btn').forEach((btn) => {
+      btn.addEventListener('click', () => selectLandmark(btn.dataset.target));
+    });
+
+    document.getElementById('close-card').addEventListener('click', () => {
+      const card = document.getElementById('info-card');
+      card.classList.add('translate-x-full', 'opacity-0', 'pointer-events-none');
+      card.classList.remove('translate-x-0', 'opacity-100', 'pointer-events-auto');
+    });
+
+    const diagramEl = document.getElementById('wind-diagram');
+    document.getElementById('toggle-diagram').addEventListener('click', () => {
+      diagramEl.classList.toggle('hidden');
+    });
+    document.getElementById('close-diagram').addEventListener('click', () => {
+      diagramEl.classList.add('hidden');
+    });
+
+    const radarBtn = document.getElementById('toggle-radar');
+    radarBtn.addEventListener('click', () => {
+      radarBeam.visible = !radarBeam.visible;
+      radarBtn.classList.toggle('opacity-60', !radarBeam.visible);
+    });
+
+    const orbitBtn = document.getElementById('toggle-orbit');
+    orbitBtn.addEventListener('click', () => {
+      controls.autoRotate = !controls.autoRotate;
+      orbitBtn.classList.toggle('opacity-50', !controls.autoRotate);
+    });
+
+    document.getElementById('reset-cam').addEventListener('click', () => {
+      selectLandmark('hero');
+    });
+
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    // --- ANIMATION LOOP ---
+    const clock = new THREE.Clock();
+
+    function animate() {
+      requestAnimationFrame(animate);
+      const elapsed = clock.getElapsedTime();
+
+      // Drift sky clouds gently
+      skyMat.uniforms.uTime.value = elapsed;
+
+      // 1. Rotate ASDE Surface Movement Radar on rooftop
+      radarGroup.rotation.y = -elapsed * 1.85;
+
+      // 2. Pulse Aviation Obstruction Beacons
+      const beaconPulse = (Math.sin(elapsed * 4.5) + 1) * 0.5;
+      beaconMat.color.setRGB(1.0, beaconPulse * 0.2, beaconPulse * 0.2);
+
+      // 3. Animate Takeoff Aircraft on South Runway (05R/23L, z = 108)
+      const tCycle = (elapsed * 28) % 520;
+      const xTakeoff = -250 + tCycle;
+      const climbY = xTakeoff > 25 ? Math.pow((xTakeoff - 25) * 0.085, 1.62) : 0;
+      const pitchAngle = xTakeoff > 25 ? Math.min(0.26, (xTakeoff - 25) * 0.0022) : 0;
+      aircraftTakeoff.position.set(xTakeoff, climbY + 0.14, 108);
+      aircraftTakeoff.rotation.z = pitchAngle;
+
+      // 4. Animate Landing Aircraft on North Runway (05L/23R, z = -108)
+      const lCycle = (elapsed * 22) % 520;
+      const xLanding = 250 - lCycle;
+      const approachY = xLanding > 65 ? Math.pow((xLanding - 65) * 0.072, 1.48) : 0;
+      aircraftLanding.position.set(xLanding, approachY + 0.14, -108);
+      aircraftLanding.rotation.z = xLanding > 65 ? -0.12 : 0;
+
+      // 5. Animate Taxiing Aircraft on North Parallel Taxiway (z = -80)
+      const taxiX = -180 + ((elapsed * 7.5) % 340);
+      aircraftTaxi.position.set(taxiX, 0.12, -80);
+
+      // 6. Smooth Camera Fly-To Interpolation
+      if (cameraGoalPos && targetGoalPos) {
+        camera.position.lerp(cameraGoalPos, 0.065);
+        controls.target.lerp(targetGoalPos, 0.065);
+        if (camera.position.distanceTo(cameraGoalPos) < 0.35) {
+          cameraGoalPos = null;
+          targetGoalPos = null;
+        }
+      }
+
+      controls.update();
+      renderer.render(scene, camera);
+    }
+
+    // Initialize in Realistic Daylight mode (matching the YouTube documentary look)
+    applyLightingMode('day');
+    animate();
+  </script>
+</body>
+</html>
