@@ -795,16 +795,116 @@
 
     // --- GROUND, APRONS, ROADS & LANDSCAPING ---
     // 1. Outer Grass & Taoyuan Coastal Plain Base
-    const groundGeo = new THREE.CircleGeometry(850, 64);
+    // Scene axes: +X = RWY 05 heading (047.8° NE), -Z = 317.8° (NW).
+    // The Taiwan Strait coastline runs roughly parallel to the runways, ~2 km NW of
+    // the North Runway (05L/23R, z = -108), so land ends at a gently wavy coastline
+    // and the ocean fills everything to the northwest of the tower.
+    // Note: shapes are drawn in XY and rotated -90° about X, so shape y = -world z.
+    const COAST_EXTENT = 1800;
+    const BEACH_WIDTH = 11;
+    const coastZ = (x) => -146 + Math.sin(x / 47) * 2.6 + Math.sin(x / 113 + 1.3) * 3.4;
+    const coastSamples = [];
+    for (let x = -COAST_EXTENT; x <= COAST_EXTENT; x += 12) coastSamples.push(x);
+
+    function buildFlatShapeMesh(points, material) {
+      const shape = new THREE.Shape(points.map(([x, z]) => new THREE.Vector2(x, -z)));
+      const mesh = new THREE.Mesh(new THREE.ShapeGeometry(shape), material);
+      mesh.rotation.x = -Math.PI / 2;
+      mesh.receiveShadow = true;
+      return mesh;
+    }
+
     const groundMat = new THREE.MeshStandardMaterial({
       color: 0x456338,
       roughness: 0.95,
       metalness: 0.02
     });
-    const ground = new THREE.Mesh(groundGeo, groundMat);
-    ground.rotation.x = -Math.PI / 2;
-    ground.receiveShadow = true;
+    const landPts = coastSamples.map((x) => [x, coastZ(x)]);
+    landPts.push([COAST_EXTENT, 900], [-COAST_EXTENT, 900]);
+    const ground = buildFlatShapeMesh(landPts, groundMat);
     scene.add(ground);
+
+    // 1b. Sandy Beach Strip along the Dayuan / Guanyin coast
+    const beachMat = new THREE.MeshStandardMaterial({ color: 0xcdbb8e, roughness: 0.97, metalness: 0.0 });
+    const beachPts = coastSamples.map((x) => [x, coastZ(x)]);
+    for (let i = coastSamples.length - 1; i >= 0; i--) {
+      const x = coastSamples[i];
+      beachPts.push([x, coastZ(x) - BEACH_WIDTH]);
+    }
+    scene.add(buildFlatShapeMesh(beachPts, beachMat));
+
+    // 1c. Taiwan Strait Ocean (animated procedural wave normal map)
+    function createWaveNormalTexture() {
+      const size = 256;
+      const canvas = document.createElement('canvas');
+      canvas.width = canvas.height = size;
+      const ctx = canvas.getContext('2d');
+      const img = ctx.createImageData(size, size);
+      const TAU = Math.PI * 2;
+      // Tileable height field from integer-frequency sine waves
+      const waves = [
+        [3, 1, 1.0, 0.0], [1, 4, 0.7, 1.7], [5, -2, 0.45, 2.9], [-2, 7, 0.3, 0.6], [9, 3, 0.18, 4.1],
+        [-6, 5, 0.22, 5.3], [11, -7, 0.12, 2.2], [4, 13, 0.1, 3.6], [-13, 2, 0.09, 1.1], [17, 9, 0.06, 0.4],
+        [-8, -15, 0.06, 4.7], [21, -4, 0.04, 2.8]
+      ];
+      for (let y = 0; y < size; y++) {
+        for (let x = 0; x < size; x++) {
+          let dx = 0, dy = 0;
+          const u = x / size, v = y / size;
+          for (const [fx, fy, amp, ph] of waves) {
+            const c = Math.cos(TAU * (fx * u + fy * v) + ph) * amp;
+            dx += c * fx;
+            dy += c * fy;
+          }
+          const nx = -dx * 0.06, ny = -dy * 0.06;
+          const len = Math.hypot(nx, ny, 1);
+          const i = (y * size + x) * 4;
+          img.data[i] = ((nx / len) * 0.5 + 0.5) * 255;
+          img.data[i + 1] = ((ny / len) * 0.5 + 0.5) * 255;
+          img.data[i + 2] = ((1 / len) * 0.5 + 0.5) * 255;
+          img.data[i + 3] = 255;
+        }
+      }
+      ctx.putImageData(img, 0, 0);
+      const tex = new THREE.CanvasTexture(canvas);
+      tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+      tex.repeat.set(1 / 80, 1 / 80); // ShapeGeometry UVs are in world units
+      tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
+      return tex;
+    }
+
+    const oceanNormalTex = createWaveNormalTexture();
+    const oceanMat = new THREE.MeshStandardMaterial({
+      color: 0x1d5872,
+      roughness: 0.22,
+      metalness: 0.15,
+      normalMap: oceanNormalTex,
+      normalScale: new THREE.Vector2(0.32, 0.32)
+    });
+    const oceanPts = coastSamples.map((x) => [x, coastZ(x) - BEACH_WIDTH]);
+    oceanPts.push([COAST_EXTENT, -COAST_EXTENT], [-COAST_EXTENT, -COAST_EXTENT]);
+    const ocean = buildFlatShapeMesh(oceanPts, oceanMat);
+    scene.add(ocean);
+
+    // 1d. Breaking surf / foam line at the waterline
+    const surfMat = new THREE.MeshBasicMaterial({
+      color: 0xf1f5f9,
+      transparent: true,
+      opacity: 0.55,
+      depthWrite: false,
+      polygonOffset: true,
+      polygonOffsetFactor: -2,
+      polygonOffsetUnits: -2
+    });
+    const surfPts = coastSamples.map((x) => [x, coastZ(x) - BEACH_WIDTH + 0.4]);
+    for (let i = coastSamples.length - 1; i >= 0; i--) {
+      const x = coastSamples[i];
+      surfPts.push([x, coastZ(x) - BEACH_WIDTH - 2.2]);
+    }
+    const surf = buildFlatShapeMesh(surfPts, surfMat);
+    surf.position.y = 0.02;
+    surf.receiveShadow = false;
+    scene.add(surf);
 
     // 2. Concrete Apron Spine & Service Tarmac
     const tarmacGeo = new THREE.PlaneGeometry(540, 155);
@@ -3354,6 +3454,10 @@
 
       // Drift sky clouds gently
       skyMat.uniforms.uTime.value = elapsed;
+
+      // Drift ocean waves (NE monsoon swell) & pulse the surf line
+      oceanNormalTex.offset.set(elapsed * 0.005, elapsed * 0.008);
+      surfMat.opacity = 0.4 + Math.sin(elapsed * 1.3) * 0.18;
 
       // 1. Rotate ASDE Surface Movement Radar on rooftop
       radarGroup.rotation.y = -elapsed * 1.85;
