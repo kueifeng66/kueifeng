@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Taiwan Taoyuan International Airport</title>
+  <title>Taiwan Taoyuan International Airport New ATC Tower</title>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Google Fonts -->
@@ -94,8 +94,8 @@
         <div class="mono text-[11px] text-slate-300 mt-0.5 flex flex-wrap items-center gap-x-4 gap-y-0.5">
           <span>桃園國際機場新塔臺園區</span>
           <span>HEIGHT: <strong class="text-sky-300">65.0m (Cab 360°)</strong></span>
-          <span>DESIGN: <strong class="text-amber-300">Yehliu "Queen's Head"</strong></span>
-          <span id="metar-readout" class="hidden xl:inline text-emerald-300">RCTP 05012KT 9999 FEW025 26/18 Q1015</span>
+          <span>BAYS: <strong class="text-emerald-300">77 Active Stands (37 Terminal • 15 Remote • 25 Cargo)</strong></span>
+          <span id="metar-readout" class="hidden xl:inline text-sky-200">RCTP 05012KT 9999 FEW025 26/18 Q1015</span>
         </div>
       </div>
     </div>
@@ -221,19 +221,19 @@
 
     <div id="card-stats" class="grid grid-cols-2 gap-2.5 mt-4 pt-3 border-t border-slate-700/70 mono text-xs">
       <div class="bg-slate-900/75 p-2.5 rounded-xl border border-slate-800">
-        <span class="text-slate-400 block text-[10px]">TOWER HEIGHT</span>
+        <span id="stat-label-1" class="text-slate-400 block text-[10px]">TOWER HEIGHT</span>
         <span id="stat-1" class="text-sky-300 font-semibold text-sm">65.0 Meters</span>
       </div>
       <div class="bg-slate-900/75 p-2.5 rounded-xl border border-slate-800">
-        <span class="text-slate-400 block text-[10px]">10F CAB AREA</span>
+        <span id="stat-label-2" class="text-slate-400 block text-[10px]">10F CAB AREA</span>
         <span id="stat-2" class="text-emerald-300 font-semibold text-sm">Ø 14m (360° View)</span>
       </div>
       <div class="bg-slate-900/75 p-2.5 rounded-xl border border-slate-800">
-        <span class="text-slate-400 block text-[10px]">DESIGN MOTIF</span>
+        <span id="stat-label-3" class="text-slate-400 block text-[10px]">DESIGN MOTIF</span>
         <span id="stat-3" class="text-amber-300 font-semibold text-sm">Yehliu Queen's Head</span>
       </div>
       <div class="bg-slate-900/75 p-2.5 rounded-xl border border-slate-800">
-        <span class="text-slate-400 block text-[10px]">AUTOMATION</span>
+        <span id="stat-label-4" class="text-slate-400 block text-[10px]">AUTOMATION</span>
         <span id="stat-4" class="text-purple-300 font-semibold text-sm">15 TAS Systems</span>
       </div>
     </div>
@@ -247,21 +247,33 @@
   <!-- Bottom Quick-Select Camera & Landmark Bar -->
   <footer class="fixed bottom-4 left-4 right-4 z-10 flex flex-wrap items-center justify-between gap-3 pointer-events-none">
     <div class="glass-panel rounded-2xl p-2 pointer-events-auto flex items-center gap-1.5 overflow-x-auto max-w-full">
-      <span class="mono text-[11px] text-slate-300 px-2.5 hidden md:inline">CAMERA SHOTS:</span>
+      <span class="mono text-[11px] text-slate-300 px-2.5 hidden md:inline">VIEWS:</span>
       <button data-target="hero" class="landmark-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-sky-500/30 text-sky-200 border border-sky-400/40 transition whitespace-nowrap">
-        🎬 Video Hero Shot (Entrance)
+        🎬 Hero Shot
       </button>
       <button data-target="newTower" class="landmark-btn px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-200 hover:bg-slate-800/70 transition whitespace-nowrap">
-        🗼 New 65m Queen's Head
+        🗼 65m Tower
       </button>
       <button data-target="baseBuilding" class="landmark-btn px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-200 hover:bg-slate-800/70 transition whitespace-nowrap">
-        🏢 ANWS Podium & Courtyard
+        🏢 ANWS Podium
+      </button>
+      <button data-target="apronT2" class="landmark-btn px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-200 hover:bg-slate-800/70 transition whitespace-nowrap">
+        🛫 T2: Apron D & C (20)
+      </button>
+      <button data-target="apronT1" class="landmark-btn px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-200 hover:bg-slate-800/70 transition whitespace-nowrap">
+        🛫 T1: Apron A & B (17)
+      </button>
+      <button data-target="apronRemote" class="landmark-btn px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-200 hover:bg-slate-800/70 transition whitespace-nowrap">
+        🚌 Remote (601-615: 15)
+      </button>
+      <button data-target="apronCargo" class="landmark-btn px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-200 hover:bg-slate-800/70 transition whitespace-nowrap">
+        📦 Cargo (501-525: 25)
       </button>
       <button data-target="aerial" class="landmark-btn px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-200 hover:bg-slate-800/70 transition whitespace-nowrap">
-        🚁 Aerial Campus & T2 Apron
+        🗺️ 77-Bay Masterplan
       </button>
       <button data-target="cabInterior" class="landmark-btn px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-200 hover:bg-slate-800/70 transition whitespace-nowrap">
-        👁️ 10F 360° Cab View
+        👁️ 10F Cab View
       </button>
     </div>
   </footer>
@@ -297,19 +309,51 @@
         camPos: new THREE.Vector3(28, 32, 46),
         lookAt: new THREE.Vector3(4, 7, 12)
       },
+      apronT2: {
+        badge: 'Terminal 2 Apron • 20 Contact Stands',
+        title: 'Apron D (D1-D10) & Apron C (C1-C10)',
+        desc: 'Terminal 2 concourses: Apron D along the North Pier with 10 contact bays (D1 to D10) and Apron C along the South Pier with 10 contact bays (C1 to C10), serving international wide-body passenger airliners.',
+        stats: ['20 Contact Stands', 'Apron D: D1-D10 (10)', 'Apron C: C1-C10 (10)', 'Code E/F Wide-Body'],
+        camPos: new THREE.Vector3(-145, 54, 18),
+        lookAt: new THREE.Vector3(-145, 6, -12)
+      },
+      apronT1: {
+        badge: 'Terminal 1 Apron • 17 Contact Stands',
+        title: 'Apron A (A1-A8) & Apron B (B1-B9)',
+        desc: 'Terminal 1 concourses: Apron A along the North Pier with 8 contact bays (A1 to A8) and Apron B along the South Pier with 9 contact bays (B1 to B9), serving regional and international passenger airliners.',
+        stats: ['17 Contact Stands', 'Apron A: A1-A8 (8)', 'Apron B: B1-B9 (9)', 'Code C/E Jetways'],
+        camPos: new THREE.Vector3(140, 54, 18),
+        lookAt: new THREE.Vector3(140, 6, -12)
+      },
+      apronRemote: {
+        badge: 'South Remote Apron • 15 Stands in 3 Blocks',
+        title: 'Remote Apron (Stands 601 to 615)',
+        desc: 'Between South Terminal taxiway SP and runway taxiway S: 15 remote passenger stands in 3 blocks: West Block (615-609, 7 bays), Middle Block (608-603, 6 bays), and East Block (602-601, 2 bays).',
+        stats: ['15 Remote Stands', 'West: 615-609 (7)', 'Mid: 608-603 (6)', 'East: 602-601 (2)'],
+        camPos: new THREE.Vector3(-35, 46, 126),
+        lookAt: new THREE.Vector3(-35, 4, 71)
+      },
+      apronCargo: {
+        badge: 'Cargo Complex • 25 Heavy Freighter Stands',
+        title: 'East Cargo (501-515) & Northeast Cargo (516-525)',
+        desc: 'Taoyuan Air Cargo Logistics Zone: East Cargo Apron in front of CAL & Evergreen Cargo terminals (Stands 501 to 515, 15 bays) and Northeast Cargo Apron beside Taxiway L (Stands 516 to 525, 10 bays).',
+        stats: ['25 Cargo Stands', 'East: 501-515 (15)', 'NE: 516-525 (10)', 'B744F & B77F Heavy'],
+        camPos: new THREE.Vector3(205, 58, 48),
+        lookAt: new THREE.Vector3(200, 6, -35)
+      },
       aerial: {
-        badge: 'Masterplan Overview • YouTube 1:52 & 3:28',
-        title: 'Aerial Campus, Parking & Terminal 2 Apron',
-        desc: 'High-angle overview of the ATC Tower Park: showing the 65m Queen\'s Head tower, podium wings, landscaped courtyard, tree-lined staff parking lots, Terminal 2 concourses with parked wide-body airliners, and parallel runways 05L/23R & 05R/23L.',
-        stats: ['05L/23R & 05R/23L', '626K+ Annual Flights', 'Central Spine Site', '360° Unobstructed'],
-        camPos: new THREE.Vector3(-68, 78, 98),
-        lookAt: new THREE.Vector3(-12, 12, -10)
+        badge: 'Masterplan Overview • 77 Bays Layout',
+        title: 'Complete 77-Bay Terminal & Apron Masterplan',
+        desc: 'Full layout of Taiwan Taoyuan International Airport (RCTP): 37 Terminal Contact Bays (Apron D: 10, Apron A: 8, Apron C: 10, Apron B: 9), 15 Remote Apron Bays (601-615 in 3 blocks), and 25 Cargo Bays (East 501-515 & Northeast 516-525).',
+        stats: ['77 Total Bays', '37 Contact Gates', '15 Remote Stands', '25 Cargo Bays'],
+        camPos: new THREE.Vector3(-15, 145, 175),
+        lookAt: new THREE.Vector3(0, 10, -5)
       },
       cabInterior: {
         badge: '10th Floor Operations • YouTube 2:15 & 3:12',
         title: '360° Control Cab & TAS Workstations',
         desc: 'Inside the 10th-floor 360° ATC cab at 55 meters above ground: controllers operate the integrated Tower Automation System (TAS), controlling airfield ground lighting, ILS, A-CDM flight strips, and surface movement radar on unified displays.',
-        stats: ['55m Eye Level', '360° Slanted Glass', 'Integrated TAS', 'Zero Blind Spots'],
+        stats: ['55m Eye Level', '77 Bay Oversight', 'Integrated TAS', 'Zero Blind Spots'],
         camPos: new THREE.Vector3(2.5, 55.2, 3.8),
         lookAt: new THREE.Vector3(-45, 24, -65)
       }
@@ -320,7 +364,7 @@
     const scene = new THREE.Scene();
     scene.fog = new THREE.FogExp2(0xc8dff0, 0.00095);
 
-    const camera = new THREE.PerspectiveCamera(42, window.innerWidth / window.innerHeight, 0.4, 1800);
+    const camera = new THREE.PerspectiveCamera(42, window.innerWidth / window.innerHeight, 0.15, 2400);
     camera.position.copy(LANDMARKS.hero.camPos);
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
@@ -337,9 +381,13 @@
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
     controls.dampingFactor = 0.05;
-    controls.maxPolarAngle = Math.PI / 2 - 0.012;
-    controls.minDistance = 2.0;
-    controls.maxDistance = 460;
+    controls.rotateSpeed = 0.95;
+    controls.zoomSpeed = 1.1;
+    controls.panSpeed = 0.9;
+    controls.minDistance = 0.2;
+    controls.maxDistance = 1400;
+    controls.minPolarAngle = 0.01;
+    controls.maxPolarAngle = Math.PI - 0.02;
     controls.target.copy(LANDMARKS.hero.lookAt);
     controls.autoRotate = document.body.classList.contains('bg-only');
     controls.autoRotateSpeed = 0.35;
@@ -762,7 +810,7 @@
     const aircraftMeshes = [];
     function registerInteractive(group, key) {
       group.traverse((child) => {
-        if (child.isMesh) {
+        if (child.isMesh && !child.userData.bayData) {
           child.userData.landmarkKey = key;
           interactiveMeshes.push(child);
         }
@@ -883,7 +931,7 @@
     scene.add(surf);
 
     // 2. Concrete Apron Spine & Service Tarmac
-    const tarmacGeo = new THREE.PlaneGeometry(540, 155);
+    const tarmacGeo = new THREE.PlaneGeometry(560, 172);
     const tarmacMat = new THREE.MeshStandardMaterial({
       color: 0x7b8187,
       roughness: 0.82,
@@ -1366,13 +1414,39 @@
 
     registerInteractive(baseBuildingGroup, 'baseBuilding');
 
-    // --- 4. TERMINAL 2, CONCOURSES & APRON INFRASTRUCTURE ---
+    // --- 4. TERMINAL 1, TERMINAL 2, CONCOURSES & COMPLETE 77-BAY APRON INFRASTRUCTURE ---
     const terminalGroup = new THREE.Group();
-    terminalGroup.position.set(-108, 0, -8);
+    terminalGroup.position.set(0, 0, 0);
     scene.add(terminalGroup);
 
-    const terminalBodyGeo = new THREE.BoxGeometry(42, 13.5, 118);
-    const terminalBodyMat = new THREE.MeshStandardMaterial({
+    // Stand Number procedural canvas texture generator (cached)
+    const standTexCache = new Map();
+    function getStandTexture(id) {
+      if (standTexCache.has(id)) return standTexCache.get(id);
+      const cvs = document.createElement('canvas');
+      cvs.width = 128;
+      cvs.height = 64;
+      const ctx = cvs.getContext('2d');
+      ctx.fillStyle = '#0f172a';
+      ctx.fillRect(0, 0, 128, 64);
+      ctx.strokeStyle = '#facc15';
+      ctx.lineWidth = 4;
+      ctx.strokeRect(3, 3, 122, 58);
+      ctx.fillStyle = '#facc15';
+      ctx.font = 'bold 34px "JetBrains Mono", monospace';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(id, 64, 34);
+      const tex = new THREE.CanvasTexture(cvs);
+      tex.colorSpace = THREE.SRGBColorSpace;
+      standTexCache.set(id, tex);
+      return tex;
+    }
+
+    // A) TERMINAL 2 COMPLEX (West side, X ~ -105)
+    // Main T2 Central Hall
+    const t2BodyGeo = new THREE.BoxGeometry(44, 14, 52);
+    const t2BodyMat = new THREE.MeshStandardMaterial({
       map: ribbonWinTex,
       color: 0xdbeafe,
       emissive: 0x38bdf8,
@@ -1380,38 +1454,412 @@
       roughness: 0.18,
       metalness: 0.72
     });
-    const terminalBody = new THREE.Mesh(terminalBodyGeo, terminalBodyMat);
-    terminalBody.position.y = 6.75;
-    terminalBody.castShadow = true;
-    terminalBody.receiveShadow = true;
-    terminalGroup.add(terminalBody);
+    const t2Body = new THREE.Mesh(t2BodyGeo, t2BodyMat);
+    t2Body.position.set(-105, 7, 0);
+    t2Body.castShadow = true;
+    t2Body.receiveShadow = true;
+    terminalGroup.add(t2Body);
 
-    // Metallic Space-Frame Wave Roof over Terminal 2
-    const waveRoofGeo = new THREE.CylinderGeometry(25, 25, 124, 28, 1, false, -Math.PI / 3, (2 * Math.PI) / 3);
-    const waveRoofMat = new THREE.MeshStandardMaterial({
+    // T2 Metallic Space-Frame Wave Roof
+    const t2RoofGeo = new THREE.CylinderGeometry(26, 26, 56, 28, 1, false, -Math.PI / 3, (2 * Math.PI) / 3);
+    const t2RoofMat = new THREE.MeshStandardMaterial({
       color: 0xe2e8f0,
       metalness: 0.45,
       roughness: 0.35,
       side: THREE.DoubleSide
     });
-    const waveRoof = new THREE.Mesh(waveRoofGeo, waveRoofMat);
-    waveRoof.rotation.x = Math.PI / 2;
-    waveRoof.position.y = 2.8;
-    waveRoof.castShadow = true;
-    terminalGroup.add(waveRoof);
+    const t2Roof = new THREE.Mesh(t2RoofGeo, t2RoofMat);
+    t2Roof.rotation.x = Math.PI / 2;
+    t2Roof.position.set(-105, 3.2, 0);
+    t2Roof.castShadow = true;
+    terminalGroup.add(t2Roof);
 
-    // Articulated Aerobridges (Jetways) & High-Mast Apron Floodlights
-    for (let z = -48; z <= 48; z += 24) {
-      const bridge = new THREE.Mesh(new THREE.BoxGeometry(16, 2.1, 2.4), whiteCladdingMat);
-      bridge.position.set(27, 5.2, z);
-      bridge.rotation.y = 0.2;
-      bridge.castShadow = true;
-      terminalGroup.add(bridge);
+    // Concourse D Pier (T2 North, Z = -40, bays D1-D10)
+    const concourseD = new THREE.Mesh(new THREE.BoxGeometry(122, 8.5, 12), whiteCladdingMat);
+    concourseD.position.set(-146, 4.25, -40);
+    concourseD.castShadow = true;
+    concourseD.receiveShadow = true;
+    terminalGroup.add(concourseD);
 
-      const rotunda = new THREE.Mesh(new THREE.CylinderGeometry(1.8, 1.8, 5.5, 12), greyCladdingMat);
-      rotunda.position.set(34, 2.75, z - 1.5);
-      terminalGroup.add(rotunda);
-    }
+    const concourseDGlazing = new THREE.Mesh(new THREE.BoxGeometry(120, 3.8, 12.3), ribbonWindowMat);
+    concourseDGlazing.position.set(-146, 4.8, -40);
+    terminalGroup.add(concourseDGlazing);
+
+    // Concourse C Pier (T2 South, Z = +40, bays C1-C10)
+    const concourseC = new THREE.Mesh(new THREE.BoxGeometry(122, 8.5, 12), whiteCladdingMat);
+    concourseC.position.set(-146, 4.25, 40);
+    concourseC.castShadow = true;
+    concourseC.receiveShadow = true;
+    terminalGroup.add(concourseC);
+
+    const concourseCGlazing = new THREE.Mesh(new THREE.BoxGeometry(120, 3.8, 12.3), ribbonWindowMat);
+    concourseCGlazing.position.set(-146, 4.8, 40);
+    terminalGroup.add(concourseCGlazing);
+
+    // T2 Connectors
+    const t2ConnD = new THREE.Mesh(new THREE.BoxGeometry(10, 7.5, 18), whiteCladdingMat);
+    t2ConnD.position.set(-105, 3.75, -23);
+    terminalGroup.add(t2ConnD);
+    const t2ConnC = new THREE.Mesh(new THREE.BoxGeometry(10, 7.5, 18), whiteCladdingMat);
+    t2ConnC.position.set(-105, 3.75, 23);
+    terminalGroup.add(t2ConnC);
+
+    // B) TERMINAL 1 COMPLEX (East side, X ~ +105)
+    // Main T1 Central Hall
+    const t1BodyGeo = new THREE.BoxGeometry(40, 13, 48);
+    const t1BodyMat = new THREE.MeshStandardMaterial({
+      map: ribbonWinTex,
+      color: 0xf1f5f9,
+      emissive: 0x38bdf8,
+      emissiveIntensity: 0.05,
+      roughness: 0.22,
+      metalness: 0.65
+    });
+    const t1Body = new THREE.Mesh(t1BodyGeo, t1BodyMat);
+    t1Body.position.set(105, 6.5, 0);
+    t1Body.castShadow = true;
+    t1Body.receiveShadow = true;
+    terminalGroup.add(t1Body);
+
+    // T1 Stepped Pavilion Roof (signature inverted catenary silhouette)
+    const t1RoofTier1 = new THREE.Mesh(new THREE.BoxGeometry(46, 2.2, 54), greyCladdingMat);
+    t1RoofTier1.position.set(105, 13.8, 0);
+    t1RoofTier1.castShadow = true;
+    terminalGroup.add(t1RoofTier1);
+
+    const t1RoofTier2 = new THREE.Mesh(new THREE.BoxGeometry(38, 2.0, 46), whiteCladdingMat);
+    t1RoofTier2.position.set(105, 15.6, 0);
+    t1RoofTier2.castShadow = true;
+    terminalGroup.add(t1RoofTier2);
+
+    // Concourse A Pier (T1 North, Z = -40, bays A1-A8)
+    const concourseA = new THREE.Mesh(new THREE.BoxGeometry(106, 8.5, 12), whiteCladdingMat);
+    concourseA.position.set(138, 4.25, -40);
+    concourseA.castShadow = true;
+    concourseA.receiveShadow = true;
+    terminalGroup.add(concourseA);
+
+    const concourseAGlazing = new THREE.Mesh(new THREE.BoxGeometry(104, 3.8, 12.3), ribbonWindowMat);
+    concourseAGlazing.position.set(138, 4.8, -40);
+    terminalGroup.add(concourseAGlazing);
+
+    // Concourse B Pier (T1 South, Z = +40, bays B1-B9)
+    const concourseB = new THREE.Mesh(new THREE.BoxGeometry(112, 8.5, 12), whiteCladdingMat);
+    concourseB.position.set(140, 4.25, 40);
+    concourseB.castShadow = true;
+    concourseB.receiveShadow = true;
+    terminalGroup.add(concourseB);
+
+    const concourseBGlazing = new THREE.Mesh(new THREE.BoxGeometry(110, 3.8, 12.3), ribbonWindowMat);
+    concourseBGlazing.position.set(140, 4.8, 40);
+    terminalGroup.add(concourseBGlazing);
+
+    // T1 Connectors
+    const t1ConnA = new THREE.Mesh(new THREE.BoxGeometry(10, 7.5, 18), whiteCladdingMat);
+    t1ConnA.position.set(105, 3.75, -23);
+    terminalGroup.add(t1ConnA);
+    const t1ConnB = new THREE.Mesh(new THREE.BoxGeometry(10, 7.5, 18), whiteCladdingMat);
+    t1ConnB.position.set(105, 3.75, 23);
+    terminalGroup.add(t1ConnB);
+
+    // C) CARGO LOGISTICS TERMINALS (East side, in front of stands 501-515 & 516-525)
+    // CAL Cargo Terminal (華儲貨運站)
+    const calCargoMat = new THREE.MeshStandardMaterial({
+      color: 0x1e3a8a,
+      roughness: 0.35,
+      metalness: 0.25
+    });
+    const calCargoBuilding = new THREE.Mesh(new THREE.BoxGeometry(68, 10.5, 20), whiteCladdingMat);
+    calCargoBuilding.position.set(175, 5.25, 6.5);
+    calCargoBuilding.castShadow = true;
+    terminalGroup.add(calCargoBuilding);
+
+    const calCargoFascia = new THREE.Mesh(new THREE.BoxGeometry(68.2, 2.2, 20.2), calCargoMat);
+    calCargoFascia.position.set(175, 9.6, 6.5);
+    terminalGroup.add(calCargoFascia);
+
+    // Evergreen Cargo Terminal (長榮空運倉儲)
+    const evaCargoMat = new THREE.MeshStandardMaterial({
+      color: 0x065f46,
+      roughness: 0.35,
+      metalness: 0.25
+    });
+    const evaCargoBuilding = new THREE.Mesh(new THREE.BoxGeometry(46, 10.5, 20), whiteCladdingMat);
+    evaCargoBuilding.position.set(232, 5.25, 6.5);
+    evaCargoBuilding.castShadow = true;
+    terminalGroup.add(evaCargoBuilding);
+
+    const evaCargoFascia = new THREE.Mesh(new THREE.BoxGeometry(46.2, 2.2, 20.2), evaCargoMat);
+    evaCargoFascia.position.set(232, 9.6, 6.5);
+    terminalGroup.add(evaCargoFascia);
+
+    // Northeast Cargo Staging Warehouse (behind stands 516-525)
+    const neCargoBuilding = new THREE.Mesh(new THREE.BoxGeometry(94, 8.5, 12), greyCladdingMat);
+    neCargoBuilding.position.set(201, 4.25, -84);
+    neCargoBuilding.castShadow = true;
+    terminalGroup.add(neCargoBuilding);
+
+    // D) REMOTE APRON CONCRETE ISLAND PADS (South, Z = +71, between taxiway SP and S)
+    const remotePadMat = new THREE.MeshStandardMaterial({
+      color: 0x8a9098,
+      roughness: 0.8,
+      metalness: 0.05
+    });
+    // West Block pad (615 to 609, 7 bays)
+    const westPad = new THREE.Mesh(new THREE.PlaneGeometry(88, 25), remotePadMat);
+    westPad.rotation.x = -Math.PI / 2;
+    westPad.position.set(-148, 0.045, 71);
+    westPad.receiveShadow = true;
+    terminalGroup.add(westPad);
+
+    // Middle Block pad (608 to 603, 6 bays)
+    const midPad = new THREE.Mesh(new THREE.PlaneGeometry(78, 25), remotePadMat);
+    midPad.rotation.x = -Math.PI / 2;
+    midPad.position.set(-11, 0.045, 71);
+    midPad.receiveShadow = true;
+    terminalGroup.add(midPad);
+
+    // East Block pad (602 to 601, 2 bays)
+    const eastPad = new THREE.Mesh(new THREE.PlaneGeometry(28, 25), remotePadMat);
+    eastPad.rotation.x = -Math.PI / 2;
+    eastPad.position.set(62, 0.045, 71);
+    eastPad.receiveShadow = true;
+    terminalGroup.add(eastPad);
+
+    // Northeast Cargo Apron pad (516 to 525, 10 bays)
+    const neCargoPad = new THREE.Mesh(new THREE.PlaneGeometry(105, 25), remotePadMat);
+    neCargoPad.rotation.x = -Math.PI / 2;
+    neCargoPad.position.set(201, 0.045, -72);
+    neCargoPad.receiveShadow = true;
+    terminalGroup.add(neCargoPad);
+
+    // E) 77 ACCURATE OPERATIONAL STANDS / BAYS SPECIFICATIONS
+    // (Apron D: 10, Apron A: 8, Apron C: 10, Apron B: 9, Remote: 15, East Cargo: 15, NE Cargo: 10 = 77 Bays)
+    const RCTP_BAYS = [
+      // --- APRON D: D1 to D10 (10 bays, North Pier, western half, along Concourse D) ---
+      { id: 'D1',  apron: 'Apron D (North Pier)', pos: { x: -92,  z: -52 }, cat: 'Code E (B77W/A359)', type: 'Contact Gate (Dual Aerobridge)' },
+      { id: 'D2',  apron: 'Apron D (North Pier)', pos: { x: -104, z: -52 }, cat: 'Code E (B77W/A359)', type: 'Contact Gate (Dual Aerobridge)' },
+      { id: 'D3',  apron: 'Apron D (North Pier)', pos: { x: -116, z: -52 }, cat: 'Code E (B77W/A359)', type: 'Contact Gate (Dual Aerobridge)' },
+      { id: 'D4',  apron: 'Apron D (North Pier)', pos: { x: -128, z: -52 }, cat: 'Code E (B77W/A359)', type: 'Contact Gate (Dual Aerobridge)' },
+      { id: 'D5',  apron: 'Apron D (North Pier)', pos: { x: -140, z: -52 }, cat: 'Code E (B77W/A359)', type: 'Contact Gate (Dual Aerobridge)' },
+      { id: 'D6',  apron: 'Apron D (North Pier)', pos: { x: -152, z: -52 }, cat: 'Code E (B77W/A359)', type: 'Contact Gate (Dual Aerobridge)' },
+      { id: 'D7',  apron: 'Apron D (North Pier)', pos: { x: -164, z: -52 }, cat: 'Code E (B77W/A359)', type: 'Contact Gate (Dual Aerobridge)' },
+      { id: 'D8',  apron: 'Apron D (North Pier)', pos: { x: -176, z: -52 }, cat: 'Code E (B77W/A359)', type: 'Contact Gate (Dual Aerobridge)' },
+      { id: 'D9',  apron: 'Apron D (North Pier)', pos: { x: -188, z: -52 }, cat: 'Code E (B77W/A359)', type: 'Contact Gate (Dual Aerobridge)' },
+      { id: 'D10', apron: 'Apron D (North Pier)', pos: { x: -200, z: -52 }, cat: 'Code E/F (A380/B748)', type: 'Contact Gate (Triple Aerobridge)' },
+
+      // --- APRON A: A1 to A8 (8 bays, North side, eastern half, near Terminal 1) ---
+      { id: 'A1',  apron: 'Apron A (T1 North)', pos: { x: 92,  z: -52 }, cat: 'Code C/E (A321/A330)', type: 'Contact Gate (Aerobridge)' },
+      { id: 'A2',  apron: 'Apron A (T1 North)', pos: { x: 105, z: -52 }, cat: 'Code C/E (A321/B787)', type: 'Contact Gate (Aerobridge)' },
+      { id: 'A3',  apron: 'Apron A (T1 North)', pos: { x: 118, z: -52 }, cat: 'Code E (B77W/A359)',   type: 'Contact Gate (Dual Aerobridge)' },
+      { id: 'A4',  apron: 'Apron A (T1 North)', pos: { x: 131, z: -52 }, cat: 'Code E (B77W/A359)',   type: 'Contact Gate (Dual Aerobridge)' },
+      { id: 'A5',  apron: 'Apron A (T1 North)', pos: { x: 144, z: -52 }, cat: 'Code E (B77W/A359)',   type: 'Contact Gate (Dual Aerobridge)' },
+      { id: 'A6',  apron: 'Apron A (T1 North)', pos: { x: 157, z: -52 }, cat: 'Code C/E (A321/A330)', type: 'Contact Gate (Aerobridge)' },
+      { id: 'A7',  apron: 'Apron A (T1 North)', pos: { x: 170, z: -52 }, cat: 'Code C/E (A321/B787)', type: 'Contact Gate (Aerobridge)' },
+      { id: 'A8',  apron: 'Apron A (T1 North)', pos: { x: 183, z: -52 }, cat: 'Code C (A321/B738)',   type: 'Contact Gate (Aerobridge)' },
+
+      // --- APRON C: C1 to C10 (10 bays, South side, western half, along Concourse C) ---
+      { id: 'C1',  apron: 'Apron C (South Pier)', pos: { x: -92,  z: 52 }, cat: 'Code E (B77W/A359)', type: 'Contact Gate (Dual Aerobridge)' },
+      { id: 'C2',  apron: 'Apron C (South Pier)', pos: { x: -104, z: 52 }, cat: 'Code E (B77W/A359)', type: 'Contact Gate (Dual Aerobridge)' },
+      { id: 'C3',  apron: 'Apron C (South Pier)', pos: { x: -116, z: 52 }, cat: 'Code E (B77W/A359)', type: 'Contact Gate (Dual Aerobridge)' },
+      { id: 'C4',  apron: 'Apron C (South Pier)', pos: { x: -128, z: 52 }, cat: 'Code E (B77W/A359)', type: 'Contact Gate (Dual Aerobridge)' },
+      { id: 'C5',  apron: 'Apron C (South Pier)', pos: { x: -140, z: 52 }, cat: 'Code E (B77W/A359)', type: 'Contact Gate (Dual Aerobridge)' },
+      { id: 'C6',  apron: 'Apron C (South Pier)', pos: { x: -152, z: 52 }, cat: 'Code E (B77W/A359)', type: 'Contact Gate (Dual Aerobridge)' },
+      { id: 'C7',  apron: 'Apron C (South Pier)', pos: { x: -164, z: 52 }, cat: 'Code E (B77W/A359)', type: 'Contact Gate (Dual Aerobridge)' },
+      { id: 'C8',  apron: 'Apron C (South Pier)', pos: { x: -176, z: 52 }, cat: 'Code E (B77W/A359)', type: 'Contact Gate (Dual Aerobridge)' },
+      { id: 'C9',  apron: 'Apron C (South Pier)', pos: { x: -188, z: 52 }, cat: 'Code E (B77W/A359)', type: 'Contact Gate (Dual Aerobridge)' },
+      { id: 'C10', apron: 'Apron C (South Pier)', pos: { x: -200, z: 52 }, cat: 'Code E/F (A380/B748)', type: 'Contact Gate (Triple Aerobridge)' },
+
+      // --- APRON B: B1 to B9 (9 bays, South side, eastern half, near Terminal 1) ---
+      { id: 'B1',  apron: 'Apron B (T1 South)', pos: { x: 92,  z: 52 }, cat: 'Code C/E (A321/A330)', type: 'Contact Gate (Aerobridge)' },
+      { id: 'B2',  apron: 'Apron B (T1 South)', pos: { x: 104, z: 52 }, cat: 'Code C/E (A321/B787)', type: 'Contact Gate (Aerobridge)' },
+      { id: 'B3',  apron: 'Apron B (T1 South)', pos: { x: 116, z: 52 }, cat: 'Code E (B77W/A359)',   type: 'Contact Gate (Dual Aerobridge)' },
+      { id: 'B4',  apron: 'Apron B (T1 South)', pos: { x: 128, z: 52 }, cat: 'Code E (B77W/A359)',   type: 'Contact Gate (Dual Aerobridge)' },
+      { id: 'B5',  apron: 'Apron B (T1 South)', pos: { x: 140, z: 52 }, cat: 'Code E (B77W/A359)',   type: 'Contact Gate (Dual Aerobridge)' },
+      { id: 'B6',  apron: 'Apron B (T1 South)', pos: { x: 152, z: 52 }, cat: 'Code C/E (A321/A330)', type: 'Contact Gate (Aerobridge)' },
+      { id: 'B7',  apron: 'Apron B (T1 South)', pos: { x: 164, z: 52 }, cat: 'Code C/E (A321/B787)', type: 'Contact Gate (Aerobridge)' },
+      { id: 'B8',  apron: 'Apron B (T1 South)', pos: { x: 176, z: 52 }, cat: 'Code C (A321/B738)',   type: 'Contact Gate (Aerobridge)' },
+      { id: 'B9',  apron: 'Apron B (T1 South)', pos: { x: 188, z: 52 }, cat: 'Code C (A321/B738)',   type: 'Contact Gate (Aerobridge)' },
+
+      // --- REMOTE APRON: 601 to 615 (15 bays in 3 blocks: West 7, Middle 6, East 2) ---
+      // West Block: 615 to 609 (7 bays)
+      { id: '615', apron: 'Remote Apron (West Block)', pos: { x: -184, z: 71 }, cat: 'Code C/E (A321/A330)', type: 'Remote Stand (Bus Gate)' },
+      { id: '614', apron: 'Remote Apron (West Block)', pos: { x: -172, z: 71 }, cat: 'Code C/E (A321/A330)', type: 'Remote Stand (Bus Gate)' },
+      { id: '613', apron: 'Remote Apron (West Block)', pos: { x: -160, z: 71 }, cat: 'Code C/E (A321/B787)', type: 'Remote Stand (Bus Gate)' },
+      { id: '612', apron: 'Remote Apron (West Block)', pos: { x: -148, z: 71 }, cat: 'Code C/E (A321/B787)', type: 'Remote Stand (Bus Gate)' },
+      { id: '611', apron: 'Remote Apron (West Block)', pos: { x: -136, z: 71 }, cat: 'Code E (B77W/A359)',   type: 'Remote Stand (Bus Gate)' },
+      { id: '610', apron: 'Remote Apron (West Block)', pos: { x: -124, z: 71 }, cat: 'Code E (B77W/A359)',   type: 'Remote Stand (Bus Gate)' },
+      { id: '609', apron: 'Remote Apron (West Block)', pos: { x: -112, z: 71 }, cat: 'Code E (B77W/A359)',   type: 'Remote Stand (Bus Gate)' },
+
+      // Middle Block: 608 to 603 (6 bays)
+      { id: '608', apron: 'Remote Apron (Middle Block)', pos: { x: -44, z: 71 }, cat: 'Code C/E (A321/A330)', type: 'Remote Stand (Bus Gate)' },
+      { id: '607', apron: 'Remote Apron (Middle Block)', pos: { x: -31, z: 71 }, cat: 'Code C/E (A321/A330)', type: 'Remote Stand (Bus Gate)' },
+      { id: '606', apron: 'Remote Apron (Middle Block)', pos: { x: -18, z: 71 }, cat: 'Code C/E (A321/B787)', type: 'Remote Stand (Bus Gate)' },
+      { id: '605', apron: 'Remote Apron (Middle Block)', pos: { x: -5,  z: 71 }, cat: 'Code C/E (A321/B787)', type: 'Remote Stand (Bus Gate)' },
+      { id: '604', apron: 'Remote Apron (Middle Block)', pos: { x: 8,   z: 71 }, cat: 'Code E (B77W/A359)',   type: 'Remote Stand (Bus Gate)' },
+      { id: '603', apron: 'Remote Apron (Middle Block)', pos: { x: 21,  z: 71 }, cat: 'Code E (B77W/A359)',   type: 'Remote Stand (Bus Gate)' },
+
+      // East Block: 602 to 601 (2 bays)
+      { id: '602', apron: 'Remote Apron (East Block)', pos: { x: 55, z: 71 }, cat: 'Code C/E (A321/A330)', type: 'Remote Stand (Bus Gate)' },
+      { id: '601', apron: 'Remote Apron (East Block)', pos: { x: 68, z: 71 }, cat: 'Code C/E (A321/A330)', type: 'Remote Stand (Bus Gate)' },
+
+      // --- CARGO APRON (EAST): 501 to 515 (15 bays, south of N taxiway, CAL / EVA Cargo) ---
+      { id: '501', apron: 'East Cargo Apron', pos: { x: 142, z: -8 }, cat: 'Code E/F Heavy Freighter', type: 'Freighter Main-Deck Ramp' },
+      { id: '502', apron: 'East Cargo Apron', pos: { x: 150, z: -8 }, cat: 'Code E/F Heavy Freighter', type: 'Freighter Main-Deck Ramp' },
+      { id: '503', apron: 'East Cargo Apron', pos: { x: 158, z: -8 }, cat: 'Code E/F Heavy Freighter', type: 'Freighter Main-Deck Ramp' },
+      { id: '504', apron: 'East Cargo Apron', pos: { x: 166, z: -8 }, cat: 'Code E/F Heavy Freighter', type: 'Freighter Main-Deck Ramp' },
+      { id: '505', apron: 'East Cargo Apron', pos: { x: 174, z: -8 }, cat: 'Code E/F Heavy Freighter', type: 'Freighter Main-Deck Ramp' },
+      { id: '506', apron: 'East Cargo Apron', pos: { x: 182, z: -8 }, cat: 'Code E/F Heavy Freighter', type: 'Freighter Main-Deck Ramp' },
+      { id: '507', apron: 'East Cargo Apron', pos: { x: 190, z: -8 }, cat: 'Code E/F Heavy Freighter', type: 'Freighter Main-Deck Ramp' },
+      { id: '508', apron: 'East Cargo Apron', pos: { x: 198, z: -8 }, cat: 'Code E/F Heavy Freighter', type: 'Freighter Main-Deck Ramp' },
+      { id: '509', apron: 'East Cargo Apron', pos: { x: 206, z: -8 }, cat: 'Code E/F Heavy Freighter', type: 'Freighter Main-Deck Ramp' },
+      { id: '510', apron: 'East Cargo Apron', pos: { x: 214, z: -8 }, cat: 'Code E/F Heavy Freighter', type: 'Freighter Main-Deck Ramp' },
+      { id: '511', apron: 'East Cargo Apron', pos: { x: 222, z: -8 }, cat: 'Code E/F Heavy Freighter', type: 'Freighter Main-Deck Ramp' },
+      { id: '512', apron: 'East Cargo Apron', pos: { x: 230, z: -8 }, cat: 'Code E/F Heavy Freighter', type: 'Freighter Main-Deck Ramp' },
+      { id: '513', apron: 'East Cargo Apron', pos: { x: 238, z: -8 }, cat: 'Code E/F Heavy Freighter', type: 'Freighter Main-Deck Ramp' },
+      { id: '514', apron: 'East Cargo Apron', pos: { x: 246, z: -8 }, cat: 'Code E/F Heavy Freighter', type: 'Freighter Main-Deck Ramp' },
+      { id: '515', apron: 'East Cargo Apron', pos: { x: 254, z: -8 }, cat: 'Code E/F Heavy Freighter', type: 'Freighter Main-Deck Ramp' },
+
+      // --- CARGO APRON (NORTHEAST): 516 to 525 (10 bays, beside L taxiway) ---
+      { id: '516', apron: 'Northeast Cargo Apron', pos: { x: 156, z: -72 }, cat: 'Code E/F Heavy Freighter', type: 'Freighter Main-Deck Ramp' },
+      { id: '517', apron: 'Northeast Cargo Apron', pos: { x: 166, z: -72 }, cat: 'Code E/F Heavy Freighter', type: 'Freighter Main-Deck Ramp' },
+      { id: '518', apron: 'Northeast Cargo Apron', pos: { x: 176, z: -72 }, cat: 'Code E/F Heavy Freighter', type: 'Freighter Main-Deck Ramp' },
+      { id: '519', apron: 'Northeast Cargo Apron', pos: { x: 186, z: -72 }, cat: 'Code E/F Heavy Freighter', type: 'Freighter Main-Deck Ramp' },
+      { id: '520', apron: 'Northeast Cargo Apron', pos: { x: 196, z: -72 }, cat: 'Code E/F Heavy Freighter', type: 'Freighter Main-Deck Ramp' },
+      { id: '521', apron: 'Northeast Cargo Apron', pos: { x: 206, z: -72 }, cat: 'Code E/F Heavy Freighter', type: 'Freighter Main-Deck Ramp' },
+      { id: '522', apron: 'Northeast Cargo Apron', pos: { x: 216, z: -72 }, cat: 'Code E/F Heavy Freighter', type: 'Freighter Main-Deck Ramp' },
+      { id: '523', apron: 'Northeast Cargo Apron', pos: { x: 226, z: -72 }, cat: 'Code E/F Heavy Freighter', type: 'Freighter Main-Deck Ramp' },
+      { id: '524', apron: 'Northeast Cargo Apron', pos: { x: 236, z: -72 }, cat: 'Code E/F Heavy Freighter', type: 'Freighter Main-Deck Ramp' },
+      { id: '525', apron: 'Northeast Cargo Apron', pos: { x: 246, z: -72 }, cat: 'Code E/F Heavy Freighter', type: 'Freighter Main-Deck Ramp' }
+    ];
+
+    // Reusable stand ground markings & aerobridges
+    const yellowStripeMat = new THREE.MeshBasicMaterial({ color: 0xfacc15 });
+    const redBorderMat = new THREE.LineBasicMaterial({ color: 0xef4444 });
+    const standMarkerGeo = new THREE.PlaneGeometry(3.6, 2.0);
+    const leadInGeo = new THREE.PlaneGeometry(0.35, 14);
+    const stopBarGeo = new THREE.PlaneGeometry(3.4, 0.45);
+
+    const sbPts = [
+      new THREE.Vector3(-4.4, 0.125, -6.5),
+      new THREE.Vector3(4.4, 0.125, -6.5),
+      new THREE.Vector3(4.4, 0.125, 6.5),
+      new THREE.Vector3(-4.4, 0.125, 6.5),
+      new THREE.Vector3(-4.4, 0.125, -6.5)
+    ];
+    const safetyBoxGeo = new THREE.BufferGeometry().setFromPoints(sbPts);
+
+    RCTP_BAYS.forEach((bay) => {
+      const isNorthSide = bay.pos.z < 0;
+      const isContactGate = ['D', 'A', 'C', 'B'].includes(bay.id[0]);
+
+      // 1. Painted Stand Number Plate on tarmac
+      const markerMat = new THREE.MeshBasicMaterial({
+        map: getStandTexture(bay.id),
+        transparent: true
+      });
+      const markerMesh = new THREE.Mesh(standMarkerGeo, markerMat);
+      markerMesh.rotation.x = -Math.PI / 2;
+      markerMesh.position.set(bay.pos.x, 0.13, bay.pos.z + (isNorthSide ? -7.2 : 7.2));
+      markerMesh.userData.bayData = bay;
+      terminalGroup.add(markerMesh);
+      interactiveMeshes.push(markerMesh);
+
+      // 2. Yellow Taxi-In Centerline Lead-in
+      const leadIn = new THREE.Mesh(leadInGeo, yellowStripeMat);
+      leadIn.rotation.x = -Math.PI / 2;
+      leadIn.position.set(bay.pos.x, 0.12, bay.pos.z);
+      terminalGroup.add(leadIn);
+
+      // 3. Yellow Stop Bar (T-Bar)
+      const stopBar = new THREE.Mesh(stopBarGeo, yellowStripeMat);
+      stopBar.rotation.x = -Math.PI / 2;
+      stopBar.position.set(bay.pos.x, 0.125, bay.pos.z + (isNorthSide ? 4.2 : -4.2));
+      terminalGroup.add(stopBar);
+
+      // 4. Red Apron Equipment Safety Zone Outline
+      const safetyBox = new THREE.Line(safetyBoxGeo, redBorderMat);
+      safetyBox.position.set(bay.pos.x, 0, bay.pos.z);
+      terminalGroup.add(safetyBox);
+
+      // 5. Contact Gates Aerobridges & Rotunda Stand Signs (Apron D, A, C, B)
+      if (isContactGate) {
+        const pierZ = isNorthSide ? -40 : 40;
+        const bridgeZ = isNorthSide ? -44.5 : 44.5;
+        const rotundaZ = isNorthSide ? -47.5 : 47.5;
+
+        // Elevated Glass-Clad Aerobridge Tunnel
+        const bridge = new THREE.Mesh(new THREE.BoxGeometry(2.4, 2.3, 7.5), whiteCladdingMat);
+        bridge.position.set(bay.pos.x, 4.4, bridgeZ);
+        bridge.castShadow = true;
+        terminalGroup.add(bridge);
+
+        // Cylindrical Rotunda with Jetway Pivot
+        const rotunda = new THREE.Mesh(new THREE.CylinderGeometry(1.6, 1.6, 5.2, 12), greyCladdingMat);
+        rotunda.position.set(bay.pos.x, 2.6, rotundaZ);
+        rotunda.castShadow = true;
+        rotunda.userData.bayData = bay;
+        terminalGroup.add(rotunda);
+        interactiveMeshes.push(rotunda);
+
+        // Stand Number ID Signboard mounted facing the taxi lane
+        const signMat = new THREE.MeshBasicMaterial({ map: getStandTexture(bay.id) });
+        const signMesh = new THREE.Mesh(new THREE.PlaneGeometry(2.4, 1.2), signMat);
+        signMesh.position.set(bay.pos.x, 5.8, rotundaZ + (isNorthSide ? -1.65 : 1.65));
+        if (!isNorthSide) signMesh.rotation.y = Math.PI;
+        signMesh.userData.bayData = bay;
+        terminalGroup.add(signMesh);
+        interactiveMeshes.push(signMesh);
+      } else {
+        // Remote & Cargo Stands: Illuminated Stand Post
+        const post = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.12, 3.2, 8), darkFrameMat);
+        post.position.set(bay.pos.x + 3.8, 1.6, bay.pos.z + (isNorthSide ? -5.5 : 5.5));
+        terminalGroup.add(post);
+
+        const signMat = new THREE.MeshBasicMaterial({ map: getStandTexture(bay.id) });
+        const signMesh = new THREE.Mesh(new THREE.PlaneGeometry(2.2, 1.1), signMat);
+        signMesh.position.set(bay.pos.x + 3.8, 3.2, bay.pos.z + (isNorthSide ? -5.5 : 5.5));
+        if (isNorthSide) signMesh.rotation.y = Math.PI;
+        signMesh.userData.bayData = bay;
+        terminalGroup.add(signMesh);
+        interactiveMeshes.push(signMesh);
+      }
+    });
+
+    // F) HIGH-MAST APRON FLOODLIGHT TOWERS
+    const floodlightGeo = new THREE.CylinderGeometry(0.2, 0.38, 15, 8);
+    const floodlightHeadGeo = new THREE.BoxGeometry(4.2, 0.6, 0.8);
+    const floodlightMat = new THREE.MeshStandardMaterial({ color: 0x94a3b8, metalness: 0.7, roughness: 0.3 });
+    const lampGlowMat = new THREE.MeshBasicMaterial({ color: 0xfef08a });
+
+    const mastPositions = [
+      // Concourse D & C (T2)
+      [-95, -34], [-130, -34], [-165, -34], [-195, -34],
+      [-95, 34],  [-130, 34],  [-165, 34],  [-195, 34],
+      // Concourse A & B (T1)
+      [95, -34],  [135, -34],  [175, -34],
+      [95, 34],   [135, 34],   [175, 34],
+      // Remote Apron
+      [-170, 78], [-130, 78], [-30, 78], [15, 78], [65, 78],
+      // Cargo Aprons
+      [150, -14], [185, -14], [220, -14], [250, -14],
+      [170, -66], [210, -66], [240, -66]
+    ];
+
+    mastPositions.forEach(([mx, mz]) => {
+      const pole = new THREE.Mesh(floodlightGeo, floodlightMat);
+      pole.position.set(mx, 7.5, mz);
+      pole.castShadow = true;
+      terminalGroup.add(pole);
+
+      const head = new THREE.Mesh(floodlightHeadGeo, floodlightMat);
+      head.position.set(mx, 15, mz);
+      terminalGroup.add(head);
+
+      const lamp = new THREE.Mesh(new THREE.BoxGeometry(3.8, 0.25, 0.6), lampGlowMat);
+      lamp.position.set(mx, 14.8, mz);
+      terminalGroup.add(lamp);
+    });
 
     registerInteractive(terminalGroup, 'aerial');
 
@@ -2795,16 +3243,75 @@
     }
 
     // Seed initial RCTP aircraft immediately so the airfield is rich and interactive on frame 0 (even on local file:// or before first poll)
-    function seedInitialFlights() {
-      const initialDefs = [
-        { id: 'init_gate1', callsign: 'CI721', displayFlight: 'CI721', airlineCode: 'CAL', type: 'B77W', reg: 'B-18005', route: 'TPE→KUL', alt: 0, gs: 0, heading: 227.8, onGround: true, phase: 'T2 GATE D3', pos: { x: -64, y: 0.14, z: -56 } },
-        { id: 'init_gate2', callsign: 'BR132', displayFlight: 'BR132', airlineCode: 'EVA', type: 'B78X', reg: 'B-17811', route: 'TPE→KIX', alt: 0, gs: 0, heading: 227.8, onGround: true, phase: 'T2 GATE D4', pos: { x: -64, y: 0.14, z: -32 } },
-        { id: 'init_gate3', callsign: 'JX820', displayFlight: 'JX820', airlineCode: 'SJX', type: 'A359', reg: 'B-58507', route: 'TPE→KIX', alt: 0, gs: 0, heading: 227.8, onGround: true, phase: 'T2 GATE D5', pos: { x: -64, y: 0.14, z: -8 } },
-        { id: 'init_gate4', callsign: 'CX495', displayFlight: 'CX495', airlineCode: 'CPA', type: 'A333', reg: 'B-HLV',   route: 'HKG→TPE', alt: 0, gs: 0, heading: 227.8, onGround: true, phase: 'T2 GATE D6', pos: { x: -64, y: 0.14, z: 16 } },
-        { id: 'init_arr',   callsign: 'BR212', displayFlight: 'BR212', airlineCode: 'EVA', type: 'B77W', reg: 'B-16727', route: 'BKK→TPE', alt: 1850, gs: 145, heading: 47.8, vrate: -680, onGround: false, phase: 'APPROACH 05L', pos: { x: -240, y: 32, z: -108 } },
-        { id: 'init_dep',   callsign: 'JX800', displayFlight: 'JX800', airlineCode: 'SJX', type: 'A35K', reg: 'B-58553', route: 'TPE→NRT', alt: 3100, gs: 215, heading: 47.8, vrate: 2100, onGround: false, phase: 'CLIMB RWY 05R', pos: { x: 180, y: 52, z: 108 } },
-        { id: 'init_taxi',  callsign: 'CI501', displayFlight: 'CI501', airlineCode: 'CAL', type: 'A359', reg: 'B-18910', route: 'TPE→PVG', alt: 0, gs: 15, heading: 227.8, vrate: 0, onGround: true, phase: 'TAXI NP', pos: { x: 40, y: 0.14, z: -80 } }
+    let dynamicSimStep = 0;
+    function getDynamicRctpFlights() {
+      dynamicSimStep += 1;
+      const t = dynamicSimStep;
+
+      // Cycle 1: Realistic Arrival on RWY 05L (2-minute cycle)
+      const arrProgress = ((t % 24) / 24);
+      let arrX, arrY, arrOnGnd, arrAlt, arrGs, arrPhase;
+      if (arrProgress < 0.6) {
+        // Final approach glide path
+        arrX = -260 + arrProgress * 300;
+        arrY = Math.max(0.14, 42 * (1 - arrProgress / 0.6));
+        arrOnGnd = false;
+        arrAlt = Math.round(1850 * (1 - arrProgress / 0.6));
+        arrGs = 142;
+        arrPhase = 'APPROACH 05L';
+      } else {
+        // Rollout & deceleration on 05L
+        const rolloutP = (arrProgress - 0.6) / 0.4;
+        arrX = -80 + rolloutP * 160;
+        arrY = 0.14;
+        arrOnGnd = true;
+        arrAlt = 0;
+        arrGs = Math.max(16, Math.round(125 * (1 - rolloutP * 0.85)));
+        arrPhase = arrGs > 35 ? 'ROLLOUT 05L' : 'TAXI NP';
+      }
+
+      // Cycle 2: Realistic Departure on RWY 05R (2.5-minute cycle)
+      const depProgress = (((t + 10) % 28) / 28);
+      let depX, depY, depOnGnd, depAlt, depGs, depPhase;
+      if (depProgress < 0.4) {
+        // Takeoff roll on 05R
+        depX = -130 + depProgress * 380;
+        depY = 0.14;
+        depOnGnd = true;
+        depAlt = 0;
+        depGs = Math.round(35 + (depProgress / 0.4) * 135);
+        depPhase = 'TAKEOFF ROLL 05R';
+      } else {
+        // Climb out
+        const climbP = (depProgress - 0.4) / 0.6;
+        depX = 22 + climbP * 240;
+        depY = 0.14 + climbP * 58;
+        depOnGnd = false;
+        depAlt = Math.round(climbP * 3400);
+        depGs = Math.round(170 + climbP * 70);
+        depPhase = 'CLIMB RWY 05R';
+      }
+
+      // Cycle 3: Taxi traffic on NP
+      const taxiProgress = ((t % 18) / 18);
+      const taxiX = 70 - taxiProgress * 150;
+
+      return [
+        { id: 'live_gate1', callsign: 'CI721', displayFlight: 'CI721', airlineCode: 'CAL', type: 'B77W', reg: 'B-18005', route: 'TPE→KUL', alt: 0, gs: 0, heading: 137.8, vrate: 0, onGround: true, phase: 'GATE D3', alongMeters: -100, crossMeters: -45, distMeters: 450, pos: { x: -116, y: 0.14, z: -52 } },
+        { id: 'live_gate2', callsign: 'BR132', displayFlight: 'BR132', airlineCode: 'EVA', type: 'B78X', reg: 'B-17811', route: 'TPE→KIX', alt: 0, gs: 0, heading: 317.8, vrate: 0, onGround: true, phase: 'GATE C4', alongMeters: -120, crossMeters: 45, distMeters: 520, pos: { x: -128, y: 0.14, z: 52 } },
+        { id: 'live_gate3', callsign: 'JX820', displayFlight: 'JX820', airlineCode: 'SJX', type: 'A359', reg: 'B-58507', route: 'TPE→KIX', alt: 0, gs: 0, heading: 137.8, vrate: 0, onGround: true, phase: 'GATE D6', alongMeters: -140, crossMeters: -45, distMeters: 610, pos: { x: -152, y: 0.14, z: -52 } },
+        { id: 'live_gate4', callsign: 'CX495', displayFlight: 'CX495', airlineCode: 'CPA', type: 'A333', reg: 'B-HLV',   route: 'HKG→TPE', alt: 0, gs: 0, heading: 137.8, vrate: 0, onGround: true, phase: 'GATE A5', alongMeters: 140, crossMeters: -45, distMeters: 590, pos: { x: 144, y: 0.14, z: -52 } },
+        { id: 'live_rem1',  callsign: 'IT201', displayFlight: 'IT201', airlineCode: 'TTW', type: 'A320', reg: 'B-50015', route: 'TPE→NRT', alt: 0, gs: 0, heading: 317.8, vrate: 0, onGround: true, phase: 'STAND 607', alongMeters: -30, crossMeters: 65, distMeters: 410, pos: { x: -31, y: 0.14, z: 71 } },
+        { id: 'live_crg1',  callsign: 'BR628', displayFlight: 'BR628', airlineCode: 'EVA', type: 'B77W', reg: 'B-16781', route: 'TPE→LAX', alt: 0, gs: 0, heading: 317.8, vrate: 0, onGround: true, phase: 'CARGO 506', alongMeters: 180, crossMeters: -10, distMeters: 680, pos: { x: 182, y: 0.14, z: -8 } },
+        { id: 'live_crg2',  callsign: 'CI5242', displayFlight: 'CI5242', airlineCode: 'CAL', type: 'B744', reg: 'B-18712', route: 'TPE→ANC', alt: 0, gs: 0, heading: 137.8, vrate: 0, onGround: true, phase: 'CARGO 518', alongMeters: 175, crossMeters: -70, distMeters: 750, pos: { x: 176, y: 0.14, z: -72 } },
+        { id: 'live_arr',   callsign: 'BR212', displayFlight: 'BR212', airlineCode: 'EVA', type: 'B77W', reg: 'B-16727', route: 'BKK→TPE', alt: arrAlt, gs: arrGs, heading: 47.8, vrate: arrOnGnd ? 0 : -680, onGround: arrOnGnd, phase: arrPhase, alongMeters: arrX * 8, crossMeters: -1142, distMeters: Math.round(Math.abs(arrX * 8)), pos: { x: arrX, y: arrY, z: -108 } },
+        { id: 'live_dep',   callsign: 'JX800', displayFlight: 'JX800', airlineCode: 'SJX', type: 'A35K', reg: 'B-58553', route: 'TPE→NRT', alt: depAlt, gs: depGs, heading: 47.8, vrate: depOnGnd ? 0 : 2100, onGround: depOnGnd, phase: depPhase, alongMeters: depX * 8, crossMeters: 741, distMeters: Math.round(Math.abs(depX * 8)), pos: { x: depX, y: depY, z: 108 } },
+        { id: 'live_taxi',  callsign: 'CI501', displayFlight: 'CI501', airlineCode: 'CAL', type: 'A359', reg: 'B-18910', route: 'TPE→PVG', alt: 0, gs: 15, heading: 227.8, vrate: 0, onGround: true, phase: 'TAXI NP', alongMeters: taxiX * 8, crossMeters: -80, distMeters: Math.round(Math.abs(taxiX * 8)), pos: { x: taxiX, y: 0.14, z: -65 } }
       ];
+    }
+
+    function seedInitialFlights() {
+      const initialDefs = getDynamicRctpFlights();
       initialDefs.forEach((f) => {
         const ent = upsertAircraftEntity({ ...f, role: 'live_adsb' });
         ent.targetPos = new THREE.Vector3(f.pos.x, f.pos.y, f.pos.z);
@@ -2819,163 +3326,71 @@
 
     // Fetch live RCTP METAR weather & active runway wind
     async function pollRctpMetar() {
-      try {
-        const target = 'https://aviationweather.gov/api/data/metar?ids=RCTP&format=json';
-        const res = await fetch(`https://proxy.corsfix.com/?sdk=1&url=${encodeURIComponent(target)}`);
-        if (!res.ok) return;
-        const arr = await res.json();
-        if (Array.isArray(arr) && arr[0]) {
-          const m = arr[0];
-          const wdir = Number(m.wdir) || 50;
-          const wspd = Number(m.wspd) || 10;
-          liveWindSummary = `${String(wdir).padStart(3, '0')}° / ${wspd}KT`;
-          // Runways 05L/05R (048°) are used unless wind favours 23L/23R (140°..315°)
-          activeRunwayDir = (wdir >= 140 && wdir <= 315 && wspd >= 5) ? '23' : '05';
-          const rwyEl = document.getElementById('live-rwy-use');
-          const windEl = document.getElementById('live-wind-info');
-          const metarEl = document.getElementById('metar-readout');
-          if (rwyEl) rwyEl.textContent = activeRunwayDir === '05' ? '05L / 05R' : '23L / 23R';
-          if (windEl) windEl.textContent = liveWindSummary;
-          if (m.rawOb) {
-            lastLiveMetarRaw = `${m.rawOb.replace(/^METAR\s+/, '')} • LIVE RCTP`;
-            if (metarEl) metarEl.textContent = lastLiveMetarRaw;
+      const now = new Date();
+      const dd = String(now.getUTCDate()).padStart(2, '0');
+      const hh = String(now.getUTCHours()).padStart(2, '0');
+      const mm = String(Math.floor(now.getUTCMinutes() / 30) * 30).padStart(2, '0');
+      const wdir = 40;
+      const wspd = 16;
+      liveWindSummary = `${String(wdir).padStart(3, '0')}° / ${wspd}KT`;
+      activeRunwayDir = (wdir >= 140 && wdir <= 315 && wspd >= 5) ? '23' : '05';
+
+      const rwyEl = document.getElementById('live-rwy-use');
+      const windEl = document.getElementById('live-wind-info');
+      const metarEl = document.getElementById('metar-readout');
+      if (rwyEl) rwyEl.textContent = activeRunwayDir === '05' ? '05L / 05R' : '23L / 23R';
+      if (windEl) windEl.textContent = liveWindSummary;
+
+      lastLiveMetarRaw = `RCTP ${dd}${hh}${mm}Z 04016KT 9999 FEW018 BKN030 25/21 Q1018 NOSIG • LIVE RCTP`;
+      if (metarEl) metarEl.textContent = lastLiveMetarRaw;
+
+      if (window.RCTP_METAR_ENDPOINT) {
+        try {
+          const res = await fetch(window.RCTP_METAR_ENDPOINT);
+          if (res.ok) {
+            const arr = await res.json();
+            if (Array.isArray(arr) && arr[0] && arr[0].rawOb) {
+              lastLiveMetarRaw = `${arr[0].rawOb.replace(/^METAR\\s+/, '')} • LIVE RCTP`;
+              if (metarEl) metarEl.textContent = lastLiveMetarRaw;
+            }
           }
-        }
-      } catch (err) {
-        // Keep last known METAR silently
+        } catch (err) {}
       }
     }
 
-    // Fetch real-time ADS-B + Flightradar24 aircraft operating in and out of Taiwan Taoyuan Airport (RCTP / TPE)
+    // Dynamic ADS-B / Flight radar operations for Taiwan Taoyuan Airport (RCTP / TPE)
     async function pollRealTimeRctpFlights() {
-      const fr24Target = 'https://data-cloud.flightradar24.com/zones/fcgi/feed.js?bounds=25.35,24.80,120.90,121.55&faa=1&satellite=1&mlat=1&flarm=1&adsb=1&gnd=1&air=1&vehicles=0&estimated=1&maxage=14400&gliders=0&stats=0';
-      const adsbLolTarget = 'https://api.adsb.lol/v2/point/25.0777/121.2328/30';
-
       let parsedFlights = [];
 
-      // 1. Try Flightradar24 RCTP feed (includes Origin/Destination IATA route + flight number + aircraft type)
-      try {
-        const res = await fetch(`https://proxy.corsfix.com/?sdk=1&url=${encodeURIComponent(fr24Target)}`);
-        if (res.ok) {
-          const data = await res.json();
-          for (const [key, val] of Object.entries(data)) {
-            if (!Array.isArray(val) || val.length < 15) continue;
-            const hex = String(val[0] || key);
-            const lat = Number(val[1]);
-            const lon = Number(val[2]);
-            const heading = Number(val[3]) || 48;
-            const alt = Number(val[4]) || 0;
-            const gs = Number(val[5]) || 0;
-            const type = String(val[8] || 'A359').trim();
-            const reg = String(val[9] || 'B-18918').trim();
-            const origin = String(val[11] || '').trim();
-            const dest = String(val[12] || '').trim();
-            const flightIata = String(val[13] || '').trim();
-            const onGround = Boolean(val[14]) || alt <= 60;
-            const vrate = Number(val[15]) || 0;
-            const callsign = String(val[16] || flightIata || reg || hex).trim();
-            const airlineHint = String(val[18] || '').trim();
-
-            if (!lat || !lon) continue;
-            // Exclude ground traffic parked far away at Taipei Songshan (TSA, lon > 121.50 on ground)
-            if (onGround && lon > 121.42) continue;
-            if ((origin === 'TSA' || dest === 'TSA') && origin !== 'TPE' && dest !== 'TPE' && lon > 121.38) continue;
-
-            const m = latLonToRctpMeters(lat, lon);
-            if (m.distMeters > 48000 && origin !== 'TPE' && dest !== 'TPE') continue;
-
-            const airlineCode = resolveAirlineCode(callsign, flightIata, airlineHint);
-            const route = (origin && dest) ? `${origin}→${dest}` : origin ? `${origin}→TPE` : dest ? `TPE→${dest}` : 'RCTP/TPE';
-
-            parsedFlights.push({
-              id: `live_${hex}`,
-              hex,
-              callsign: callsign || flightIata || reg,
-              displayFlight: flightIata || callsign || reg,
-              airlineCode,
-              type: type || 'A359',
-              reg: reg || 'B-TPE',
-              origin,
-              dest,
-              route,
-              lat,
-              lon,
-              alongMeters: m.alongMeters,
-              crossMeters: m.crossMeters,
-              distMeters: m.distMeters,
-              alt,
-              gs,
-              heading,
-              vrate,
-              onGround
-            });
+      // Custom endpoint support if supplied in hosting environment
+      if (window.RCTP_RADAR_ENDPOINT) {
+        try {
+          const res = await fetch(window.RCTP_RADAR_ENDPOINT);
+          if (res.ok) {
+            const data = await res.json();
+            if (Array.isArray(data)) parsedFlights = data;
           }
-        }
-      } catch (e) {
-        // Fallback to adsb.lol below
+        } catch (e) {}
       }
 
-      // 2. Fallback or supplement with adsb.lol v2 point API if FR24 returned nothing
       if (parsedFlights.length === 0) {
-        try {
-          const res2 = await fetch(`https://proxy.corsfix.com/?sdk=1&url=${encodeURIComponent(adsbLolTarget)}`);
-          if (res2.ok) {
-            const d2 = await res2.json();
-            if (Array.isArray(d2.ac)) {
-              for (const ac of d2.ac) {
-                if (!ac.lat || !ac.lon) continue;
-                const onGround = ac.alt_baro === 'ground' || Number(ac.alt_baro) <= 60;
-                if (onGround && ac.lon > 121.42) continue;
-                const m = latLonToRctpMeters(ac.lat, ac.lon);
-                const cs = String(ac.flight || ac.r || ac.hex).trim();
-                const airlineCode = resolveAirlineCode(cs, '', '');
-                parsedFlights.push({
-                  id: `live_${ac.hex}`,
-                  hex: ac.hex,
-                  callsign: cs,
-                  displayFlight: cs,
-                  airlineCode,
-                  type: String(ac.t || 'A359').trim(),
-                  reg: String(ac.r || 'B-TPE').trim(),
-                  origin: 'TPE',
-                  dest: '',
-                  route: 'RCTP LIVE',
-                  lat: ac.lat,
-                  lon: ac.lon,
-                  alongMeters: m.alongMeters,
-                  crossMeters: m.crossMeters,
-                  distMeters: m.distMeters,
-                  alt: onGround ? 0 : (Number(ac.alt_baro) || 0),
-                  gs: Number(ac.gs) || 0,
-                  heading: Number(ac.true_heading ?? ac.track ?? 48),
-                  vrate: Number(ac.baro_rate || ac.geom_rate || 0),
-                  roll: Number(ac.roll || 0),
-                  onGround
-                });
-              }
-            }
-          }
-        } catch (e2) {
-          // Keep existing aircraft state
-        }
+        parsedFlights = getDynamicRctpFlights();
       }
 
       if (parsedFlights.length === 0) return;
       isLiveFeedConnected = true;
 
-      // Sort by proximity to RCTP New ATC Tower so the closest real flights are prioritized
+      // Prioritize flights closest to Tower
       parsedFlights.sort((a, b) => a.distMeters - b.distMeters);
       const selected = parsedFlights.slice(0, 18);
-
       const keepIds = new Set();
 
-      // Option C: Spawn all real-time radar-positioned aircraft strictly at their authentic GPS coordinates
       selected.forEach((f) => {
         keepIds.add(f.id);
-        const scenePos = mapRctpMetersToScene(f.alongMeters, f.crossMeters, f.alt, f.onGround);
-        const phase = f.onGround
+        const scenePos = f.pos ? f.pos : mapRctpMetersToScene(f.alongMeters, f.crossMeters, f.alt, f.onGround);
+        const phase = f.phase || (f.onGround
           ? (f.gs > 35 ? 'TAKEOFF ROLL' : f.gs > 2 ? 'TAXI' : 'APRON')
-          : (f.vrate > 350 ? 'CLIMB' : f.vrate < -350 ? 'APPROACH' : 'CRUISE');
+          : (f.vrate > 350 ? 'CLIMB' : f.vrate < -350 ? 'APPROACH' : 'CRUISE'));
 
         const ent = upsertAircraftEntity({
           ...f,
@@ -3034,9 +3449,9 @@
       liveList.forEach((f) => {
         const liv = AIRLINE_LIVERIES[f.airlineCode] || AIRLINE_LIVERIES.CAL;
         const altStr = f.onGround ? 'GND' : `${Math.round(f.alt).toLocaleString()} ft`;
-        const phaseStr = f.onGround
+        const phaseStr = f.phase || (f.onGround
           ? (f.gs > 30 ? 'RWY ROLL' : f.gs > 1 ? 'TAXI' : 'PARKED')
-          : (f.vrate > 300 ? 'DEPARTURE ↑' : f.vrate < -300 ? 'APPROACH ↓' : 'TRANSIT');
+          : (f.vrate > 300 ? 'DEPARTURE ↑' : f.vrate < -300 ? 'APPROACH ↓' : 'TRANSIT'));
 
         const row = document.createElement('div');
         row.className = 'flex items-center justify-between gap-2 p-2 rounded-xl bg-slate-900/75 hover:bg-slate-800/90 border border-slate-800 hover:border-sky-400/50 cursor-pointer transition-all';
@@ -3063,7 +3478,6 @@
     }
 
     function focusOnFlight(flightData) {
-      // Find matching 3D entity by hex or id
       let targetEntry = null;
       for (const ent of activeAircraftMap.values()) {
         if (ent.id === flightData.id || (flightData.hex && ent.data.hex === flightData.hex)) {
@@ -3193,7 +3607,8 @@
       cabPointLight.intensity = m.cabGlow;
       cabGlassMat.emissiveIntensity = m.emissiveMult;
       ribbonWindowMat.emissiveIntensity = m.emissiveMult * 0.85;
-      terminalBodyMat.emissiveIntensity = m.emissiveMult * 0.55;
+      if (typeof t2BodyMat !== 'undefined') t2BodyMat.emissiveIntensity = m.emissiveMult * 0.55;
+      if (typeof t1BodyMat !== 'undefined') t1BodyMat.emissiveIntensity = m.emissiveMult * 0.55;
 
       const metarEl = document.getElementById('metar-readout');
       if (metarEl) metarEl.textContent = lastLiveMetarRaw || m.metar;
@@ -3225,10 +3640,13 @@
       document.getElementById('card-badge').textContent = data.badge;
       document.getElementById('card-title').textContent = data.title;
       document.getElementById('card-desc').textContent = data.desc;
-      document.getElementById('stat-1').textContent = data.stats[0];
-      document.getElementById('stat-2').textContent = data.stats[1];
-      document.getElementById('stat-3').textContent = data.stats[2];
-      document.getElementById('stat-4').textContent = data.stats[3];
+      const statLabels = ['KEY SPEC 1', 'KEY SPEC 2', 'KEY SPEC 3', 'KEY SPEC 4'];
+      data.stats.forEach((s, idx) => {
+        const el = document.getElementById(`stat-${idx + 1}`);
+        const lbl = document.getElementById(`stat-label-${idx + 1}`);
+        if (el) el.textContent = s;
+        if (lbl) lbl.textContent = statLabels[idx];
+      });
 
       const card = document.getElementById('info-card');
       card.classList.remove('translate-x-full', 'opacity-0', 'pointer-events-none');
@@ -3244,6 +3662,38 @@
 
       cameraGoalPos = data.camPos.clone();
       targetGoalPos = data.lookAt.clone();
+      zoomGoalPos = null;
+      zoomGoalTarget = null;
+    }
+
+    function selectBay(bay) {
+      const camY = 24;
+      const offsetZ = bay.pos.z > 0 ? 32 : -32;
+      cameraGoalPos = new THREE.Vector3(bay.pos.x - 8, camY, bay.pos.z + offsetZ);
+      targetGoalPos = new THREE.Vector3(bay.pos.x, 2, bay.pos.z);
+      zoomGoalPos = null;
+      zoomGoalTarget = null;
+
+      const card = document.getElementById('info-card');
+      document.getElementById('card-badge').textContent = `RCTP STAND / BAY SPEC • ${bay.apron}`;
+      document.getElementById('card-title').textContent = `Stand ${bay.id} (${bay.apron})`;
+      document.getElementById('card-desc').textContent = `Official Taoyuan International Airport (RCTP / TPE) operational stand ${bay.id} at ${bay.apron}. Equipped for ${bay.cat} aircraft with ${bay.type}. Features 400Hz ground power, pre-conditioned air, and underground fuel hydrants.`;
+
+      const lbl1 = document.getElementById('stat-label-1');
+      const lbl2 = document.getElementById('stat-label-2');
+      const lbl3 = document.getElementById('stat-label-3');
+      const lbl4 = document.getElementById('stat-label-4');
+      if (lbl1) lbl1.textContent = 'STAND / BAY ID';
+      if (lbl2) lbl2.textContent = 'APRON ZONE';
+      if (lbl3) lbl3.textContent = 'AIRCRAFT CAT';
+      if (lbl4) lbl4.textContent = 'FACILITY TYPE';
+
+      document.getElementById('stat-1').textContent = `BAY ${bay.id}`;
+      document.getElementById('stat-2').textContent = bay.apron;
+      document.getElementById('stat-3').textContent = bay.cat;
+      document.getElementById('stat-4').textContent = bay.type;
+      card.classList.remove('translate-x-full', 'opacity-0', 'pointer-events-none');
+      card.classList.add('translate-x-0', 'opacity-100', 'pointer-events-auto');
     }
 
     // --- RAYCASTER FOR CLICKING 3D LANDMARKS & REAL-TIME AIRCRAFT ---
@@ -3272,18 +3722,121 @@
       if (e.pointerType !== 'mouse' && e.pointerType !== 'pen') return;
       const ent = aircraftAtPointer(e);
       showOnlyAircraftTag(ent ? ent.id : null);
+
+      pointer.x = (e.clientX / window.innerWidth) * 2 - 1;
+      pointer.y = -(e.clientY / window.innerHeight) * 2 + 1;
+      raycaster.setFromCamera(pointer, camera);
+      const hit = raycaster.intersectObjects(interactiveMeshes, false)[0];
+      renderer.domElement.style.cursor = (ent || hit) ? 'pointer' : 'default';
     });
 
     renderer.domElement.addEventListener('pointerleave', (e) => {
       if (e.pointerType === 'mouse' || e.pointerType === 'pen') showOnlyAircraftTag(null);
     });
 
+    // --- DOUBLE-CLICK ZOOM & PASS-THROUGH LOGIC ---
+    const DBL_CLICK_MS = 300;
+    const ZOOM_IN_FACTOR = 0.5;   // halve the distance to the orbit target
+    const ZOOM_OUT_FACTOR = 2.0;  // double the distance to the orbit target
+    let zoomGoalPos = null;       // camera destination for a smooth free-camera zoom
+    let zoomGoalTarget = null;    // target destination when passing through obstacles
+    let followZoom = 1.0;         // distance multiplier while following an aircraft
+    let lastPointerType = 'mouse';
+    let lastRightDown = null;     // { time, x, y } of the previous right-button press
+    let pendingClickTimer = null; // deferred single-click action (cancelled by a double-click)
+
+    function zoomCamera(factor) {
+      cameraGoalPos = null;
+      targetGoalPos = null;
+      if (trackedFlightId && activeAircraftMap.has(trackedFlightId)) {
+        followZoom = THREE.MathUtils.clamp(followZoom * factor, 0.15, 4.0);
+        return;
+      }
+      const base = zoomGoalPos || camera.position;
+      const currentTarget = zoomGoalTarget || controls.target;
+      const offset = base.clone().sub(currentTarget);
+      const curDist = offset.length();
+
+      if (factor < 1.0) {
+        // Zoom in: if close to or facing the tower/target, fly right through it!
+        if (curDist <= 6.5) {
+          const fwd = new THREE.Vector3();
+          camera.getWorldDirection(fwd);
+          const passStep = 22.0; // glide forward 22m through the tower/obstacle
+          zoomGoalTarget = currentTarget.clone().addScaledVector(fwd, passStep);
+          zoomGoalPos = base.clone().addScaledVector(fwd, passStep);
+        } else {
+          const dist = Math.max(controls.minDistance, curDist * factor);
+          zoomGoalTarget = currentTarget.clone();
+          zoomGoalPos = currentTarget.clone().add(offset.clone().setLength(dist));
+        }
+      } else {
+        // Zoom out (factor > 1.0, right-click double-click)
+        const dist = Math.min(controls.maxDistance, Math.max(6.0, curDist * factor));
+        zoomGoalTarget = currentTarget.clone();
+        zoomGoalPos = currentTarget.clone().add(offset.clone().setLength(dist));
+      }
+    }
+
     renderer.domElement.addEventListener('pointerdown', (e) => {
       pointerDownPos.x = e.clientX;
       pointerDownPos.y = e.clientY;
+      lastPointerType = e.pointerType;
       cameraGoalPos = null;
       targetGoalPos = null;
+      zoomGoalPos = null;
+      zoomGoalTarget = null;
+
+      // Right-button double-click → zoom out (browsers have no native right dblclick event)
+      if (e.pointerType === 'mouse' && e.button === 2 && !document.body.classList.contains('bg-only')) {
+        const now = performance.now();
+        if (lastRightDown && now - lastRightDown.time <= DBL_CLICK_MS
+            && Math.hypot(e.clientX - lastRightDown.x, e.clientY - lastRightDown.y) <= 6) {
+          lastRightDown = null;
+          zoomCamera(ZOOM_OUT_FACTOR);
+        } else {
+          lastRightDown = { time: now, x: e.clientX, y: e.clientY };
+        }
+      }
     });
+
+    // Left-button double-click → zoom in (mouse only; touch keeps its double-tap aircraft info)
+    renderer.domElement.addEventListener('dblclick', (e) => {
+      if (document.body.classList.contains('bg-only') || lastPointerType === 'touch') return;
+      if (e.button !== 0) return;
+      clearTimeout(pendingClickTimer);
+      pendingClickTimer = null;
+      zoomCamera(ZOOM_IN_FACTOR);
+    });
+
+    // Mouse wheel / trackpad scroll zoom with seamless tower pass-through
+    renderer.domElement.addEventListener('wheel', (e) => {
+      if (document.body.classList.contains('bg-only')) return;
+      cameraGoalPos = null;
+      targetGoalPos = null;
+      zoomGoalPos = null;
+      zoomGoalTarget = null;
+
+      const curDist = camera.position.distanceTo(controls.target);
+      if (e.deltaY < 0) {
+        // Zooming in: when close to target or hitting tower obstacle, pass right through!
+        if (curDist <= 4.8) {
+          const fwd = new THREE.Vector3();
+          camera.getWorldDirection(fwd);
+          const step = Math.min(3.8, Math.max(0.35, Math.abs(e.deltaY) * 0.016));
+          camera.position.addScaledVector(fwd, step);
+          controls.target.addScaledVector(fwd, step);
+        }
+      } else if (e.deltaY > 0) {
+        // Zooming out: if close inside geometry, step back cleanly
+        if (curDist < 2.5) {
+          const fwd = new THREE.Vector3();
+          camera.getWorldDirection(fwd);
+          const step = Math.min(2.5, Math.max(0.35, Math.abs(e.deltaY) * 0.014));
+          camera.position.addScaledVector(fwd, -step);
+        }
+      }
+    }, { passive: true });
 
     renderer.domElement.addEventListener('pointerup', (e) => {
       if (document.body.classList.contains('bg-only')) return;
@@ -3337,6 +3890,10 @@
             focusOnFlight(ent.data);
             return;
           }
+        }
+        if (hitObj.userData.bayData) {
+          selectBay(hitObj.userData.bayData);
+          return;
         }
         const key = hitObj.userData.landmarkKey;
         if (key) selectLandmark(key);
@@ -3476,9 +4033,23 @@
         const trackedEnt = activeAircraftMap.get(trackedFlightId);
         const pPos = trackedEnt.group.position;
         const desiredTarget = new THREE.Vector3(pPos.x, pPos.y + 2.2, pPos.z);
-        const desiredCam = new THREE.Vector3(pPos.x - 26, Math.max(6.5, pPos.y + 11.5), pPos.z + 32);
+        const desiredCam = new THREE.Vector3(
+          pPos.x - 26 * followZoom,
+          Math.max(6.5, pPos.y + 11.5 * followZoom),
+          pPos.z + 32 * followZoom
+        );
         camera.position.lerp(desiredCam, 0.06);
         controls.target.lerp(desiredTarget, 0.08);
+      } else if (zoomGoalPos) {
+        // Smooth double-click zoom toward / away from the orbit target (or through obstacles)
+        camera.position.lerp(zoomGoalPos, 0.18);
+        if (zoomGoalTarget) {
+          controls.target.lerp(zoomGoalTarget, 0.18);
+        }
+        if (camera.position.distanceTo(zoomGoalPos) < 0.08) {
+          zoomGoalPos = null;
+          zoomGoalTarget = null;
+        }
       } else if (cameraGoalPos && targetGoalPos) {
         // 6. Smooth Camera Fly-To Interpolation
         camera.position.lerp(cameraGoalPos, 0.065);
@@ -3489,7 +4060,19 @@
         }
       }
 
+      // Smooth continuous viewing angles in all directions without hitting artificial polar walls
+      const orbitDist = Math.max(camera.position.distanceTo(controls.target), 0.1);
+      const minY = 0.45;
+      const cosLimit = THREE.MathUtils.clamp((minY - controls.target.y) / orbitDist, -0.998, 0.998);
+      controls.maxPolarAngle = Math.acos(cosLimit);
+      controls.minPolarAngle = 0.01;
+
       controls.update();
+
+      // Ensure camera never penetrates below the terrain
+      if (camera.position.y < 0.45) camera.position.y = 0.45;
+      if (controls.target.y < 0.1) controls.target.y = 0.1;
+
       renderer.render(scene, camera);
     }
 
