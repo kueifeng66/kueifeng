@@ -41,9 +41,21 @@
     }
     body.bg-only header,
     body.bg-only #wind-diagram,
+    body.bg-only #live-flights-panel,
     body.bg-only #info-card,
     body.bg-only footer {
       display: none !important;
+    }
+    .custom-scroll::-webkit-scrollbar {
+      width: 5px;
+    }
+    .custom-scroll::-webkit-scrollbar-track {
+      background: rgba(15, 23, 42, 0.4);
+      border-radius: 6px;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb {
+      background: rgba(56, 189, 248, 0.45);
+      border-radius: 6px;
     }
   </style>
 
@@ -103,6 +115,12 @@
         </button>
       </div>
 
+      <!-- Live RCTP ADS-B Flights Toggle -->
+      <button id="toggle-flights" class="px-3 py-2 rounded-xl text-xs font-semibold bg-emerald-500/25 text-emerald-200 border border-emerald-400/50 hover:bg-emerald-500/35 transition-all flex items-center gap-1.5" title="Real-Time Taiwan Taoyuan Airport (RCTP/TPE) Live Aircraft">
+        <span id="live-dot" class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+        ✈️ Live TPE (<span id="live-count">0</span>)
+      </button>
+
       <!-- Top-View Cross-Section Diagram Overlay Toggle (from YouTube 1:18) -->
       <button id="toggle-diagram" class="px-3 py-2 rounded-xl text-xs font-semibold bg-slate-800/80 text-slate-200 border border-slate-600/60 hover:bg-slate-700 transition-all flex items-center gap-1.5" title="Show Monsoon Aerodynamic Design Overlay from Video">
         💨 Wind Design
@@ -125,6 +143,50 @@
       </button>
     </div>
   </header>
+
+  <!-- Live RCTP / TPE Real-Time ADS-B Flight Tracker Panel -->
+  <div id="live-flights-panel" class="fixed top-24 left-4 z-10 w-80 sm:w-96 glass-panel rounded-2xl p-4 transition-all duration-300 pointer-events-auto">
+    <div class="flex items-center justify-between border-b border-slate-700/70 pb-2.5 mb-2.5">
+      <div class="flex items-center gap-2">
+        <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+        <div>
+          <span class="mono text-xs font-bold text-white tracking-wider block">RCTP / TPE LIVE ADS-B RADAR</span>
+          <span id="live-feed-status" class="mono text-[10px] text-emerald-300">Syncing real-time Taoyuan traffic...</span>
+        </div>
+      </div>
+      <div class="flex items-center gap-1.5">
+        <button id="stop-track-btn" class="hidden px-2 py-0.5 rounded bg-amber-500/30 text-amber-200 border border-amber-400/40 mono text-[10px] hover:bg-amber-500/40">Unfollow</button>
+        <button id="close-flights" class="text-slate-400 hover:text-white text-xs px-1">✕</button>
+      </div>
+    </div>
+    <div class="grid grid-cols-3 gap-1.5 mb-2.5 mono text-[10px]">
+      <div class="bg-slate-900/80 rounded-lg px-2.5 py-1.5 border border-slate-800">
+        <span class="text-slate-400 block">ACTIVE RWY</span>
+        <span id="live-rwy-use" class="text-sky-300 font-semibold">05L / 05R</span>
+      </div>
+      <div class="bg-slate-900/80 rounded-lg px-2.5 py-1.5 border border-slate-800">
+        <span class="text-slate-400 block">SURFACE WIND</span>
+        <span id="live-wind-info" class="text-emerald-300 font-semibold">050° / 12KT</span>
+      </div>
+      <div class="bg-slate-900/80 rounded-lg px-2.5 py-1.5 border border-slate-800">
+        <span class="text-slate-400 block">TPE TRAFFIC</span>
+        <span id="live-traffic-summary" class="text-amber-300 font-semibold">Scanning...</span>
+      </div>
+    </div>
+    <div id="live-flights-list" class="custom-scroll max-h-60 overflow-y-auto space-y-1.5 pr-1 mono text-[11px]">
+      <div class="text-slate-400 py-4 text-center">Connecting to RCTP ADS-B transponder feed...</div>
+    </div>
+    <div class="mt-2.5 pt-2 border-t border-slate-700/60 flex items-center justify-between text-[10px] text-slate-400 mono">
+      <span>Click any flight or 3D plane to follow</span>
+      <span id="live-last-update">REAL-TIME</span>
+    </div>
+  </div>
+
+  <!-- Compact Live RCTP Telemetry Ticker (Also visible in site1 background mode) -->
+  <div id="bg-live-badge" class="fixed bottom-3 right-3 z-10 glass-panel rounded-xl px-3 py-1.5 pointer-events-none flex items-center gap-2.5 mono text-[11px] text-slate-200 border border-emerald-400/30">
+    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+    <span id="bg-live-text">RCTP LIVE ADS-B • Syncing Taoyuan traffic...</span>
+  </div>
 
   <!-- Aerodynamic "Queen's Head" Cross-Section Overlay (Matches YouTube Video 1:18 Diagram) -->
   <div id="wind-diagram" class="fixed top-24 left-4 z-10 w-80 glass-panel rounded-2xl p-4 transition-all duration-300 hidden pointer-events-auto">
@@ -695,7 +757,10 @@
       roughness: 0.15,
       metalness: 0.75,
       emissive: 0x38bdf8,
-      emissiveIntensity: 0.05
+      emissiveIntensity: 0.05,
+      polygonOffset: true,
+      polygonOffsetFactor: -1,
+      polygonOffsetUnits: -1
     });
 
     const cabGlassMat = new THREE.MeshPhysicalMaterial({
@@ -1154,7 +1219,7 @@
 
     // Recessed glazing + Signature Warm Wood/Terracotta Vertical Louvers on the front facade
     const louverBayGlass = new THREE.Mesh(new THREE.BoxGeometry(19.5, 4.2, 0.4), ribbonWindowMat);
-    louverBayGlass.position.set(-2.0, 7.6, 8.2);
+    louverBayGlass.position.set(-2.0, 7.6, 8.25);
     frontWing.add(louverBayGlass);
 
     for (let lx = -11.2; lx <= 7.2; lx += 0.75) {
@@ -1173,7 +1238,7 @@
 
     // Multi-story recessed window bands with terracotta sunshades
     for (const wy of [3.5, 7.2, 10.9, 14.0]) {
-      const winStrip = new THREE.Mesh(new THREE.BoxGeometry(28, 2.1, 17.3), ribbonWindowMat);
+      const winStrip = new THREE.Mesh(new THREE.BoxGeometry(28, 2.1, 17.4), ribbonWindowMat);
       winStrip.position.set(0, wy, 0);
       northWing.add(winStrip);
 
@@ -1197,7 +1262,7 @@
     westPavilion.rotation.y = 0.15;
     baseBuildingGroup.add(westPavilion);
 
-    const westWindows = new THREE.Mesh(new THREE.BoxGeometry(18, 3.8, 15.3), ribbonWindowMat);
+    const westWindows = new THREE.Mesh(new THREE.BoxGeometry(18, 3.8, 15.4), ribbonWindowMat);
     westWindows.position.set(-25, 3.8, 22);
     westWindows.rotation.y = 0.15;
     baseBuildingGroup.add(westWindows);
@@ -1383,161 +1448,1661 @@
 
     registerInteractive(runwaysGroup, 'aerial');
 
-    // --- 6. REALISTIC WIDE-BODY AIRLINERS (CHINA AIRLINES & EVA AIR MOTIFS) ---
-    function createRealisticAircraft(tailColor = 0xe11d48, accentColor = 0x2563eb) {
-      const plane = new THREE.Group();
+    // --- 6. REAL-TIME TAOYUAN INT'L AIRPORT (RCTP / TPE) ADS-B ENGINE & ULTRA-REALISTIC 3D AIRCRAFT ---
+    const RCTP_REF = {
+      lat: 25.0777,
+      lon: 121.2328,
+      rwyHeadingDeg: 47.81
+    };
 
-      const fuselageMat = new THREE.MeshStandardMaterial({
-        color: 0xf8fafc,
-        roughness: 0.2,
-        metalness: 0.25
-      });
-      const wingMat = new THREE.MeshStandardMaterial({
-        color: 0xe2e8f0,
-        roughness: 0.3,
-        metalness: 0.35
-      });
-      const tailMat = new THREE.MeshStandardMaterial({
-        color: tailColor,
-        roughness: 0.25,
-        metalness: 0.3
-      });
-      const accentMat = new THREE.MeshStandardMaterial({
-        color: accentColor,
-        roughness: 0.25,
-        metalness: 0.3
-      });
+    // Authentic Airline Liveries operating at Taiwan Taoyuan International Airport (RCTP / TPE)
+    const AIRLINE_LIVERIES = {
+      CAL: {
+        name: 'China Airlines 中華航空',
+        titleText: 'CHINA AIRLINES',
+        subText: '華航',
+        bodyTop: '#f8fafc',
+        bodyBottom: '#e2e8f0',
+        cheatline: '#1e40af',
+        titleColor: '#1e3a8a',
+        tailBase: '#ffffff',
+        tailPrimary: '#e11d48',
+        tailSecondary: '#f43f5e',
+        engineColor: 0xf8fafc,
+        engineAccent: 0x1d4ed8,
+        wingletColor: 0xe11d48,
+        badgeHex: '#f43f5e',
+        motif: 'plum'
+      },
+      EVA: {
+        name: 'EVA Air 長榮航空',
+        titleText: 'EVA AIR',
+        subText: '長榮航空',
+        bodyTop: '#f8fafc',
+        bodyBottom: '#064e3b',
+        cheatline: '#ea580c',
+        titleColor: '#065f46',
+        tailBase: '#065f46',
+        tailPrimary: '#10b981',
+        tailSecondary: '#f97316',
+        engineColor: 0x065f46,
+        engineAccent: 0xea580c,
+        wingletColor: 0x065f46,
+        badgeHex: '#10b981',
+        motif: 'eva'
+      },
+      SJX: {
+        name: 'STARLUX Airlines 星宇航空',
+        titleText: 'STARLUX',
+        subText: '星宇航空',
+        bodyTop: '#f5f3ef',
+        bodyBottom: '#27272a',
+        cheatline: '#b48a5a',
+        titleColor: '#18181b',
+        tailBase: '#18181b',
+        tailPrimary: '#c69f6e',
+        tailSecondary: '#f59e0b',
+        engineColor: 0x27272a,
+        engineAccent: 0xb48a5a,
+        wingletColor: 0x18181b,
+        badgeHex: '#f59e0b',
+        motif: 'starlux'
+      },
+      TTW: {
+        name: 'Tigerair Taiwan 台灣虎航',
+        titleText: 'tigerair',
+        subText: 'Taiwan',
+        bodyTop: '#ffffff',
+        bodyBottom: '#f1f5f9',
+        cheatline: '#f59e0b',
+        titleColor: '#18181b',
+        tailBase: '#f59e0b',
+        tailPrimary: '#18181b',
+        tailSecondary: '#d97706',
+        engineColor: 0xf59e0b,
+        engineAccent: 0x18181b,
+        wingletColor: 0xf59e0b,
+        badgeHex: '#facc15',
+        motif: 'tiger'
+      },
+      MDA: {
+        name: 'Mandarin Airlines 華信航空',
+        titleText: 'MANDARIN AIRLINES',
+        subText: '華信航空',
+        bodyTop: '#ffffff',
+        bodyBottom: '#e2e8f0',
+        cheatline: '#0284c7',
+        titleColor: '#0369a1',
+        tailBase: '#0369a1',
+        tailPrimary: '#38bdf8',
+        tailSecondary: '#f59e0b',
+        engineColor: 0x0284c7,
+        engineAccent: 0xf59e0b,
+        wingletColor: 0x0284c7,
+        badgeHex: '#38bdf8',
+        motif: 'swallow'
+      },
+      UIA: {
+        name: 'UNI Air 立榮航空',
+        titleText: 'UNI AIR',
+        subText: '立榮航空',
+        bodyTop: '#ffffff',
+        bodyBottom: '#e2e8f0',
+        cheatline: '#ea580c',
+        titleColor: '#047857',
+        tailBase: '#047857',
+        tailPrimary: '#ea580c',
+        tailSecondary: '#10b981',
+        engineColor: 0x047857,
+        engineAccent: 0xea580c,
+        wingletColor: 0xea580c,
+        badgeHex: '#fb923c',
+        motif: 'eva'
+      },
+      CPA: {
+        name: 'Cathay Pacific 國泰航空',
+        titleText: 'CATHAY PACIFIC',
+        subText: '國泰航空',
+        bodyTop: '#f8fafc',
+        bodyBottom: '#cbd5e1',
+        cheatline: '#0f5c5c',
+        titleColor: '#0f5c5c',
+        tailBase: '#0f5c5c',
+        tailPrimary: '#ffffff',
+        tailSecondary: '#14b8a6',
+        engineColor: 0xf1f5f9,
+        engineAccent: 0x0f5c5c,
+        wingletColor: 0x0f5c5c,
+        badgeHex: '#2dd4bf',
+        motif: 'brushwing'
+      },
+      JAL: {
+        name: 'Japan Airlines 日本航空',
+        titleText: 'JAPAN AIRLINES',
+        subText: 'JAL',
+        bodyTop: '#ffffff',
+        bodyBottom: '#f1f5f9',
+        cheatline: '#dc2626',
+        titleColor: '#1e293b',
+        tailBase: '#ffffff',
+        tailPrimary: '#dc2626',
+        tailSecondary: '#991b1b',
+        engineColor: 0xffffff,
+        engineAccent: 0xdc2626,
+        wingletColor: 0xdc2626,
+        badgeHex: '#ef4444',
+        motif: 'crane'
+      },
+      ANA: {
+        name: 'All Nippon Airways 全日空',
+        titleText: 'Inspiration of JAPAN',
+        subText: 'ANA',
+        bodyTop: '#ffffff',
+        bodyBottom: '#e2e8f0',
+        cheatline: '#0284c7',
+        titleColor: '#1e3a8a',
+        tailBase: '#1e3a8a',
+        tailPrimary: '#0284c7',
+        tailSecondary: '#ffffff',
+        engineColor: 0xffffff,
+        engineAccent: 0x1e3a8a,
+        wingletColor: 0x1e3a8a,
+        badgeHex: '#38bdf8',
+        motif: 'ana'
+      },
+      SIA: {
+        name: 'Singapore Airlines 新加坡航空',
+        titleText: 'SINGAPORE AIRLINES',
+        subText: 'SIA',
+        bodyTop: '#ffffff',
+        bodyBottom: '#e2e8f0',
+        cheatline: '#d97706',
+        titleColor: '#1e3a8a',
+        tailBase: '#172554',
+        tailPrimary: '#f59e0b',
+        tailSecondary: '#fbbf24',
+        engineColor: 0xffffff,
+        engineAccent: 0x172554,
+        wingletColor: 0x172554,
+        badgeHex: '#fbbf24',
+        motif: 'kris'
+      },
+      KOR: {
+        name: 'Korean Air 大韓航空',
+        titleText: 'KOREAN AIR',
+        subText: '大韓航空',
+        bodyTop: '#7dd3fc',
+        bodyBottom: '#e2e8f0',
+        cheatline: '#94a3b8',
+        titleColor: '#0f172a',
+        tailBase: '#38bdf8',
+        tailPrimary: '#dc2626',
+        tailSecondary: '#1d4ed8',
+        engineColor: 0x7dd3fc,
+        engineAccent: 0x1d4ed8,
+        wingletColor: 0x38bdf8,
+        badgeHex: '#38bdf8',
+        motif: 'taegeuk'
+      },
+      THA: {
+        name: 'Thai Airways 泰國航空',
+        titleText: 'THAI',
+        subText: '泰國航空',
+        bodyTop: '#ffffff',
+        bodyBottom: '#f3e8ff',
+        cheatline: '#eab308',
+        titleColor: '#581c87',
+        tailBase: '#581c87',
+        tailPrimary: '#db2777',
+        tailSecondary: '#facc15',
+        engineColor: 0x581c87,
+        engineAccent: 0xfacc15,
+        wingletColor: 0x581c87,
+        badgeHex: '#c084fc',
+        motif: 'orchid'
+      },
+      FDX: {
+        name: 'FedEx Express 聯邦快遞',
+        titleText: 'FedEx',
+        subText: 'Express Cargo',
+        bodyTop: '#ffffff',
+        bodyBottom: '#f1f5f9',
+        cheatline: '#ea580c',
+        titleColor: '#4c1d95',
+        tailBase: '#4c1d95',
+        tailPrimary: '#ea580c',
+        tailSecondary: '#ffffff',
+        engineColor: 0x4c1d95,
+        engineAccent: 0xea580c,
+        wingletColor: 0x4c1d95,
+        badgeHex: '#a855f7',
+        motif: 'cargo',
+        isCargo: true
+      },
+      UPS: {
+        name: 'UPS Airlines 優比速貨運',
+        titleText: 'ups',
+        subText: 'Worldwide Services',
+        bodyTop: '#ffffff',
+        bodyBottom: '#29150b',
+        cheatline: '#eab308',
+        titleColor: '#451a03',
+        tailBase: '#29150b',
+        tailPrimary: '#facc15',
+        tailSecondary: '#ca8a04',
+        engineColor: 0x29150b,
+        engineAccent: 0xeab308,
+        wingletColor: 0x29150b,
+        badgeHex: '#eab308',
+        motif: 'cargo',
+        isCargo: true
+      },
+      AMU: {
+        name: 'Air Macau 澳門航空',
+        titleText: 'AIR MACAU',
+        subText: '澳門航空',
+        bodyTop: '#ffffff',
+        bodyBottom: '#e2e8f0',
+        cheatline: '#be123c',
+        titleColor: '#1e3a8a',
+        tailBase: '#be123c',
+        tailPrimary: '#ffffff',
+        tailSecondary: '#1e3a8a',
+        engineColor: 0xbe123c,
+        engineAccent: 0x1e3a8a,
+        wingletColor: 0xbe123c,
+        badgeHex: '#fb7185',
+        motif: 'crane'
+      },
+      HKE: {
+        name: 'HK Express 香港快運',
+        titleText: 'HKexpress',
+        subText: '香港快運',
+        bodyTop: '#ffffff',
+        bodyBottom: '#f3e8ff',
+        cheatline: '#6d28d9',
+        titleColor: '#5b21b6',
+        tailBase: '#6d28d9',
+        tailPrimary: '#ef4444',
+        tailSecondary: '#ffffff',
+        engineColor: 0x6d28d9,
+        engineAccent: 0xef4444,
+        wingletColor: 0x6d28d9,
+        badgeHex: '#a78bfa',
+        motif: 'ana'
+      },
+      TLM: {
+        name: 'Thai Lion Air 泰獅航',
+        titleText: 'Thai Lion air',
+        subText: '泰獅航',
+        bodyTop: '#ffffff',
+        bodyBottom: '#f1f5f9',
+        cheatline: '#dc2626',
+        titleColor: '#dc2626',
+        tailBase: '#dc2626',
+        tailPrimary: '#f97316',
+        tailSecondary: '#ffffff',
+        engineColor: 0xdc2626,
+        engineAccent: 0xffffff,
+        wingletColor: 0xdc2626,
+        badgeHex: '#f87171',
+        motif: 'crane'
+      }
+    };
 
-      // Main Cylindrical Fuselage
-      const fuselageGeo = new THREE.CylinderGeometry(1.25, 1.25, 13.5, 20);
-      fuselageGeo.rotateZ(Math.PI / 2);
-      const fuselage = new THREE.Mesh(fuselageGeo, fuselageMat);
-      fuselage.position.y = 2.1;
-      fuselage.castShadow = true;
-      plane.add(fuselage);
+    function resolveAirlineCode(callsign = '', flightIata = '', airlineHint = '') {
+      const hint = (airlineHint || '').trim().toUpperCase();
+      if (AIRLINE_LIVERIES[hint]) return hint;
+      const cs = (callsign || '').trim().toUpperCase();
+      const prefix3 = cs.slice(0, 3);
+      if (AIRLINE_LIVERIES[prefix3]) return prefix3;
+      const fl = (flightIata || '').trim().toUpperCase();
+      const iataMap = {
+        CI: 'CAL', BR: 'EVA', JX: 'SJX', IT: 'TTW', AE: 'MDA', B7: 'UIA',
+        CX: 'CPA', JL: 'JAL', NH: 'ANA', SQ: 'SIA', KE: 'KOR', TG: 'THA',
+        FX: 'FDX', '5X': 'UPS', NX: 'AMU', UO: 'HKE', SL: 'TLM'
+      };
+      if (iataMap[fl.slice(0, 2)]) return iataMap[fl.slice(0, 2)];
+      return 'CAL';
+    }
 
-      // Sculpted Nose Cone & Cockpit Windows
-      const noseGeo = new THREE.SphereGeometry(1.25, 20, 14);
-      noseGeo.scale(1.9, 0.95, 1.0);
-      const nose = new THREE.Mesh(noseGeo, fuselageMat);
-      nose.position.set(6.75, 2.04, 0);
-      plane.add(nose);
+    function getAircraftSpec(typeCode = 'A359') {
+      const t = (typeCode || 'A359').toUpperCase();
+      if (t.startsWith('B74')) {
+        return {
+          code: t, family: 'B747', name: 'Boeing 747-400F/8F',
+          scale: 1.08, length: 19.8, radius: 1.38, wingSpan: 13.2, wingChord: 3.6,
+          wingSweep: 0.36, engines: 4, hasHump: true, wingtipType: 'canted',
+          bogieAxles: 3, isTurboprop: false
+        };
+      }
+      if (t.startsWith('B77')) {
+        return {
+          code: t, family: 'B777', name: t === 'B77L' ? 'Boeing 777F' : 'Boeing 777-300ER',
+          scale: 1.05, length: 19.4, radius: 1.30, wingSpan: 12.8, wingChord: 3.3,
+          wingSweep: 0.33, engines: 2, hasHump: false, wingtipType: 'raked',
+          bogieAxles: 3, isTurboprop: false, isCargo: t === 'B77L'
+        };
+      }
+      if (t.startsWith('A35')) {
+        return {
+          code: t, family: 'A350', name: t === 'A35K' ? 'Airbus A350-1000' : 'Airbus A350-900',
+          scale: t === 'A35K' ? 1.04 : 1.00, length: t === 'A35K' ? 19.0 : 18.0, radius: 1.26,
+          wingSpan: 12.6, wingChord: 3.2, wingSweep: 0.34, engines: 2,
+          hasHump: false, wingtipType: 'sharklet', zorroMask: true,
+          bogieAxles: t === 'A35K' ? 3 : 2, isTurboprop: false
+        };
+      }
+      if (t.startsWith('B78')) {
+        return {
+          code: t, family: 'B787', name: t === 'B78X' ? 'Boeing 787-10' : 'Boeing 787-9 Dreamliner',
+          scale: 0.96, length: 17.2, radius: 1.22, wingSpan: 12.2, wingChord: 3.1,
+          wingSweep: 0.35, engines: 2, hasHump: false, wingtipType: 'raked',
+          bogieAxles: 2, isTurboprop: false
+        };
+      }
+      if (t.startsWith('A33')) {
+        return {
+          code: t, family: 'A330', name: 'Airbus A330-300/900',
+          scale: 0.95, length: 16.8, radius: 1.20, wingSpan: 11.8, wingChord: 3.0,
+          wingSweep: 0.31, engines: 2, hasHump: false, wingtipType: 'canted',
+          bogieAxles: 2, isTurboprop: false
+        };
+      }
+      if (t.startsWith('AT7') || t.startsWith('B350') || t.startsWith('DH8') || t.startsWith('C208')) {
+        return {
+          code: t, family: 'AT76', name: t === 'AT76' ? 'ATR 72-600' : 'Regional Turboprop',
+          scale: 0.68, length: 11.2, radius: 0.85, wingSpan: 8.6, wingChord: 1.65,
+          wingSweep: 0.04, engines: 2, hasHump: false, wingtipType: 'none',
+          bogieAxles: 1, isTurboprop: true, highWing: true
+        };
+      }
+      if (t.startsWith('A21') || t.startsWith('A32') || t.startsWith('A20') || t.startsWith('B73') || t.startsWith('B38')) {
+        return {
+          code: t, family: t.startsWith('B') ? 'B737' : 'A321',
+          name: t.startsWith('B') ? 'Boeing 737-800/900' : 'Airbus A321neo',
+          scale: 0.80, length: 13.8, radius: 0.98, wingSpan: 9.4, wingChord: 2.3,
+          wingSweep: 0.28, engines: 2, hasHump: false, wingtipType: 'sharklet',
+          bogieAxles: 1, isTurboprop: false
+        };
+      }
+      return {
+        code: t, family: 'A350', name: `Airliner (${t})`,
+        scale: 0.96, length: 17.4, radius: 1.22, wingSpan: 12.0, wingChord: 3.1,
+        wingSweep: 0.33, engines: 2, hasHump: false, wingtipType: 'sharklet',
+         zorroMask: true, bogieAxles: 2, isTurboprop: false
+      };
+    }
 
-      const cockpit = new THREE.Mesh(new THREE.BoxGeometry(1.1, 0.42, 1.35), darkFrameMat);
-      cockpit.position.set(7.6, 2.48, 0);
-      cockpit.rotation.z = -0.25;
-      plane.add(cockpit);
+    // Cache procedural livery textures by key to keep WebGL memory & framerate optimal
+    const fuselageTexCache = new Map();
+    const tailTexCache = new Map();
 
-      // Tapered Tailcone
-      const tailConeGeo = new THREE.CylinderGeometry(0.35, 1.25, 4.8, 16);
-      tailConeGeo.rotateZ(-Math.PI / 2);
-      const tailCone = new THREE.Mesh(tailConeGeo, fuselageMat);
-      tailCone.position.set(-9.1, 2.25, 0);
-      plane.add(tailCone);
+    function getFuselageTexture(airlineCode, spec, regText = 'B-18918', isCargoOverride = false) {
+      const isCargo = isCargoOverride || spec.isCargo || (AIRLINE_LIVERIES[airlineCode] && AIRLINE_LIVERIES[airlineCode].isCargo);
+      const cacheKey = `${airlineCode}_${spec.family}_${regText}_${isCargo ? 'C' : 'P'}`;
+      if (fuselageTexCache.has(cacheKey)) return fuselageTexCache.get(cacheKey);
 
-      // Swept Main Wings (Left & Right) + Winglets
-      for (const side of [-1, 1]) {
-        const wing = new THREE.Mesh(new THREE.BoxGeometry(3.0, 0.22, 10.5), wingMat);
-        wing.position.set(-0.6, 1.85, side * 5.6);
-        wing.rotation.y = side * -0.32;
-        wing.rotation.x = side * -0.04;
-        wing.castShadow = true;
-        plane.add(wing);
+      const liv = AIRLINE_LIVERIES[airlineCode] || AIRLINE_LIVERIES.CAL;
+      const canvas = document.createElement('canvas');
+      canvas.width = 1024;
+      canvas.height = 512;
+      const ctx = canvas.getContext('2d');
 
-        // Winglet
-        const winglet = new THREE.Mesh(new THREE.BoxGeometry(1.2, 1.3, 0.14), tailMat);
-        winglet.position.set(-2.3, 2.45, side * 10.5);
-        winglet.rotation.x = side * 0.2;
-        plane.add(winglet);
+      // Note on LatheGeometry UV mapping:
+      // u (0..1) wraps circumferentially around the fuselage (u=0.25 & u=0.75 are the left/right cabin sides; u=0.5 is top crown; u=0/1 is bottom belly)
+      // v (0..1) runs longitudinally from tail (v=0) to nose tip (v=1)
+      ctx.fillStyle = liv.bodyTop;
+      ctx.fillRect(0, 0, 1024, 512);
 
-        // Under-wing Turbofan Engine Nacelle
-        const nacelleGroup = new THREE.Group();
-        nacelleGroup.position.set(0.8, 1.2, side * 4.2);
-        const cowl = new THREE.Mesh(new THREE.CylinderGeometry(0.68, 0.62, 2.5, 16), accentMat);
-        cowl.rotation.z = Math.PI / 2;
-        cowl.castShadow = true;
-        nacelleGroup.add(cowl);
+      // Lower belly anti-corrosion / airline belly color (u near 0..0.18 and 0.82..1.0)
+      ctx.fillStyle = liv.bodyBottom;
+      ctx.fillRect(0, 0, 185, 455);
+      ctx.fillRect(839, 0, 185, 455);
 
-        const intake = new THREE.Mesh(new THREE.CylinderGeometry(0.55, 0.55, 2.55, 12), darkFrameMat);
-        intake.rotation.z = Math.PI / 2;
-        nacelleGroup.add(intake);
-        plane.add(nacelleGroup);
+      // Dynamic cheatline / ribbon sweep along both sides
+      ctx.fillStyle = liv.cheatline;
+      ctx.fillRect(178, 35, 14, 415);
+      ctx.fillRect(832, 35, 14, 415);
 
-        // Swept Horizontal Stabilizer
-        const hStab = new THREE.Mesh(new THREE.BoxGeometry(1.8, 0.15, 4.2), wingMat);
-        hStab.position.set(-9.8, 2.4, side * 2.1);
-        hStab.rotation.y = side * -0.35;
-        plane.add(hStab);
+      if (airlineCode === 'EVA') {
+        // EVA green/orange wave accent near forward & rear belly
+        ctx.fillStyle = '#10b981';
+        ctx.fillRect(166, 40, 14, 390);
+        ctx.fillRect(844, 40, 14, 390);
+      } else if (airlineCode === 'SJX') {
+        // STARLUX rose-gold & obsidian swoosh
+        ctx.fillStyle = '#c69f6e';
+        ctx.fillRect(172, 30, 18, 410);
+        ctx.fillRect(834, 30, 18, 410);
       }
 
-      // Swept Vertical Tail Fin
-      const vFinShape = new THREE.Shape();
-      vFinShape.moveTo(0, 0);
-      vFinShape.lineTo(3.8, 0);
-      vFinShape.lineTo(1.2, 4.4);
-      vFinShape.lineTo(-0.6, 4.4);
-      vFinShape.closePath();
-      const vFinGeo = new THREE.ExtrudeGeometry(vFinShape, { depth: 0.24, bevelEnabled: true, bevelSize: 0.04, bevelThickness: 0.04 });
-      vFinGeo.translate(-1.5, 0, -0.12);
-      const vFin = new THREE.Mesh(vFinGeo, tailMat);
-      vFin.position.set(-8.6, 2.9, 0);
-      vFin.castShadow = true;
-      plane.add(vFin);
+      // Subtle circumferential fuselage skin panel seams
+      ctx.strokeStyle = 'rgba(100, 116, 139, 0.16)';
+      ctx.lineWidth = 1;
+      for (let vy = 40; vy < 470; vy += 24) {
+        ctx.beginPath();
+        ctx.moveTo(0, vy);
+        ctx.lineTo(1024, vy);
+        ctx.stroke();
+      }
 
-      // Landing Gear Struts & Wheels
-      for (const gx of [5.8, -0.8, -0.8]) {
-        const gz = gx > 0 ? 0 : 1.65;
-        for (const s of (gx > 0 ? [0] : [-1, 1])) {
-          const strut = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.1, 1.4, 8), greyCladdingMat);
-          strut.position.set(gx, 0.85, s * gz);
-          plane.add(strut);
-          const wheel = new THREE.Mesh(new THREE.CylinderGeometry(0.35, 0.35, 0.35, 12), darkFrameMat);
-          wheel.rotation.x = Math.PI / 2;
-          wheel.position.set(gx, 0.35, s * gz);
-          plane.add(wheel);
+      // Passenger cabin windows & doors along left (u ≈ 0.27 -> x=276) and right (u ≈ 0.73 -> x=748) sides
+      // In canvas coords, y=0 is v=1 (nose) or v=0 (tail): Three.js CanvasTexture has flipY=true so y=0 is v=1 (NOSE) and y=512 is v=0 (TAIL)!
+      // Let's place nose radome & cockpit near y = 18..75 (v = 0.85..0.96), cabin along y = 85..410!
+      ctx.fillStyle = '#e2e8f0';
+      ctx.fillRect(0, 0, 1024, 16); // Radome tip cap
+
+      // Cockpit Windshields (centered on top-front crown u = 0.5 -> x = 512, y = 32..56)
+      if (spec.zorroMask) {
+        // Signature Airbus A350 black wrap-around "Zorro mask" cockpit visor
+        ctx.fillStyle = '#0f172a';
+        ctx.beginPath();
+        ctx.roundRect(350, 28, 324, 30, 14);
+        ctx.fill();
+        ctx.fillStyle = '#38bdf8';
+        ctx.globalAlpha = 0.35;
+        ctx.fillRect(375, 33, 125, 20);
+        ctx.fillRect(524, 33, 125, 20);
+        ctx.globalAlpha = 1.0;
+      } else {
+        // Classic Boeing / Airbus 6-panel dark metallic cockpit windshield
+        ctx.fillStyle = '#0f172a';
+        ctx.beginPath();
+        ctx.roundRect(370, 30, 284, 24, 8);
+        ctx.fill();
+      }
+
+      // Cabin windows & entry doors
+      for (const sideX of [276, 748]) {
+        // Entry doors (L1, L2, L3, L4)
+        const doorYs = [90, 185, 295, 395];
+        ctx.strokeStyle = '#64748b';
+        ctx.lineWidth = 2;
+        for (const dy of doorYs) {
+          ctx.fillStyle = '#f1f5f9';
+          ctx.fillRect(sideX - 11, dy, 22, 10);
+          ctx.strokeRect(sideX - 11, dy, 22, 10);
+        }
+
+        if (!isCargo) {
+          // Illuminated / tinted passenger windows
+          for (let wy = 106; wy < 390; wy += 7.5) {
+            if (doorYs.some((dy) => Math.abs(wy - dy) < 11)) continue;
+            ctx.fillStyle = '#1e293b';
+            ctx.fillRect(sideX - 4, wy, 8, 4.2);
+            ctx.fillStyle = 'rgba(186, 230, 253, 0.55)';
+            ctx.fillRect(sideX - 3, wy + 0.6, 6, 3.0);
+          }
         }
       }
 
-      // Navigation Lights
-      const navGeo = new THREE.SphereGeometry(0.22, 8, 8);
-      const redNav = new THREE.Mesh(navGeo, new THREE.MeshBasicMaterial({ color: 0xff2222 }));
-      redNav.position.set(-2.2, 2.1, 10.6);
-      plane.add(redNav);
+      // Airline Titles & Registration Number painted along both sides of the fuselage
+      ctx.save();
+      ctx.translate(335, 215);
+      ctx.rotate(Math.PI / 2);
+      ctx.fillStyle = liv.titleColor;
+      ctx.font = 'bold 24px Inter, sans-serif';
+      ctx.fillText(liv.titleText, -95, 0);
+      ctx.font = '600 15px Inter, sans-serif';
+      ctx.fillText(regText, 115, 0);
+      ctx.restore();
 
-      const greenNav = new THREE.Mesh(navGeo, new THREE.MeshBasicMaterial({ color: 0x22c55e }));
-      greenNav.position.set(-2.2, 2.1, -10.6);
-      plane.add(greenNav);
+      ctx.save();
+      ctx.translate(689, 215);
+      ctx.rotate(-Math.PI / 2);
+      ctx.fillStyle = liv.titleColor;
+      ctx.font = 'bold 24px Inter, sans-serif';
+      ctx.fillText(liv.titleText, -95, 0);
+      ctx.font = '600 15px Inter, sans-serif';
+      ctx.fillText(regText, -185, 0);
+      ctx.restore();
 
+      const tex = new THREE.CanvasTexture(canvas);
+      tex.anisotropy = 8;
+      tex.colorSpace = THREE.SRGBColorSpace;
+      fuselageTexCache.set(cacheKey, tex);
+      return tex;
+    }
+
+    function getTailFinTexture(airlineCode) {
+      if (tailTexCache.has(airlineCode)) return tailTexCache.get(airlineCode);
+      const liv = AIRLINE_LIVERIES[airlineCode] || AIRLINE_LIVERIES.CAL;
+      const canvas = document.createElement('canvas');
+      canvas.width = 512;
+      canvas.height = 512;
+      const ctx = canvas.getContext('2d');
+
+      ctx.fillStyle = liv.tailBase;
+      ctx.fillRect(0, 0, 512, 512);
+
+      const cx = 256;
+      const cy = 256;
+
+      if (liv.motif === 'plum') {
+        // China Airlines iconic 5-petal Pink-Magenta Plum Blossom (紅梅揚姿)
+        for (let i = 0; i < 5; i++) {
+          const ang = (i * Math.PI * 2) / 5 - Math.PI / 2;
+          const px = cx + Math.cos(ang) * 78;
+          const py = cy + Math.sin(ang) * 78;
+          const grad = ctx.createRadialGradient(px, py, 8, px, py, 68);
+          grad.addColorStop(0, '#fda4af');
+          grad.addColorStop(0.55, '#f43f5e');
+          grad.addColorStop(1, '#be123c');
+          ctx.fillStyle = grad;
+          ctx.beginPath();
+          ctx.arc(px, py, 64, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        // Plum blossom white/crimson stamen center
+        ctx.fillStyle = '#fff1f2';
+        ctx.beginPath();
+        ctx.arc(cx, cy, 26, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = '#9f1239';
+        ctx.lineWidth = 4;
+        for (let i = 0; i < 10; i++) {
+          const a = (i * Math.PI) / 5;
+          ctx.beginPath();
+          ctx.moveTo(cx, cy);
+          ctx.lineTo(cx + Math.cos(a) * 42, cy + Math.sin(a) * 42);
+          ctx.stroke();
+        }
+      } else if (liv.motif === 'eva') {
+        // EVA Air / UNI Air emerald green & orange-gold globe swoosh
+        ctx.fillStyle = liv.tailSecondary;
+        ctx.beginPath();
+        ctx.moveTo(0, 512);
+        ctx.quadraticCurveTo(240, 350, 512, 410);
+        ctx.lineTo(512, 512);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 14;
+        ctx.beginPath();
+        ctx.arc(cx, cy - 20, 88, 0, Math.PI * 2);
+        ctx.stroke();
+
+        ctx.fillStyle = liv.tailSecondary;
+        ctx.beginPath();
+        ctx.arc(cx, cy - 20, 44, 0, Math.PI * 2);
+        ctx.fill();
+      } else if (liv.motif === 'starlux') {
+        // STARLUX obsidian & champagne-gold Polaris diagonal bars + North Star
+        ctx.strokeStyle = '#c69f6e';
+        ctx.lineWidth = 34;
+        ctx.beginPath();
+        ctx.moveTo(70, 460);
+        ctx.lineTo(430, 120);
+        ctx.stroke();
+
+        ctx.strokeStyle = '#e4c59e';
+        ctx.lineWidth = 18;
+        ctx.beginPath();
+        ctx.moveTo(130, 490);
+        ctx.lineTo(460, 180);
+        ctx.stroke();
+
+        // 4-point Polaris Star
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.moveTo(cx, 70);
+        ctx.lineTo(cx + 22, 145);
+        ctx.lineTo(cx + 95, 165);
+        ctx.lineTo(cx + 22, 185);
+        ctx.lineTo(cx, 260);
+        ctx.lineTo(cx - 22, 185);
+        ctx.lineTo(cx - 95, 165);
+        ctx.lineTo(cx - 22, 145);
+        ctx.closePath();
+        ctx.fill();
+      } else if (liv.motif === 'tiger') {
+        // Tigerair Taiwan black tiger stripes on amber-yellow tail
+        ctx.fillStyle = '#18181b';
+        for (const yOff of [90, 195, 300, 405]) {
+          ctx.beginPath();
+          ctx.moveTo(30, yOff);
+          ctx.quadraticCurveTo(260, yOff - 45, 480, yOff + 25);
+          ctx.lineTo(480, yOff + 65);
+          ctx.quadraticCurveTo(260, yOff + 5, 30, yOff + 42);
+          ctx.closePath();
+          ctx.fill();
+        }
+      } else if (liv.motif === 'brushwing') {
+        // Cathay Pacific white Brushwing swoop
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.moveTo(110, 360);
+        ctx.quadraticCurveTo(250, 210, 430, 130);
+        ctx.quadraticCurveTo(290, 275, 195, 385);
+        ctx.closePath();
+        ctx.fill();
+      } else if (liv.motif === 'crane') {
+        // JAL Tsurumaru / Red Circle emblem
+        ctx.fillStyle = liv.tailPrimary;
+        ctx.beginPath();
+        ctx.arc(cx, cy, 118, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = liv.tailBase;
+        ctx.fillRect(cx - 90, cy + 25, 180, 28);
+      } else {
+        // Bold angled dual-band tail with airline code
+        ctx.fillStyle = liv.tailPrimary;
+        ctx.beginPath();
+        ctx.moveTo(60, 480);
+        ctx.lineTo(310, 60);
+        ctx.lineTo(470, 60);
+        ctx.lineTo(240, 480);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.fillStyle = liv.tailSecondary;
+        ctx.font = 'bold 84px Inter, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(airlineCode, cx, cy + 30);
+      }
+
+      const tex = new THREE.CanvasTexture(canvas);
+      tex.anisotropy = 8;
+      tex.colorSpace = THREE.SRGBColorSpace;
+      tailTexCache.set(airlineCode, tex);
+      return tex;
+    }
+
+    // Build an ultra-realistic 3D airliner model matching specific aircraft type & airline livery
+    function createRealisticAircraft(options = {}) {
+      const airlineCode = options.airlineCode || 'CAL';
+      const typeCode = options.typeCode || 'A359';
+      const regText = options.reg || 'B-18918';
+      const spec = getAircraftSpec(typeCode);
+      const liv = AIRLINE_LIVERIES[airlineCode] || AIRLINE_LIVERIES.CAL;
+
+      const plane = new THREE.Group();
+      plane.rotation.order = 'YXZ';
+
+      const fuselageTex = getFuselageTexture(airlineCode, spec, regText, options.isCargo);
+      const tailTex = getTailFinTexture(airlineCode);
+
+      const fuselageMat = new THREE.MeshStandardMaterial({
+        map: fuselageTex,
+        roughness: 0.18,
+        metalness: 0.22
+      });
+      const wingMat = new THREE.MeshStandardMaterial({
+        color: 0xdbe3ec,
+        roughness: 0.28,
+        metalness: 0.38
+      });
+      const chromeEdgeMat = new THREE.MeshStandardMaterial({
+        color: 0xf8fafc,
+        roughness: 0.12,
+        metalness: 0.88
+      });
+      const tailMat = new THREE.MeshStandardMaterial({
+        map: tailTex,
+        roughness: 0.22,
+        metalness: 0.2
+      });
+      const wingletMat = new THREE.MeshStandardMaterial({
+        color: liv.wingletColor,
+        roughness: 0.22,
+        metalness: 0.25
+      });
+      const cowlMat = new THREE.MeshStandardMaterial({
+        color: liv.engineColor,
+        roughness: 0.2,
+        metalness: 0.3
+      });
+      const cowlAccentMat = new THREE.MeshStandardMaterial({
+        color: liv.engineAccent,
+        roughness: 0.25,
+        metalness: 0.35
+      });
+
+      const L = spec.length;
+      const R = spec.radius;
+      const cabinY = 2.25;
+
+      // 1. Sculpted Aerodynamic Fuselage (Lofted LatheGeometry from tail tip -L/2 to nose radome +L/2)
+      const lathePts = [
+        new THREE.Vector2(0.04, -L * 0.52), // APU exhaust tip
+        new THREE.Vector2(R * 0.22, -L * 0.50),
+        new THREE.Vector2(R * 0.52, -L * 0.42),
+        new THREE.Vector2(R * 0.82, -L * 0.33),
+        new THREE.Vector2(R * 0.98, -L * 0.24),
+        new THREE.Vector2(R * 1.00, -L * 0.12),
+        new THREE.Vector2(R * 1.00,  L * 0.20),
+        new THREE.Vector2(R * 0.97,  L * 0.30),
+        new THREE.Vector2(R * 0.84,  L * 0.39), // Cockpit windshield taper
+        new THREE.Vector2(R * 0.58,  L * 0.45),
+        new THREE.Vector2(R * 0.28,  L * 0.49),
+        new THREE.Vector2(0.02,      L * 0.515) // Pointed nose radome tip
+      ];
+      const fuselageGeo = new THREE.LatheGeometry(lathePts, 28);
+      fuselageGeo.rotateZ(-Math.PI / 2); // Align +Y of lathe with +X (forward nose)
+      // Slight vertical ovality + upswept rear tailcone
+      const posAttr = fuselageGeo.attributes.position;
+      for (let i = 0; i < posAttr.count; i++) {
+        const vx = posAttr.getX(i);
+        let vy = posAttr.getY(i);
+        const vz = posAttr.getZ(i);
+        vy *= 1.05;
+        // Upswept rear tailcone and drooped aerodynamic nose radome
+        if (vx < -L * 0.22) {
+          const t = (-vx - L * 0.22) / (L * 0.30);
+          vy += t * t * R * 0.36;
+        } else if (vx > L * 0.30) {
+          const t = (vx - L * 0.30) / (L * 0.215);
+          vy -= t * t * R * 0.22;
+        }
+        posAttr.setXYZ(i, vx, vy, vz);
+      }
+      fuselageGeo.computeVertexNormals();
+      const fuselageMesh = new THREE.Mesh(fuselageGeo, fuselageMat);
+      fuselageMesh.position.y = cabinY;
+      fuselageMesh.castShadow = true;
+      fuselageMesh.receiveShadow = true;
+      plane.add(fuselageMesh);
+
+      // Wing-to-Body Aerodynamic Belly Fairing
+      const fairingGeo = new THREE.SphereGeometry(R * 0.92, 18, 12);
+      fairingGeo.scale(2.8, 0.52, 1.16);
+      const fairingMesh = new THREE.Mesh(fairingGeo, wingMat);
+      fairingMesh.position.set(-0.4, cabinY - R * 0.58, 0);
+      plane.add(fairingMesh);
+
+      // Boeing 747 Iconic Upper Deck Hump
+      if (spec.hasHump) {
+        const humpGeo = new THREE.SphereGeometry(R * 0.78, 20, 12);
+        humpGeo.scale(3.6, 0.72, 0.88);
+        const humpMesh = new THREE.Mesh(humpGeo, fuselageMat);
+        humpMesh.position.set(L * 0.16, cabinY + R * 0.62, 0);
+        humpMesh.castShadow = true;
+        plane.add(humpMesh);
+      }
+
+      // 2. Tapered Swept Airfoil Main Wings, Flap Track Canoes & Wingtips
+      const wingRootChord = spec.wingChord;
+      const wingTipChord = spec.wingChord * 0.32;
+      const halfSpan = spec.wingSpan;
+      const sweepOffset = halfSpan * Math.tan(spec.wingSweep);
+      const wingY = spec.highWing ? cabinY + R * 0.72 : cabinY - R * 0.32;
+
+      const propRotors = [];
+
+      for (const side of [-1, 1]) {
+        // Build tapered swept wing planform in XZ plane
+        const wShape = new THREE.Shape();
+        wShape.moveTo(wingRootChord * 0.55, 0);
+        wShape.lineTo(wingRootChord * 0.55 - sweepOffset, side * halfSpan);
+        wShape.lineTo(wingRootChord * 0.55 - sweepOffset - wingTipChord, side * halfSpan);
+        wShape.lineTo(-wingRootChord * 0.45, 0);
+        wShape.closePath();
+
+        const wGeo = new THREE.ExtrudeGeometry(wShape, {
+          depth: 0.18,
+          bevelEnabled: true,
+          bevelSegments: 2,
+          bevelSize: 0.04,
+          bevelThickness: 0.04
+        });
+        wGeo.rotateX(Math.PI / 2);
+        // Apply realistic upward wing dihedral & flex toward the wingtip
+        const wPos = wGeo.attributes.position;
+        for (let i = 0; i < wPos.count; i++) {
+          const wz = Math.abs(wPos.getZ(i));
+          const spanRatio = wz / halfSpan;
+          const dihedral = spec.highWing ? 0.02 : spanRatio * 0.55 + spanRatio * spanRatio * 0.28;
+          wPos.setY(i, wPos.getY(i) * (1.0 - spanRatio * 0.52) + dihedral);
+        }
+        wGeo.computeVertexNormals();
+        const wingMesh = new THREE.Mesh(wGeo, wingMat);
+        wingMesh.position.set(0.2, wingY, 0);
+        wingMesh.castShadow = true;
+        wingMesh.receiveShadow = true;
+        plane.add(wingMesh);
+
+        // Under-wing Flap Track Fairing Canoes
+        for (const fRatio of [0.28, 0.48, 0.68]) {
+          const canoeZ = side * halfSpan * fRatio;
+          const canoeX = 0.2 - sweepOffset * fRatio - wingRootChord * 0.35;
+          const canoeY = wingY + fRatio * 0.45 - 0.14;
+          const canoe = new THREE.Mesh(new THREE.ConeGeometry(0.11, 1.35, 8), wingMat);
+          canoe.rotation.z = Math.PI / 2;
+          canoe.position.set(canoeX, canoeY, canoeZ);
+          plane.add(canoe);
+        }
+
+        // Type-Specific Wingtips (Curved A350 Sharklet, Raked B777/B787 Wingtip, or Canted Winglet)
+        const tipX = 0.2 + wingRootChord * 0.55 - sweepOffset - wingTipChord * 0.5;
+        const tipY = wingY + (spec.highWing ? 0.05 : 0.82);
+        const tipZ = side * halfSpan;
+
+        if (spec.wingtipType === 'sharklet' || spec.wingtipType === 'canted') {
+          const wlShape = new THREE.Shape();
+          wlShape.moveTo(0, 0);
+          wlShape.lineTo(-wingTipChord * 1.05, 0);
+          wlShape.lineTo(-wingTipChord * 1.55, 1.35);
+          wlShape.lineTo(-wingTipChord * 0.85, 1.35);
+          wlShape.closePath();
+          const wlGeo = new THREE.ExtrudeGeometry(wlShape, { depth: 0.08, bevelEnabled: true, bevelSize: 0.02, bevelThickness: 0.02 });
+          const wlMesh = new THREE.Mesh(wlGeo, wingletMat);
+          wlMesh.position.set(tipX + wingTipChord * 0.4, tipY, tipZ - 0.04);
+          wlMesh.rotation.x = side * -0.18;
+          plane.add(wlMesh);
+        } else if (spec.wingtipType === 'raked') {
+          const rkGeo = new THREE.BoxGeometry(wingTipChord * 1.4, 0.08, 1.45);
+          const rkMesh = new THREE.Mesh(rkGeo, wingletMat);
+          rkMesh.position.set(tipX - 0.35, tipY + 0.12, tipZ + side * 0.65);
+          rkMesh.rotation.y = side * -0.52;
+          rkMesh.rotation.x = side * -0.12;
+          plane.add(rkMesh);
+        }
+
+        // 3. Detailed Under-Wing Turbofan Engines (or Twin Turboprops for ATR-72)
+        const engineSpanRatios = spec.engines === 4 ? [0.34, 0.64] : [0.36];
+        engineSpanRatios.forEach((eRatio, idx) => {
+          const engGroup = new THREE.Group();
+          const ez = side * halfSpan * eRatio;
+          const ex = 0.7 - sweepOffset * eRatio + (idx === 0 ? 0.45 : 0.1);
+          const ey = spec.highWing ? wingY - 0.32 : wingY + eRatio * 0.35 - 0.58;
+          engGroup.position.set(ex, ey, ez);
+
+          // Aerodynamic Engine Pylon Strut connecting nacelle to wing leading edge
+          const pylonGeo = new THREE.BoxGeometry(1.45, 0.48, 0.16);
+          const pylon = new THREE.Mesh(pylonGeo, wingMat);
+          pylon.position.set(-0.25, 0.36, 0);
+          pylon.rotation.z = -0.18;
+          engGroup.add(pylon);
+
+          if (spec.isTurboprop) {
+            // Turboprop nacelle + spinning 6-blade propeller
+            const tpCowl = new THREE.Mesh(new THREE.CylinderGeometry(0.32, 0.26, 2.1, 14), cowlMat);
+            tpCowl.rotation.z = Math.PI / 2;
+            engGroup.add(tpCowl);
+
+            const rotor = new THREE.Group();
+            rotor.position.set(1.12, 0, 0);
+            const spinner = new THREE.Mesh(new THREE.ConeGeometry(0.22, 0.45, 12), chromeEdgeMat);
+            spinner.rotation.z = -Math.PI / 2;
+            rotor.add(spinner);
+            for (let b = 0; b < 6; b++) {
+              const blade = new THREE.Mesh(new THREE.BoxGeometry(0.04, 1.35, 0.12), darkFrameMat);
+              blade.rotation.x = (b * Math.PI) / 3;
+              rotor.add(blade);
+            }
+            engGroup.add(rotor);
+            propRotors.push(rotor);
+          } else {
+            // High-Bypass Turbofan Engine Nacelle
+            const eRad = (spec.engines === 4 ? 0.52 : 0.68) * (spec.scale > 0.9 ? 1.0 : 0.78);
+            const eLen = (spec.engines === 4 ? 2.1 : 2.55) * (spec.scale > 0.9 ? 1.0 : 0.82);
+
+            const outerCowl = new THREE.Mesh(new THREE.CylinderGeometry(eRad, eRad * 0.88, eLen, 20, 1, true), cowlMat);
+            outerCowl.rotation.z = Math.PI / 2;
+            outerCowl.castShadow = true;
+            engGroup.add(outerCowl);
+
+            // Metallic Chrome Intake Lip Ring
+            const lipRing = new THREE.Mesh(new THREE.TorusGeometry(eRad * 0.96, eRad * 0.09, 10, 24), chromeEdgeMat);
+            lipRing.rotation.y = Math.PI / 2;
+            lipRing.position.x = eLen * 0.5;
+            engGroup.add(lipRing);
+
+            // Airline Accent Band around Cowl
+            const accentBand = new THREE.Mesh(new THREE.CylinderGeometry(eRad * 1.005, eRad * 0.99, eLen * 0.22, 20, 1, true), cowlAccentMat);
+            accentBand.rotation.z = Math.PI / 2;
+            accentBand.position.x = eLen * 0.22;
+            engGroup.add(accentBand);
+
+            // Dark Fan Disk + White Conical Spinner inside Intake
+            const fanDisk = new THREE.Mesh(new THREE.CylinderGeometry(eRad * 0.88, eRad * 0.88, 0.15, 16), darkFrameMat);
+            fanDisk.rotation.z = Math.PI / 2;
+            fanDisk.position.x = eLen * 0.32;
+            engGroup.add(fanDisk);
+
+            const spinnerCone = new THREE.Mesh(new THREE.ConeGeometry(eRad * 0.26, eRad * 0.55, 12), chromeEdgeMat);
+            spinnerCone.rotation.z = -Math.PI / 2;
+            spinnerCone.position.x = eLen * 0.45;
+            engGroup.add(spinnerCone);
+
+            // Core Exhaust Nozzle & Tailcone at rear of nacelle
+            const coreNozzle = new THREE.Mesh(new THREE.CylinderGeometry(eRad * 0.58, eRad * 0.42, eLen * 0.45, 14), darkFrameMat);
+            coreNozzle.rotation.z = Math.PI / 2;
+            coreNozzle.position.x = -eLen * 0.58;
+            engGroup.add(coreNozzle);
+          }
+
+          plane.add(engGroup);
+        });
+
+        // 4. Swept Horizontal Stabilizers (Tailplane) with Elevator Trim
+        const hSpan = halfSpan * 0.34;
+        const hRoot = wingRootChord * 0.52;
+        const hTip = hRoot * 0.38;
+        const hSweep = hSpan * 0.55;
+        const hShape = new THREE.Shape();
+        hShape.moveTo(0, 0);
+        hShape.lineTo(-hSweep, side * hSpan);
+        hShape.lineTo(-hSweep - hTip, side * hSpan);
+        hShape.lineTo(-hRoot, 0);
+        hShape.closePath();
+        const hGeo = new THREE.ExtrudeGeometry(hShape, { depth: 0.1, bevelEnabled: true, bevelSize: 0.02, bevelThickness: 0.02 });
+        hGeo.rotateX(Math.PI / 2);
+        const hStab = new THREE.Mesh(hGeo, wingMat);
+        hStab.position.set(-L * 0.42, cabinY + R * 0.32, 0);
+        hStab.rotation.x = side * -0.06;
+        plane.add(hStab);
+      }
+
+      // 5. Sculpted Swept Vertical Stabilizer (Tail Fin) with Proper UV Mapping for Livery Artwork
+      const finBase = L * 0.21;
+      const finTop = finBase * 0.34;
+      const finHeight = R * 3.45;
+      const finSweep = finBase * 0.78;
+
+      const vFinShape = new THREE.Shape();
+      vFinShape.moveTo(0, 0);
+      vFinShape.lineTo(finBase, 0);
+      vFinShape.lineTo(finBase - finSweep + finTop, finHeight);
+      vFinShape.lineTo(-finSweep * 0.45, finHeight);
+      vFinShape.quadraticCurveTo(finBase * 0.12, finHeight * 0.35, 0, 0);
+
+      const vFinGeo = new THREE.ExtrudeGeometry(vFinShape, {
+        depth: 0.18,
+        bevelEnabled: true,
+        bevelSegments: 2,
+        bevelSize: 0.035,
+        bevelThickness: 0.035
+      });
+      vFinGeo.translate(-finBase * 0.5, 0, -0.09);
+      // Normalize UVs to [0..1] so the 512x512 airline tail texture fits the fin cleanly
+      vFinGeo.computeBoundingBox();
+      const bb = vFinGeo.boundingBox;
+      const uvAttr = vFinGeo.attributes.uv;
+      const vPosAttr = vFinGeo.attributes.position;
+      for (let i = 0; i < uvAttr.count; i++) {
+        const u = (vPosAttr.getX(i) - bb.min.x) / (bb.max.x - bb.min.x || 1);
+        const v = (vPosAttr.getY(i) - bb.min.y) / (bb.max.y - bb.min.y || 1);
+        uvAttr.setXY(i, u, v);
+      }
+      const vFin = new THREE.Mesh(vFinGeo, tailMat);
+      vFin.position.set(-L * 0.39, cabinY + R * 0.72, 0);
+      vFin.castShadow = true;
+      plane.add(vFin);
+
+      // 6. Retractable Multi-Wheel Bogie Landing Gear Assembly
+      const gearGroup = new THREE.Group();
+      plane.add(gearGroup);
+
+      // Nose Gear (Twin-wheel + Oleo Strut + Taxi Light)
+      const noseGearX = L * 0.36;
+      const noseStrut = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.07, 1.35, 10), chromeEdgeMat);
+      noseStrut.position.set(noseGearX, 0.92, 0);
+      gearGroup.add(noseStrut);
+      for (const wz of [-0.16, 0.16]) {
+        const nTire = new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.24, 0.12, 14), darkFrameMat);
+        nTire.rotation.x = Math.PI / 2;
+        nTire.position.set(noseGearX, 0.26, wz);
+        gearGroup.add(nTire);
+      }
+
+      // Main Landing Gear (4-wheel or 6-wheel bogie trucks + gear bay doors)
+      for (const side of [-1, 1]) {
+        const mgZ = side * (R * 1.32);
+        const mgX = -0.55;
+        const mStrut = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.10, 1.45, 10), chromeEdgeMat);
+        mStrut.position.set(mgX, 0.98, mgZ);
+        gearGroup.add(mStrut);
+
+        const door = new THREE.Mesh(new THREE.BoxGeometry(1.15, 0.65, 0.05), fuselageMat);
+        door.position.set(mgX, 1.25, mgZ - side * 0.32);
+        gearGroup.add(door);
+
+        const axleOffsets = spec.bogieAxles === 3 ? [-0.46, 0, 0.46] : spec.bogieAxles === 2 ? [-0.28, 0.28] : [0];
+        for (const ax of axleOffsets) {
+          for (const wz of [-0.20, 0.20]) {
+            const tire = new THREE.Mesh(new THREE.CylinderGeometry(0.32, 0.32, 0.16, 14), darkFrameMat);
+            tire.rotation.x = Math.PI / 2;
+            tire.position.set(mgX + ax, 0.32, mgZ + wz);
+            gearGroup.add(tire);
+          }
+        }
+      }
+
+      // 7. ICAO-Compliant Aviation Navigation, Strobe, Anti-Collision Beacon & Landing Lights
+      // Left/Port (-Z) = Red; Right/Starboard (+Z) = Green; Tail (-X) = White
+      const navSphere = new THREE.SphereGeometry(0.18, 8, 8);
+      const portTipX = 0.2 - sweepOffset;
+      const portRedNav = new THREE.Mesh(navSphere, new THREE.MeshBasicMaterial({ color: 0xff2222 }));
+      portRedNav.position.set(portTipX, wingY + 0.85, -halfSpan - 0.08);
+      plane.add(portRedNav);
+
+      const stbdGreenNav = new THREE.Mesh(navSphere, new THREE.MeshBasicMaterial({ color: 0x22c55e }));
+      stbdGreenNav.position.set(portTipX, wingY + 0.85, halfSpan + 0.08);
+      plane.add(stbdGreenNav);
+
+      // Wingtip & Tail White Strobe Lights
+      const strobeMat = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.95 });
+      const stL = new THREE.Mesh(navSphere, strobeMat);
+      stL.position.set(portTipX - 0.35, wingY + 0.9, -halfSpan - 0.1);
+      const stR = new THREE.Mesh(navSphere, strobeMat);
+      stR.position.set(portTipX - 0.35, wingY + 0.9, halfSpan + 0.1);
+      const stTail = new THREE.Mesh(navSphere, strobeMat);
+      stTail.position.set(-L * 0.515, cabinY + R * 0.35, 0);
+      plane.add(stL, stR, stTail);
+
+      // Upper & Lower Red Anti-Collision Flashing Beacons
+      const antiColMat = new THREE.MeshBasicMaterial({ color: 0xff1111 });
+      const topAntiCol = new THREE.Mesh(new THREE.SphereGeometry(0.16, 8, 8), antiColMat);
+      topAntiCol.position.set(L * 0.05, cabinY + R * 1.06, 0);
+      const botAntiCol = new THREE.Mesh(new THREE.SphereGeometry(0.16, 8, 8), antiColMat);
+      botAntiCol.position.set(-0.2, cabinY - R * 0.92, 0);
+      plane.add(topAntiCol, botAntiCol);
+
+      // High-intensity Landing Light Halo on Nose Gear & Wing Roots
+      const landingLightMat = new THREE.MeshBasicMaterial({
+        color: 0xfef9c3,
+        transparent: true,
+        opacity: 0.9
+      });
+      const noseLamp = new THREE.Mesh(new THREE.SphereGeometry(0.22, 8, 8), landingLightMat);
+      noseLamp.position.set(noseGearX + 0.15, 0.65, 0);
+      gearGroup.add(noseLamp);
+
+      plane.scale.setScalar(spec.scale);
+      plane.userData = {
+        airlineCode,
+        typeCode,
+        reg: regText,
+        spec,
+        gearGroup,
+        strobeMat,
+        antiColMat,
+        landingLightMat,
+        propRotors
+      };
       return plane;
     }
 
-    // Active Takeoff & Landing Aircraft on Parallel Runways
-    const aircraftTakeoff = createRealisticAircraft(0xdb2777, 0x1d4ed8); // China Airlines Plum Blossom motif
-    scene.add(aircraftTakeoff);
+    // Create crisp 3D ATC Radar Data Tag Sprite floating above each real-time aircraft
+    function createFlightTagSprite() {
+      const canvas = document.createElement('canvas');
+      canvas.width = 512;
+      canvas.height = 144;
+      const tex = new THREE.CanvasTexture(canvas);
+      tex.colorSpace = THREE.SRGBColorSpace;
+      const mat = new THREE.SpriteMaterial({
+        map: tex,
+        transparent: true,
+        depthTest: false,
+        depthWrite: false
+      });
+      const sprite = new THREE.Sprite(mat);
+      sprite.scale.set(17.5, 4.9, 1);
+      sprite.renderOrder = 999;
+      sprite.userData = { canvas, ctx: canvas.getContext('2d'), tex, lastKey: '' };
+      return sprite;
+    }
 
-    const aircraftLanding = createRealisticAircraft(0x059669, 0x047857); // EVA Air Green motif
-    aircraftLanding.rotation.y = Math.PI;
-    scene.add(aircraftLanding);
+    function updateFlightTagSprite(sprite, info) {
+      const key = `${info.callsign}|${info.type}|${info.route}|${Math.round((info.alt || 0) / 50)}|${Math.round((info.gs || 0) / 5)}|${info.phase}`;
+      if (sprite.userData.lastKey === key) return;
+      sprite.userData.lastKey = key;
 
-    // Parked Wide-Body Aircraft at Terminal 2 Apron Gates
-    const gateConfigs = [
-      { z: -48, tail: 0xdb2777, eng: 0x1d4ed8 },
-      { z: -24, tail: 0x059669, eng: 0x047857 },
-      { z: 0,   tail: 0xdb2777, eng: 0x1d4ed8 },
-      { z: 24,  tail: 0x0284c7, eng: 0x0369a1 }
+      const { canvas, ctx, tex } = sprite.userData;
+      const liv = AIRLINE_LIVERIES[info.airlineCode] || AIRLINE_LIVERIES.CAL;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Dark translucent ATC radar strip background
+      ctx.fillStyle = 'rgba(15, 23, 42, 0.84)';
+      ctx.beginPath();
+      ctx.roundRect(16, 10, 480, 102, 16);
+      ctx.fill();
+
+      ctx.strokeStyle = liv.badgeHex || '#38bdf8';
+      ctx.lineWidth = 3.5;
+      ctx.stroke();
+
+      // Left airline color pill bar
+      ctx.fillStyle = liv.badgeHex || '#38bdf8';
+      ctx.beginPath();
+      ctx.roundRect(26, 22, 12, 78, 6);
+      ctx.fill();
+
+      // Line 1: Flight Callsign + Aircraft Type + Registration
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 30px "JetBrains Mono", monospace';
+      const titleStr = `${info.displayFlight || info.callsign} • ${info.type}`;
+      ctx.fillText(titleStr, 52, 54);
+
+      // Right badge: Route (e.g. TPE→NRT) or Registration
+      ctx.fillStyle = '#38bdf8';
+      ctx.font = 'bold 24px "JetBrains Mono", monospace';
+      ctx.textAlign = 'right';
+      ctx.fillText(info.route || info.reg || 'RCTP', 478, 52);
+
+      // Line 2: Phase + Altitude + Speed
+      ctx.textAlign = 'left';
+      ctx.fillStyle = '#a7f3d0';
+      ctx.font = '600 22px "JetBrains Mono", monospace';
+      const altTxt = info.onGround || info.alt <= 80 ? 'GND' : `${Math.round(info.alt).toLocaleString()}FT`;
+      const spdTxt = `${Math.round(info.gs || 0)}KT`;
+      ctx.fillText(`${info.phase} • ${altTxt} • ${spdTxt}`, 52, 92);
+
+      // Leader line pointer triangle at bottom center
+      ctx.fillStyle = liv.badgeHex || '#38bdf8';
+      ctx.beginPath();
+      ctx.moveTo(244, 112);
+      ctx.lineTo(268, 112);
+      ctx.lineTo(256, 134);
+      ctx.closePath();
+      ctx.fill();
+
+      tex.needsUpdate = true;
+    }
+
+    // Touchdown Tire Smoke Puff Pool
+    const smokePuffs = [];
+    const smokeGeo = new THREE.SphereGeometry(0.65, 10, 8);
+    function spawnTouchdownSmoke(x, z) {
+      for (let i = 0; i < 3; i++) {
+        const mat = new THREE.MeshBasicMaterial({
+          color: 0xf1f5f9,
+          transparent: true,
+          opacity: 0.65,
+          depthWrite: false
+        });
+        const puff = new THREE.Mesh(smokeGeo, mat);
+        puff.position.set(
+          x - 1.5 + (Math.random() - 0.5) * 2.5,
+          0.35 + Math.random() * 0.25,
+          z + (i === 0 ? -1.6 : i === 1 ? 1.6 : 0)
+        );
+        scene.add(puff);
+        smokePuffs.push({ mesh: puff, age: 0, vx: -4 - Math.random() * 3, vz: (Math.random() - 0.5) * 2.2 });
+      }
+    }
+
+    // --- LIVE RCTP / TPE FLIGHT TRACKING ENGINE ---
+    const liveAircraftGroup = new THREE.Group();
+    scene.add(liveAircraftGroup);
+
+    const activeAircraftMap = new Map(); // id -> { group, plane, tag, data, ... }
+    let trackedFlightId = null;
+    let activeRunwayDir = '05'; // '05' (heading 048°, +X) or '23' (heading 228°, -X)
+    let liveWindSummary = '050° / 12KT';
+    let isLiveFeedConnected = false;
+
+    // Realistic fallback RCTP flights (used immediately on boot before first network poll resolves)
+    const INITIAL_RCTP_FLIGHTS = [
+      { id: 'rwy_dep', callsign: 'JX800', displayFlight: 'JX800', airlineCode: 'SJX', type: 'A35K', reg: 'B-58553', route: 'TPE→NRT', alt: 0, gs: 155, heading: 47.8, vrate: 2200, onGround: true, role: 'showcase_takeoff' },
+      { id: 'rwy_arr', callsign: 'BR212', displayFlight: 'BR212', airlineCode: 'EVA', type: 'B77W', reg: 'B-16727', route: 'BKK→TPE', alt: 420, gs: 142, heading: 47.8, vrate: -720, onGround: false, role: 'showcase_landing' },
+      { id: 'taxi_1',  callsign: 'CI501', displayFlight: 'CI501', airlineCode: 'CAL', type: 'A359', reg: 'B-18910', route: 'TPE→PVG', alt: 0, gs: 18, heading: 227.8, vrate: 0, onGround: true, role: 'showcase_taxi_n' },
+      { id: 'taxi_2',  callsign: 'CI5883', displayFlight: 'CI5883', airlineCode: 'CAL', type: 'B744', reg: 'B-18719', route: 'TPE→ANC', alt: 0, gs: 16, heading: 47.8, vrate: 0, onGround: true, role: 'showcase_taxi_s' },
+      { id: 'gate_1',  callsign: 'CI721', displayFlight: 'CI721', airlineCode: 'CAL', type: 'B77W', reg: 'B-18005', route: 'TPE→KUL', alt: 0, gs: 0, heading: 227.8, vrate: 0, onGround: true, role: 'gate', gateIdx: 0 },
+      { id: 'gate_2',  callsign: 'BR132', displayFlight: 'BR132', airlineCode: 'EVA', type: 'B78X', reg: 'B-17811', route: 'TPE→KIX', alt: 0, gs: 0, heading: 227.8, vrate: 0, onGround: true, role: 'gate', gateIdx: 1 },
+      { id: 'gate_3',  callsign: 'JX820', displayFlight: 'JX820', airlineCode: 'SJX', type: 'A359', reg: 'B-58507', route: 'TPE→KIX', alt: 0, gs: 0, heading: 227.8, vrate: 0, onGround: true, role: 'gate', gateIdx: 2 },
+      { id: 'gate_4',  callsign: 'CX495', displayFlight: 'CX495', airlineCode: 'CPA', type: 'A333', reg: 'B-HLV',   route: 'HKG→TPE', alt: 0, gs: 0, heading: 227.8, vrate: 0, onGround: true, role: 'gate', gateIdx: 3 }
     ];
-    gateConfigs.forEach((cfg) => {
-      const parked = createRealisticAircraft(cfg.tail, cfg.eng);
-      parked.scale.setScalar(0.92);
-      parked.position.set(-64, 0.1, cfg.z - 8);
-      parked.rotation.y = Math.PI;
-      scene.add(parked);
-    });
 
-    // Taxiing Aircraft moving along North Parallel Taxiway
-    const aircraftTaxi = createRealisticAircraft(0xdb2777, 0x1d4ed8);
-    aircraftTaxi.scale.setScalar(0.95);
-    scene.add(aircraftTaxi);
+    const GATE_SLOTS = [
+      { x: -64, z: -56 },
+      { x: -64, z: -32 },
+      { x: -64, z: -8 },
+      { x: -64, z: 16 }
+    ];
+
+    // Convert real-world (lat, lon, altFeet) around RCTP (25.0777, 121.2328) into runway-aligned 3D scene coords
+    function latLonToRctpMeters(lat, lon) {
+      const theta = (RCTP_REF.rwyHeadingDeg * Math.PI) / 180.0;
+      const uxE = Math.sin(theta);
+      const uxN = Math.cos(theta);
+      const uzE = Math.sin(theta + Math.PI / 2);
+      const uzN = Math.cos(theta + Math.PI / 2);
+
+      const dN = (lat - RCTP_REF.lat) * 111132.0;
+      const dE = (lon - RCTP_REF.lon) * 111320.0 * Math.cos((RCTP_REF.lat * Math.PI) / 180.0);
+      return {
+        alongMeters: dE * uxE + dN * uxN, // +X = RWY 05 direction (047.81° NE)
+        crossMeters: dE * uzE + dN * uzN, // -Z = North RWY 05L/23R (-1142m), +Z = South RWY 05R/23L (+741m)
+        distMeters: Math.hypot(dE, dN)
+      };
+    }
+
+    function mapRctpMetersToScene(alongMeters, crossMeters, altFeet, onGround) {
+      // Along-runway X mapping: [-2000m..+2000m] -> [-250..+250] runway length; smoothly compressed beyond
+      let sx;
+      if (Math.abs(alongMeters) <= 2000) {
+        sx = (alongMeters / 2000) * 250;
+      } else {
+        const sign = Math.sign(alongMeters);
+        const extra = Math.abs(alongMeters) - 2000;
+        sx = sign * (250 + Math.tanh(extra / 15000) * 195);
+      }
+
+      // Cross-runway Z mapping: align North Runway (-1142m -> -108) and South Runway (+741m -> +108)
+      let sz;
+      if (onGround && Math.abs(crossMeters - (-1142)) < 220) {
+        sz = -108; // North Runway 05L/23R
+      } else if (onGround && Math.abs(crossMeters - 741) < 220) {
+        sz = 108; // South Runway 05R/23L
+      } else if (onGround && crossMeters < -320 && crossMeters >= -920) {
+        sz = -80; // North Parallel Taxiway
+      } else if (onGround && crossMeters > 300 && crossMeters <= 520) {
+        sz = 80; // South Parallel Taxiway
+      } else if (crossMeters < 0) {
+        const norm = Math.min(1, Math.abs(crossMeters) / 1142);
+        const extra = Math.max(0, Math.abs(crossMeters) - 1142);
+        sz = -(norm * 108 + Math.tanh(extra / 14000) * 185);
+      } else {
+        const norm = Math.min(1, crossMeters / 741);
+        const extra = Math.max(0, crossMeters - 741);
+        sz = norm * 108 + Math.tanh(extra / 14000) * 185;
+      }
+
+      // Vertical Y mapping
+      const sy = (onGround || altFeet <= 75)
+        ? 0.14
+        : Math.min(145, 2.2 + Math.pow(Math.max(0, altFeet) / 100, 0.72) * 1.45);
+
+      return { x: sx, y: sy, z: sz };
+    }
+
+    function upsertAircraftEntity(flight) {
+      let entry = activeAircraftMap.get(flight.id);
+      const specKey = `${flight.airlineCode}_${flight.type}_${flight.reg}`;
+      if (entry && entry.specKey !== specKey) {
+        liveAircraftGroup.remove(entry.group);
+        activeAircraftMap.delete(flight.id);
+        entry = null;
+      }
+
+      if (!entry) {
+        const wrapper = new THREE.Group();
+        const planeMesh = createRealisticAircraft({
+          airlineCode: flight.airlineCode,
+          typeCode: flight.type,
+          reg: flight.reg
+        });
+        wrapper.add(planeMesh);
+
+        const tagSprite = createFlightTagSprite();
+        tagSprite.position.set(0, 6.2, 0);
+        wrapper.add(tagSprite);
+
+        // Register for 3D raycast clicking to inspect / track aircraft
+        planeMesh.traverse((child) => {
+          if (child.isMesh) {
+            child.userData.flightId = flight.id;
+            interactiveMeshes.push(child);
+          }
+        });
+
+        liveAircraftGroup.add(wrapper);
+        entry = {
+          id: flight.id,
+          specKey,
+          group: wrapper,
+          plane: planeMesh,
+          tag: tagSprite,
+          data: { ...flight },
+          cycleOffset: Math.random() * 120,
+          lastSmokeTime: 0
+        };
+        activeAircraftMap.set(flight.id, entry);
+      } else {
+        Object.assign(entry.data, flight);
+      }
+      return entry;
+    }
+
+    // Seed initial RCTP aircraft immediately so the scene is rich on frame 0
+    INITIAL_RCTP_FLIGHTS.forEach((f) => upsertAircraftEntity(f));
+
+    let lastLiveMetarRaw = null;
+
+    // Fetch live RCTP METAR weather & active runway wind
+    async function pollRctpMetar() {
+      try {
+        const target = 'https://aviationweather.gov/api/data/metar?ids=RCTP&format=json';
+        const res = await fetch(`https://proxy.corsfix.com/?sdk=1&url=${encodeURIComponent(target)}`);
+        if (!res.ok) return;
+        const arr = await res.json();
+        if (Array.isArray(arr) && arr[0]) {
+          const m = arr[0];
+          const wdir = Number(m.wdir) || 50;
+          const wspd = Number(m.wspd) || 10;
+          liveWindSummary = `${String(wdir).padStart(3, '0')}° / ${wspd}KT`;
+          // Runways 05L/05R (048°) are used unless wind favours 23L/23R (140°..315°)
+          activeRunwayDir = (wdir >= 140 && wdir <= 315 && wspd >= 5) ? '23' : '05';
+          const rwyEl = document.getElementById('live-rwy-use');
+          const windEl = document.getElementById('live-wind-info');
+          const metarEl = document.getElementById('metar-readout');
+          if (rwyEl) rwyEl.textContent = activeRunwayDir === '05' ? '05L / 05R' : '23L / 23R';
+          if (windEl) windEl.textContent = liveWindSummary;
+          if (m.rawOb) {
+            lastLiveMetarRaw = `${m.rawOb.replace(/^METAR\s+/, '')} • LIVE RCTP`;
+            if (metarEl) metarEl.textContent = lastLiveMetarRaw;
+          }
+        }
+      } catch (err) {
+        // Keep last known METAR silently
+      }
+    }
+
+    // Fetch real-time ADS-B + Flightradar24 aircraft operating in and out of Taiwan Taoyuan Airport (RCTP / TPE)
+    async function pollRealTimeRctpFlights() {
+      const fr24Target = 'https://data-cloud.flightradar24.com/zones/fcgi/feed.js?bounds=25.35,24.80,120.90,121.55&faa=1&satellite=1&mlat=1&flarm=1&adsb=1&gnd=1&air=1&vehicles=0&estimated=1&maxage=14400&gliders=0&stats=0';
+      const adsbLolTarget = 'https://api.adsb.lol/v2/point/25.0777/121.2328/30';
+
+      let parsedFlights = [];
+
+      // 1. Try Flightradar24 RCTP feed (includes Origin/Destination IATA route + flight number + aircraft type)
+      try {
+        const res = await fetch(`https://proxy.corsfix.com/?sdk=1&url=${encodeURIComponent(fr24Target)}`);
+        if (res.ok) {
+          const data = await res.json();
+          for (const [key, val] of Object.entries(data)) {
+            if (!Array.isArray(val) || val.length < 15) continue;
+            const hex = String(val[0] || key);
+            const lat = Number(val[1]);
+            const lon = Number(val[2]);
+            const heading = Number(val[3]) || 48;
+            const alt = Number(val[4]) || 0;
+            const gs = Number(val[5]) || 0;
+            const type = String(val[8] || 'A359').trim();
+            const reg = String(val[9] || 'B-18918').trim();
+            const origin = String(val[11] || '').trim();
+            const dest = String(val[12] || '').trim();
+            const flightIata = String(val[13] || '').trim();
+            const onGround = Boolean(val[14]) || alt <= 60;
+            const vrate = Number(val[15]) || 0;
+            const callsign = String(val[16] || flightIata || reg || hex).trim();
+            const airlineHint = String(val[18] || '').trim();
+
+            if (!lat || !lon) continue;
+            // Exclude ground traffic parked far away at Taipei Songshan (TSA, lon > 121.50 on ground)
+            if (onGround && lon > 121.42) continue;
+            if ((origin === 'TSA' || dest === 'TSA') && origin !== 'TPE' && dest !== 'TPE' && lon > 121.38) continue;
+
+            const m = latLonToRctpMeters(lat, lon);
+            if (m.distMeters > 48000 && origin !== 'TPE' && dest !== 'TPE') continue;
+
+            const airlineCode = resolveAirlineCode(callsign, flightIata, airlineHint);
+            const route = (origin && dest) ? `${origin}→${dest}` : origin ? `${origin}→TPE` : dest ? `TPE→${dest}` : 'RCTP/TPE';
+
+            parsedFlights.push({
+              id: `live_${hex}`,
+              hex,
+              callsign: callsign || flightIata || reg,
+              displayFlight: flightIata || callsign || reg,
+              airlineCode,
+              type: type || 'A359',
+              reg: reg || 'B-TPE',
+              origin,
+              dest,
+              route,
+              lat,
+              lon,
+              alongMeters: m.alongMeters,
+              crossMeters: m.crossMeters,
+              distMeters: m.distMeters,
+              alt,
+              gs,
+              heading,
+              vrate,
+              onGround
+            });
+          }
+        }
+      } catch (e) {
+        // Fallback to adsb.lol below
+      }
+
+      // 2. Fallback or supplement with adsb.lol v2 point API if FR24 returned nothing
+      if (parsedFlights.length === 0) {
+        try {
+          const res2 = await fetch(`https://proxy.corsfix.com/?sdk=1&url=${encodeURIComponent(adsbLolTarget)}`);
+          if (res2.ok) {
+            const d2 = await res2.json();
+            if (Array.isArray(d2.ac)) {
+              for (const ac of d2.ac) {
+                if (!ac.lat || !ac.lon) continue;
+                const onGround = ac.alt_baro === 'ground' || Number(ac.alt_baro) <= 60;
+                if (onGround && ac.lon > 121.42) continue;
+                const m = latLonToRctpMeters(ac.lat, ac.lon);
+                const cs = String(ac.flight || ac.r || ac.hex).trim();
+                const airlineCode = resolveAirlineCode(cs, '', '');
+                parsedFlights.push({
+                  id: `live_${ac.hex}`,
+                  hex: ac.hex,
+                  callsign: cs,
+                  displayFlight: cs,
+                  airlineCode,
+                  type: String(ac.t || 'A359').trim(),
+                  reg: String(ac.r || 'B-TPE').trim(),
+                  origin: 'TPE',
+                  dest: '',
+                  route: 'RCTP LIVE',
+                  lat: ac.lat,
+                  lon: ac.lon,
+                  alongMeters: m.alongMeters,
+                  crossMeters: m.crossMeters,
+                  distMeters: m.distMeters,
+                  alt: onGround ? 0 : (Number(ac.alt_baro) || 0),
+                  gs: Number(ac.gs) || 0,
+                  heading: Number(ac.true_heading ?? ac.track ?? 48),
+                  vrate: Number(ac.baro_rate || ac.geom_rate || 0),
+                  roll: Number(ac.roll || 0),
+                  onGround
+                });
+              }
+            }
+          }
+        } catch (e2) {
+          // Keep existing aircraft state
+        }
+      }
+
+      if (parsedFlights.length === 0) return;
+      isLiveFeedConnected = true;
+
+      // Sort by proximity to RCTP New ATC Tower so the closest real flights are prioritized
+      parsedFlights.sort((a, b) => a.distMeters - b.distMeters);
+      const selected = parsedFlights.slice(0, 14);
+
+      // Identify real live RCTP departures, arrivals, taxiing, and gate aircraft to drive active airfield operations
+      const airborne = selected.filter((f) => !f.onGround && f.alt > 80);
+      const groundMoving = selected.filter((f) => f.onGround && f.gs >= 3);
+      const groundParked = selected.filter((f) => f.onGround && f.gs < 3);
+
+      // Pick real live departure & arrival to showcase active runway roll/approach if no aircraft is directly on the strip
+      const liveDep = airborne.find((f) => f.origin === 'TPE' || f.vrate > 300) || groundMoving[0] || selected[0];
+      const liveArr = airborne.find((f) => f.dest === 'TPE' || f.vrate < -250) || airborne[1] || selected[1] || selected[0];
+      const liveTaxiN = groundMoving[0] || selected[2] || selected[0];
+      const liveTaxiS = groundMoving[1] || selected[3] || selected[1] || selected[0];
+
+      const keepIds = new Set(['rwy_dep', 'rwy_arr', 'taxi_1', 'taxi_2', 'gate_1', 'gate_2', 'gate_3', 'gate_4']);
+
+      // Sync the 4 showcase active runway/taxiway slots with real live RCTP flight identities & aircraft types!
+      if (liveDep) {
+        upsertAircraftEntity({
+          ...liveDep,
+          id: 'rwy_dep',
+          role: 'showcase_takeoff'
+        });
+      }
+      if (liveArr) {
+        upsertAircraftEntity({
+          ...liveArr,
+          id: 'rwy_arr',
+          role: 'showcase_landing'
+        });
+      }
+      if (liveTaxiN) {
+        upsertAircraftEntity({
+          ...liveTaxiN,
+          id: 'taxi_1',
+          role: 'showcase_taxi_n'
+        });
+      }
+      if (liveTaxiS) {
+        upsertAircraftEntity({
+          ...liveTaxiS,
+          id: 'taxi_2',
+          role: 'showcase_taxi_s'
+        });
+      }
+
+      // Sync Terminal 2 Apron Gates with real aircraft currently at TPE
+      const gateCandidates = [...groundParked, ...groundMoving, ...selected];
+      for (let g = 0; g < 4; g++) {
+        const src = gateCandidates[g];
+        if (src) {
+          upsertAircraftEntity({
+            ...src,
+            id: `gate_${g + 1}`,
+            role: 'gate',
+            gateIdx: g
+          });
+        }
+      }
+
+      // Also spawn real-time radar-positioned aircraft in the RCTP airspace / ground
+      selected.forEach((f) => {
+        // Avoid duplicating the exact callsign already assigned to the active takeoff/landing runway showcase
+        if (
+          (liveDep && f.hex === liveDep.hex) ||
+          (liveArr && f.hex === liveArr.hex)
+        ) {
+          return;
+        }
+        keepIds.add(f.id);
+        const scenePos = mapRctpMetersToScene(f.alongMeters, f.crossMeters, f.alt, f.onGround);
+        const phase = f.onGround
+          ? (f.gs > 35 ? 'TAKEOFF ROLL' : f.gs > 2 ? 'TAXI' : 'APRON')
+          : (f.vrate > 350 ? 'CLIMB' : f.vrate < -350 ? 'APPROACH' : 'CRUISE');
+
+        const ent = upsertAircraftEntity({
+          ...f,
+          role: 'live_adsb',
+          phase
+        });
+        ent.targetPos = new THREE.Vector3(scenePos.x, scenePos.y, scenePos.z);
+        if (!ent.initializedPos) {
+          ent.group.position.copy(ent.targetPos);
+          ent.initializedPos = true;
+        }
+      });
+
+      // Remove stale aircraft no longer in range
+      for (const [id, ent] of activeAircraftMap.entries()) {
+        if (!keepIds.has(id)) {
+          liveAircraftGroup.remove(ent.group);
+          activeAircraftMap.delete(id);
+        }
+      }
+
+      renderLiveFlightsUI(selected);
+    }
+
+    function renderLiveFlightsUI(liveList) {
+      const countEl = document.getElementById('live-count');
+      const statusEl = document.getElementById('live-feed-status');
+      const summaryEl = document.getElementById('live-traffic-summary');
+      const listEl = document.getElementById('live-flights-list');
+      const timeEl = document.getElementById('live-last-update');
+      const bgTextEl = document.getElementById('bg-live-text');
+
+      if (countEl) countEl.textContent = String(liveList.length);
+      if (statusEl) {
+        statusEl.textContent = `LIVE • ${liveList.length} real aircraft around Taoyuan (RCTP)`;
+      }
+      const gndCount = liveList.filter((f) => f.onGround).length;
+      const airCount = liveList.length - gndCount;
+      if (summaryEl) summaryEl.textContent = `${airCount} AIR / ${gndCount} GND`;
+      if (timeEl) {
+        const now = new Date();
+        timeEl.textContent = `SYNC ${ now.toTimeString().slice(0, 8) }`;
+      }
+
+      // Update compact background ticker (also visible in site1/index.html)
+      if (bgTextEl && liveList.length > 0) {
+        const topNames = liveList.slice(0, 4).map((f) => `${f.displayFlight}(${f.type})`).join(' • ');
+        bgTextEl.textContent = `LIVE TPE ADS-B [${liveList.length}] RWY ${activeRunwayDir}L/R • ${topNames}`;
+      }
+
+      if (!listEl) return;
+      listEl.innerHTML = '';
+      liveList.forEach((f) => {
+        const liv = AIRLINE_LIVERIES[f.airlineCode] || AIRLINE_LIVERIES.CAL;
+        const altStr = f.onGround ? 'GND' : `${Math.round(f.alt).toLocaleString()} ft`;
+        const phaseStr = f.onGround
+          ? (f.gs > 30 ? 'RWY ROLL' : f.gs > 1 ? 'TAXI' : 'PARKED')
+          : (f.vrate > 300 ? 'DEPARTURE ↑' : f.vrate < -300 ? 'APPROACH ↓' : 'TRANSIT');
+
+        const row = document.createElement('div');
+        row.className = 'flex items-center justify-between gap-2 p-2 rounded-xl bg-slate-900/75 hover:bg-slate-800/90 border border-slate-800 hover:border-sky-400/50 cursor-pointer transition-all';
+        row.innerHTML = `
+          <div class="flex items-center gap-2 min-w-0">
+            <span class="w-2 h-7 rounded-full shrink-0" style="background:${liv.badgeHex || '#38bdf8'}"></span>
+            <div class="truncate">
+              <div class="flex items-center gap-1.5">
+                <span class="font-bold text-white text-xs">${f.displayFlight}</span>
+                <span class="px-1.5 py-0.2 rounded bg-slate-800 text-sky-300 text-[10px]">${f.type}</span>
+                <span class="text-slate-400 text-[10px]">${f.reg}</span>
+              </div>
+              <div class="text-[10px] text-slate-400 truncate">${liv.name} • <span class="text-amber-300">${f.route}</span></div>
+            </div>
+          </div>
+          <div class="text-right shrink-0">
+            <div class="text-emerald-300 font-semibold text-[10px]">${phaseStr}</div>
+            <div class="text-slate-300 text-[10px]">${altStr} • ${Math.round(f.gs)}kt</div>
+          </div>
+        `;
+        row.addEventListener('click', () => focusOnFlight(f));
+        listEl.appendChild(row);
+      });
+    }
+
+    function focusOnFlight(flightData) {
+      // Find matching 3D entity by hex or id
+      let targetEntry = null;
+      for (const ent of activeAircraftMap.values()) {
+        if (ent.id === flightData.id || (flightData.hex && ent.data.hex === flightData.hex)) {
+          targetEntry = ent;
+          break;
+        }
+      }
+      if (!targetEntry) return;
+
+      trackedFlightId = targetEntry.id;
+      const stopBtn = document.getElementById('stop-track-btn');
+      if (stopBtn) stopBtn.classList.remove('hidden');
+
+      const liv = AIRLINE_LIVERIES[targetEntry.data.airlineCode] || AIRLINE_LIVERIES.CAL;
+      const spec = getAircraftSpec(targetEntry.data.type);
+
+      document.getElementById('card-badge').textContent = `LIVE ADS-B TRANSPONDER • ${targetEntry.data.airlineCode}`;
+      document.getElementById('card-title').textContent = `${targetEntry.data.displayFlight} (${spec.name})`;
+      document.getElementById('card-desc').textContent = `Real-time aircraft operating at Taiwan Taoyuan International Airport (RCTP / TPE). Operated by ${liv.name}, registration ${targetEntry.data.reg}, route ${targetEntry.data.route}.`;
+      document.getElementById('stat-1').textContent = `${targetEntry.data.type} • ${targetEntry.data.reg}`;
+      document.getElementById('stat-2').textContent = targetEntry.data.route || 'RCTP / TPE';
+      document.getElementById('stat-3').textContent = targetEntry.data.onGround ? 'GROUND OPS' : `${Math.round(targetEntry.data.alt).toLocaleString()} FT`;
+      document.getElementById('stat-4').textContent = `${Math.round(targetEntry.data.gs)} KT • HDG ${Math.round(targetEntry.data.heading)}°`;
+
+      const card = document.getElementById('info-card');
+      card.classList.remove('translate-x-full', 'opacity-0', 'pointer-events-none');
+      card.classList.add('translate-x-0', 'opacity-100', 'pointer-events-auto');
+    }
+
+    // Start polling real-time RCTP flights & METAR immediately and every 7 seconds
+    pollRctpMetar();
+    pollRealTimeRctpFlights();
+    setInterval(pollRealTimeRctpFlights, 7000);
+    setInterval(pollRctpMetar, 60000);
 
     // --- LIGHTING PRESETS (REALISTIC DAYLIGHT DEFAULT / GOLDEN SUNSET / NIGHT OPS) ---
     const LIGHTING_MODES = {
@@ -1636,7 +3201,7 @@
       terminalBodyMat.emissiveIntensity = m.emissiveMult * 0.55;
 
       const metarEl = document.getElementById('metar-readout');
-      if (metarEl) metarEl.textContent = m.metar;
+      if (metarEl) metarEl.textContent = lastLiveMetarRaw || m.metar;
 
       document.querySelectorAll('.mode-btn').forEach((btn) => {
         if (btn.dataset.mode === modeKey) {
@@ -1654,6 +3219,10 @@
     function selectLandmark(key) {
       const data = LANDMARKS[key];
       if (!data) return;
+
+      trackedFlightId = null;
+      const stopBtn = document.getElementById('stop-track-btn');
+      if (stopBtn) stopBtn.classList.add('hidden');
 
       document.getElementById('card-badge').textContent = data.badge;
       document.getElementById('card-title').textContent = data.title;
@@ -1679,7 +3248,7 @@
       targetGoalPos = data.lookAt.clone();
     }
 
-    // --- RAYCASTER FOR CLICKING 3D LANDMARKS ---
+    // --- RAYCASTER FOR CLICKING 3D LANDMARKS & REAL-TIME AIRCRAFT ---
     const raycaster = new THREE.Raycaster();
     const pointer = new THREE.Vector2();
     let pointerDownPos = { x: 0, y: 0 };
@@ -1702,7 +3271,15 @@
       raycaster.setFromCamera(pointer, camera);
       const hits = raycaster.intersectObjects(interactiveMeshes, false);
       if (hits.length > 0) {
-        const key = hits[0].object.userData.landmarkKey;
+        const hitObj = hits[0].object;
+        if (hitObj.userData.flightId) {
+          const ent = activeAircraftMap.get(hitObj.userData.flightId);
+          if (ent) {
+            focusOnFlight(ent.data);
+            return;
+          }
+        }
+        const key = hitObj.userData.landmarkKey;
         if (key) selectLandmark(key);
       }
     });
@@ -1720,6 +3297,19 @@
       const card = document.getElementById('info-card');
       card.classList.add('translate-x-full', 'opacity-0', 'pointer-events-none');
       card.classList.remove('translate-x-0', 'opacity-100', 'pointer-events-auto');
+    });
+
+    const flightsPanelEl = document.getElementById('live-flights-panel');
+    document.getElementById('toggle-flights').addEventListener('click', () => {
+      flightsPanelEl.classList.toggle('hidden');
+    });
+    document.getElementById('close-flights').addEventListener('click', () => {
+      flightsPanelEl.classList.add('hidden');
+    });
+    document.getElementById('stop-track-btn').addEventListener('click', () => {
+      trackedFlightId = null;
+      document.getElementById('stop-track-btn').classList.add('hidden');
+      selectLandmark('hero');
     });
 
     const diagramEl = document.getElementById('wind-diagram');
@@ -1754,10 +3344,13 @@
 
     // --- ANIMATION LOOP ---
     const clock = new THREE.Clock();
+    let prevTime = 0;
 
     function animate() {
       requestAnimationFrame(animate);
       const elapsed = clock.getElapsedTime();
+      const dt = Math.min(0.1, elapsed - prevTime);
+      prevTime = elapsed;
 
       // Drift sky clouds gently
       skyMat.uniforms.uTime.value = elapsed;
@@ -1769,27 +3362,171 @@
       const beaconPulse = (Math.sin(elapsed * 4.5) + 1) * 0.5;
       beaconMat.color.setRGB(1.0, beaconPulse * 0.2, beaconPulse * 0.2);
 
-      // 3. Animate Takeoff Aircraft on South Runway (05R/23L, z = 108)
-      const tCycle = (elapsed * 28) % 520;
-      const xTakeoff = -250 + tCycle;
-      const climbY = xTakeoff > 25 ? Math.pow((xTakeoff - 25) * 0.085, 1.62) : 0;
-      const pitchAngle = xTakeoff > 25 ? Math.min(0.26, (xTakeoff - 25) * 0.0022) : 0;
-      aircraftTakeoff.position.set(xTakeoff, climbY + 0.14, 108);
-      aircraftTakeoff.rotation.z = pitchAngle;
+      // 3. Animate Real-Time RCTP Aircraft Fleet (Takeoff, Landing, Taxi, Gates & Live ADS-B Airspace)
+      const dirSign = activeRunwayDir === '05' ? 1 : -1; // +1 = RWY 05 (+X, 048°), -1 = RWY 23 (-X, 228°)
+      const rwyYaw = dirSign === 1 ? 0 : Math.PI;
 
-      // 4. Animate Landing Aircraft on North Runway (05L/23R, z = -108)
-      const lCycle = (elapsed * 22) % 520;
-      const xLanding = 250 - lCycle;
-      const approachY = xLanding > 65 ? Math.pow((xLanding - 65) * 0.072, 1.48) : 0;
-      aircraftLanding.position.set(xLanding, approachY + 0.14, -108);
-      aircraftLanding.rotation.z = xLanding > 65 ? -0.12 : 0;
+      // Double-flash white strobe & red anti-collision beacon timing
+      const strobePhase = elapsed % 1.25;
+      const isStrobeOn = (strobePhase < 0.07) || (strobePhase > 0.14 && strobePhase < 0.21);
+      const isAntiColOn = (elapsed % 1.1) < 0.12;
 
-      // 5. Animate Taxiing Aircraft on North Parallel Taxiway (z = -80)
-      const taxiX = -180 + ((elapsed * 7.5) % 340);
-      aircraftTaxi.position.set(taxiX, 0.12, -80);
+      for (const ent of activeAircraftMap.values()) {
+        const { group, plane, tag, data } = ent;
+        const u = plane.userData;
 
-      // 6. Smooth Camera Fly-To Interpolation
-      if (cameraGoalPos && targetGoalPos) {
+        // Flash strobes, anti-collision beacons & spin turboprop rotors
+        if (u.strobeMat) u.strobeMat.opacity = isStrobeOn ? 1.0 : 0.08;
+        if (u.antiColMat) u.antiColMat.color.setHex(isAntiColOn ? 0xff1111 : 0x450a0a);
+        if (u.propRotors && u.propRotors.length > 0) {
+          for (const r of u.propRotors) r.rotation.x += dt * 42.0;
+        }
+
+        if (data.role === 'showcase_takeoff') {
+          // Active Departure on South Runway (05R / 23L, z = 108)
+          const tCycle = ((elapsed + 6.0) * 26) % 560;
+          const distAlong = -255 + tCycle; // -255 -> +305 along takeoff direction
+          const worldX = dirSign * distAlong;
+          const climbY = distAlong > 15 ? Math.pow((distAlong - 15) * 0.092, 1.58) : 0;
+          const pitchUp = distAlong > 8 ? Math.min(0.24, (distAlong - 8) * 0.0024) : 0;
+
+          group.position.set(worldX, climbY + 0.14, 108);
+          plane.rotation.set(0, rwyYaw, pitchUp);
+
+          // Retract landing gear smoothly after positive rate of climb
+          if (u.gearGroup) u.gearGroup.visible = climbY < 5.5;
+
+          const simAlt = climbY > 0.2 ? Math.round(climbY * 42) : 0;
+          const simSpd = distAlong < 15 ? Math.round(65 + ((distAlong + 255) / 270) * 100) : Math.round(165 + climbY * 1.4);
+          updateFlightTagSprite(tag, {
+            ...data,
+            alt: simAlt,
+            gs: simSpd,
+            onGround: climbY < 0.3,
+            phase: climbY < 0.3 ? `RWY ${activeRunwayDir}R ROLL` : `DEP RWY ${activeRunwayDir}R ↑`
+          });
+        } else if (data.role === 'showcase_landing') {
+          // Active ILS Final Approach & Touchdown on North Runway (05L / 23R, z = -108)
+          const lCycle = (elapsed * 23) % 560;
+          const distAlong = -265 + lCycle; // Starts on final approach (-265) -> touches down at -95 -> rolls out
+          const worldX = dirSign * distAlong;
+          const touchdownPoint = -95;
+          const isAirborne = distAlong < touchdownPoint;
+          const approachY = isAirborne ? Math.pow((touchdownPoint - distAlong) * 0.082, 1.42) : 0;
+          // Slight nose-up flare just before touchdown, then level on rollout
+          const pitchAngle = isAirborne
+            ? (distAlong > touchdownPoint - 38 ? 0.085 : 0.04)
+            : (distAlong < touchdownPoint + 25 ? 0.04 * (1 - (distAlong - touchdownPoint) / 25) : 0);
+
+          group.position.set(worldX, approachY + 0.14, -108);
+          plane.rotation.set(0, rwyYaw, pitchAngle);
+          if (u.gearGroup) u.gearGroup.visible = true;
+
+          // Puff of white tire smoke at main-gear touchdown
+          if (Math.abs(distAlong - touchdownPoint) < 3.5 && elapsed - ent.lastSmokeTime > 1.2) {
+            ent.lastSmokeTime = elapsed;
+            spawnTouchdownSmoke(worldX, -108);
+          }
+
+          const simAlt = isAirborne ? Math.max(20, Math.round(approachY * 36)) : 0;
+          const simSpd = isAirborne ? 142 : Math.max(28, Math.round(138 - (distAlong - touchdownPoint) * 0.38));
+          updateFlightTagSprite(tag, {
+            ...data,
+            alt: simAlt,
+            gs: simSpd,
+            onGround: !isAirborne,
+            phase: isAirborne ? `ILS RWY ${activeRunwayDir}L ↓` : `LANDED ${activeRunwayDir}L`
+          });
+        } else if (data.role === 'showcase_taxi_n') {
+          // North Parallel Taxiway (z = -80)
+          const taxiX = 185 - ((elapsed * 6.8) % 370);
+          group.position.set(taxiX, 0.14, -80);
+          plane.rotation.set(0, Math.PI, 0);
+          if (u.gearGroup) u.gearGroup.visible = true;
+          updateFlightTagSprite(tag, {
+            ...data,
+            alt: 0,
+            gs: Math.max(12, Math.min(24, data.gs || 16)),
+            onGround: true,
+            phase: 'TAXI NP'
+          });
+        } else if (data.role === 'showcase_taxi_s') {
+          // South Parallel Taxiway (z = +80)
+          const taxiX = -185 + (((elapsed + 19) * 6.2) % 370);
+          group.position.set(taxiX, 0.14, 80);
+          plane.rotation.set(0, 0, 0);
+          if (u.gearGroup) u.gearGroup.visible = true;
+          updateFlightTagSprite(tag, {
+            ...data,
+            alt: 0,
+            gs: Math.max(12, Math.min(22, data.gs || 15)),
+            onGround: true,
+            phase: 'TAXI SP'
+          });
+        } else if (data.role === 'gate') {
+          // Parked at Terminal 2 Concourse Gates
+          const slot = GATE_SLOTS[data.gateIdx || 0] || GATE_SLOTS[0];
+          group.position.set(slot.x, 0.14, slot.z);
+          plane.rotation.set(0, Math.PI, 0);
+          if (u.gearGroup) u.gearGroup.visible = true;
+          updateFlightTagSprite(tag, {
+            ...data,
+            alt: 0,
+            gs: 0,
+            onGround: true,
+            phase: `T2 GATE D${(data.gateIdx || 0) + 3}`
+          });
+        } else if (data.role === 'live_adsb') {
+          // Real-Time GPS / ADS-B Positioned Aircraft around RCTP with 60 FPS dead-reckoning
+          const relRad = (((data.heading || 48) - RCTP_REF.rwyHeadingDeg) * Math.PI) / 180.0;
+          const yaw = -relRad;
+          const pitch = data.onGround ? 0 : Math.max(-0.14, Math.min(0.20, (data.vrate || 0) / 14000));
+          const bank = data.onGround ? 0 : Math.max(-0.38, Math.min(0.38, ((data.roll || 0) * Math.PI) / 180.0));
+
+          if (ent.targetPos) {
+            // Advance dead-reckoning target along true heading at scaled groundspeed
+            const speedSceneUnits = ((data.gs || 0) * 0.51444) * (250 / 2000) * 0.55;
+            ent.targetPos.x += Math.cos(relRad) * speedSceneUnits * dt;
+            ent.targetPos.z += Math.sin(relRad) * speedSceneUnits * dt;
+            group.position.lerp(ent.targetPos, 0.06);
+          }
+
+          plane.rotation.set(bank, yaw, pitch);
+          if (u.gearGroup) u.gearGroup.visible = data.onGround || (data.alt || 0) < 1200;
+
+          updateFlightTagSprite(tag, {
+            ...data,
+            phase: data.phase || (data.onGround ? 'GND OPS' : 'LIVE ADS-B')
+          });
+        }
+      }
+
+      // 4. Animate Touchdown Tire Smoke Puffs
+      for (let i = smokePuffs.length - 1; i >= 0; i--) {
+        const s = smokePuffs[i];
+        s.age += dt;
+        s.mesh.position.x += s.vx * dt;
+        s.mesh.position.z += s.vz * dt;
+        s.mesh.position.y += dt * 0.9;
+        s.mesh.scale.setScalar(1.0 + s.age * 2.8);
+        s.mesh.material.opacity = Math.max(0, 0.65 * (1.0 - s.age / 1.6));
+        if (s.age >= 1.6) {
+          scene.remove(s.mesh);
+          s.mesh.material.dispose();
+          smokePuffs.splice(i, 1);
+        }
+      }
+
+      // 5. Camera Follow Mode when tracking a live RCTP aircraft
+      if (trackedFlightId && activeAircraftMap.has(trackedFlightId)) {
+        const trackedEnt = activeAircraftMap.get(trackedFlightId);
+        const pPos = trackedEnt.group.position;
+        const desiredTarget = new THREE.Vector3(pPos.x, pPos.y + 2.2, pPos.z);
+        const desiredCam = new THREE.Vector3(pPos.x - 26, Math.max(6.5, pPos.y + 11.5), pPos.z + 32);
+        camera.position.lerp(desiredCam, 0.06);
+        controls.target.lerp(desiredTarget, 0.08);
+      } else if (cameraGoalPos && targetGoalPos) {
+        // 6. Smooth Camera Fly-To Interpolation
         camera.position.lerp(cameraGoalPos, 0.065);
         controls.target.lerp(targetGoalPos, 0.065);
         if (camera.position.distanceTo(cameraGoalPos) < 0.35) {
