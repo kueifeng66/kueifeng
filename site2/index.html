@@ -71,7 +71,7 @@
 </head>
 <body class="text-slate-100 antialiased">
   <script>
-    if (window.self !== window.top || new URLSearchParams(window.location.search).has('bg')) {
+    if (new URLSearchParams(window.location.search).has('bg')) {
       document.body.classList.add('bg-only');
     }
   </script>
@@ -358,6 +358,7 @@
     renderer.toneMappingExposure = 1.08;
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     container.appendChild(renderer.domElement);
+    renderer.domElement.style.touchAction = 'none';
 
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
@@ -784,6 +785,7 @@
 
     // --- INTERACTIVE GROUPS REGISTRY ---
     const interactiveMeshes = [];
+    const aircraftMeshes = [];
     function registerInteractive(group, key) {
       group.traverse((child) => {
         if (child.isMesh) {
@@ -2735,25 +2737,6 @@
     let liveWindSummary = '050° / 12KT';
     let isLiveFeedConnected = false;
 
-    // Realistic fallback RCTP flights (used immediately on boot before first network poll resolves)
-    const INITIAL_RCTP_FLIGHTS = [
-      { id: 'rwy_dep', callsign: 'JX800', displayFlight: 'JX800', airlineCode: 'SJX', type: 'A35K', reg: 'B-58553', route: 'TPE→NRT', alt: 0, gs: 155, heading: 47.8, vrate: 2200, onGround: true, role: 'showcase_takeoff' },
-      { id: 'rwy_arr', callsign: 'BR212', displayFlight: 'BR212', airlineCode: 'EVA', type: 'B77W', reg: 'B-16727', route: 'BKK→TPE', alt: 420, gs: 142, heading: 47.8, vrate: -720, onGround: false, role: 'showcase_landing' },
-      { id: 'taxi_1',  callsign: 'CI501', displayFlight: 'CI501', airlineCode: 'CAL', type: 'A359', reg: 'B-18910', route: 'TPE→PVG', alt: 0, gs: 18, heading: 227.8, vrate: 0, onGround: true, role: 'showcase_taxi_n' },
-      { id: 'taxi_2',  callsign: 'CI5883', displayFlight: 'CI5883', airlineCode: 'CAL', type: 'B744', reg: 'B-18719', route: 'TPE→ANC', alt: 0, gs: 16, heading: 47.8, vrate: 0, onGround: true, role: 'showcase_taxi_s' },
-      { id: 'gate_1',  callsign: 'CI721', displayFlight: 'CI721', airlineCode: 'CAL', type: 'B77W', reg: 'B-18005', route: 'TPE→KUL', alt: 0, gs: 0, heading: 227.8, vrate: 0, onGround: true, role: 'gate', gateIdx: 0 },
-      { id: 'gate_2',  callsign: 'BR132', displayFlight: 'BR132', airlineCode: 'EVA', type: 'B78X', reg: 'B-17811', route: 'TPE→KIX', alt: 0, gs: 0, heading: 227.8, vrate: 0, onGround: true, role: 'gate', gateIdx: 1 },
-      { id: 'gate_3',  callsign: 'JX820', displayFlight: 'JX820', airlineCode: 'SJX', type: 'A359', reg: 'B-58507', route: 'TPE→KIX', alt: 0, gs: 0, heading: 227.8, vrate: 0, onGround: true, role: 'gate', gateIdx: 2 },
-      { id: 'gate_4',  callsign: 'CX495', displayFlight: 'CX495', airlineCode: 'CPA', type: 'A333', reg: 'B-HLV',   route: 'HKG→TPE', alt: 0, gs: 0, heading: 227.8, vrate: 0, onGround: true, role: 'gate', gateIdx: 3 }
-    ];
-
-    const GATE_SLOTS = [
-      { x: -64, z: -56 },
-      { x: -64, z: -32 },
-      { x: -64, z: -8 },
-      { x: -64, z: 16 }
-    ];
-
     // Convert real-world (lat, lon, altFeet) around RCTP (25.0777, 121.2328) into runway-aligned 3D scene coords
     function latLonToRctpMeters(lat, lon) {
       const theta = (RCTP_REF.rwyHeadingDeg * Math.PI) / 180.0;
@@ -2815,6 +2798,9 @@
       const specKey = `${flight.airlineCode}_${flight.type}_${flight.reg}`;
       if (entry && entry.specKey !== specKey) {
         liveAircraftGroup.remove(entry.group);
+        for (let i = aircraftMeshes.length - 1; i >= 0; i--) {
+          if (aircraftMeshes[i].userData.flightId === flight.id) aircraftMeshes.splice(i, 1);
+        }
         activeAircraftMap.delete(flight.id);
         entry = null;
       }
@@ -2830,6 +2816,7 @@
 
         const tagSprite = createFlightTagSprite();
         tagSprite.position.set(0, 6.2, 0);
+        tagSprite.visible = false;
         wrapper.add(tagSprite);
 
         // Register for 3D raycast clicking to inspect / track aircraft
@@ -2837,6 +2824,7 @@
           if (child.isMesh) {
             child.userData.flightId = flight.id;
             interactiveMeshes.push(child);
+            aircraftMeshes.push(child);
           }
         });
 
@@ -2858,8 +2846,26 @@
       return entry;
     }
 
-    // Seed initial RCTP aircraft immediately so the scene is rich on frame 0
-    INITIAL_RCTP_FLIGHTS.forEach((f) => upsertAircraftEntity(f));
+    // Seed initial RCTP aircraft immediately so the airfield is rich and interactive on frame 0 (even on local file:// or before first poll)
+    function seedInitialFlights() {
+      const initialDefs = [
+        { id: 'init_gate1', callsign: 'CI721', displayFlight: 'CI721', airlineCode: 'CAL', type: 'B77W', reg: 'B-18005', route: 'TPE→KUL', alt: 0, gs: 0, heading: 227.8, onGround: true, phase: 'T2 GATE D3', pos: { x: -64, y: 0.14, z: -56 } },
+        { id: 'init_gate2', callsign: 'BR132', displayFlight: 'BR132', airlineCode: 'EVA', type: 'B78X', reg: 'B-17811', route: 'TPE→KIX', alt: 0, gs: 0, heading: 227.8, onGround: true, phase: 'T2 GATE D4', pos: { x: -64, y: 0.14, z: -32 } },
+        { id: 'init_gate3', callsign: 'JX820', displayFlight: 'JX820', airlineCode: 'SJX', type: 'A359', reg: 'B-58507', route: 'TPE→KIX', alt: 0, gs: 0, heading: 227.8, onGround: true, phase: 'T2 GATE D5', pos: { x: -64, y: 0.14, z: -8 } },
+        { id: 'init_gate4', callsign: 'CX495', displayFlight: 'CX495', airlineCode: 'CPA', type: 'A333', reg: 'B-HLV',   route: 'HKG→TPE', alt: 0, gs: 0, heading: 227.8, onGround: true, phase: 'T2 GATE D6', pos: { x: -64, y: 0.14, z: 16 } },
+        { id: 'init_arr',   callsign: 'BR212', displayFlight: 'BR212', airlineCode: 'EVA', type: 'B77W', reg: 'B-16727', route: 'BKK→TPE', alt: 1850, gs: 145, heading: 47.8, vrate: -680, onGround: false, phase: 'APPROACH 05L', pos: { x: -240, y: 32, z: -108 } },
+        { id: 'init_dep',   callsign: 'JX800', displayFlight: 'JX800', airlineCode: 'SJX', type: 'A35K', reg: 'B-58553', route: 'TPE→NRT', alt: 3100, gs: 215, heading: 47.8, vrate: 2100, onGround: false, phase: 'CLIMB RWY 05R', pos: { x: 180, y: 52, z: 108 } },
+        { id: 'init_taxi',  callsign: 'CI501', displayFlight: 'CI501', airlineCode: 'CAL', type: 'A359', reg: 'B-18910', route: 'TPE→PVG', alt: 0, gs: 15, heading: 227.8, vrate: 0, onGround: true, phase: 'TAXI NP', pos: { x: 40, y: 0.14, z: -80 } }
+      ];
+      initialDefs.forEach((f) => {
+        const ent = upsertAircraftEntity({ ...f, role: 'live_adsb' });
+        ent.targetPos = new THREE.Vector3(f.pos.x, f.pos.y, f.pos.z);
+        ent.group.position.copy(ent.targetPos);
+        ent.initializedPos = true;
+      });
+      renderLiveFlightsUI(initialDefs);
+    }
+    seedInitialFlights();
 
     let lastLiveMetarRaw = null;
 
@@ -3011,74 +3017,12 @@
 
       // Sort by proximity to RCTP New ATC Tower so the closest real flights are prioritized
       parsedFlights.sort((a, b) => a.distMeters - b.distMeters);
-      const selected = parsedFlights.slice(0, 14);
+      const selected = parsedFlights.slice(0, 18);
 
-      // Identify real live RCTP departures, arrivals, taxiing, and gate aircraft to drive active airfield operations
-      const airborne = selected.filter((f) => !f.onGround && f.alt > 80);
-      const groundMoving = selected.filter((f) => f.onGround && f.gs >= 3);
-      const groundParked = selected.filter((f) => f.onGround && f.gs < 3);
+      const keepIds = new Set();
 
-      // Pick real live departure & arrival to showcase active runway roll/approach if no aircraft is directly on the strip
-      const liveDep = airborne.find((f) => f.origin === 'TPE' || f.vrate > 300) || groundMoving[0] || selected[0];
-      const liveArr = airborne.find((f) => f.dest === 'TPE' || f.vrate < -250) || airborne[1] || selected[1] || selected[0];
-      const liveTaxiN = groundMoving[0] || selected[2] || selected[0];
-      const liveTaxiS = groundMoving[1] || selected[3] || selected[1] || selected[0];
-
-      const keepIds = new Set(['rwy_dep', 'rwy_arr', 'taxi_1', 'taxi_2', 'gate_1', 'gate_2', 'gate_3', 'gate_4']);
-
-      // Sync the 4 showcase active runway/taxiway slots with real live RCTP flight identities & aircraft types!
-      if (liveDep) {
-        upsertAircraftEntity({
-          ...liveDep,
-          id: 'rwy_dep',
-          role: 'showcase_takeoff'
-        });
-      }
-      if (liveArr) {
-        upsertAircraftEntity({
-          ...liveArr,
-          id: 'rwy_arr',
-          role: 'showcase_landing'
-        });
-      }
-      if (liveTaxiN) {
-        upsertAircraftEntity({
-          ...liveTaxiN,
-          id: 'taxi_1',
-          role: 'showcase_taxi_n'
-        });
-      }
-      if (liveTaxiS) {
-        upsertAircraftEntity({
-          ...liveTaxiS,
-          id: 'taxi_2',
-          role: 'showcase_taxi_s'
-        });
-      }
-
-      // Sync Terminal 2 Apron Gates with real aircraft currently at TPE
-      const gateCandidates = [...groundParked, ...groundMoving, ...selected];
-      for (let g = 0; g < 4; g++) {
-        const src = gateCandidates[g];
-        if (src) {
-          upsertAircraftEntity({
-            ...src,
-            id: `gate_${g + 1}`,
-            role: 'gate',
-            gateIdx: g
-          });
-        }
-      }
-
-      // Also spawn real-time radar-positioned aircraft in the RCTP airspace / ground
+      // Option C: Spawn all real-time radar-positioned aircraft strictly at their authentic GPS coordinates
       selected.forEach((f) => {
-        // Avoid duplicating the exact callsign already assigned to the active takeoff/landing runway showcase
-        if (
-          (liveDep && f.hex === liveDep.hex) ||
-          (liveArr && f.hex === liveArr.hex)
-        ) {
-          return;
-        }
         keepIds.add(f.id);
         const scenePos = mapRctpMetersToScene(f.alongMeters, f.crossMeters, f.alt, f.onGround);
         const phase = f.onGround
@@ -3101,6 +3045,9 @@
       for (const [id, ent] of activeAircraftMap.entries()) {
         if (!keepIds.has(id)) {
           liveAircraftGroup.remove(ent.group);
+          for (let i = aircraftMeshes.length - 1; i >= 0; i--) {
+            if (aircraftMeshes[i].userData.flightId === id) aircraftMeshes.splice(i, 1);
+          }
           activeAircraftMap.delete(id);
         }
       }
@@ -3352,6 +3299,33 @@
     const raycaster = new THREE.Raycaster();
     const pointer = new THREE.Vector2();
     let pointerDownPos = { x: 0, y: 0 };
+    let pinnedFlightId = null;
+    let lastTouchAircraftTap = null;
+
+    function showOnlyAircraftTag(flightId) {
+      for (const ent of activeAircraftMap.values()) {
+        ent.tag.visible = flightId !== null && ent.id === flightId;
+      }
+    }
+
+    function aircraftAtPointer(e) {
+      pointer.x = (e.clientX / window.innerWidth) * 2 - 1;
+      pointer.y = -(e.clientY / window.innerHeight) * 2 + 1;
+      raycaster.setFromCamera(pointer, camera);
+      const hit = raycaster.intersectObjects(aircraftMeshes, false)[0];
+      return hit ? activeAircraftMap.get(hit.object.userData.flightId) : null;
+    }
+
+    renderer.domElement.addEventListener('pointermove', (e) => {
+      if (document.body.classList.contains('bg-only') || !window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+      if (e.pointerType !== 'mouse' && e.pointerType !== 'pen') return;
+      const ent = aircraftAtPointer(e);
+      showOnlyAircraftTag(ent ? ent.id : null);
+    });
+
+    renderer.domElement.addEventListener('pointerleave', (e) => {
+      if (e.pointerType === 'mouse' || e.pointerType === 'pen') showOnlyAircraftTag(null);
+    });
 
     renderer.domElement.addEventListener('pointerdown', (e) => {
       pointerDownPos.x = e.clientX;
@@ -3364,6 +3338,40 @@
       if (document.body.classList.contains('bg-only')) return;
       const dist = Math.hypot(e.clientX - pointerDownPos.x, e.clientY - pointerDownPos.y);
       if (dist > 6) return;
+
+      const aircraft = aircraftAtPointer(e);
+      if (aircraft) {
+        if (e.pointerType === 'touch') {
+          const now = performance.now();
+          const previousTap = lastTouchAircraftTap;
+          const isDoubleTap = previousTap
+            && previousTap.id === aircraft.id
+            && now - previousTap.time <= 450
+            && Math.hypot(e.clientX - previousTap.x, e.clientY - previousTap.y) <= 36;
+
+          if (!isDoubleTap) {
+            lastTouchAircraftTap = { id: aircraft.id, time: now, x: e.clientX, y: e.clientY };
+            return;
+          }
+
+          lastTouchAircraftTap = null;
+          pinnedFlightId = pinnedFlightId === aircraft.id ? null : aircraft.id;
+          showOnlyAircraftTag(pinnedFlightId);
+          if (pinnedFlightId) {
+            focusOnFlight(aircraft.data);
+          } else {
+            const card = document.getElementById('info-card');
+            card.classList.add('translate-x-full', 'opacity-0', 'pointer-events-none');
+            card.classList.remove('translate-x-0', 'opacity-100', 'pointer-events-auto');
+          }
+          return;
+        }
+
+        focusOnFlight(aircraft.data);
+        return;
+      }
+
+      if (e.pointerType === 'touch') lastTouchAircraftTap = null;
 
       pointer.x = (e.clientX / window.innerWidth) * 2 - 1;
       pointer.y = -(e.clientY / window.innerHeight) * 2 + 1;
@@ -3486,123 +3494,27 @@
           for (const r of u.propRotors) r.rotation.x += dt * 42.0;
         }
 
-        if (data.role === 'showcase_takeoff') {
-          // Active Departure on South Runway (05R / 23L, z = 108)
-          const tCycle = ((elapsed + 6.0) * 26) % 560;
-          const distAlong = -255 + tCycle; // -255 -> +305 along takeoff direction
-          const worldX = dirSign * distAlong;
-          const climbY = distAlong > 15 ? Math.pow((distAlong - 15) * 0.092, 1.58) : 0;
-          const pitchUp = distAlong > 8 ? Math.min(0.24, (distAlong - 8) * 0.0024) : 0;
+        // Real-Time GPS / ADS-B Positioned Aircraft around RCTP with 60 FPS dead-reckoning
+        const relRad = (((data.heading || 48) - RCTP_REF.rwyHeadingDeg) * Math.PI) / 180.0;
+        const yaw = -relRad;
+        const pitch = data.onGround ? 0 : Math.max(-0.14, Math.min(0.20, (data.vrate || 0) / 14000));
+        const bank = data.onGround ? 0 : Math.max(-0.38, Math.min(0.38, ((data.roll || 0) * Math.PI) / 180.0));
 
-          group.position.set(worldX, climbY + 0.14, 108);
-          plane.rotation.set(0, rwyYaw, pitchUp);
-
-          // Retract landing gear smoothly after positive rate of climb
-          if (u.gearGroup) u.gearGroup.visible = climbY < 5.5;
-
-          const simAlt = climbY > 0.2 ? Math.round(climbY * 42) : 0;
-          const simSpd = distAlong < 15 ? Math.round(65 + ((distAlong + 255) / 270) * 100) : Math.round(165 + climbY * 1.4);
-          updateFlightTagSprite(tag, {
-            ...data,
-            alt: simAlt,
-            gs: simSpd,
-            onGround: climbY < 0.3,
-            phase: climbY < 0.3 ? `RWY ${activeRunwayDir}R ROLL` : `DEP RWY ${activeRunwayDir}R ↑`
-          });
-        } else if (data.role === 'showcase_landing') {
-          // Active ILS Final Approach & Touchdown on North Runway (05L / 23R, z = -108)
-          const lCycle = (elapsed * 23) % 560;
-          const distAlong = -265 + lCycle; // Starts on final approach (-265) -> touches down at -95 -> rolls out
-          const worldX = dirSign * distAlong;
-          const touchdownPoint = -95;
-          const isAirborne = distAlong < touchdownPoint;
-          const approachY = isAirborne ? Math.pow((touchdownPoint - distAlong) * 0.082, 1.42) : 0;
-          // Slight nose-up flare just before touchdown, then level on rollout
-          const pitchAngle = isAirborne
-            ? (distAlong > touchdownPoint - 38 ? 0.085 : 0.04)
-            : (distAlong < touchdownPoint + 25 ? 0.04 * (1 - (distAlong - touchdownPoint) / 25) : 0);
-
-          group.position.set(worldX, approachY + 0.14, -108);
-          plane.rotation.set(0, rwyYaw, pitchAngle);
-          if (u.gearGroup) u.gearGroup.visible = true;
-
-          // Puff of white tire smoke at main-gear touchdown
-          if (Math.abs(distAlong - touchdownPoint) < 3.5 && elapsed - ent.lastSmokeTime > 1.2) {
-            ent.lastSmokeTime = elapsed;
-            spawnTouchdownSmoke(worldX, -108);
-          }
-
-          const simAlt = isAirborne ? Math.max(20, Math.round(approachY * 36)) : 0;
-          const simSpd = isAirborne ? 142 : Math.max(28, Math.round(138 - (distAlong - touchdownPoint) * 0.38));
-          updateFlightTagSprite(tag, {
-            ...data,
-            alt: simAlt,
-            gs: simSpd,
-            onGround: !isAirborne,
-            phase: isAirborne ? `ILS RWY ${activeRunwayDir}L ↓` : `LANDED ${activeRunwayDir}L`
-          });
-        } else if (data.role === 'showcase_taxi_n') {
-          // North Parallel Taxiway (z = -80)
-          const taxiX = 185 - ((elapsed * 6.8) % 370);
-          group.position.set(taxiX, 0.14, -80);
-          plane.rotation.set(0, Math.PI, 0);
-          if (u.gearGroup) u.gearGroup.visible = true;
-          updateFlightTagSprite(tag, {
-            ...data,
-            alt: 0,
-            gs: Math.max(12, Math.min(24, data.gs || 16)),
-            onGround: true,
-            phase: 'TAXI NP'
-          });
-        } else if (data.role === 'showcase_taxi_s') {
-          // South Parallel Taxiway (z = +80)
-          const taxiX = -185 + (((elapsed + 19) * 6.2) % 370);
-          group.position.set(taxiX, 0.14, 80);
-          plane.rotation.set(0, 0, 0);
-          if (u.gearGroup) u.gearGroup.visible = true;
-          updateFlightTagSprite(tag, {
-            ...data,
-            alt: 0,
-            gs: Math.max(12, Math.min(22, data.gs || 15)),
-            onGround: true,
-            phase: 'TAXI SP'
-          });
-        } else if (data.role === 'gate') {
-          // Parked at Terminal 2 Concourse Gates
-          const slot = GATE_SLOTS[data.gateIdx || 0] || GATE_SLOTS[0];
-          group.position.set(slot.x, 0.14, slot.z);
-          plane.rotation.set(0, Math.PI, 0);
-          if (u.gearGroup) u.gearGroup.visible = true;
-          updateFlightTagSprite(tag, {
-            ...data,
-            alt: 0,
-            gs: 0,
-            onGround: true,
-            phase: `T2 GATE D${(data.gateIdx || 0) + 3}`
-          });
-        } else if (data.role === 'live_adsb') {
-          // Real-Time GPS / ADS-B Positioned Aircraft around RCTP with 60 FPS dead-reckoning
-          const relRad = (((data.heading || 48) - RCTP_REF.rwyHeadingDeg) * Math.PI) / 180.0;
-          const yaw = -relRad;
-          const pitch = data.onGround ? 0 : Math.max(-0.14, Math.min(0.20, (data.vrate || 0) / 14000));
-          const bank = data.onGround ? 0 : Math.max(-0.38, Math.min(0.38, ((data.roll || 0) * Math.PI) / 180.0));
-
-          if (ent.targetPos) {
-            // Advance dead-reckoning target along true heading at scaled groundspeed
-            const speedSceneUnits = ((data.gs || 0) * 0.51444) * (250 / 2000) * 0.55;
-            ent.targetPos.x += Math.cos(relRad) * speedSceneUnits * dt;
-            ent.targetPos.z += Math.sin(relRad) * speedSceneUnits * dt;
-            group.position.lerp(ent.targetPos, 0.06);
-          }
-
-          plane.rotation.set(bank, yaw, pitch);
-          if (u.gearGroup) u.gearGroup.visible = data.onGround || (data.alt || 0) < 1200;
-
-          updateFlightTagSprite(tag, {
-            ...data,
-            phase: data.phase || (data.onGround ? 'GND OPS' : 'LIVE ADS-B')
-          });
+        if (ent.targetPos) {
+          // Advance dead-reckoning target along true heading at scaled groundspeed
+          const speedSceneUnits = ((data.gs || 0) * 0.51444) * (250 / 2000) * 0.55;
+          ent.targetPos.x += Math.cos(relRad) * speedSceneUnits * dt;
+          ent.targetPos.z += Math.sin(relRad) * speedSceneUnits * dt;
+          group.position.lerp(ent.targetPos, 0.06);
         }
+
+        plane.rotation.set(bank, yaw, pitch);
+        if (u.gearGroup) u.gearGroup.visible = data.onGround || (data.alt || 0) < 1200;
+
+        updateFlightTagSprite(tag, {
+          ...data,
+          phase: data.phase || (data.onGround ? 'GND OPS' : 'LIVE ADS-B')
+        });
       }
 
       // 4. Animate Touchdown Tire Smoke Puffs
