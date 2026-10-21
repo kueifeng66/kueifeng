@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Taiwan Taoyuan International Airport</title>
+  <title>Taiwan Taoyuan International Airport New ATC Tower Project - Realistic 3D Visualization</title>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Google Fonts -->
@@ -94,7 +94,7 @@
         <div class="mono text-[11px] text-slate-300 mt-0.5 flex flex-wrap items-center gap-x-4 gap-y-0.5">
           <span>桃園國際機場新塔臺園區</span>
           <span>HEIGHT: <strong class="text-sky-300">65.0m (Cab 360°)</strong></span>
-          <span>DESIGN: <strong class="text-amber-300">野柳女王頭</strong></span>
+          <span>DESIGN: <strong class="text-amber-300">Yehliu "Queen's Head"</strong></span>
           <span id="metar-readout" class="hidden xl:inline text-emerald-300">RCTP 05012KT 9999 FEW025 26/18 Q1015</span>
         </div>
       </div>
@@ -1174,20 +1174,11 @@
     crownTrim.position.set(cabCenterX, 56.3, 0);
     newTowerGroup.add(crownTrim);
 
-    // G) Rooftop Radar Housing Block, ASDE Surface Radar & 65m Antenna Spire
-    // const roofBlockGeo = new THREE.BoxGeometry(2.6, 1.9, 2.6);
-    // const roofBlock = new THREE.Mesh(roofBlockGeo, whiteCladdingMat);
-    // roofBlock.position.set(cabCenterX - 0.3, 59.1, 0);
-    // newTowerGroup.add(roofBlock);
-
-    // Spinning ASDE Surface Movement Radar
-    // const radarGroup = new THREE.Group();
-    // radarGroup.position.set(cabCenterX - 0.3, 60.4, 0);
-    // newTowerGroup.add(radarGroup);
-
-    // const radarBarGeo = new THREE.BoxGeometry(4.4, 0.48, 0.65);
-    // const radarBar = new THREE.Mesh(radarBarGeo, whiteCladdingMat);
-    // radarGroup.add(radarBar);
+    // G) Rooftop Housing Block & 65m Antenna Spire
+    const roofBlockGeo = new THREE.BoxGeometry(2.6, 1.9, 2.6);
+    const roofBlock = new THREE.Mesh(roofBlockGeo, whiteCladdingMat);
+    roofBlock.position.set(cabCenterX - 0.3, 59.1, 0);
+    newTowerGroup.add(roofBlock);
 
     // Communications Masts & 65m Lightning Arrestor Spire
     const spireGeo = new THREE.CylinderGeometry(0.06, 0.18, 4.8, 8);
@@ -3417,10 +3408,7 @@
       oceanNormalTex.offset.set(elapsed * 0.005, elapsed * 0.008);
       surfMat.opacity = 0.4 + Math.sin(elapsed * 1.3) * 0.18;
 
-      // 1. Rotate ASDE Surface Movement Radar on rooftop
-      radarGroup.rotation.y = -elapsed * 1.85;
-
-      // 2. Pulse Aviation Obstruction Beacons
+      // 1. Pulse Aviation Obstruction Beacons
       const beaconPulse = (Math.sin(elapsed * 4.5) + 1) * 0.5;
       beaconMat.color.setRGB(1.0, beaconPulse * 0.2, beaconPulse * 0.2);
 
