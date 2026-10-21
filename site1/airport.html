@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Taiwan Taoyuan International Airport New ATC Tower Project - Realistic 3D Visualization</title>
+  <title>Taiwan Taoyuan International Airport</title>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Google Fonts -->
@@ -102,19 +102,6 @@
 
     <!-- Right Interactive Controls -->
     <div class="glass-panel rounded-2xl p-2 pointer-events-auto flex flex-wrap items-center gap-2">
-      <!-- Lighting Mode Selector -->
-      <div class="flex items-center bg-slate-950/70 rounded-xl p-1 border border-slate-700/60">
-        <button data-mode="day" class="mode-btn px-3 py-1.5 rounded-lg text-xs font-semibold transition-all bg-sky-500/30 text-sky-200 border border-sky-400/40">
-          ☀️ Daylight (Video)
-        </button>
-        <button data-mode="golden" class="mode-btn px-3 py-1.5 rounded-lg text-xs font-semibold transition-all text-slate-300 hover:text-white">
-          🌅 Sunset Glow
-        </button>
-        <button data-mode="night" class="mode-btn px-3 py-1.5 rounded-lg text-xs font-semibold transition-all text-slate-300 hover:text-white">
-          🌃 Night Ops
-        </button>
-      </div>
-
       <!-- Live RCTP ADS-B Flights Toggle -->
       <button id="toggle-flights" class="px-3 py-2 rounded-xl text-xs font-semibold bg-emerald-500/25 text-emerald-200 border border-emerald-400/50 hover:bg-emerald-500/35 transition-all flex items-center gap-1.5" title="Real-Time Taiwan Taoyuan Airport (RCTP/TPE) Live Aircraft">
         <span id="live-dot" class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
@@ -124,12 +111,6 @@
       <!-- Top-View Cross-Section Diagram Overlay Toggle (from YouTube 1:18) -->
       <button id="toggle-diagram" class="px-3 py-2 rounded-xl text-xs font-semibold bg-slate-800/80 text-slate-200 border border-slate-600/60 hover:bg-slate-700 transition-all flex items-center gap-1.5" title="Show Monsoon Aerodynamic Design Overlay from Video">
         💨 Wind Design
-      </button>
-
-      <!-- Radar Sweep Toggle -->
-      <button id="toggle-radar" class="px-3 py-2 rounded-xl text-xs font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-400/40 opacity-60 hover:opacity-100 transition-all flex items-center gap-1.5">
-        <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
-        ASDE Beam
       </button>
 
       <!-- Auto-Orbit Toggle -->
@@ -282,13 +263,6 @@
       <button data-target="cabInterior" class="landmark-btn px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-200 hover:bg-slate-800/70 transition whitespace-nowrap">
         👁️ 10F 360° Cab View
       </button>
-    </div>
-
-    <div class="glass-panel rounded-xl px-3.5 py-2 pointer-events-auto hidden xl:flex items-center gap-4 mono text-xs text-slate-300">
-      <span>LMB: Rotate</span>
-      <span>RMB: Pan</span>
-      <span>Scroll: Zoom</span>
-      <span>Click 3D Building: Inspect</span>
     </div>
   </footer>
 
@@ -1214,23 +1188,6 @@
     const radarBarGeo = new THREE.BoxGeometry(4.4, 0.48, 0.65);
     const radarBar = new THREE.Mesh(radarBarGeo, whiteCladdingMat);
     radarGroup.add(radarBar);
-
-    // Optional Volumetric Radar Sweep Beam
-    const beamGeo = new THREE.ConeGeometry(38, 105, 32, 1, true);
-    beamGeo.translate(0, -52.5, 0);
-    beamGeo.rotateZ(Math.PI / 2);
-    const beamMat = new THREE.MeshBasicMaterial({
-      color: 0x10b981,
-      transparent: true,
-      opacity: 0.11,
-      side: THREE.DoubleSide,
-      depthWrite: false,
-      blending: THREE.AdditiveBlending
-    });
-    const radarBeam = new THREE.Mesh(beamGeo, beamMat);
-    radarBeam.rotation.z = -0.18;
-    radarBeam.visible = false;
-    radarGroup.add(radarBeam);
 
     // Communications Masts & 65m Lightning Arrestor Spire
     const spireGeo = new THREE.CylinderGeometry(0.06, 0.18, 4.8, 8);
@@ -3249,14 +3206,17 @@
 
       const metarEl = document.getElementById('metar-readout');
       if (metarEl) metarEl.textContent = lastLiveMetarRaw || m.metar;
+    }
 
-      document.querySelectorAll('.mode-btn').forEach((btn) => {
-        if (btn.dataset.mode === modeKey) {
-          btn.className = 'mode-btn px-3 py-1.5 rounded-lg text-xs font-semibold transition-all bg-sky-500/30 text-sky-200 border border-sky-400/40';
-        } else {
-          btn.className = 'mode-btn px-3 py-1.5 rounded-lg text-xs font-semibold transition-all text-slate-300 hover:text-white';
-        }
-      });
+    function getAutoLightingMode() {
+      const now = new Date();
+      const hour = now.getHours() + now.getMinutes() / 60;
+      // Daytime: 06:00 to 18:00 (6 AM to 6 PM), Night outside those hours
+      return (hour >= 6.0 && hour < 18.0) ? 'day' : 'night';
+    }
+
+    function syncAutoLighting() {
+      applyLightingMode(getAutoLightingMode());
     }
 
     // --- CAMERA SMOOTH TRANSITION & UI CARD LOGIC ---
@@ -3393,10 +3353,6 @@
     });
 
     // --- UI EVENT LISTENERS ---
-    document.querySelectorAll('.mode-btn').forEach((btn) => {
-      btn.addEventListener('click', () => applyLightingMode(btn.dataset.mode));
-    });
-
     document.querySelectorAll('.landmark-btn').forEach((btn) => {
       btn.addEventListener('click', () => selectLandmark(btn.dataset.target));
     });
@@ -3426,12 +3382,6 @@
     });
     document.getElementById('close-diagram').addEventListener('click', () => {
       diagramEl.classList.add('hidden');
-    });
-
-    const radarBtn = document.getElementById('toggle-radar');
-    radarBtn.addEventListener('click', () => {
-      radarBeam.visible = !radarBeam.visible;
-      radarBtn.classList.toggle('opacity-60', !radarBeam.visible);
     });
 
     const orbitBtn = document.getElementById('toggle-orbit');
@@ -3555,8 +3505,9 @@
       renderer.render(scene, camera);
     }
 
-    // Initialize in Realistic Daylight mode (matching the YouTube documentary look)
-    applyLightingMode('day');
+    // Automatically detect current time and apply Daylight or Night mode
+    syncAutoLighting();
+    setInterval(syncAutoLighting, 60000);
     animate();
   </script>
 </body>
