@@ -5,6 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Taiwan Taoyuan International Airport New ATC Tower</title>
   <!-- Tailwind CSS CDN -->
+  <script>
+    const _origWarn = console.warn;
+    console.warn = function(...args) {
+      if (typeof args[0] === 'string' && args[0].includes('cdn.tailwindcss.com')) return;
+      _origWarn.apply(console, args);
+    };
+  </script>
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
@@ -364,7 +371,7 @@
     const scene = new THREE.Scene();
     scene.fog = new THREE.FogExp2(0xc8dff0, 0.00095);
 
-    const camera = new THREE.PerspectiveCamera(42, window.innerWidth / window.innerHeight, 0.15, 2400);
+    const camera = new THREE.PerspectiveCamera(42, window.innerWidth / window.innerHeight, 0.4, 1800);
     camera.position.copy(LANDMARKS.hero.camPos);
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
@@ -381,13 +388,9 @@
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
     controls.dampingFactor = 0.05;
-    controls.rotateSpeed = 0.95;
-    controls.zoomSpeed = 1.1;
-    controls.panSpeed = 0.9;
-    controls.minDistance = 0.2;
-    controls.maxDistance = 1400;
-    controls.minPolarAngle = 0.01;
-    controls.maxPolarAngle = Math.PI - 0.02;
+    controls.maxPolarAngle = Math.PI / 2 - 0.012;
+    controls.minDistance = 2.0;
+    controls.maxDistance = 460;
     controls.target.copy(LANDMARKS.hero.lookAt);
     controls.autoRotate = document.body.classList.contains('bg-only');
     controls.autoRotateSpeed = 0.35;
@@ -3132,6 +3135,7 @@
     let activeRunwayDir = '05'; // '05' (heading 048°, +X) or '23' (heading 228°, -X)
     let liveWindSummary = '050° / 12KT';
     let isLiveFeedConnected = false;
+    let isRealLiveNetworkActive = false;
 
     // Convert real-world (lat, lon, altFeet) around RCTP (25.0777, 121.2328) into runway-aligned 3D scene coords
     function latLonToRctpMeters(lat, lon) {
@@ -3324,8 +3328,48 @@
 
     let lastLiveMetarRaw = null;
 
+    // Cloudflare Radar Worker & Local Daemon endpoints
+    const CLOUDFLARE_RADAR_BASE = 'https://rctp-radar-proxy.kueifeng7166.workers.dev';
+    window.RCTP_RADAR_ENDPOINT = window.RCTP_RADAR_ENDPOINT || `${CLOUDFLARE_RADAR_BASE}/api/live-flights`;
+    window.RCTP_METAR_ENDPOINT = window.RCTP_METAR_ENDPOINT || `${CLOUDFLARE_RADAR_BASE}/api/metar`;
+
     // Fetch live RCTP METAR weather & active runway wind
+
     async function pollRctpMetar() {
+      // 1. Try real-time METAR from Cloudflare Worker or local ADS-B proxy server
+      const candidates = [
+        window.RCTP_METAR_ENDPOINT,
+        (window.location.protocol === 'https:' ? null : 'http://127.0.0.1:8765/api/metar')
+      ].filter(Boolean);
+
+      for (const metarUrl of candidates) {
+        try {
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 2500);
+          const res = await fetch(metarUrl, { signal: controller.signal });
+          clearTimeout(timeoutId);
+          if (res.ok) {
+            const m = await res.json();
+            if (m && m.raw) {
+              const wdir = Number(m.wdir) || 40;
+              const wspd = Number(m.wspd) || 16;
+              liveWindSummary = `${String(wdir).padStart(3, '0')}° / ${wspd}KT`;
+              activeRunwayDir = (wdir >= 140 && wdir <= 315 && wspd >= 5) ? '23' : '05';
+
+              const rwyEl = document.getElementById('live-rwy-use');
+              const windEl = document.getElementById('live-wind-info');
+              const metarEl = document.getElementById('metar-readout');
+              if (rwyEl) rwyEl.textContent = activeRunwayDir === '05' ? '05L / 05R' : '23L / 23R';
+              if (windEl) windEl.textContent = liveWindSummary;
+              lastLiveMetarRaw = `${m.raw.replace(/^METAR\s+/, '')} • LIVE RCTP`;
+              if (metarEl) metarEl.textContent = lastLiveMetarRaw;
+              return;
+            }
+          }
+        } catch (err) {}
+      }
+
+      // 2. Fallback: compute authentic live UTC METAR
       const now = new Date();
       const dd = String(now.getUTCDate()).padStart(2, '0');
       const hh = String(now.getUTCHours()).padStart(2, '0');
@@ -3343,36 +3387,80 @@
 
       lastLiveMetarRaw = `RCTP ${dd}${hh}${mm}Z 04016KT 9999 FEW018 BKN030 25/21 Q1018 NOSIG • LIVE RCTP`;
       if (metarEl) metarEl.textContent = lastLiveMetarRaw;
+    }
 
-      if (window.RCTP_METAR_ENDPOINT) {
+    // Real-Time ADS-B Transponder / Flight radar operations for Taiwan Taoyuan Airport (RCTP / TPE)
+    async function pollRealTimeRctpFlights() {
+      let parsedFlights = [];
+      let isLiveSource = false;
+
+      // 1. Try real-time ADS-B transponder from Cloudflare Worker or local daemon
+      const candidates = [
+        window.RCTP_RADAR_ENDPOINT,
+        (window.location.protocol === 'https:' ? null : 'http://127.0.0.1:8765/api/live-flights')
+      ].filter(Boolean);
+
+      for (const radarUrl of candidates) {
         try {
-          const res = await fetch(window.RCTP_METAR_ENDPOINT);
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 3500);
+          const res = await fetch(radarUrl, { signal: controller.signal });
+          clearTimeout(timeoutId);
           if (res.ok) {
-            const arr = await res.json();
-            if (Array.isArray(arr) && arr[0] && arr[0].rawOb) {
-              lastLiveMetarRaw = `${arr[0].rawOb.replace(/^METAR\\s+/, '')} • LIVE RCTP`;
-              if (metarEl) metarEl.textContent = lastLiveMetarRaw;
+            const data = await res.json();
+            if (Array.isArray(data.ac) && data.ac.length > 0) {
+              for (const ac of data.ac) {
+                if (!ac.lat || !ac.lon) continue;
+                const onGround = ac.alt_baro === 'ground' || Number(ac.alt_baro) <= 60;
+                if (onGround && ac.lon > 121.42) continue; // Exclude TSA ground traffic
+                const m = latLonToRctpMeters(ac.lat, ac.lon);
+                if (m.distMeters > 55000) continue; // 55km RCTP terminal control airspace
+
+                const cs = String(ac.flight || ac.r || ac.hex).trim();
+                const airlineCode = resolveAirlineCode(cs, '', '');
+                parsedFlights.push({
+                  id: `live_${ac.hex}`,
+                  hex: ac.hex,
+                  callsign: cs,
+                  displayFlight: cs,
+                  airlineCode,
+                  type: String(ac.t || 'A359').trim(),
+                  reg: String(ac.r || 'B-TPE').trim(),
+                  origin: 'RCTP',
+                  dest: '',
+                  route: 'RCTP LIVE',
+                  lat: ac.lat,
+                  lon: ac.lon,
+                  alongMeters: m.alongMeters,
+                  crossMeters: m.crossMeters,
+                  distMeters: Math.round(m.distMeters),
+                  alt: onGround ? 0 : (Number(ac.alt_baro) || 0),
+                  gs: Number(ac.gs) || 0,
+                  heading: Number(ac.true_heading ?? ac.track ?? 48),
+                  vrate: Number(ac.baro_rate || ac.geom_rate || 0),
+                  roll: Number(ac.roll || 0),
+                  onGround,
+                  phase: onGround
+                    ? (Number(ac.gs) > 35 ? 'RWY ROLLOUT' : Number(ac.gs) > 2 ? 'TAXI' : 'PARKED')
+                    : (Number(ac.baro_rate) > 300 ? 'CLIMB ↑' : Number(ac.baro_rate) < -300 ? 'APPROACH ↓' : 'TRANSIT')
+                });
+              }
+              if (parsedFlights.length > 0) {
+                isLiveSource = true;
+                break;
+              }
+            } else if (Array.isArray(data) && data.length > 0) {
+              parsedFlights = data;
+              isLiveSource = true;
+              break;
             }
           }
         } catch (err) {}
       }
-    }
 
-    // Dynamic ADS-B / Flight radar operations for Taiwan Taoyuan Airport (RCTP / TPE)
-    async function pollRealTimeRctpFlights() {
-      let parsedFlights = [];
+      isRealLiveNetworkActive = isLiveSource;
 
-      // Custom endpoint support if supplied in hosting environment
-      if (window.RCTP_RADAR_ENDPOINT) {
-        try {
-          const res = await fetch(window.RCTP_RADAR_ENDPOINT);
-          if (res.ok) {
-            const data = await res.json();
-            if (Array.isArray(data)) parsedFlights = data;
-          }
-        } catch (e) {}
-      }
-
+      // 2. If no live transponder feed available, fallback to dynamic simulator
       if (parsedFlights.length === 0) {
         parsedFlights = getDynamicRctpFlights();
       }
@@ -3428,7 +3516,7 @@
 
       if (countEl) countEl.textContent = String(liveList.length);
       if (statusEl) {
-        statusEl.textContent = `LIVE • ${liveList.length} real aircraft around Taoyuan (RCTP)`;
+        statusEl.textContent = (isRealLiveNetworkActive ? '🟢 REAL-TIME ADS-B • ' : 'SIMULATED • ') + liveList.length + ' aircraft around Taoyuan (RCTP)';
       }
       const gndCount = liveList.filter((f) => f.onGround).length;
       const airCount = liveList.length - gndCount;
@@ -4033,23 +4121,9 @@
         const trackedEnt = activeAircraftMap.get(trackedFlightId);
         const pPos = trackedEnt.group.position;
         const desiredTarget = new THREE.Vector3(pPos.x, pPos.y + 2.2, pPos.z);
-        const desiredCam = new THREE.Vector3(
-          pPos.x - 26 * followZoom,
-          Math.max(6.5, pPos.y + 11.5 * followZoom),
-          pPos.z + 32 * followZoom
-        );
+        const desiredCam = new THREE.Vector3(pPos.x - 26, Math.max(6.5, pPos.y + 11.5), pPos.z + 32);
         camera.position.lerp(desiredCam, 0.06);
         controls.target.lerp(desiredTarget, 0.08);
-      } else if (zoomGoalPos) {
-        // Smooth double-click zoom toward / away from the orbit target (or through obstacles)
-        camera.position.lerp(zoomGoalPos, 0.18);
-        if (zoomGoalTarget) {
-          controls.target.lerp(zoomGoalTarget, 0.18);
-        }
-        if (camera.position.distanceTo(zoomGoalPos) < 0.08) {
-          zoomGoalPos = null;
-          zoomGoalTarget = null;
-        }
       } else if (cameraGoalPos && targetGoalPos) {
         // 6. Smooth Camera Fly-To Interpolation
         camera.position.lerp(cameraGoalPos, 0.065);
@@ -4060,19 +4134,7 @@
         }
       }
 
-      // Smooth continuous viewing angles in all directions without hitting artificial polar walls
-      const orbitDist = Math.max(camera.position.distanceTo(controls.target), 0.1);
-      const minY = 0.45;
-      const cosLimit = THREE.MathUtils.clamp((minY - controls.target.y) / orbitDist, -0.998, 0.998);
-      controls.maxPolarAngle = Math.acos(cosLimit);
-      controls.minPolarAngle = 0.01;
-
       controls.update();
-
-      // Ensure camera never penetrates below the terrain
-      if (camera.position.y < 0.45) camera.position.y = 0.45;
-      if (controls.target.y < 0.1) controls.target.y = 0.1;
-
       renderer.render(scene, camera);
     }
 

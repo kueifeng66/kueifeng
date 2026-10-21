@@ -1776,7 +1776,7 @@ class IosWheelPicker {
       // Haptic feedback tick when passing an item
       if (nearestInt !== state.currentIndex && nearestInt >= 0 && nearestInt < items.length) {
         state.currentIndex = nearestInt;
-        if (navigator.vibrate) {
+        if (typeof navigator !== 'undefined' && navigator.vibrate && navigator.userActivation?.hasBeenActive) {
           try { navigator.vibrate(4); } catch (e) {}
         }
       }
@@ -2219,7 +2219,7 @@ class IosNameWheelPicker {
     // Haptic feedback tick when passing a name
     if (nearestInt !== this.currentIndex && nearestInt >= 0 && nearestInt < this.names.length) {
       this.currentIndex = nearestInt;
-      if (navigator.vibrate) {
+      if (typeof navigator !== 'undefined' && navigator.vibrate && navigator.userActivation?.hasBeenActive) {
         try { navigator.vibrate(4); } catch (e) {}
       }
     }
@@ -3230,7 +3230,7 @@ makeCardDraggable();
     'kueifeng.eo94g@g2.nctu.edu.tw': '洪柜峰',
     'shinchir46@gmail.com': '洪柜峰',
     'qqcats0901@mail.post.gov.tw': '洪柜峰',
-    'test@gmail.com':'陳鈞緯',
+    'test@gmail.com':'洪柜峰',
     'jeremycks@gmail.com':'劉錦郎',
     'chinjiewan@anws.gov.tw':'秦桔萬',
     'shihhsun.hsu@gmail.com':'許世勳',
@@ -3276,7 +3276,7 @@ makeCardDraggable();
 
     // 2. Parent window currentUserEmail (when loaded inside kueifeng/index.html iframe)
     try {
-      if (window.parent && window.parent.currentUserEmail) {
+      if (window.location.protocol !== 'file:' && window.parent && window.parent !== window && window.parent.currentUserEmail) {
         saveUserEmail(window.parent.currentUserEmail);
         return window.parent.currentUserEmail;
       }
