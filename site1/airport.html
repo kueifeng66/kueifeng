@@ -3488,117 +3488,11 @@
       return entry;
     }
 
-    // Continuous 60 FPS trajectory generator for simulated RCTP flights (no stepped poll jumps or snap-backs)
+    // Ground surface elevation constant for tarmac & runway
     const GROUND_SURFACE_Y = 0.16;
-    function getDynamicRctpFlights(elapsedSec = 0) {
-      const t = Math.max(0, elapsedSec);
 
-      // Cycle 1: Realistic Arrival on RWY 05L (75-second continuous cycle)
-      const arrCycleDur = 75.0;
-      const arrT = (t % arrCycleDur);
-      const arrCycleIndex = Math.floor(t / arrCycleDur);
-      let arrX, arrY, arrOnGnd, arrAlt, arrGs, arrPhase, arrPitch, arrVrate;
-      if (arrT < 42.0) {
-        // Final approach glide path along RWY 05L (-460 -> -160)
-        const p = arrT / 42.0;
-        arrX = -460 + p * 300;
-        // Smooth flare over last 12% before touchdown
-        const flare = p > 0.88 ? Math.pow((p - 0.88) / 0.12, 2) * 0.8 : 0;
-        arrY = Math.max(GROUND_SURFACE_Y, GROUND_SURFACE_Y + (1 - p) * 66 - flare);
-        arrOnGnd = false;
-        arrAlt = Math.max(20, Math.round(2100 * (1 - p)));
-        arrGs = Math.round(144 - p * 8);
-        arrVrate = -720;
-        arrPitch = p > 0.82 ? 0.055 : 0.02;
-        arrPhase = 'APPROACH 05L';
-      } else if (arrT < 65.0) {
-        // Touchdown & smooth deceleration rollout on RWY 05L (-160 -> +95)
-        const p = (arrT - 42.0) / 23.0;
-        const decelEase = 1 - Math.pow(1 - p, 1.85);
-        arrX = -160 + decelEase * 255;
-        arrY = GROUND_SURFACE_Y;
-        arrOnGnd = true;
-        arrAlt = 0;
-        arrGs = Math.max(22, Math.round(136 * (1 - p * 0.84)));
-        arrVrate = 0;
-        arrPitch = 0;
-        arrPhase = arrGs > 40 ? 'ROLLOUT 05L' : 'TAXI 05L';
-      } else {
-        // Steady taxi rollout (+95 -> +145)
-        const p = (arrT - 65.0) / 10.0;
-        arrX = 95 + p * 50;
-        arrY = GROUND_SURFACE_Y;
-        arrOnGnd = true;
-        arrAlt = 0;
-        arrGs = 22;
-        arrVrate = 0;
-        arrPitch = 0;
-        arrPhase = 'TAXI 05L';
-      }
-
-      // Cycle 2: Realistic Departure on RWY 05R (80-second continuous cycle)
-      const depCycleDur = 80.0;
-      const depT = ((t + 18.0) % depCycleDur);
-      const depCycleIndex = Math.floor((t + 18.0) / depCycleDur);
-      let depX, depY, depOnGnd, depAlt, depGs, depPhase, depPitch, depVrate;
-      if (depT < 26.0) {
-        // Takeoff roll on RWY 05R (-230 -> 0) with realistic acceleration and VR rotation
-        const p = depT / 26.0;
-        const accelEase = Math.pow(p, 1.75);
-        depX = -230 + accelEase * 230;
-        depY = GROUND_SURFACE_Y;
-        depOnGnd = true;
-        depAlt = 0;
-        depGs = Math.round(15 + p * 153);
-        depVrate = 0;
-        depPitch = p > 0.80 ? ((p - 0.80) / 0.20) * 0.145 : 0;
-        depPhase = 'TAKEOFF ROLL 05R';
-      } else {
-        // Continuous climb out (0 -> +480, climbing smoothly to y = 118)
-        const p = (depT - 26.0) / 54.0;
-        depX = p * 480;
-        depY = GROUND_SURFACE_Y + Math.pow(p, 1.08) * 118;
-        depOnGnd = false;
-        depAlt = Math.round(p * 4200);
-        depGs = Math.round(168 + p * 68);
-        depVrate = 2200;
-        depPitch = 0.145;
-        depPhase = 'CLIMB RWY 05R';
-      }
-
-      // Cycle 3: Continuous Taxi traffic on North Parallel Taxiway NP (z = -80)
-      const taxiCycleDur = 90.0;
-      const taxiT = (t % taxiCycleDur);
-      const taxiCycleIndex = Math.floor(t / taxiCycleDur);
-      const taxiProgress = taxiT / taxiCycleDur;
-      const taxiX = 185 - taxiProgress * 370;
-
-      return [
-        { id: 'live_gate1', isSimulated: true, cycleIndex: 0, callsign: 'CI721', displayFlight: 'CI721', airlineCode: 'CAL', type: 'B77W', reg: 'B-18005', route: 'TPE→KUL', alt: 0, gs: 0, heading: 137.8, vrate: 0, pitch: 0, onGround: true, phase: 'GATE D3', alongMeters: -100, crossMeters: -45, distMeters: 450, pos: { x: -116, y: GROUND_SURFACE_Y, z: -52 } },
-        { id: 'live_gate2', isSimulated: true, cycleIndex: 0, callsign: 'BR132', displayFlight: 'BR132', airlineCode: 'EVA', type: 'B78X', reg: 'B-17811', route: 'TPE→KIX', alt: 0, gs: 0, heading: 317.8, vrate: 0, pitch: 0, onGround: true, phase: 'GATE C4', alongMeters: -120, crossMeters: 45, distMeters: 520, pos: { x: -128, y: GROUND_SURFACE_Y, z: 52 } },
-        { id: 'live_gate3', isSimulated: true, cycleIndex: 0, callsign: 'JX820', displayFlight: 'JX820', airlineCode: 'SJX', type: 'A359', reg: 'B-58507', route: 'TPE→KIX', alt: 0, gs: 0, heading: 137.8, vrate: 0, pitch: 0, onGround: true, phase: 'GATE D6', alongMeters: -140, crossMeters: -45, distMeters: 610, pos: { x: -152, y: GROUND_SURFACE_Y, z: -52 } },
-        { id: 'live_gate4', isSimulated: true, cycleIndex: 0, callsign: 'CX495', displayFlight: 'CX495', airlineCode: 'CPA', type: 'A333', reg: 'B-HLV',   route: 'HKG→TPE', alt: 0, gs: 0, heading: 137.8, vrate: 0, pitch: 0, onGround: true, phase: 'GATE A5', alongMeters: 140, crossMeters: -45, distMeters: 590, pos: { x: 144, y: GROUND_SURFACE_Y, z: -52 } },
-        { id: 'live_rem1',  isSimulated: true, cycleIndex: 0, callsign: 'IT201', displayFlight: 'IT201', airlineCode: 'TTW', type: 'A320', reg: 'B-50015', route: 'TPE→NRT', alt: 0, gs: 0, heading: 317.8, vrate: 0, pitch: 0, onGround: true, phase: 'STAND 607', alongMeters: -30, crossMeters: 65, distMeters: 410, pos: { x: -31, y: GROUND_SURFACE_Y, z: 71 } },
-        { id: 'live_crg1',  isSimulated: true, cycleIndex: 0, callsign: 'BR628', displayFlight: 'BR628', airlineCode: 'EVA', type: 'B77W', reg: 'B-16781', route: 'TPE→LAX', alt: 0, gs: 0, heading: 137.8, vrate: 0, pitch: 0, onGround: true, phase: 'CARGO 506', alongMeters: 280, crossMeters: -45, distMeters: 680, pos: { x: 283, y: GROUND_SURFACE_Y, z: -52 } },
-        { id: 'live_crg2',  isSimulated: true, cycleIndex: 0, callsign: 'CI5242', displayFlight: 'CI5242', airlineCode: 'CAL', type: 'B744', reg: 'B-18712', route: 'TPE→ANC', alt: 0, gs: 0, heading: 137.8, vrate: 0, pitch: 0, onGround: true, phase: 'CARGO 518', alongMeters: 185, crossMeters: -150, distMeters: 820, pos: { x: 186, y: GROUND_SURFACE_Y, z: -156 } },
-        { id: 'live_arr',   isSimulated: true, cycleIndex: arrCycleIndex, callsign: 'BR212', displayFlight: 'BR212', airlineCode: 'EVA', type: 'B77W', reg: 'B-16727', route: 'BKK→TPE', alt: arrAlt, gs: arrGs, heading: 47.8, vrate: arrVrate, pitch: arrPitch, onGround: arrOnGnd, phase: arrPhase, alongMeters: arrX * 8, crossMeters: -1142, distMeters: Math.round(Math.abs(arrX * 8)), pos: { x: arrX, y: arrY, z: -108 } },
-        { id: 'live_dep',   isSimulated: true, cycleIndex: depCycleIndex, callsign: 'JX800', displayFlight: 'JX800', airlineCode: 'SJX', type: 'A35K', reg: 'B-58553', route: 'TPE→NRT', alt: depAlt, gs: depGs, heading: 47.8, vrate: depVrate, pitch: depPitch, onGround: depOnGnd, phase: depPhase, alongMeters: depX * 8, crossMeters: 741, distMeters: Math.round(Math.abs(depX * 8)), pos: { x: depX, y: depY, z: 108 } },
-        { id: 'live_taxi',  isSimulated: true, cycleIndex: taxiCycleIndex, callsign: 'CI501', displayFlight: 'CI501', airlineCode: 'CAL', type: 'A359', reg: 'B-18910', route: 'TPE→PVG', alt: 0, gs: 18, heading: 227.8, vrate: 0, pitch: 0, onGround: true, phase: 'TAXI NP', alongMeters: taxiX * 8, crossMeters: -80, distMeters: Math.round(Math.abs(taxiX * 8)), pos: { x: taxiX, y: GROUND_SURFACE_Y, z: -80 } }
-      ];
-    }
-
-    function seedInitialFlights() {
-      const initialDefs = getDynamicRctpFlights(0);
-      initialDefs.forEach((f) => {
-        const ent = upsertAircraftEntity({ ...f, role: 'live_adsb' });
-        ent.targetPos = new THREE.Vector3(f.pos.x, f.pos.y, f.pos.z);
-        ent.group.position.copy(ent.targetPos);
-        ent.initializedPos = true;
-        ent.lastCycleIndex = f.cycleIndex;
-      });
-      renderLiveFlightsUI(initialDefs);
-    }
-    seedInitialFlights();
+    // Initialize UI in connecting state (real ADS-B only)
+    renderLiveFlightsUI([]);
 
     let lastLiveMetarRaw = null;
 
@@ -3733,19 +3627,11 @@
       }
 
       isRealLiveNetworkActive = isLiveSource;
-
-      // 2. If no live transponder feed available, fallback to dynamic simulator
-      const nowElapsedSec = performance.now() * 0.001;
-      if (parsedFlights.length === 0) {
-        parsedFlights = getDynamicRctpFlights(nowElapsedSec);
-      }
-
-      if (parsedFlights.length === 0) return;
-      isLiveFeedConnected = true;
+      if (isLiveSource) isLiveFeedConnected = true;
 
       // Prioritize flights closest to Tower
       parsedFlights.sort((a, b) => a.distMeters - b.distMeters);
-      const selected = parsedFlights.slice(0, 18);
+      const selected = parsedFlights.slice(0, 24);
       const keepIds = new Set();
 
       selected.forEach((f) => {
@@ -3761,39 +3647,29 @@
           phase
         });
 
-        if (f.isSimulated) {
-          // Simulated flights are updated continuously every frame in animate(); only initialize if new
-          if (!ent.initializedPos) {
-            ent.targetPos = new THREE.Vector3(scenePos.x, scenePos.y, scenePos.z);
-            ent.group.position.copy(ent.targetPos);
+        // Real live ADS-B flight: only update targetPos if GPS coordinates actually changed
+        // so cached network polls never snap dead-reckoned aircraft backward
+        const gpsChanged = (ent.lastLat !== f.lat) || (ent.lastLon !== f.lon) || !ent.initializedPos;
+        if (gpsChanged) {
+          ent.lastLat = f.lat;
+          ent.lastLon = f.lon;
+          const newTarget = new THREE.Vector3(scenePos.x, scenePos.y, scenePos.z);
+          if (!ent.initializedPos || ent.group.position.distanceTo(newTarget) > 90) {
+            ent.targetPos = newTarget;
+            ent.group.position.copy(newTarget);
             ent.initializedPos = true;
-            ent.lastCycleIndex = f.cycleIndex;
-          }
-        } else {
-          // Real live ADS-B flight: only update targetPos if GPS coordinates actually changed
-          // so cached network polls never snap dead-reckoned aircraft backward
-          const gpsChanged = (ent.lastLat !== f.lat) || (ent.lastLon !== f.lon) || !ent.initializedPos;
-          if (gpsChanged) {
-            ent.lastLat = f.lat;
-            ent.lastLon = f.lon;
-            const newTarget = new THREE.Vector3(scenePos.x, scenePos.y, scenePos.z);
-            if (!ent.initializedPos || ent.group.position.distanceTo(newTarget) > 90) {
+          } else {
+            // Ensure new poll target doesn't pull an airborne aircraft backward along its heading
+            const relRad = (((f.heading || 48) - RCTP_REF.rwyHeadingDeg) * Math.PI) / 180.0;
+            const fwdX = Math.cos(relRad);
+            const fwdZ = Math.sin(relRad);
+            const dx = newTarget.x - ent.group.position.x;
+            const dz = newTarget.z - ent.group.position.z;
+            const alongTrack = dx * fwdX + dz * fwdZ;
+            if (alongTrack >= -2.0 || (f.gs || 0) < 5) {
               ent.targetPos = newTarget;
-              ent.group.position.copy(newTarget);
-              ent.initializedPos = true;
             } else {
-              // Ensure new poll target doesn't pull an airborne aircraft backward along its heading
-              const relRad = (((f.heading || 48) - RCTP_REF.rwyHeadingDeg) * Math.PI) / 180.0;
-              const fwdX = Math.cos(relRad);
-              const fwdZ = Math.sin(relRad);
-              const dx = newTarget.x - ent.group.position.x;
-              const dz = newTarget.z - ent.group.position.z;
-              const alongTrack = dx * fwdX + dz * fwdZ;
-              if (alongTrack >= -2.0 || (f.gs || 0) < 5) {
-                ent.targetPos = newTarget;
-              } else {
-                ent.targetPos.y = newTarget.y;
-              }
+              ent.targetPos.y = newTarget.y;
             }
           }
         }
@@ -3823,24 +3699,38 @@
 
       if (countEl) countEl.textContent = String(liveList.length);
       if (statusEl) {
-        statusEl.textContent = (isRealLiveNetworkActive ? '🟢 REAL-TIME ADS-B • ' : 'SIMULATED • ') + liveList.length + ' aircraft around Taoyuan (RCTP)';
+        if (isRealLiveNetworkActive) {
+          statusEl.textContent = `🟢 REAL-TIME ADS-B • ${liveList.length} aircraft around Taoyuan (RCTP)`;
+        } else if (isLiveFeedConnected) {
+          statusEl.textContent = `🟢 REAL-TIME ADS-B • 0 aircraft in range`;
+        } else {
+          statusEl.textContent = `📡 REAL-TIME ADS-B • Syncing Taoyuan traffic...`;
+        }
       }
       const gndCount = liveList.filter((f) => f.onGround).length;
       const airCount = liveList.length - gndCount;
-      if (summaryEl) summaryEl.textContent = `${airCount} AIR / ${gndCount} GND`;
+      if (summaryEl) summaryEl.textContent = liveList.length > 0 ? `${airCount} AIR / ${gndCount} GND` : 'Scanning...';
       if (timeEl) {
         const now = new Date();
         timeEl.textContent = `SYNC ${ now.toTimeString().slice(0, 8) }`;
       }
 
       // Update compact background ticker (also visible in site1/index.html)
-      if (bgTextEl && liveList.length > 0) {
-        const topNames = liveList.slice(0, 4).map((f) => `${f.displayFlight}(${f.type})`).join(' • ');
-        bgTextEl.textContent = `LIVE TPE ADS-B [${liveList.length}] RWY ${activeRunwayDir}L/R • ${topNames}`;
+      if (bgTextEl) {
+        if (liveList.length > 0) {
+          const topNames = liveList.slice(0, 4).map((f) => `${f.displayFlight}(${f.type})`).join(' • ');
+          bgTextEl.textContent = `LIVE TPE ADS-B [${liveList.length}] RWY ${activeRunwayDir}L/R • ${topNames}`;
+        } else {
+          bgTextEl.textContent = `RCTP LIVE ADS-B • Syncing Taoyuan traffic...`;
+        }
       }
 
       if (!listEl) return;
       listEl.innerHTML = '';
+      if (liveList.length === 0) {
+        listEl.innerHTML = '<div class="text-slate-400 py-6 text-center text-xs">No active aircraft in RCTP terminal airspace.<br/><span class="text-[10px] text-slate-500">Listening to live transponder feed...</span></div>';
+        return;
+      }
       liveList.forEach((f) => {
         const liv = AIRLINE_LIVERIES[f.airlineCode] || AIRLINE_LIVERIES.CAL;
         const altStr = f.onGround ? 'GND' : `${Math.round(f.alt).toLocaleString()} ft`;
@@ -5104,32 +4994,7 @@
       const beaconPulse = (Math.sin(elapsed * 4.5) + 1) * 0.5;
       beaconMat.color.setRGB(1.0, beaconPulse * 0.2, beaconPulse * 0.2);
 
-      // 2. Update Continuous Simulated Flights at 60 FPS (prevents any snap-back on poll intervals)
-      if (!isRealLiveNetworkActive) {
-        const simStates = getDynamicRctpFlights(performance.now() * 0.001);
-        for (const simF of simStates) {
-          const ent = activeAircraftMap.get(simF.id);
-          if (ent) {
-            const wasAirborne = !ent.data.onGround;
-            Object.assign(ent.data, simF);
-            ent.targetPos.set(simF.pos.x, simF.pos.y, simF.pos.z);
-            if (ent.lastCycleIndex !== simF.cycleIndex) {
-              // Cycle wrapped at far boundary: teleport immediately without backward lerp
-              ent.group.position.copy(ent.targetPos);
-              ent.lastCycleIndex = simF.cycleIndex;
-            } else {
-              ent.group.position.copy(ent.targetPos);
-            }
-            // Spawn touchdown tire smoke when arrival flight transitions from airborne to ground
-            if (wasAirborne && simF.onGround && simF.id === 'live_arr' && elapsed - ent.lastSmokeTime > 5.0) {
-              ent.lastSmokeTime = elapsed;
-              spawnTouchdownSmoke(simF.pos.x, simF.pos.z);
-            }
-          }
-        }
-      }
-
-      // 3. Animate Real-Time RCTP Aircraft Fleet (Takeoff, Landing, Taxi, Gates & Live ADS-B Airspace)
+      // 2. Animate Real-Time RCTP Aircraft Fleet (Live ADS-B Airspace)
       const strobePhase = elapsed % 1.25;
       const isStrobeOn = (strobePhase < 0.07) || (strobePhase > 0.14 && strobePhase < 0.21);
       const isAntiColOn = (elapsed % 1.1) < 0.12;
@@ -5152,8 +5017,8 @@
           : (data.onGround ? 0 : Math.max(-0.14, Math.min(0.20, (data.vrate || 0) / 14000)));
         const bank = data.onGround ? 0 : Math.max(-0.38, Math.min(0.38, ((data.roll || 0) * Math.PI) / 180.0));
 
-        // Only run dead-reckoning interpolation for external live ADS-B network flights
-        if (!data.isSimulated && ent.targetPos) {
+        // Dead-reckoning interpolation for real ADS-B network flights
+        if (ent.targetPos) {
           const speedSceneUnits = ((data.gs || 0) * 0.51444) * (250 / 2000) * 0.55;
           ent.targetPos.x += Math.cos(relRad) * speedSceneUnits * dt;
           ent.targetPos.z += Math.sin(relRad) * speedSceneUnits * dt;
