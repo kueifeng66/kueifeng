@@ -10,6 +10,7 @@ const userID = urlParams.get('userID');
 
 
 let mode = "neutral";
+
 const currentDay = new Date().getDate();
 let clickCount = 1;
 
