@@ -893,6 +893,7 @@ function renderHeaderCellContent(y, m, d, showFullDate = true) {
       <span class="header-cell-year">${y} 年</span>
       <span class="header-cell-date">${m}月 ${d}日</span>
       <span class="header-cell-weekday">${weekText}</span>
+      <span class="header-cell-clock"></span>
     `;
   } else {
     headerCell.innerHTML = `
@@ -900,7 +901,16 @@ function renderHeaderCellContent(y, m, d, showFullDate = true) {
       <span class="header-cell-date">${m} 月</span>
     `;
   }
+  updateHeaderClock();
 }
+
+function updateHeaderClock() {
+  const el = document.querySelector('.header-cell-clock');
+  if (!el) return;
+  el.textContent = new Date().toLocaleTimeString('en-GB', { hour12: false });
+}
+
+setInterval(updateHeaderClock, 1000);
 
 function addEventListener_toHideToolTipandShowToday(headerCell) {
   headerCell.addEventListener('click', () => {
@@ -1715,6 +1725,7 @@ function selectYearMonth(targetYear, targetMonth, options) {
 
   makeCardDraggable();
 }
+
 
 					   
 

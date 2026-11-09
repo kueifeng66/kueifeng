@@ -83,7 +83,7 @@ body {
 
 .header-cell-year {
   display: block;
-  font-size: 1.25rem;
+  font-size: 1.5rem;
   font-weight: 700;
   color: #f5d6a8;
   letter-spacing: 0.08rem;
@@ -95,7 +95,7 @@ body {
 
 .header-cell-date {
   display: block;
-  font-size: 1.6rem;
+  font-size: 1.5rem;
   font-weight: 900;
   color: #fffdf8;
   letter-spacing: 0.05rem;
@@ -115,6 +115,21 @@ body {
   text-shadow: 0 0.1rem 0.2rem rgba(0, 0, 0, 0.9), 0 0 0.5rem rgba(243, 203, 125, 0.4);
   white-space: nowrap;
 }
+
+.header-cell-clock {
+  display: block;
+  font-family: Tahoma, Verdana, "Segoe UI", sans-serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #fffdf8;
+  letter-spacing: 0.06rem;
+  line-height: 1.15;
+  margin-top: 0.2rem;
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 0.1rem 0.2rem rgba(0, 0, 0, 0.9);
+  white-space: nowrap;
+}
+
 
 #header {
   display: flex;
