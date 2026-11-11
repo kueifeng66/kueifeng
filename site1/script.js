@@ -412,6 +412,7 @@ const state = {
   day: now.getDate(),
   initialDay: now.getDate(),
   headerClickCount: 1,
+  tooltipMoved: false, // true once the user drags the tooltip															  
   username: null,
   targetName: null,
   selectedStaff: null,
@@ -1185,6 +1186,8 @@ function showTooltip(date) {
 
   dom.tooltip.style.display = 'block';
   dom.tooltip.style.fontSize = '16px';
+    // Default anchor: below the header cell, unless the user has dragged it elsewhere
+  if (!state.tooltipMoved) positionTooltip();																					
   document.title = holiday[date] || dom.defaultTitle;
 }
 
@@ -2186,6 +2189,7 @@ document.addEventListener('mousemove', (e) => {
 // Draggable tooltip
 attachDragBehavior(dom.tooltip, {
   onDragMove: (x, y) => {
+	state.tooltipMoved = true;								  
     dom.tooltip.style.left = `${x}px`;
     dom.tooltip.style.top = `${y}px`;
   },
