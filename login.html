@@ -398,7 +398,7 @@
 
                     registerForm.reset();
                     switchMode("login", false);
-                    setStatus("Registration successful! Your account is pending administrator approval.", true);
+                    setStatus("註冊成功，等待審核中。(Registration successful! Your account is pending administrator approval.)", true);
                 } catch (error) {
                     setStatus(formatFirebaseError(error));
                 } finally {
