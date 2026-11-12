@@ -4,14 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>On Duty Calendar</title>
-	<style>
+    <style>
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+
         html {
-                font-size: 62.5%; /* 1rem = 10px */
-                height: 100%;
-                width: 100%;
-                margin: 0;
-                padding: 0;
-             }
+            font-size: 62.5%; /* 1rem = 10px */
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+        }
 
         body {
             font-family: Arial, sans-serif;
@@ -19,253 +23,465 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            min-width: 100vw;
+            min-height: 100vh;
+            margin: 0;
+            padding: 2rem 1.5rem;
             background-image: url('site1/tower.png');
             background-size: cover;
-            margin: 0;
+            background-position: center;
             background-attachment: fixed;
         }
-        h2 {
-        color: #007BFF;
-        font-size: 5rem;
-        margin-bottom: 2rem;
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
+
+        .login-container {
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border-radius: 20px;
+            padding: 35px 35px 30px;
+            width: 100%;
+            max-width: 380px;
+            text-align: center;
+            color: #333;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            animation: fadeIn 0.8s ease-in-out;
         }
 
-        /* h2 span {
-        position: relative;
-        display: inline-block;
-        color: #007BFF;
-        text-shadow: 0 0.1rem 0 #fff, 0 0.2rem 0 #fff, 0 0.3rem 0 #b7b7b7,
-            0 0.4rem 0 #b7b7b7, 0 0.5rem 0 #b7b7b7, 0 0.7rem 0 #b7b7b7,
-            0 0.8rem 0 #b7b7b7, 0 0.9rem 0 #b7b7b7, 0 1rem 1rem rgba(0,0,0,0.1);
-
-           
-        animation: bounce 3s ease-in-out infinite;
-        }
-
-       
-        h2 span:nth-child(1)  { animation-delay: 0s; }
-        h2 span:nth-child(2)  { animation-delay: 0.2s; }
-        h2 span:nth-child(3)  { width:1.5rem }
-        h2 span:nth-child(4)  { animation-delay: 0.6s; }
-        h2 span:nth-child(5)  { animation-delay: 0.8s; }
-        h2 span:nth-child(6)  { animation-delay: 1.0s; }
-        h2 span:nth-child(7)  { animation-delay: 1.2s; }
-        h2 span:nth-child(8)  { width:1.5rem }
-        h2 span:nth-child(9)  { animation-delay: 1.6s; }
-        h2 span:nth-child(10) { animation-delay: 1.8s; }
-        h2 span:nth-child(11) { animation-delay: 2s; }
-        h2 span:nth-child(12) { animation-delay: 2.2s; }
-        h2 span:nth-child(13) { animation-delay: 2.4s; }
-        h2 span:nth-child(14) { animation-delay: 2.6s; }
-        h2 span:nth-child(15) { animation-delay: 2.8s; }
-        h2 span:nth-child(16) { animation-delay: 3.0s; }
-
-        @keyframes bounce {
-            0%, 100% {
-                top: 0;
-            }
-            50% {
-            top: -2rem;
-            text-shadow: 0 0.1rem 0 #fff, 0 0.2rem 0 #fff, 0 0.3rem 0 #fff,
-            0 0.4rem 0 #fff, 0 0.5rem 0 #fff, 0 0.6rem 0 #fff,
-            0 0.7rem 0 #fff, 0 0.8rem 0 #fff, 0 0.9rem 0 #fff,
-            0 6rem 3rem rgba(0,0,0,0.1);
-                         
-            }
-        } */
-
-
-        input {
-            width: 30rem; 
-            padding: 1.5rem;
-            font-size: 2.2rem;
-            margin: 1rem 0;
-            border: 0.2rem solid #ccc;
-            border-radius: 0.5rem;
-        }
-        button {
-            width: 32rem;
-            padding: 1.5rem;
-            font-size: 4rem;
-            background-color: #007BFF;
-            color: white;
-            border: none;
-            border-radius: 0.5rem;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-
-        .btn-login {
-            font-size: 4rem;
+        .login-container h2 {
+            margin: 0 0 20px;
+            font-size: 2.6rem;
+            color: #007BFF;
             font-weight: bold;
-            padding: 1.5rem 5rem;
+            text-shadow: 0 1px 2px rgba(255, 255, 255, 0.6);
+        }
+
+        /* Clean mode toggle tab pills */
+        .tab-switcher {
+            display: flex;
+            background: rgba(255, 255, 255, 0.4);
+            border-radius: 30px;
+            padding: 4px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.6);
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 8px 12px;
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #0056b3;
+            background: transparent;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+
+        .tab-btn.active {
+            background: #007BFF;
+            color: #ffffff;
+            box-shadow: 0 2px 6px rgba(0, 123, 255, 0.35);
+        }
+
+        .auth-form {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .auth-form[hidden] {
+            display: none !important;
+        }
+
+        .login-container input {
+            width: 100%;
+            padding: 13px 16px;
+            margin: 0;
+            border: 1px solid rgba(255, 255, 255, 0.7);
+            border-radius: 10px;
+            outline: none;
+            font-size: 1.5rem;
+            color: #333;
+            background: rgba(255, 255, 255, 0.85);
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.08);
+            transition: all 0.2s ease;
+        }
+
+        .login-container input:focus {
+            background: #ffffff;
+            border-color: #007BFF;
+            box-shadow: 0 0 8px rgba(0, 123, 255, 0.4);
+        }
+
+        .login-container input::placeholder {
+            color: #777;
+        }
+
+        /* Cozy Original Blue 3D Button */
+        .btn-login {
+            width: 100%;
+            padding: 12px 20px;
+            font-size: 2rem;
+            font-weight: bold;
             color: white;
             border: none;
-            border-radius: 1rem;
+            border-radius: 10px;
             cursor: pointer;
             position: relative;
             background: linear-gradient(145deg, #007BFF, #0056b3);
-            box-shadow: 0.2rem 0.2rem 0 #004494, 0.3rem 0.3rem 0.5rem #555;
+            box-shadow: 0 4px 10px rgba(0, 86, 179, 0.35);
             transition: all 0.2s ease-in-out;
-             user-select: none;  
-            -webkit-user-select: none;  
-            -moz-user-select: none;    
-            -ms-user-select: none;      
-            -webkit-touch-callout: none;  
+            margin-top: 6px;
+            user-select: none;
+            -webkit-user-select: none;
         }
 
-        .btn-login::before {
-            content: "";
+        .btn-login:hover:not(:disabled) {
+            background: linear-gradient(145deg, #0088ff, #005ec4);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 14px rgba(0, 86, 179, 0.45);
+        }
+
+        .btn-login:active:not(:disabled) {
+            transform: translateY(1px);
+            box-shadow: 0 2px 6px rgba(0, 86, 179, 0.3);
+        }
+
+        .btn-login:disabled {
+            opacity: 0.65;
+            cursor: wait;
+        }
+
+        .switch-link-wrapper {
+            margin-top: 14px;
+            font-size: 1.3rem;
+            color: #333;
+        }
+
+        .switch-link {
+            color: #0056b3;
+            font-weight: bold;
+            background: none;
+            border: none;
+            padding: 0;
+            font-size: 1.3rem;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        .switch-link:hover {
+            color: #007BFF;
+        }
+
+        .error-message {
+            min-height: 2rem;
+            margin-top: 14px;
+            color: #d92525;
+            font-size: 1.35rem;
+            line-height: 1.4;
+            font-weight: 500;
+            text-shadow: 0 0 4px rgba(255, 255, 255, 0.8);
+        }
+
+        .error-message.success {
+            color: #0f8b3b;
+        }
+
+        .visually-hidden {
             position: absolute;
-            top: 0rem;
-            left: 0rem;
-            right: 0rem;
-            bottom: 0rem;
-            background: linear-gradient(145deg, #008CFF, #0049A0);
-            border-radius: 1rem;
-            z-index: -1;
-            box-shadow: inset 0rem 0rem 0.5rem rgba(255, 255, 255, 0.7);
+            clip-path: inset(50%);
+            overflow: hidden;
+            width: 1px;
+            height: 1px;
+            margin: -1px;
+            padding: 0;
+            border: 0;
+            white-space: nowrap;
         }
 
-        .btn-login:hover {
-            transform: translateY(-0.1rem);
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-
-        .btn-login:active {
-            transform: translateY(0.1rem);
-            box-shadow: 0.1rem 0.1rem 0 #004494, 0.2rem 0.2rem 0.5rem rgba(0, 0, 0, 0.2);
-        }
-
-
-   .login-container {
-      background: rgba(255, 255, 255, 0.15);
-      backdrop-filter: blur(12px);
-      border-radius: 20px;
-      padding: 40px;
-      width: 350px;
-      text-align: center;
-      color: white;
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
-      animation: fadeIn 1.2s ease-in-out;
-    }
-    .login-container h2 {
-      margin-bottom: 20px;
-      font-size: 28px;
-    }
-    .login-container input {
-      width: 100%;
-      padding: 12px;
-      margin: 12px 0;
-      border: none;
-      border-radius: 10px;
-      outline: none;
-      font-size: 16px;
-    }
-    
-    .login-container input[type="email"],
-    .login-container input[type="password"] {
-      background: rgba(255, 255, 255, 0.8);
-    }
-
-    .login-container button {
-      width: 100%;
-      padding: 12px;
-      border: none;
-      border-radius: 10px;
-      color: white;
-      font-size: 18px;
-      cursor: pointer;
-      margin-top: 15px;
-      transition: 0.3s;
-    }
-
-     .error-message {
-	      min-height: 2rem;
-	      margin-top: 1rem;
-	      color: #ffdddd;
-	      font-size: 1.4rem;
-	      text-shadow: 0 0 0.3rem rgba(0, 0, 0, 0.5);
-	    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(-30px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-
     </style>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } 
-          from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+        import {
+            getAuth,
+            signInWithEmailAndPassword,
+            createUserWithEmailAndPassword,
+            updateProfile,
+            signOut
+        } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+        import {
+            getDatabase,
+            ref,
+            get,
+            set
+        } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
-           const firebaseConfig = {
-                    apiKey: "AIzaSyB09LglfIXHfUGUWI5cFRzQvyz8D90dlGc",
-                    authDomain: "on-duty-calenadar.firebaseapp.com",
-                    projectId: "on-duty-calenadar",
-                    storageBucket: "on-duty-calenadar.firebasestorage.app",
-                    messagingSenderId: "1048788052024",
-                    appId: "1:1048788052024:web:ea80ce1666c99ebc429ecd",
-                    measurementId: "G-CHLW1GSW19"
-                };
+        const firebaseConfig = {
+            apiKey: "AIzaSyB09LglfIXHfUGUWI5cFRzQvyz8D90dlGc",
+            authDomain: "on-duty-calenadar.firebaseapp.com",
+            projectId: "on-duty-calenadar",
+            storageBucket: "on-duty-calenadar.firebasestorage.app",
+            messagingSenderId: "1048788052024",
+            appId: "1:1048788052024:web:ea80ce1666c99ebc429ecd",
+            measurementId: "G-CHLW1GSW19",
+            databaseURL: "https://on-duty-calenadar-default-rtdb.asia-southeast1.firebasedatabase.app"
+        };
 
-        
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
+        const database = getDatabase(app);
 
-document.addEventListener("DOMContentLoaded", () => {
-   const loginButton = document.getElementById("login");
-        const errorMessage = document.getElementById("error-message");
-	    let holdTimer;
+        function formatFirebaseError(error) {
+            switch (error?.code) {
+                case "auth/email-already-in-use":
+                    return "This email is already registered. Please log in.";
+                case "auth/invalid-email":
+                    return "Please enter a valid email address.";
+                case "auth/weak-password":
+                    return "Password should be at least 6 characters long.";
+                case "auth/invalid-credential":
+                case "auth/user-not-found":
+                case "auth/wrong-password":
+                    return "Login failed. Please check your email and password.";
+                case "auth/too-many-requests":
+                    return "Too many attempts. Please try again later.";
+                default:
+                    return error?.message || "Authentication failed. Please try again.";
+            }
+        }
 
-	    loginButton.addEventListener("click", () => {
-	        const email = document.getElementById("email").value.trim();
-	        const password = document.getElementById("password").value.trim();
-            errorMessage.textContent = "";
+        document.addEventListener("DOMContentLoaded", () => {
+            const tabLogin = document.getElementById("tabLogin");
+            const tabRegister = document.getElementById("tabRegister");
+            const loginForm = document.getElementById("loginForm");
+            const registerForm = document.getElementById("registerForm");
+            const errorMessage = document.getElementById("error-message");
 
-	        // Only attempt login if both fields are filled
-	        if (email && password) {
+            const emailInput = document.getElementById("email");
+            const passwordInput = document.getElementById("password");
+            const loginButton = document.getElementById("login");
+
+            const regNameInput = document.getElementById("regName");
+            const regEmailInput = document.getElementById("regEmail");
+            const regPasswordInput = document.getElementById("regPassword");
+            const registerButton = document.getElementById("register");
+
+            function setStatus(msg, isSuccess = false) {
+                errorMessage.textContent = msg;
+                errorMessage.classList.toggle("success", isSuccess);
+            }
+
+            function switchMode(mode, moveFocus = true) {
+                const isLogin = mode === "login";
+                tabLogin.classList.toggle("active", isLogin);
+                tabRegister.classList.toggle("active", !isLogin);
+
+                loginForm.hidden = !isLogin;
+                loginForm.inert = !isLogin;
+                registerForm.hidden = isLogin;
+                registerForm.inert = isLogin;
+
+                setStatus("");
+
+                if (moveFocus) {
+                    if (isLogin) {
+                        emailInput.focus();
+                    } else {
+                        regNameInput.focus();
+                    }
+                }
+            }
+
+            tabLogin.addEventListener("click", () => switchMode("login"));
+            tabRegister.addEventListener("click", () => switchMode("register"));
+            document.getElementById("goToRegister").addEventListener("click", () => switchMode("register"));
+            document.getElementById("goToLogin").addEventListener("click", () => switchMode("login"));
+
+            [emailInput, passwordInput, regNameInput, regEmailInput, regPasswordInput].forEach((inp) => {
+                inp.addEventListener("input", () => {
+                    if (errorMessage.textContent) setStatus("");
+                });
+            });
+
+            // Login submission
+            loginForm.addEventListener("submit", async (e) => {
+                e.preventDefault();
+                const email = emailInput.value.trim();
+                const password = passwordInput.value;
+                setStatus("");
+
+                if (!email || !password) {
+                    setStatus("Please enter both email and password.");
+                    return;
+                }
+
                 loginButton.disabled = true;
                 loginButton.textContent = "Logging in...";
-	            signInWithEmailAndPassword(auth, email, password)
-	                .then(() => {
-	                    window.location.href = "index.html"; // Redirect to main page
-	                })
-	                .catch(error => {
-                        errorMessage.textContent = "Login failed. Please check your email and password.";
-                    })
-                    .finally(() => {
-                        loginButton.disabled = false;
-                        loginButton.textContent = "Login";
-                    });
-	        } else {
-                errorMessage.textContent = "Please enter both email and password.";
-	        }
-	    });
 
-   
-});
+                try {
+                    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                    const user = userCredential.user;
 
+                    // Verify admin approval in database
+                    try {
+                        const userSnap = await get(ref(database, `users/${user.uid}`));
+                        if (userSnap.exists()) {
+                            const userData = userSnap.val();
+                            if (userData.approved === false) {
+                                await signOut(auth);
+                                setStatus("Your account is pending administrator approval before you can log in.");
+                                return;
+                            }
+                        }
+                    } catch (checkErr) {
+                        console.warn("Could not verify approval:", checkErr);
+                    }
 
+                    window.location.href = "index.html";
+                } catch (error) {
+                    setStatus(formatFirebaseError(error));
+                } finally {
+                    loginButton.disabled = false;
+                    loginButton.textContent = "Login";
+                }
+            });
+
+            // Register submission
+            registerForm.addEventListener("submit", async (e) => {
+                e.preventDefault();
+                const fullName = regNameInput.value.trim();
+                const email = regEmailInput.value.trim();
+                const password = regPasswordInput.value;
+                setStatus("");
+
+                if (!fullName || !email || !password) {
+                    setStatus("Please fill in your full name, email, and password.");
+                    return;
+                }
+
+                if (password.length < 6) {
+                    setStatus("Password should be at least 6 characters long.");
+                    return;
+                }
+
+                registerButton.disabled = true;
+                registerButton.textContent = "Registering...";
+
+                try {
+                    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                    const user = userCredential.user;
+
+                    if (fullName) {
+                        await updateProfile(user, { displayName: fullName });
+                    }
+
+                    // Store pending approval record in database
+                    try {
+                        await set(ref(database, `users/${user.uid}`), {
+                            displayName: fullName,
+                            email: email,
+                            approved: false,
+                            createdAt: new Date().toISOString()
+                        });
+                    } catch (dbErr) {
+                        console.warn("Could not write user profile:", dbErr);
+                    }
+
+                    // Immediately sign out pending user
+                    await signOut(auth);
+
+                    registerForm.reset();
+                    switchMode("login", false);
+                    setStatus("Registration successful! Your account is pending administrator approval.", true);
+                } catch (error) {
+                    setStatus(formatFirebaseError(error));
+                } finally {
+                    registerButton.disabled = false;
+                    registerButton.textContent = "Register";
+                }
+            });
+        });
     </script>
 </head>
 <body>
-<div class="login-container">
-    <h2>On Duty Calendar</h2>
-    
-   
-	
-	<input type="email" id="email" placeholder="Enter email" aria-label="Email">
-    <input type="password" id="password" placeholder="Enter password" aria-label="Password">
-    <button class="btn-login" id="login" aria-label="Log in">Login</button>
-    <div id="error-message" class="error-message" aria-live="polite"></div>
-    
-</div>
-    
+    <div class="login-container">
+        <h2>On Duty Calendar</h2>
+
+        <div class="tab-switcher" role="tablist" aria-label="Mode selection">
+            <button type="button" id="tabLogin" class="tab-btn active" role="tab" aria-selected="true">Login</button>
+            <button type="button" id="tabRegister" class="tab-btn" role="tab" aria-selected="false">Register</button>
+        </div>
+
+        <!-- Login Form -->
+        <form id="loginForm" class="auth-form" method="post" action="#" novalidate>
+            <input
+                type="email"
+                id="email"
+                name="email"
+                placeholder="Enter email"
+                autocomplete="username"
+                spellcheck="false"
+                required
+            >
+            <input
+                type="password"
+                id="password"
+                name="password"
+                placeholder="Enter password"
+                autocomplete="current-password"
+                required
+            >
+            <button type="submit" class="btn-login" id="login">Login</button>
+
+            <div class="switch-link-wrapper">
+                Don't have an account?
+                <button type="button" id="goToRegister" class="switch-link">Register</button>
+            </div>
+        </form>
+
+        <!-- Register Form -->
+        <form id="registerForm" class="auth-form" method="post" action="#" hidden inert novalidate>
+            <input
+                type="text"
+                id="regName"
+                name="name"
+                placeholder="Enter full name"
+                autocomplete="name"
+                required
+            >
+            <input
+                type="email"
+                id="regEmail"
+                name="email"
+                placeholder="Enter email"
+                autocomplete="username"
+                spellcheck="false"
+                required
+            >
+            <input
+                type="password"
+                id="regPassword"
+                name="new-password"
+                placeholder="Enter password (min 6 characters)"
+                autocomplete="new-password"
+                minlength="6"
+                required
+            >
+            <button type="submit" class="btn-login" id="register">Register</button>
+
+            <div class="switch-link-wrapper">
+                Already have an account?
+                <button type="button" id="goToLogin" class="switch-link">Login</button>
+            </div>
+        </form>
+
+        <div id="error-message" class="error-message" role="status" aria-live="polite"></div>
+    </div>
 </body>
 </html>
