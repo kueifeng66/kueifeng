@@ -335,7 +335,7 @@
                             const userData = userSnap.val();
                             if (userData.approved === false) {
                                 await signOut(auth);
-                                setStatus("Your account is pending administrator approval before you can log in.");
+                                setStatus("審核完成後才能登入。(Your account is pending administrator approval before you can log in.)");
                                 return;
                             }
                         }
