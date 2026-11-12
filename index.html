@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link id="favicon" rel="icon" href="favicon1.ico" type="image/x-icon">
-    <title>Last Updated: 2026-11-12</title>
+    <title>Last Updated: 2026-11-02</title>
     <style>
         html {
               font-size: 62.5%; /* 1rem = 10px */
@@ -37,8 +37,8 @@
             border-radius: 50%;
             box-shadow: 0px 0.4rem 0.6rem rgba(0, 0, 0, 0.2);
             cursor: pointer;
-	    z-index: 1;
-            
+	    z-index: 10;
+			
         }
         #logout-btn {
             width:5rem;
@@ -55,8 +55,182 @@
             border-radius: 50%;
             box-shadow: 0px 0.4rem 0.6rem rgba(0, 0, 0, 0.2);
             cursor: pointer;
-            z-index: 1;
-            
+            z-index: 10;
+        }
+
+        /* Admin review bell button & badge */
+        #admin-review-btn {
+            display: none;
+            width: 5rem;
+            height: 5rem;
+            position: fixed;
+            bottom: 2rem;
+            right: 14rem;
+            padding: 1.2rem;
+            background-color: #ff9800;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            box-shadow: 0px 0.4rem 0.6rem rgba(0, 0, 0, 0.25);
+            cursor: pointer;
+            z-index: 10;
+            transition: transform 0.2s, background-color 0.2s;
+        }
+        #admin-review-btn:hover {
+            background-color: #f57c00;
+            transform: scale(1.05);
+        }
+        #pending-badge {
+            display: none;
+            position: absolute;
+            top: -0.4rem;
+            right: -0.4rem;
+            background-color: #e53935;
+            color: white;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border-radius: 50%;
+            min-width: 2.2rem;
+            height: 2.2rem;
+            line-height: 2.2rem;
+            text-align: center;
+            border: 2px solid white;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.15); }
+            100% { transform: scale(1); }
+        }
+
+        /* Modal Overlay & Card */
+        #review-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.45);
+            backdrop-filter: blur(4px);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+        }
+        #review-modal.show {
+            display: flex;
+        }
+        .review-card {
+            background: #ffffff;
+            width: 90%;
+            max-width: 520px;
+            max-height: 80vh;
+            border-radius: 1.5rem;
+            box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            font-family: Arial, sans-serif;
+            animation: modalFadeIn 0.25s ease-out;
+        }
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: translateY(-15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.6rem 2rem;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+        }
+        .review-header h3 {
+            margin: 0;
+            font-size: 1.8rem;
+            color: #333;
+        }
+        .review-close {
+            background: none;
+            border: none;
+            font-size: 2.2rem;
+            color: #888;
+            cursor: pointer;
+            line-height: 1;
+            padding: 0 0.5rem;
+        }
+        .review-close:hover {
+            color: #333;
+        }
+        .review-body {
+            padding: 1.5rem 2rem;
+            overflow-y: auto;
+            flex: 1;
+        }
+        .pending-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.2rem;
+            background: #fbfbfb;
+            border: 1px solid #eee;
+            border-radius: 0.8rem;
+            margin-bottom: 1rem;
+            gap: 1rem;
+        }
+        .pending-info {
+            text-align: left;
+            font-size: 1.3rem;
+            line-height: 1.5;
+            color: #444;
+        }
+        .pending-name {
+            font-weight: bold;
+            font-size: 1.5rem;
+            color: #007BFF;
+        }
+        .pending-time {
+            font-size: 1.1rem;
+            color: #888;
+        }
+        .pending-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+        .btn-approve {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 0.8rem 1.4rem;
+            font-size: 1.3rem;
+            font-weight: bold;
+            border-radius: 0.6rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            white-space: nowrap;
+        }
+        .btn-approve:hover {
+            background: #218838;
+        }
+        .btn-deny {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 0.8rem 1.4rem;
+            font-size: 1.3rem;
+            font-weight: bold;
+            border-radius: 0.6rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            white-space: nowrap;
+        }
+        .btn-deny:hover {
+            background: #c82333;
+        }
+        .empty-pending {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: #777;
+            font-size: 1.5rem;
         }
         button:active {
             background-color: #0056b3;
@@ -75,7 +249,7 @@
 	<script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-        import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+        import { getDatabase, ref, get, update, onValue } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
         // Initialize Firebase
         const firebaseConfig = {
@@ -98,6 +272,132 @@ const noAutoLogoutUsers = [
   "qqcats0901@mail.post.gov.tw",
   "chinjiewan@anws.gov.tw"
 ];
+
+const adminEmails = [
+  "kueifeng7166@gmail.com"
+];
+
+let pendingUsersMap = {};
+
+function initAdminReviewSystem(userEmail) {
+  if (!adminEmails.includes(userEmail)) return;
+
+  const reviewBtn = document.getElementById("admin-review-btn");
+  const pendingBadge = document.getElementById("pending-badge");
+  const modal = document.getElementById("review-modal");
+  const modalClose = document.getElementById("review-modal-close");
+  const pendingList = document.getElementById("pending-users-list");
+
+  reviewBtn.style.display = "block";
+
+  reviewBtn.addEventListener("click", () => {
+    modal.classList.add("show");
+  });
+
+  modalClose.addEventListener("click", () => {
+    modal.classList.remove("show");
+  });
+
+  modal.addEventListener("click", (e) => {
+    if (e.target === modal) modal.classList.remove("show");
+  });
+
+  // Listen to users collection in real time
+  const usersRef = ref(database, "users");
+  onValue(usersRef, (snapshot) => {
+    pendingUsersMap = {};
+    if (snapshot.exists()) {
+      const data = snapshot.val();
+      Object.keys(data).forEach((uid) => {
+        if (data[uid] && data[uid].approved === false) {
+          pendingUsersMap[uid] = data[uid];
+        }
+      });
+    }
+
+    const pendingKeys = Object.keys(pendingUsersMap);
+    const count = pendingKeys.length;
+
+    if (count > 0) {
+      pendingBadge.style.display = "block";
+      pendingBadge.textContent = count > 99 ? "99+" : count;
+      reviewBtn.title = `${count} pending registration approval(s)`;
+    } else {
+      pendingBadge.style.display = "none";
+      reviewBtn.title = "Review registrations (0 pending)";
+    }
+
+    // Render list inside modal
+    if (count === 0) {
+      pendingList.innerHTML = `<div class="empty-pending">No pending user registrations.</div>`;
+    } else {
+      pendingList.innerHTML = pendingKeys.map((uid) => {
+        const u = pendingUsersMap[uid];
+        const dateStr = u.createdAt ? new Date(u.createdAt).toLocaleString() : "";
+        return `
+          <div class="pending-item" id="item-${uid}">
+            <div class="pending-info">
+              <div class="pending-name">${escapeHtml(u.displayName || "No Name")}</div>
+              <div>${escapeHtml(u.email || "")}</div>
+              ${dateStr ? `<div class="pending-time">${dateStr}</div>` : ""}
+            </div>
+            <div class="pending-actions">
+              <button type="button" class="btn-approve" data-uid="${uid}" title="Approve registration">Approve</button>
+              <button type="button" class="btn-deny" data-uid="${uid}" title="Deny registration">Deny</button>
+            </div>
+          </div>
+        `;
+      }).join("");
+
+      pendingList.querySelectorAll(".btn-approve").forEach((btn) => {
+        btn.addEventListener("click", async () => {
+          const targetUid = btn.getAttribute("data-uid");
+          btn.disabled = true;
+          btn.textContent = "Approving...";
+          try {
+            await update(ref(database, `users/${targetUid}`), { 
+              approved: true,
+              status: "approved"
+            });
+          } catch (err) {
+            alert("Error approving user: " + err.message);
+            btn.disabled = false;
+            btn.textContent = "Approve";
+          }
+        });
+      });
+
+      pendingList.querySelectorAll(".btn-deny").forEach((btn) => {
+        btn.addEventListener("click", async () => {
+          const targetUid = btn.getAttribute("data-uid");
+          const targetUser = pendingUsersMap[targetUid];
+          const name = targetUser?.displayName || targetUser?.email || "this user";
+          if (!confirm(`Are you sure you want to deny ${name}?`)) {
+            return;
+          }
+          btn.disabled = true;
+          btn.textContent = "Denying...";
+          try {
+            await update(ref(database, `users/${targetUid}`), { 
+              approved: "denied",
+              status: "denied"
+            });
+          } catch (err) {
+            alert("Error denying user: " + err.message);
+            btn.disabled = false;
+            btn.textContent = "Deny";
+          }
+        });
+      });
+    }
+  });
+}
+
+function escapeHtml(str) {
+  return str.replace(/[&<>'"]/g, 
+    tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
+  );
+}
 
         // inside your module after successful login:
 onAuthStateChanged(auth, async (user) => {
@@ -124,6 +424,7 @@ onAuthStateChanged(auth, async (user) => {
   //  store globally
   window.currentUserEmail = user.email;
   resetTimer();
+  initAdminReviewSystem(user.email);
 
   const iframe = document.getElementById('website-frame');
   iframe.src = `site1/index.html?userEmail=${encodeURIComponent(user.email)}`;
@@ -248,7 +549,13 @@ function initializeInactivityTimer() {
 </head>
 <body>
     <iframe id="website-frame" src="site1/index.html"></iframe>
-    <button id="switchWebsite"onclick="switchWebsite()">⇄</button>
+    <button id="admin-review-btn" title="Pending Registrations">
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+            <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2zm-2 1H8v-6c0-2.48 1.51-4.5 4-4.5s4 2.02 4 4.5v6z"/>
+        </svg>
+        <span id="pending-badge">0</span>
+    </button>
+    <button id="switchWebsite" onclick="switchWebsite()">⇄</button>
     <button id="logout-btn" onclick="logout()">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20">
             <rect x="5" y="11" width="14" height="10" rx="2" ry="2" fill="white" stroke="white" stroke-width="1" />
@@ -258,6 +565,19 @@ function initializeInactivityTimer() {
         </svg>
     </button>
 
+    <!-- Admin Review Modal -->
+    <div id="review-modal">
+        <div class="review-card">
+            <div class="review-header">
+                <h3>Pending User Registrations</h3>
+                <button type="button" class="review-close" id="review-modal-close">&times;</button>
+            </div>
+            <div class="review-body" id="pending-users-list">
+                <div class="empty-pending">Loading...</div>
+            </div>
+        </div>
+    </div>
+
     <script>
         const sites = [
             { src: 'site1/index.html', favicon: 'favicon1.ico' },
@@ -266,7 +586,7 @@ function initializeInactivityTimer() {
             { src: 'site4/index.html', favicon: 'favicon4.ico' },
             { src: 'site5/index.html', favicon: 'favicon5.ico' },
             { src: 'site6/index.html', favicon: 'favicon6.ico' },
-			      { src: 'site7/index.html', favicon: 'favicon6.ico' },
+			{ src: 'site7/index.html', favicon: 'favicon6.ico' },
         ];
         let currentSiteIndex = 0;
        
