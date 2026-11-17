@@ -47,7 +47,7 @@ const EMAIL_NAME_MAP = {
   'cw.chang@anws.gov.tw': '張哲維',
   'death174@gmail.com': '周育稔',
   'johnnyjan65@gmail.com': '詹文欽',
-  'p0915208386@gmail.com': '清潔劉小惠',
+  'liu@gmail.com': '劉小惠',
   'larchyde310119@hotmail.com': '邱冠霖',
   'swimmingfish@hotmail.com.tw': '余金原',
   'sct@anws.gov.tw': '孫景泰',
