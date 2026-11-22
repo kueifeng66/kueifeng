@@ -2,64 +2,242 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chinese New Year Countdown</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;900&display=swap"
-        rel="stylesheet">
-    <link rel="stylesheet" href="./app.css">
-    <script type="speculationrules">
-        {
-          "prerender": [
-            {
-              "urls": ["/", "/site1/index.html", "/site2/index.html", "/site3/index.html"],
-              "eagerness": "eager"
-            }
-          ]
-        }
-    </script>
-    <script defer src="./fireworks.js"></script>
-    <script defer src="./app.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#050816">
+  <title>Chinese New Year Countdown | Celestial Skyline</title>
+  <link rel="icon" type="image/svg+xml"
+    href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23070c1e'/%3E%3Cpath d='M32 10c-8 7-13 15-13 24 0 8 6 14 13 14s13-6 13-14c0-9-5-17-13-24z' fill='%23e8503a'/%3E%3Cpath d='M32 14c-5 6-8 12-8 19 0 5 3.5 9 8 9s8-4 8-9c0-7-3-13-8-19z' fill='%23f6c978'/%3E%3Crect x='26' y='49' width='12' height='4' rx='2' fill='%23d8a34a'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Noto+Serif+TC:wght@500;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="./app.css">
+  <script defer src="./audio.js"></script>
+  <script defer src="./fireworks-engine.js"></script>
+  <script defer src="./scene.js"></script>
+  <script defer src="./app.js"></script>
 </head>
 
 <body>
+  <canvas id="stage-canvas" aria-hidden="true"></canvas>
+  <div class="film-grain" aria-hidden="true"></div>
+  <div class="horizon-vignette" aria-hidden="true"></div>
 
-    <div class="content-wrapper">
-        <p class="header">Kueifeng wish you a Happy Chinese New Year!!</p>
-        <h1 class="year" id="new-year">0000</h1>
-        <div class="timer">
-            <div class="timer-box">
-                <div class="timer-box__count">
-                    <span id="days">0</span>
-                </div>
-                <div class="timer-box__text">Days</div>
-            </div>
-            <div class="timer-box">
-                <div class="timer-box__count">
-                    <span id="hours">0</span>
-                </div>
-                <div class="timer-box__text">Hours</div>
-            </div>
-            <div class="timer-box">
-                <div class="timer-box__count">
-                    <span id="minutes">0</span>
-                </div>
-                <div class="timer-box__text">Minutes</div>
-            </div>
-            <div class="timer-box">
-                <div class="timer-box__count">
-                    <span id="seconds">0</span>
-                </div>
-                <div class="timer-box__text">Seconds</div>
-            </div>
+  <div class="page-shell">
+    <header class="top-bar">
+      <div class="brand-seal">
+        <span class="seal-mark" aria-hidden="true">福</span>
+        <div class="brand-meta">
+          <span class="brand-kicker">Taipei Midnight Observatory</span>
+          <span class="brand-sub" id="target-date-label">Loading lunar calendar…</span>
         </div>
+      </div>
+
+      <div class="mode-switch" role="group" aria-label="Countdown calendar mode">
+        <button type="button" class="mode-btn is-active" data-mode="lunar" aria-pressed="true">
+          Lunar New Year
+        </button>
+        <button type="button" class="mode-btn" data-mode="gregorian" aria-pressed="false">
+          Jan 1 New Year
+        </button>
+      </div>
+    </header>
+
+    <main class="hero-stage" id="main-stage">
+      <p class="dedication">
+        <span class="dedication-line" aria-hidden="true"></span>
+        <span>Kueifeng wishes you a Happy Chinese New Year</span>
+        <span class="dedication-line" aria-hidden="true"></span>
+      </p>
+
+      <div class="year-lockup">
+        <div class="zodiac-badge" id="zodiac-badge">
+          <span class="zodiac-hanzi" lang="zh-Hant" id="zodiac-hanzi">丁未年</span>
+          <span class="zodiac-sep" aria-hidden="true">·</span>
+          <span class="zodiac-en" id="zodiac-en">Year of the Fire Goat</span>
+        </div>
+        <h1 class="year-display" id="new-year">2027</h1>
+      </div>
+
+      <div class="celebration-banner" id="celebration-banner" hidden>
+        <span class="celebration-hanzi" lang="zh-Hant">迎春納福 · 歲歲平安</span>
+        <p class="celebration-title">Happy New Year!</p>
+      </div>
+
+      <section class="countdown-section" aria-label="Time remaining until New Year">
+        <div class="countdown-grid" role="timer" aria-live="off">
+          <article class="timer-card">
+            <div class="timer-card__frame">
+              <div class="timer-card__value-wrap">
+                <span class="timer-card__value" id="days">00</span>
+              </div>
+              <span class="timer-card__label">Days</span>
+            </div>
+          </article>
+
+          <article class="timer-card">
+            <div class="timer-card__frame">
+              <div class="timer-card__value-wrap">
+                <span class="timer-card__value" id="hours">00</span>
+              </div>
+              <span class="timer-card__label">Hours</span>
+            </div>
+          </article>
+
+          <article class="timer-card">
+            <div class="timer-card__frame">
+              <div class="timer-card__value-wrap">
+                <span class="timer-card__value" id="minutes">00</span>
+              </div>
+              <span class="timer-card__label">Minutes</span>
+            </div>
+          </article>
+
+          <article class="timer-card timer-card--seconds">
+            <div class="timer-card__frame">
+              <div class="timer-card__value-wrap">
+                <span class="timer-card__value" id="seconds">00</span>
+              </div>
+              <span class="timer-card__label">Seconds</span>
+            </div>
+          </article>
+        </div>
+
+        <p class="sky-hint" id="sky-hint">
+          <span class="sky-hint__dot" aria-hidden="true"></span>
+          Click or tap anywhere in the night sky to launch a bespoke firework
+        </p>
+      </section>
+    </main>
+
+    <footer class="dock-footer">
+      <nav class="control-dock" aria-label="Sky and celebration controls">
+        <button type="button" class="dock-btn dock-btn--accent" id="open-wish-btn">
+          <svg class="dock-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 3c-3.5 3.2-5.5 6.8-5.5 10.2A5.5 5.5 0 0 0 12 18.7a5.5 5.5 0 0 0 5.5-5.5C17.5 9.8 15.5 6.2 12 3Z" />
+            <path d="M9.5 19h5" />
+            <path d="M12 19v3" />
+          </svg>
+          <span>Wish Lantern</span>
+        </button>
+
+        <button type="button" class="dock-btn" id="finale-btn" aria-pressed="false">
+          <svg class="dock-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
+          </svg>
+          <span id="finale-btn-label">Finale Preview</span>
+        </button>
+
+        <button type="button" class="dock-btn" id="audio-menu-btn" popovertarget="audio-popover"
+          aria-expanded="false">
+          <svg class="dock-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+            <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14" />
+          </svg>
+          <span>Sound</span>
+        </button>
+
+        <button type="button" class="dock-btn" id="motion-toggle-btn">
+          <svg class="dock-icon" id="motion-icon-pause" aria-hidden="true" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="6" y="4" width="4" height="16" rx="1" />
+            <rect x="14" y="4" width="4" height="16" rx="1" />
+          </svg>
+          <svg class="dock-icon" id="motion-icon-play" aria-hidden="true" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" hidden>
+            <polygon points="6 4 20 12 6 20 6 4" />
+          </svg>
+          <span id="motion-btn-label">Pause Sky</span>
+        </button>
+      </nav>
+    </footer>
+  </div>
+
+  <!-- Native Popover for Sound Controls -->
+  <div id="audio-popover" popover="auto" class="audio-popover" aria-labelledby="audio-popover-title">
+    <div class="audio-popover__header">
+      <h2 id="audio-popover-title">Atmosphere Audio</h2>
+      <button type="button" class="icon-close-btn" popovertarget="audio-popover" popovertargetaction="hide"
+        aria-label="Close sound controls">×</button>
     </div>
-    <div class="fireworks-container" style="background-image: url(./background.jpg);"></div>
 
+    <div class="audio-row">
+      <div class="audio-row__info">
+        <span class="audio-row__title">Firework Acoustics</span>
+        <span class="audio-row__desc">Synthesized launch whistles &amp; skyline booms</span>
+      </div>
+      <button type="button" class="pill-toggle" id="sfx-toggle" aria-pressed="false">Off</button>
+    </div>
 
+    <div class="audio-row">
+      <div class="audio-row__info">
+        <span class="audio-row__title">Festive Melody</span>
+        <span class="audio-row__desc">Ambient Lunar New Year music</span>
+      </div>
+      <button type="button" class="pill-toggle" id="music-toggle" aria-pressed="false">Off</button>
+    </div>
+
+    <div class="audio-volume">
+      <label for="audio-volume-slider">Master Volume</label>
+      <input type="range" id="audio-volume-slider" min="0" max="100" value="55">
+    </div>
+  </div>
+
+  <!-- Native Modal Dialog for Wish Lantern -->
+  <dialog id="wish-dialog" class="wish-dialog" closedby="any" aria-labelledby="wish-dialog-title">
+    <form method="dialog" class="wish-form" id="wish-form">
+      <div class="wish-dialog__header">
+        <div>
+          <span class="wish-dialog__eyebrow" lang="zh-Hant">放天燈 · Pingxi Tradition</span>
+          <h2 id="wish-dialog-title">Release a Sky Lantern</h2>
+        </div>
+        <button type="submit" value="cancel" class="icon-close-btn" aria-label="Close dialog">×</button>
+      </div>
+
+      <p class="wish-dialog__lead">
+        Inscribe a wish for the coming year and send a glowing paper lantern drifting above the Taipei skyline.
+      </p>
+
+      <div class="wish-field">
+        <label for="wish-input">Your New Year Wish</label>
+        <input type="text" id="wish-input" name="wish" maxlength="36"
+          placeholder="Health, peace &amp; bright horizons" autocomplete="off" autofocus>
+        <span class="wish-field__hint" id="wish-char-hint">Up to 36 characters · floats in the night sky</span>
+      </div>
+
+      <fieldset class="lantern-colors">
+        <legend>Lantern Glow</legend>
+        <label class="color-choice">
+          <input type="radio" name="lanternColor" value="gold" checked>
+          <span class="color-swatch color-swatch--gold" aria-hidden="true"></span>
+          <span>Imperial Gold</span>
+        </label>
+        <label class="color-choice">
+          <input type="radio" name="lanternColor" value="vermilion">
+          <span class="color-swatch color-swatch--vermilion" aria-hidden="true"></span>
+          <span>Vermilion</span>
+        </label>
+        <label class="color-choice">
+          <input type="radio" name="lanternColor" value="jade">
+          <span class="color-swatch color-swatch--jade" aria-hidden="true"></span>
+          <span>Jade Mist</span>
+        </label>
+      </fieldset>
+
+      <div class="wish-actions">
+        <button type="submit" value="cancel" class="btn-secondary">Cancel</button>
+        <button type="submit" value="release" class="btn-primary">Release Lantern</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div class="visually-hidden" id="live-announcer" aria-live="polite"></div>
 </body>
 
 </html>
