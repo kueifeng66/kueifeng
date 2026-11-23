@@ -31,6 +31,7 @@ class CelestialScene {
     // Offscreen caches
     this.skyCache = document.createElement('canvas');
     this.nebulaCache = document.createElement('canvas');
+    this.farSkylineCache = document.createElement('canvas');
     this.skylineCache = document.createElement('canvas');
     this.moonCache = document.createElement('canvas');
     this.rooftopBeacons = [];
@@ -41,6 +42,7 @@ class CelestialScene {
     this.meteorTimer = 4.5;
     this.lanterns = [];
     this.wishLanterns = [];
+    this.boats = [];
     this.foregroundEmbers = [];
     this.beams = [];
 
@@ -89,6 +91,13 @@ class CelestialScene {
     for (let i = 0; i < 46; i++) {
       this.foregroundEmbers.push(this.createEmber(true));
     }
+
+    // 5. Riverside boats gliding gently under the moonlight
+    this.boats = [
+      { type: 'sampan', nx: 0.2, yFrac: 0.2, speedX: 0.0042, scale: 0.72, phase: 0.4 },
+      { type: 'cruiser', nx: 0.35, yFrac: 0.41, speedX: -0.0055, scale: 1.02, phase: 2.1 },
+      { type: 'ferry', nx: 0.74, yFrac: 0.28, speedX: 0.0038, scale: 0.84, phase: 4.3 },
+    ];
   }
 
   createLantern(depth, randomY = false) {
@@ -194,6 +203,7 @@ class CelestialScene {
     this.buildSkyCache();
     this.buildNebulaCache();
     this.buildMoonCache();
+    this.buildFarSkylineCache();
     this.buildSkylineCache();
   }
 
@@ -402,12 +412,12 @@ class CelestialScene {
     ctx.restore();
   }
 
-  buildSkylineCache() {
+  buildFarSkylineCache() {
     const w = Math.max(1, Math.round(this.width * this.dpr));
     const h = Math.max(1, Math.round(this.height * this.dpr));
-    this.skylineCache.width = w;
-    this.skylineCache.height = h;
-    const ctx = this.skylineCache.getContext('2d');
+    this.farSkylineCache.width = w;
+    this.farSkylineCache.height = h;
+    const ctx = this.farSkylineCache.getContext('2d');
     ctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
 
     const hy = this.horizonY;
@@ -462,6 +472,18 @@ class CelestialScene {
       ctx.fillStyle = 'rgba(17, 25, 52, 0.72)';
       ctx.fillRect(fx, hy - fh, fw, fh);
     }
+  }
+
+  buildSkylineCache() {
+    const w = Math.max(1, Math.round(this.width * this.dpr));
+    const h = Math.max(1, Math.round(this.height * this.dpr));
+    this.skylineCache.width = w;
+    this.skylineCache.height = h;
+    const ctx = this.skylineCache.getContext('2d');
+    ctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
+
+    const hy = this.horizonY;
+    const isCompact = this.width < 720;
 
     // 4. Midground architectural towers with varied crowns, antennas & curtain-wall shimmer
     this.rooftopBeacons = [];
@@ -1165,8 +1187,395 @@ class CelestialScene {
       }
     }
 
+    // Riverside boats
+    for (let i = 0; i < this.boats.length; i++) {
+      const b = this.boats[i];
+      b.nx += b.speedX * dt * motionScale;
+      if (b.nx > 1.12) b.nx = -0.12;
+      if (b.nx < -0.12) b.nx = 1.12;
+    }
+
     // Fireworks
     this.fireworks.update(dt, this.reducedMotion);
+  }
+
+  drawFerrisWheel(ctx, px, py) {
+    const isCompact = this.width < 720;
+    const hy = this.horizonY;
+    const cx = this.width * (isCompact ? 0.2 : 0.225) + px * 0.14;
+    const wheelR = Math.max(
+      46,
+      Math.min(118, Math.min(this.height * (isCompact ? 0.12 : 0.148), this.width * (isCompact ? 0.13 : 0.088)))
+    );
+    const cy = hy - wheelR * 1.15 + py * 0.07;
+
+    ctx.save();
+
+    // Subtle atmospheric halo behind the illuminated wheel
+    const halo = ctx.createRadialGradient(cx, cy, wheelR * 0.2, cx, cy, wheelR * 1.65);
+    halo.addColorStop(0, 'rgba(130, 188, 255, 0.09)');
+    halo.addColorStop(0.5, 'rgba(234, 185, 99, 0.05)');
+    halo.addColorStop(1, 'rgba(10, 16, 40, 0)');
+    ctx.fillStyle = halo;
+    ctx.beginPath();
+    ctx.arc(cx, cy, wheelR * 1.65, 0, Math.PI * 2);
+    ctx.fill();
+
+    // A-frame support legs anchored behind the midground skyline
+    const legSpread = wheelR * 0.52;
+    const footY = hy + 4;
+    ctx.lineCap = 'round';
+    ctx.lineWidth = Math.max(2.2, wheelR * 0.038);
+    ctx.strokeStyle = '#0c142e';
+    ctx.beginPath();
+    ctx.moveTo(cx - legSpread, footY);
+    ctx.lineTo(cx, cy);
+    ctx.lineTo(cx + legSpread, footY);
+    ctx.stroke();
+
+    // Moon-facing silver highlight along left A-frame leg
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = 'rgba(205, 224, 255, 0.24)';
+    ctx.beginPath();
+    ctx.moveTo(cx - legSpread, footY);
+    ctx.lineTo(cx, cy);
+    ctx.stroke();
+
+    // Cross-braces between A-frame legs
+    for (const frac of [0.42, 0.72]) {
+      const braceY = cy + (footY - cy) * frac;
+      const halfW = legSpread * frac;
+      ctx.strokeStyle = 'rgba(28, 44, 84, 0.85)';
+      ctx.lineWidth = 1.4;
+      ctx.beginPath();
+      ctx.moveTo(cx - halfW, braceY);
+      ctx.lineTo(cx + halfW, braceY);
+      ctx.stroke();
+    }
+
+    const numSpokes = 16;
+    const angleOffset = this.time * 0.04;
+
+    // Radial spokes
+    ctx.strokeStyle = 'rgba(164, 198, 246, 0.34)';
+    ctx.lineWidth = 1;
+    for (let i = 0; i < numSpokes; i++) {
+      const a = angleOffset + (i / numSpokes) * Math.PI * 2;
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.lineTo(cx + Math.cos(a) * wheelR, cy + Math.sin(a) * wheelR);
+      ctx.stroke();
+    }
+
+    // Concentric structural rings (inner truss, mid ring, double outer rim)
+    ctx.strokeStyle = 'rgba(164, 198, 248, 0.24)';
+    ctx.lineWidth = 1.1;
+    ctx.beginPath();
+    ctx.arc(cx, cy, wheelR * 0.36, 0, Math.PI * 2);
+    ctx.stroke();
+
+    ctx.strokeStyle = 'rgba(176, 208, 252, 0.3)';
+    ctx.lineWidth = 1.2;
+    ctx.beginPath();
+    ctx.arc(cx, cy, wheelR * 0.72, 0, Math.PI * 2);
+    ctx.stroke();
+
+    ctx.strokeStyle = 'rgba(196, 220, 255, 0.42)';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.arc(cx, cy, wheelR * 0.94, 0, Math.PI * 2);
+    ctx.stroke();
+
+    ctx.strokeStyle = 'rgba(234, 198, 134, 0.38)';
+    ctx.lineWidth = 1.8;
+    ctx.beginPath();
+    ctx.arc(cx, cy, wheelR, 0, Math.PI * 2);
+    ctx.stroke();
+
+    // Softly illuminated rim LEDs & suspended upright gondolas
+    const cabW = Math.max(5.5, wheelR * 0.088);
+    const cabH = Math.max(6.5, wheelR * 0.1);
+    const hangerLen = Math.max(2.5, wheelR * 0.036);
+
+    for (let i = 0; i < numSpokes; i++) {
+      const a = angleOffset + (i / numSpokes) * Math.PI * 2;
+      const gx = cx + Math.cos(a) * wheelR;
+      const gy = cy + Math.sin(a) * wheelR;
+
+      // Gentle rim accent light (warm gold & moonlight cyan alternation)
+      const shimmer = this.reducedMotion ? 0.8 : 0.65 + 0.35 * Math.sin(this.time * 1.15 + i * 0.45);
+      const isWarmNode = i % 2 === 0;
+      ctx.fillStyle = isWarmNode
+        ? `rgba(255, 224, 152, ${0.72 * shimmer})`
+        : `rgba(148, 226, 255, ${0.68 * shimmer})`;
+      ctx.beginPath();
+      ctx.arc(gx, gy, Math.max(1.5, wheelR * 0.022), 0, Math.PI * 2);
+      ctx.fill();
+
+      // Mid-segment rim node
+      const ma = a + Math.PI / numSpokes;
+      const mx = cx + Math.cos(ma) * wheelR * 0.97;
+      const my = cy + Math.sin(ma) * wheelR * 0.97;
+      ctx.fillStyle = `rgba(255, 194, 146, ${0.42 * shimmer})`;
+      ctx.beginPath();
+      ctx.arc(mx, my, Math.max(1.1, wheelR * 0.014), 0, Math.PI * 2);
+      ctx.fill();
+
+      // Upright hanging gondola cabin
+      const cabTopY = gy + hangerLen;
+      ctx.strokeStyle = 'rgba(180, 204, 240, 0.48)';
+      ctx.lineWidth = 0.9;
+      ctx.beginPath();
+      ctx.moveTo(gx, gy);
+      ctx.lineTo(gx, cabTopY);
+      ctx.stroke();
+
+      // Gondola soft warm aura
+      const cabGlow = ctx.createRadialGradient(gx, cabTopY + cabH * 0.5, 0.5, gx, cabTopY + cabH * 0.5, cabW * 1.45);
+      cabGlow.addColorStop(0, 'rgba(255, 214, 134, 0.22)');
+      cabGlow.addColorStop(1, 'rgba(255, 214, 134, 0)');
+      ctx.fillStyle = cabGlow;
+      ctx.beginPath();
+      ctx.arc(gx, cabTopY + cabH * 0.5, cabW * 1.45, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Gondola dark shell + warm cabin window
+      ctx.fillStyle = '#0c142b';
+      ctx.beginPath();
+      ctx.roundRect(gx - cabW / 2, cabTopY, cabW, cabH, Math.max(2, cabW * 0.28));
+      ctx.fill();
+
+      ctx.fillStyle = `rgba(255, 224, 152, ${0.78 + 0.14 * shimmer})`;
+      ctx.fillRect(gx - cabW * 0.3, cabTopY + cabH * 0.28, cabW * 0.6, cabH * 0.36);
+    }
+
+    // Central axle hub medallion
+    const hubR = Math.max(4.5, wheelR * 0.068);
+    ctx.fillStyle = '#0e1836';
+    ctx.strokeStyle = 'rgba(255, 224, 158, 0.65)';
+    ctx.lineWidth = 1.4;
+    ctx.beginPath();
+    ctx.arc(cx, cy, hubR, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.fillStyle = 'rgba(164, 232, 255, 0.78)';
+    ctx.beginPath();
+    ctx.arc(cx, cy, hubR * 0.38, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.restore();
+  }
+
+  drawBoats(ctx, px) {
+    const waterH = this.height - this.horizonY;
+    if (waterH <= 18) return;
+
+    const sorted = [...this.boats].sort((a, b) => a.yFrac - b.yFrac);
+    for (let i = 0; i < sorted.length; i++) {
+      this.drawBoat(ctx, sorted[i], px, waterH);
+    }
+  }
+
+  drawBoat(ctx, boat, px, waterH) {
+    const parallax = 0.2 + boat.yFrac * 0.32;
+    const bx = boat.nx * this.width + px * parallax;
+    const baseSize = Math.max(0.72, Math.min(1.25, this.width / 1280));
+    const s = boat.scale * baseSize;
+    const bob = this.reducedMotion ? 0 : Math.sin(this.time * 1.45 + boat.phase) * 1.2 * s;
+    const pitch = this.reducedMotion ? 0 : Math.sin(this.time * 1.1 + boat.phase) * 0.022;
+    const by = this.horizonY + waterH * boat.yFrac + bob;
+    const dir = boat.speedX >= 0 ? 1 : -1;
+
+    ctx.save();
+    ctx.translate(bx, by);
+    ctx.scale(dir, 1);
+
+    // 1. V-wake & subtle water ripples behind the stern
+    ctx.strokeStyle = 'rgba(196, 222, 255, 0.16)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(-24 * s, 1 * s);
+    ctx.lineTo(-56 * s, -3.5 * s);
+    ctx.moveTo(-24 * s, 1 * s);
+    ctx.lineTo(-62 * s, 5.5 * s);
+    ctx.stroke();
+
+    // 2. Inverted local water reflection (dark hull shadow + warm light streaks)
+    const hullLen = boat.type === 'sampan' ? 46 * s : boat.type === 'ferry' ? 58 * s : 68 * s;
+    ctx.fillStyle = 'rgba(3, 6, 16, 0.42)';
+    ctx.beginPath();
+    ctx.ellipse(0, 4.5 * s, hullLen * 0.46, 3.2 * s, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    for (let r = 0; r < 4; r++) {
+      const ry = (4 + r * 3.2) * s;
+      const rw = (hullLen * (0.48 - r * 0.08)) * (0.85 + 0.15 * Math.sin(this.time * 2.5 + r));
+      const rx = (this.reducedMotion ? 0 : Math.sin(this.time * 2.8 + r * 1.4 + boat.phase) * 2.4 * s);
+      ctx.fillStyle = `rgba(255, 206, 128, ${0.22 - r * 0.045})`;
+      ctx.fillRect(rx - rw / 2, ry, rw, 1.3 * s);
+    }
+
+    // Rotate slightly for gentle wave pitch
+    ctx.rotate(pitch);
+
+    if (boat.type === 'sampan') {
+      // Curved traditional wooden lantern boat
+      const hullGrad = ctx.createLinearGradient(-23 * s, -7 * s, 25 * s, 1 * s);
+      hullGrad.addColorStop(0, '#070c1e');
+      hullGrad.addColorStop(0.55, '#111a36');
+      hullGrad.addColorStop(1, '#1a274a');
+      ctx.fillStyle = hullGrad;
+      ctx.beginPath();
+      ctx.moveTo(-22 * s, -4.5 * s);
+      ctx.quadraticCurveTo(0, -1.5 * s, 25 * s, -6.5 * s);
+      ctx.quadraticCurveTo(22 * s, 1.5 * s, 13 * s, 2 * s);
+      ctx.lineTo(-16 * s, 2 * s);
+      ctx.quadraticCurveTo(-21 * s, 1.5 * s, -22 * s, -4.5 * s);
+      ctx.closePath();
+      ctx.fill();
+
+      // Moonlight gunwale rim
+      ctx.strokeStyle = 'rgba(218, 232, 255, 0.36)';
+      ctx.lineWidth = 0.9;
+      ctx.beginPath();
+      ctx.moveTo(-22 * s, -4.5 * s);
+      ctx.quadraticCurveTo(0, -1.5 * s, 25 * s, -6.5 * s);
+      ctx.stroke();
+
+      // Arched canopy with warm interior lantern glow
+      ctx.fillStyle = '#0c142c';
+      ctx.beginPath();
+      ctx.moveTo(-10 * s, -3 * s);
+      ctx.quadraticCurveTo(-1 * s, -13 * s, 9 * s, -3.5 * s);
+      ctx.closePath();
+      ctx.fill();
+
+      ctx.fillStyle = 'rgba(255, 212, 134, 0.78)';
+      ctx.beginPath();
+      ctx.ellipse(-0.5 * s, -5.2 * s, 3.6 * s, 1.9 * s, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Curved bow lantern pole & glowing paper lantern
+      ctx.strokeStyle = 'rgba(180, 200, 235, 0.5)';
+      ctx.lineWidth = 0.9;
+      ctx.beginPath();
+      ctx.moveTo(20 * s, -5.5 * s);
+      ctx.quadraticCurveTo(23 * s, -13 * s, 26.5 * s, -12.5 * s);
+      ctx.stroke();
+
+      const lx = 26.5 * s;
+      const ly = -9.8 * s;
+      const lGlow = ctx.createRadialGradient(lx, ly, 0.5, lx, ly, 11 * s);
+      lGlow.addColorStop(0, 'rgba(255, 220, 140, 0.58)');
+      lGlow.addColorStop(1, 'rgba(255, 160, 72, 0)');
+      ctx.fillStyle = lGlow;
+      ctx.beginPath();
+      ctx.arc(lx, ly, 11 * s, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = '#ffe29e';
+      ctx.beginPath();
+      ctx.ellipse(lx, ly, 1.7 * s, 2.3 * s, 0, 0, Math.PI * 2);
+      ctx.fill();
+    } else {
+      // Sleek riverside sightseeing cruiser / ferry
+      const halfL = hullLen * 0.5;
+      const hullGrad = ctx.createLinearGradient(-halfL, -7 * s, halfL, 2 * s);
+      hullGrad.addColorStop(0, '#070c1e');
+      hullGrad.addColorStop(0.5, '#111c3a');
+      hullGrad.addColorStop(1, '#1b2b52');
+      ctx.fillStyle = hullGrad;
+      ctx.beginPath();
+      ctx.moveTo(-halfL, -5.5 * s);
+      ctx.lineTo(halfL * 0.84, -6 * s);
+      ctx.lineTo(halfL, -8.2 * s);
+      ctx.quadraticCurveTo(halfL * 0.92, 1.8 * s, halfL * 0.7, 2 * s);
+      ctx.lineTo(-halfL * 0.9, 2 * s);
+      ctx.closePath();
+      ctx.fill();
+
+      // Moonlight hull rim
+      ctx.strokeStyle = 'rgba(220, 236, 255, 0.34)';
+      ctx.lineWidth = 0.95;
+      ctx.beginPath();
+      ctx.moveTo(-halfL, -5.5 * s);
+      ctx.lineTo(halfL * 0.84, -6 * s);
+      ctx.lineTo(halfL, -8.2 * s);
+      ctx.stroke();
+
+      // Low-profile passenger cabin
+      const cabStart = -halfL * 0.62;
+      const cabEnd = halfL * 0.56;
+      const cabTop = -12.8 * s;
+      ctx.fillStyle = '#0c152e';
+      ctx.beginPath();
+      ctx.moveTo(cabStart, -5.8 * s);
+      ctx.lineTo(cabStart + 3 * s, cabTop);
+      ctx.lineTo(cabEnd - 7 * s, cabTop);
+      ctx.lineTo(cabEnd, -6 * s);
+      ctx.closePath();
+      ctx.fill();
+
+      // Cabin roof moonlight edge
+      ctx.strokeStyle = 'rgba(216, 232, 255, 0.3)';
+      ctx.lineWidth = 0.85;
+      ctx.beginPath();
+      ctx.moveTo(cabStart + 3 * s, cabTop);
+      ctx.lineTo(cabEnd - 7 * s, cabTop);
+      ctx.stroke();
+
+      // Warm golden cabin windows
+      const winCount = boat.type === 'cruiser' ? 4 : 3;
+      const winSpan = cabEnd - cabStart - 13 * s;
+      for (let w = 0; w < winCount; w++) {
+        const wx = cabStart + 6 * s + (w / Math.max(1, winCount - 1)) * winSpan;
+        const wy = -10.5 * s;
+        const ww = 4.6 * s;
+        const wh = 2.7 * s;
+        ctx.fillStyle = 'rgba(255, 224, 152, 0.86)';
+        ctx.fillRect(wx - ww / 2, wy, ww, wh);
+      }
+
+      // Cabin warm aura
+      const cabGlow = ctx.createRadialGradient(0, -8 * s, 2, 0, -8 * s, halfL * 0.72);
+      cabGlow.addColorStop(0, 'rgba(255, 208, 128, 0.22)');
+      cabGlow.addColorStop(1, 'rgba(255, 208, 128, 0)');
+      ctx.fillStyle = cabGlow;
+      ctx.beginPath();
+      ctx.arc(0, -8 * s, halfL * 0.72, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Small mast & navigation light
+      const mastX = -halfL * 0.15;
+      ctx.strokeStyle = 'rgba(182, 206, 242, 0.45)';
+      ctx.lineWidth = 0.9;
+      ctx.beginPath();
+      ctx.moveTo(mastX, cabTop);
+      ctx.lineTo(mastX, cabTop - 6 * s);
+      ctx.stroke();
+
+      ctx.fillStyle = 'rgba(255, 240, 190, 0.9)';
+      ctx.beginPath();
+      ctx.arc(mastX, cabTop - 6.2 * s, 1.3 * s, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Subtle bow navigation light
+      ctx.fillStyle = boat.type === 'cruiser' ? 'rgba(124, 242, 202, 0.85)' : 'rgba(255, 134, 114, 0.85)';
+      ctx.beginPath();
+      ctx.arc(halfL * 0.86, -7.2 * s, 1.2 * s, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // Waterline contact shimmer directly under the hull
+    ctx.strokeStyle = 'rgba(225, 238, 255, 0.24)';
+    ctx.lineWidth = 0.9;
+    ctx.beginPath();
+    ctx.moveTo(-hullLen * 0.42, 2.2 * s);
+    ctx.lineTo(hullLen * 0.42, 2.2 * s);
+    ctx.stroke();
+
+    ctx.restore();
   }
 
   render() {
@@ -1208,7 +1617,13 @@ class CelestialScene {
       }
     }
 
-    // 7. Mountain Ridges & Taipei 101 Skyline
+    // 7a. Far Mountain Ridges & Distant Hazy Skyline
+    ctx.drawImage(this.farSkylineCache, px * 0.12, py * 0.06, this.width, this.height);
+
+    // 7b. Background Illuminated Ferris Wheel under the Moonlight
+    this.drawFerrisWheel(ctx, px, py);
+
+    // 7c. Midground Taipei 101 Skyline
     ctx.drawImage(this.skylineCache, px * 0.16, py * 0.08, this.width, this.height);
 
     // Pulsing aviation beacon & dynamic firework rim glow on Taipei 101 spire
@@ -1273,8 +1688,11 @@ class CelestialScene {
       this.drawSkyLantern(ctx, this.wishLanterns[i], px, py);
     }
 
-    // 11. Real-time Rippled River Reflection Plane (mirrors sky, skyline, lanterns & fireworks!)
+    // 11. Real-time Rippled River Reflection Plane (mirrors sky, Ferris wheel, skyline, lanterns & fireworks!)
     this.drawRiverReflection(ctx, px);
+
+    // 11b. Riverside Boats gliding along the moonlit river
+    this.drawBoats(ctx, px);
 
     // 12. Foreground Observatory Parapet & Fast Wind-Carried Sparks
     this.drawForegroundFrame(ctx, px);
