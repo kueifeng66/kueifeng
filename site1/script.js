@@ -335,6 +335,12 @@ function generateHolidayData(targetYear = state.year) {
     }
   });
 
+
+    // If next year's New Year's Day (Jan 1) falls on a Saturday, Dec 31 is a compensatory holiday
+  if (new Date(y + 1, 0, 1).getDay() === 6 && daysMeta.length > 0) {
+    daysMeta[daysMeta.length - 1].isHoliday = true;
+  }
+
   daysMeta.forEach((dm) => {
     result[dm.dateKey] = `【${dm.name}】${dm.isHoliday ? '【放假日】' : ''}`;
   });
