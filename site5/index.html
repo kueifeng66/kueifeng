@@ -2,14 +2,118 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Multi Countdown Timer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=JetBrains+Mono:wght@500;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet" />
   <link href="styles.css" rel="stylesheet" />
+  <script defer src="fireworks.js"></script>
   <script defer src="script.js"></script>
 </head>
 <body>
-  <h1>Countdown Timers</h1>
-  <div id="timers-container"></div>
+  <!-- BACKGROUND LAYER: Atmospheric Stage, Clockwork Astrolabe Canvas, Volumetric Spotlight & Celebration Fireworks -->
+  <div id="stage" class="stage" aria-hidden="true">
+    <div class="stage-backdrop"></div>
+    <canvas id="clockworkCanvas" class="clockwork-canvas"></canvas>
+    <div id="fireworksContainer" class="fireworks-layer"></div>
+    <div class="spotlight" id="spot"></div>
+    <div class="stage-vignette"></div>
+  </div>
+
+  <!-- MIDGROUND & FOREGROUND SHELL -->
+  <div class="atelier-shell">
+    <!-- Master Horological Studio Header Console -->
+    <header class="atelier-header" role="banner">
+      <div class="brand-plaque">
+        <div class="brand-emblem" aria-hidden="true">
+          <svg viewBox="0 0 48 48" class="emblem-svg">
+            <circle cx="24" cy="24" r="21" fill="none" stroke="currentColor" stroke-width="1.6" stroke-dasharray="3 2" />
+            <circle cx="24" cy="24" r="16" fill="none" stroke="currentColor" stroke-width="1.8" />
+            <circle cx="24" cy="24" r="3" fill="currentColor" />
+            <line x1="24" y1="24" x2="24" y2="11" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" />
+            <line x1="24" y1="24" x2="33" y2="24" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+            <path d="M20 3 L28 3 M24 3 L24 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+          </svg>
+        </div>
+        <div class="brand-copy">
+          <span class="atelier-eyebrow">ATELIER CHRONOS • HOROLOGICAL CONSOLE</span>
+          <h1>Countdown Timers</h1>
+          <p class="atelier-subtitle">Crafted Walnut &amp; Brass 3D Drum Chronometers</p>
+        </div>
+      </div>
+
+      <!-- Reference Master Clock Plaque (Directly inspired by ref/#header) -->
+      <div id="header" class="master-clock-plaque" title="Reference Studio Clock">
+        <div class="header-cell">
+          <span class="header-cell-year" id="refYear">2026 年</span>
+          <span class="header-cell-date" id="refDate">11月 24日</span>
+          <span class="header-cell-weekday" id="refWeekday">(二)</span>
+          <span class="header-cell-clock" id="refClock">09:00:00</span>
+        </div>
+      </div>
+
+      <!-- Studio Telemetry & Ambient Lighting Deck -->
+      <div class="studio-telemetry">
+        <div class="telemetry-grid">
+          <div class="telemetry-card">
+            <span class="telemetry-label">RUNNING</span>
+            <span class="telemetry-value telemetry-running" id="runningCountVal">0</span>
+          </div>
+          <div class="telemetry-card">
+            <span class="telemetry-label">ALERTS</span>
+            <span class="telemetry-value telemetry-alert" id="alertCountVal">0</span>
+          </div>
+          <div class="telemetry-card">
+            <span class="telemetry-label">MODULES</span>
+            <span class="telemetry-value" id="totalCountVal">100</span>
+          </div>
+        </div>
+
+        <div class="studio-controls-row">
+          <label class="lamp-control" title="Scroll or drag to adjust studio spotlight intensity">
+            <span class="lamp-icon" aria-hidden="true">☀</span>
+            <span class="lamp-text">Light: <strong id="val">0.65</strong></span>
+            <input type="range" id="lightSlider" min="0.1" max="1" step="0.05" value="0.65" aria-label="Ambient Spotlight Intensity" />
+          </label>
+          <button type="button" id="soundToggleBtn" class="studio-action-btn" title="Toggle Alarm Audio">
+            <span id="soundIcon">🔔</span> <span id="soundLabel">Audio On</span>
+          </button>
+          <button type="button" id="silenceAlarmBtn" class="studio-action-btn silence-btn" hidden title="Silence Active Alarm">
+            🔕 Silence Alarm
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Midground Workbench Filter & Quick Navigation Deck -->
+    <nav class="workbench-toolbar" aria-label="Chronometer Bank Controls">
+      <div class="filter-pills" role="tablist" aria-label="Filter Timers">
+        <button type="button" class="filter-pill active" data-filter="all" role="tab" aria-selected="true">All Modules <span class="pill-badge" id="badgeAll">100</span></button>
+        <button type="button" class="filter-pill" data-filter="running" role="tab" aria-selected="false">Running <span class="pill-badge" id="badgeRunning">0</span></button>
+        <button type="button" class="filter-pill" data-filter="configured" role="tab" aria-selected="false">Configured <span class="pill-badge" id="badgeConfigured">3</span></button>
+        <button type="button" class="filter-pill" data-filter="expired" role="tab" aria-selected="false">Time Up <span class="pill-badge" id="badgeExpired">0</span></button>
+      </div>
+
+      <div class="toolbar-actions">
+        <div class="jump-search-box">
+          <span class="search-icon" aria-hidden="true">⌕</span>
+          <input type="text" id="timerSearchInput" placeholder="Find #1–100 or label..." aria-label="Search or jump to timer" />
+        </div>
+        <div class="batch-btns">
+          <button type="button" id="demoShowcaseBtn" class="workbench-btn gold-accent" title="Load &amp; start sample showcase timers">✨ Demo Showcase</button>
+          <button type="button" id="pauseAllBtn" class="workbench-btn" title="Pause all running timers">⏸ Pause All</button>
+          <button type="button" id="resetAllBtn" class="workbench-btn" title="Reset all timers">↺ Reset All</button>
+        </div>
+      </div>
+    </nav>
+
+    <!-- FOREGROUND LAYER: Chronometer Modules Grid -->
+    <main class="workbench-main">
+      <div id="timers-container"></div>
+    </main>
+  </div>
+
   <audio id="alarmSound" src="https://actions.google.com/sounds/v1/alarms/digital_watch_alarm_long.ogg" preload="auto"></audio>
 </body>
 </html>

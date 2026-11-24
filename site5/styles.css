@@ -1,109 +1,1562 @@
-html, body {
-  font-size: 62.5%; /* 1rem = 10px */
+:root {
+  --light-intensity: 0.65;
+  --walnut-deep: #140a05;
+  --walnut-dark: #211008;
+  --walnut-mid: #381d10;
+  --walnut-warm: #512c18;
+  --brass-dark: #6b4123;
+  --brass-mid: #a46b3b;
+  --brass-bright: #dfa851;
+  --brass-highlight: #ffe7a8;
+  --amber-glow: rgba(246, 200, 108, 0.58);
+  --ivory-text: #fff8eb;
+  --muted-sand: #cfb393;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
+[hidden] {
+  display: none !important;
+}
+
+html {
+  font-size: 62.5%; /* 1rem = 10px, matching ref/styles.css */
+  scroll-behavior: smooth;
+}
+
 body {
+  min-height: 100vh;
+  width: 100%;
+  overflow-x: hidden;
+  background-color: #0c0603;
+  color: var(--ivory-text);
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  position: relative;
+}
+
+/* Screen-reader / DOM-compatibility hidden selects (from ref/styles.css) */
+.sr-only {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+/* ============================================================================
+   1. BACKGROUND LAYER: STAGE, SKYLINE, CLOCKWORK ASTROLABE & VOLUMETRIC LIGHT
+   ============================================================================ */
+
+.stage {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  z-index: 0;
+  pointer-events: none;
+  transition: filter 220ms ease;
+}
+
+.stage-backdrop {
+  position: absolute;
+  inset: -2%;
+  background-image:
+    radial-gradient(circle at 50% 14%, rgba(110, 58, 24, 0.42) 0%, rgba(20, 10, 5, 0.80) 52%, rgba(8, 4, 2, 0.94) 100%),
+    url('background.jpg');
+  background-size: cover;
+  background-position: center bottom;
+  filter: saturate(1.18) contrast(1.1) brightness(calc(0.72 + var(--light-intensity) * 0.48));
+  transform: scale(1.02);
+}
+
+/* Subtle architectural wood & brass astrolabe grid texture in deep background */
+.stage-backdrop::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(circle at 50% 22%, rgba(245, 195, 110, 0.12) 0%, transparent 55%),
+    repeating-linear-gradient(90deg, rgba(223, 168, 81, 0.03) 0px, rgba(223, 168, 81, 0.03) 1px, transparent 1px, transparent 72px),
+    repeating-linear-gradient(0deg, rgba(223, 168, 81, 0.025) 0px, rgba(223, 168, 81, 0.025) 1px, transparent 1px, transparent 72px);
+  pointer-events: none;
+}
+
+.clockwork-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: calc(0.48 + var(--light-intensity) * 0.45);
+  pointer-events: none;
+}
+
+.fireworks-layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* Volumetric Spotlight Cone from ref/styles.css */
+.spotlight {
+  position: absolute;
+  left: 50%;
+  top: 42%;
+  width: 100vw;
+  height: 100vh;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  mix-blend-mode: screen;
+  opacity: calc(var(--light-intensity));
+  transition: opacity 140ms linear;
+  z-index: 3;
+}
+
+.spotlight::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(to bottom,
+      rgba(255, 224, 158, 0.46) 0%,
+      rgba(255, 198, 115, 0.25) 26%,
+      rgba(235, 148, 62, 0.11) 58%,
+      rgba(0, 0, 0, 0) 100%),
+    radial-gradient(ellipse 74% 58% at 50% 12%,
+      rgba(255, 245, 218, 0.72) 0%,
+      rgba(255, 216, 145, 0.35) 30%,
+      rgba(240, 165, 75, 0.11) 60%,
+      rgba(0, 0, 0, 0) 88%);
+}
+
+.stage-vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 42%, transparent 48%, rgba(5, 2, 1, 0.82) 100%);
+  pointer-events: none;
+  z-index: 4;
+}
+
+/* ============================================================================
+   2. MIDGROUND LAYER: ATELIER SHELL, MASTER CLOCK HEADER & WORKBENCH DECK
+   ============================================================================ */
+
+.atelier-shell {
+  position: relative;
+  z-index: 10;
+  max-width: 144rem;
+  margin: 0 auto;
+  padding: 2rem 2.6rem 5.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.6rem;
+}
+
+.atelier-header {
+  display: grid;
+  grid-template-columns: 1.3fr auto 1.3fr;
+  align-items: center;
+  gap: 2rem;
+  padding: 1.5rem 2.2rem;
+  border-radius: 1.4rem;
+  border: 0.18rem solid #88542f;
+  background:
+    repeating-linear-gradient(90deg, rgba(255, 215, 155, 0.015) 0px, rgba(255, 215, 155, 0.015) 2px, transparent 2px, transparent 9px),
+    linear-gradient(165deg, rgba(68, 36, 19, 0.93) 0%, rgba(40, 21, 11, 0.95) 50%, rgba(24, 12, 6, 0.97) 100%);
+  box-shadow:
+    0 1.4rem 3.4rem rgba(0, 0, 0, 0.78),
+    0 0 2.8rem rgba(223, 168, 81, calc(var(--light-intensity) * 0.22)),
+    inset 0 0.15rem 0.28rem rgba(255, 234, 192, 0.28),
+    inset 0 -0.3rem 0.6rem rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(12px);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Gold filigree inner rim matching ref/#header::before */
+.atelier-header::before {
+  content: '';
+  position: absolute;
+  inset: 0.35rem;
+  border: 0.1rem solid rgba(235, 195, 135, 0.28);
+  border-radius: 1.05rem;
+  pointer-events: none;
+}
+
+.brand-plaque {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.brand-emblem {
+  width: 5.6rem;
+  height: 5.6rem;
+  border-radius: 1.25rem;
+  border: 0.16rem solid #c58d46;
+  background: radial-gradient(circle at 35% 30%, #683a1f 0%, #241208 100%);
+  box-shadow:
+    0 0.45rem 1.1rem rgba(0, 0, 0, 0.65),
+    inset 0 0.12rem 0.22rem rgba(255, 238, 195, 0.45),
+    0 0 1.4rem rgba(223, 168, 81, 0.32);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #f8d88c;
+  flex-shrink: 0;
+}
+
+.emblem-svg {
+  width: 3.8rem;
+  height: 3.8rem;
+  filter: drop-shadow(0 0.1rem 0.3rem rgba(0, 0, 0, 0.85));
+}
+
+.brand-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 0.18rem;
+}
+
+.atelier-eyebrow {
+  font-size: 1.04rem;
+  font-weight: 800;
+  letter-spacing: 0.24rem;
+  color: #e6b764;
+  text-transform: uppercase;
+  text-shadow: 0 0.1rem 0.2rem rgba(0, 0, 0, 0.9);
+}
+
+.atelier-header h1 {
+  font-family: 'Cinzel', Georgia, serif;
+  font-size: 2.75rem;
+  font-weight: 800;
+  letter-spacing: 0.1rem;
+  background: linear-gradient(180deg, #ffffff 0%, #f8dc9c 52%, #cf9540 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 0.2rem 0.35rem rgba(0, 0, 0, 0.88));
+  line-height: 1.14;
+}
+
+.atelier-subtitle {
+  font-size: 1.2rem;
+  color: var(--muted-sand);
+  font-weight: 500;
+  letter-spacing: 0.04rem;
+}
+
+/* Reference Master Clock Plaque - directly modeled after ref/#header */
+.master-clock-plaque {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 0.16rem solid #a86c3d;
+  min-width: 16.4rem;
+  padding: 0.72rem 2rem;
+  background: linear-gradient(135deg, #472514 0%, #68391e 50%, #3e2010 100%);
+  color: #fff6e2;
+  border-radius: 0.95rem;
+  position: relative;
+  box-shadow:
+    0 0.55rem 1.5rem rgba(0, 0, 0, 0.65),
+    inset 0 0.12rem 0.25rem rgba(255, 228, 185, 0.32),
+    inset 0 -0.25rem 0.5rem rgba(0, 0, 0, 0.52),
+    0 0 1.5rem rgba(223, 168, 81, 0.24);
+}
+
+.master-clock-plaque::before {
+  content: '';
+  position: absolute;
+  inset: 0.22rem;
+  border: 0.1rem solid rgba(235, 195, 135, 0.38);
+  border-radius: 0.68rem;
+  pointer-events: none;
+}
+
+.header-cell {
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: hsl(0, 0%, 90%);
-  font-family: Arial, sans-serif;
+  text-align: center;
+  line-height: 1.18;
+  user-select: none;
 }
 
+.header-cell-year {
+  font-size: 1.24rem;
+  font-weight: 700;
+  color: #f5d6a8;
+  letter-spacing: 0.1rem;
+  text-shadow: 0 0.1rem 0.2rem rgba(0, 0, 0, 0.85);
+}
 
+.header-cell-date {
+  font-size: 1.46rem;
+  font-weight: 900;
+  color: #fffdf8;
+  letter-spacing: 0.06rem;
+  text-shadow: 0 0.1rem 0.3rem rgba(0, 0, 0, 0.95), 0 0 0.6rem rgba(240, 195, 120, 0.5);
+}
+
+.header-cell-weekday {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #f3cb7d;
+  letter-spacing: 0.05rem;
+}
+
+.header-cell-clock {
+  font-family: 'JetBrains Mono', Tahoma, monospace;
+  font-size: 1.58rem;
+  font-weight: 800;
+  color: #fffdf8;
+  letter-spacing: 0.08rem;
+  margin-top: 0.2rem;
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 0 0.8rem rgba(246, 212, 136, 0.58), 0 0.1rem 0.2rem rgba(0, 0, 0, 0.9);
+}
+
+/* Studio Telemetry & Controls */
+.studio-telemetry {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.85rem;
+}
+
+.telemetry-grid {
+  display: flex;
+  gap: 0.8rem;
+}
+
+.telemetry-card {
+  background: linear-gradient(180deg, #190d06 0%, #2a160c 100%);
+  border: 0.12rem solid #77492a;
+  border-radius: 0.72rem;
+  padding: 0.45rem 1.15rem;
+  min-width: 7.8rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: inset 0 0.2rem 0.5rem rgba(0, 0, 0, 0.75), 0 0.1rem 0.2rem rgba(255, 220, 175, 0.14);
+}
+
+.telemetry-label {
+  font-size: 0.94rem;
+  font-weight: 800;
+  letter-spacing: 0.1rem;
+  color: #c2a07e;
+}
+
+.telemetry-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1.72rem;
+  font-weight: 800;
+  color: #f7dfc0;
+  font-variant-numeric: tabular-nums;
+}
+
+.telemetry-running {
+  color: #4ade80;
+  text-shadow: 0 0 0.8rem rgba(74, 222, 128, 0.48);
+}
+
+.telemetry-alert {
+  color: #fb7185;
+  text-shadow: 0 0 0.8rem rgba(251, 113, 133, 0.48);
+}
+
+.studio-controls-row {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.lamp-control {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: rgba(20, 10, 5, 0.88);
+  border: 0.12rem solid #76482a;
+  border-radius: 0.65rem;
+  padding: 0.45rem 0.95rem;
+  font-size: 1.15rem;
+  color: #f3dcc1;
+  box-shadow: inset 0 0.15rem 0.4rem rgba(0, 0, 0, 0.65);
+}
+
+.lamp-icon {
+  color: #f7c96e;
+  font-size: 1.35rem;
+}
+
+.lamp-control input[type="range"] {
+  width: 7.4rem;
+  accent-color: #dfa851;
+  cursor: pointer;
+}
+
+.studio-action-btn {
+  border: 0.12rem solid #82502e;
+  border-radius: 0.65rem;
+  background: linear-gradient(180deg, #4f2a16 0%, #2f190c 100%);
+  color: #f7e6ce;
+  font-size: 1.15rem;
+  font-weight: 700;
+  padding: 0.5rem 1.05rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.48), inset 0 0.1rem 0.15rem rgba(255, 225, 180, 0.24);
+  transition: transform 0.15s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.studio-action-btn:hover {
+  border-color: #c98a47;
+  box-shadow: 0 0.3rem 0.7rem rgba(0, 0, 0, 0.6), 0 0 0.8rem rgba(223, 168, 81, 0.32);
+  color: #ffffff;
+}
+
+.studio-action-btn.silence-btn {
+  background: linear-gradient(180deg, #b91c1c 0%, #7f1d1d 100%);
+  border-color: #fca5a5;
+  color: #fff;
+  animation: pulseAlarmBtn 1s infinite alternate;
+}
+
+@keyframes pulseAlarmBtn {
+  from { box-shadow: 0 0 0.6rem rgba(248, 113, 113, 0.5); }
+  to { box-shadow: 0 0 1.6rem rgba(248, 113, 113, 0.95); }
+}
+
+/* Workbench Filter & Navigation Bar */
+.workbench-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1.2rem;
+  padding: 1.05rem 1.8rem;
+  border-radius: 1.1rem;
+  border: 0.15rem solid #744627;
+  background: linear-gradient(180deg, rgba(46, 25, 14, 0.90) 0%, rgba(26, 14, 8, 0.94) 100%);
+  box-shadow:
+    0 0.8rem 2.2rem rgba(0, 0, 0, 0.62),
+    inset 0 0.1rem 0.2rem rgba(255, 225, 180, 0.18);
+  backdrop-filter: blur(10px);
+}
+
+.filter-pills {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.filter-pill {
+  border: 0.12rem solid #683e23;
+  border-radius: 0.7rem;
+  background: linear-gradient(180deg, #341c10 0%, #201008 100%);
+  color: #dcbfa3;
+  font-size: 1.24rem;
+  font-weight: 700;
+  padding: 0.58rem 1.2rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  transition: all 0.18s ease;
+}
+
+.filter-pill:hover {
+  border-color: #ab703e;
+  color: #fff6e5;
+}
+
+.filter-pill.active {
+  background: linear-gradient(180deg, #e5b058 0%, #b87c2c 100%);
+  border-color: #ffe6a6;
+  color: #231004;
+  font-weight: 800;
+  box-shadow:
+    0 0.25rem 0.6rem rgba(0, 0, 0, 0.45),
+    inset 0 0.1rem 0.2rem rgba(255, 255, 255, 0.65),
+    0 0 1rem rgba(223, 168, 81, 0.45);
+}
+
+.pill-badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1.1rem;
+  padding: 0.12rem 0.55rem;
+  border-radius: 99rem;
+  background: rgba(0, 0, 0, 0.35);
+  color: inherit;
+}
+
+.filter-pill.active .pill-badge {
+  background: rgba(36, 17, 5, 0.22);
+  color: #1a0b02;
+}
+
+.toolbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.jump-search-box {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-icon {
+  position: absolute;
+  left: 1rem;
+  font-size: 1.4rem;
+  color: #c69c6d;
+  pointer-events: none;
+}
+
+#timerSearchInput {
+  background: #160b05;
+  border: 0.12rem solid #714528;
+  border-radius: 0.7rem;
+  color: #fff6e5;
+  font-size: 1.24rem;
+  padding: 0.6rem 1.2rem 0.6rem 2.8rem;
+  width: 21rem;
+  outline: none;
+  box-shadow: inset 0 0.2rem 0.5rem rgba(0, 0, 0, 0.78);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+#timerSearchInput::placeholder {
+  color: #917156;
+}
+
+#timerSearchInput:focus {
+  border-color: #dfa851;
+  box-shadow: inset 0 0.2rem 0.5rem rgba(0, 0, 0, 0.78), 0 0 0.8rem rgba(223, 168, 81, 0.38);
+}
+
+.batch-btns {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.workbench-btn {
+  border: 0.12rem solid #744628;
+  border-radius: 0.7rem;
+  background: linear-gradient(180deg, #4b2815 0%, #2d170b 100%);
+  color: #f5e2cb;
+  font-size: 1.2rem;
+  font-weight: 700;
+  padding: 0.6rem 1.15rem;
+  cursor: pointer;
+  box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.45), inset 0 0.1rem 0.15rem rgba(255, 220, 175, 0.22);
+  transition: all 0.15s ease;
+}
+
+.workbench-btn:hover {
+  border-color: #bd7f46;
+  color: #fff;
+  transform: translateY(-0.1rem);
+}
+
+.workbench-btn:active {
+  transform: translateY(0) scale(0.97);
+}
+
+.workbench-btn.gold-accent {
+  background: linear-gradient(180deg, #e7b35c 0%, #b97d2c 100%);
+  border-color: #ffe6a8;
+  color: #231004;
+  font-weight: 800;
+  box-shadow: 0 0.25rem 0.6rem rgba(0, 0, 0, 0.45), inset 0 0.1rem 0.2rem rgba(255, 255, 255, 0.65), 0 0 0.9rem rgba(223, 168, 81, 0.38);
+}
+
+/* ============================================================================
+   3. FOREGROUND LAYER: CHRONOMETER GRID & CRAFTED WALNUT-BRASS TIMER MODULES
+   ============================================================================ */
+
+#timers-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(33rem, 1fr));
+  gap: 2.4rem;
+  width: 100%;
+  align-items: start;
+}
 
 .timer {
-  background-color: white;
-  border: 0.3rem solid hsl(0, 0%, 70%);
-  border-radius: 3rem;
-  padding: 2rem;
-  margin-bottom: 2rem;
-  width: 32rem;
+  position: relative;
+  width: 100%;
+  min-width: 0;
+  border: 0.18rem solid #82502d;
+  border-radius: 1.45rem;
+  padding: 1.55rem 1.65rem 1.7rem;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(248, 200, 120, 0.14) 0%, transparent 58%),
+    repeating-linear-gradient(90deg, rgba(255, 210, 145, 0.014) 0px, rgba(255, 210, 145, 0.014) 2px, transparent 2px, transparent 7px),
+    linear-gradient(162deg, rgba(54, 29, 16, 0.95) 0%, rgba(65, 36, 20, 0.95) 35%, rgba(36, 19, 10, 0.97) 72%, rgba(24, 12, 6, 0.98) 100%);
+  box-shadow:
+    0 1.4rem 3rem rgba(0, 0, 0, 0.78),
+    0 0.35rem 0.8rem rgba(0, 0, 0, 0.55),
+    inset 0 0.16rem 0.28rem rgba(255, 232, 190, 0.26),
+    inset 0 -0.35rem 0.7rem rgba(0, 0, 0, 0.68);
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+  color: var(--ivory-text);
+  transition: transform 0.22s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+  overflow: hidden;
+  backdrop-filter: blur(8px);
+}
+
+/* Inner gold filigree hairline border matching ref's crafted wood panels */
+.timer::before {
+  content: '';
+  position: absolute;
+  inset: 0.34rem;
+  border: 0.1rem solid rgba(238, 198, 138, 0.28);
+  border-radius: 1.12rem;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.timer:hover {
+  transform: translateY(-0.28rem);
+  border-color: #b87944;
+  box-shadow:
+    0 1.8rem 3.5rem rgba(0, 0, 0, 0.82),
+    0 0 1.8rem rgba(223, 168, 81, 0.26),
+    inset 0 0.16rem 0.32rem rgba(255, 235, 195, 0.32),
+    inset 0 -0.35rem 0.7rem rgba(0, 0, 0, 0.68);
+}
+
+.timer.is-running {
+  border-color: #42b883;
+  box-shadow:
+    0 1.5rem 3.2rem rgba(0, 0, 0, 0.82),
+    0 0 2.4rem rgba(52, 211, 153, 0.26),
+    inset 0 0.16rem 0.32rem rgba(167, 243, 208, 0.28);
+}
+
+.timer.is-paused {
+  border-color: #d99b3c;
+}
+
+/* Corner Brass Rivets */
+.brass-rivet {
+  position: absolute;
+  width: 0.72rem;
+  height: 0.72rem;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #fff0bd 0%, #c48436 62%, #4a290e 100%);
+  box-shadow: 0 0.12rem 0.24rem rgba(0, 0, 0, 0.9), inset 0 0.05rem 0.1rem rgba(255, 255, 255, 0.8);
+  z-index: 3;
+  pointer-events: none;
+}
+.brass-rivet.tl { top: 0.76rem; left: 0.76rem; }
+.brass-rivet.tr { top: 0.76rem; right: 0.76rem; }
+.brass-rivet.bl { bottom: 0.76rem; left: 0.76rem; }
+.brass-rivet.br { bottom: 0.76rem; right: 0.76rem; }
+
+/* Timer Module Header Plaque */
+.timer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.8rem;
+  padding: 0.3rem 0.7rem 0.55rem;
+  border-bottom: 0.1rem solid rgba(220, 175, 112, 0.25);
+  position: relative;
+  z-index: 2;
+}
+
+.timer-id-group {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  min-width: 0;
+  flex: 1;
+}
+
+.timer-badge {
+  font-family: 'Cinzel', Georgia, serif;
+  font-size: 1.12rem;
+  font-weight: 800;
+  letter-spacing: 0.08rem;
+  padding: 0.25rem 0.68rem;
+  border-radius: 0.45rem;
+  background: linear-gradient(180deg, #5d331b 0%, #371d0e 100%);
+  border: 0.1rem solid #9e6439;
+  color: #f8d88e;
+  box-shadow: inset 0 0.1rem 0.15rem rgba(255, 232, 188, 0.3), 0 0.15rem 0.3rem rgba(0, 0, 0, 0.5);
+  white-space: nowrap;
+}
+
+.timer-title-input {
+  background: transparent;
+  border: 0.1rem solid transparent;
+  border-radius: 0.4rem;
+  color: #f6e6cf;
+  font-size: 1.32rem;
+  font-weight: 700;
+  padding: 0.2rem 0.45rem;
+  width: 100%;
+  min-width: 0;
+  text-overflow: ellipsis;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.timer-title-input:hover,
+.timer-title-input:focus {
+  background: rgba(18, 9, 4, 0.72);
+  border-color: rgba(223, 168, 81, 0.55);
+  outline: none;
+  color: #fff;
+}
+
+.timer-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.48rem;
+  padding: 0.26rem 0.8rem;
+  border-radius: 99rem;
+  font-size: 1.02rem;
+  font-weight: 800;
+  letter-spacing: 0.08rem;
+  text-transform: uppercase;
+  background: rgba(16, 8, 3, 0.82);
+  border: 0.1rem solid rgba(195, 145, 85, 0.45);
+  color: #dcc09e;
+  white-space: nowrap;
+}
+
+.status-jewel {
+  width: 0.72rem;
+  height: 0.72rem;
+  border-radius: 50%;
+  background: #cfa15a;
+  box-shadow: 0 0 0.55rem rgba(223, 168, 81, 0.65);
+}
+
+.timer.is-running .timer-status-pill {
+  border-color: rgba(74, 222, 128, 0.68);
+  color: #86efac;
+  background: rgba(6, 48, 30, 0.75);
+}
+
+.timer.is-running .status-jewel {
+  background: #4ade80;
+  box-shadow: 0 0 0.85rem #4ade80;
+  animation: pulseJewel 1s infinite alternate;
+}
+
+.timer.is-paused .timer-status-pill {
+  border-color: rgba(251, 191, 36, 0.7);
+  color: #fde68a;
+  background: rgba(65, 38, 8, 0.75);
+}
+
+.timer.is-paused .status-jewel {
+  background: #fbbf24;
+  box-shadow: 0 0 0.75rem #fbbf24;
+}
+
+.timer.expired .timer-status-pill,
+.timer.blink-border .timer-status-pill {
+  border-color: #fca5a5;
+  background: rgba(135, 25, 25, 0.88);
+  color: #fecaca;
+}
+
+.timer.expired .status-jewel,
+.timer.blink-border .status-jewel {
+  background: #ff4d4f;
+  box-shadow: 0 0 1rem #ff4d4f;
+}
+
+@keyframes pulseJewel {
+  from { transform: scale(0.9); opacity: 0.75; }
+  to { transform: scale(1.2); opacity: 1; }
+}
+
+/* ============================================================================
+   4. 3D CYLINDER WHEEL PICKER (Adapted directly from ref/styles.css)
+   ============================================================================ */
+
+.picker {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 0.52rem;
+  width: 100%;
+  margin: 0;
+}
+
+.drum-column-headers {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  text-align: center;
+  padding: 0 0.4rem;
+}
+
+.drum-col-title {
+  font-size: 1.02rem;
+  font-weight: 800;
+  letter-spacing: 0.12rem;
+  color: #e2b87e;
+  text-transform: uppercase;
+  text-shadow: 0 0.1rem 0.2rem rgba(0, 0, 0, 0.9);
+}
+
+/* iOS 3D Cylinder Wheel Picker - Wood Crafted Drum (from ref/styles.css) */
+.ios-wheel-picker {
+  position: relative;
+  width: 100%;
+  height: 9.6rem;
+  border: 0.16rem solid #855230;
+  border-radius: 0.85rem;
+  background:
+    repeating-linear-gradient(90deg,
+      rgba(223, 168, 81, 0.06) 0px,
+      rgba(223, 168, 81, 0.06) 2px,
+      transparent 2px,
+      transparent 6px),
+    linear-gradient(180deg, #140a04 0%, #2d170b 22%, #4f2b17 50%, #2d170b 78%, #140a04 100%);
+  box-shadow:
+    inset 0 0.55rem 1.2rem rgba(0, 0, 0, 0.85),
+    inset 0 -0.55rem 1.2rem rgba(0, 0, 0, 0.85),
+    0 0.3rem 0.65rem rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: stretch;
+  overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+}
+
+/* Knurled Brass Axle End-Caps on left and right of the 3D Drum */
+.ios-wheel-picker::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-left: 0.35rem solid rgba(195, 138, 72, 0.35);
+  border-right: 0.35rem solid rgba(195, 138, 72, 0.35);
+  z-index: 5;
+}
+
+/* Top & Bottom fade vignette for authentic wood cylinder horizon (from ref/styles.css) */
+.ios-wheel-picker::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(180deg,
+    rgba(16, 8, 3, 0.94) 0%,
+    rgba(16, 8, 3, 0.32) 20%,
+    rgba(16, 8, 3, 0) 34%,
+    rgba(16, 8, 3, 0) 66%,
+    rgba(16, 8, 3, 0.32) 80%,
+    rgba(16, 8, 3, 0.94) 100%
+  );
+  z-index: 4;
+}
+
+/* Center selection highlight bar / lens (combining ref's .ios-picker-highlight & glowing amber lens) */
+.ios-picker-highlight {
+  position: absolute;
+  top: 50%;
+  left: 0.45rem;
+  right: 0.45rem;
+  height: 3.1rem;
+  transform: translateY(-50%);
+  background: linear-gradient(180deg,
+    rgba(255, 238, 195, 0.28) 0%,
+    rgba(244, 200, 122, 0.22) 50%,
+    rgba(218, 158, 68, 0.30) 100%);
+  border-top: 0.14rem solid rgba(250, 214, 144, 0.92);
+  border-bottom: 0.14rem solid rgba(250, 214, 144, 0.92);
+  border-radius: 0.52rem;
+  box-shadow:
+    0 0 1.35rem rgba(238, 184, 86, 0.36),
+    inset 0 0.12rem 0.25rem rgba(255, 250, 230, 0.42);
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* Brass index pointers on left & right of selection lens */
+.ios-picker-highlight::before,
+.ios-picker-highlight::after {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1.05rem;
+  color: #ffe299;
+  text-shadow: 0 0 0.5rem rgba(255, 215, 130, 0.9);
+  line-height: 1;
+}
+.ios-picker-highlight::before {
+  content: "▸";
+  left: 0.35rem;
+}
+.ios-picker-highlight::after {
+  content: "◂";
+  right: 0.35rem;
+}
+
+/* Wheel Columns */
+.ios-picker-column {
+  position: relative;
+  flex: 1;
+  height: 100%;
+  overflow: hidden;
+  perspective: 540px;
+  perspective-origin: center center;
+  cursor: grab;
+  touch-action: none;
+  outline: none;
+  z-index: 3;
+}
+
+.ios-picker-column:active {
+  cursor: grabbing;
+}
+
+.ios-picker-column:focus-visible {
+  outline: 0.12rem solid rgba(248, 210, 140, 0.95);
+  background: rgba(248, 210, 140, 0.07);
+}
+
+.ios-picker-separator {
+  width: 0.14rem;
+  height: 70%;
+  margin: auto 0;
+  background: linear-gradient(180deg, transparent 0%, rgba(235, 188, 120, 0.6) 50%, transparent 100%);
+  z-index: 3;
+  pointer-events: none;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ios-picker-separator::after {
+  content: ":";
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1.55rem;
+  font-weight: 800;
+  color: #f7d38a;
+  text-shadow: 0 0 0.6rem rgba(247, 211, 138, 0.75);
+  transform: translateY(-0.1rem);
+}
+
+.ios-picker-wheel {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  pointer-events: auto;
+}
+
+/* Individual Items inside 3D Cylinder Wheel */
+.ios-picker-item {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  height: 2.8rem;
+  margin-top: -1.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  color: rgba(235, 212, 184, 0.68);
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 600;
+  font-size: 1.38rem;
+  line-height: 1;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transform-origin: center center;
+  will-change: transform, opacity;
+  transition: none;
+  pointer-events: auto;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.ios-picker-item .unit-suffix {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  opacity: 0.85;
+}
+
+.ios-picker-item.active {
+  color: #fffdf5;
+  font-size: 1.72rem;
+  font-weight: 800;
+  text-shadow:
+    0 0 0.9rem rgba(250, 208, 122, 0.9),
+    0 0.12rem 0.25rem rgba(0, 0, 0, 0.95);
+}
+
+.ios-picker-item.active .unit-suffix {
+  color: #f8d182;
+  opacity: 1;
+}
+
+/* Quick Preset Row below 3D Drum (styled after ref's .month-nav-row & .month-nav-btn) */
+.month-nav-row {
+  display: flex;
+  justify-content: stretch;
+  align-items: stretch;
+  gap: 0.35rem;
+  width: 100%;
+}
+
+.month-nav-btn {
+  flex: 1;
+  min-height: 2.68rem;
+  border: 0.12rem solid #744628;
+  border-radius: 0.5rem;
+  background: linear-gradient(180deg, #4e2a16 0%, #2e180c 100%);
+  color: #f5e2cb;
+  font-size: 1.13rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow:
+    0 0.2rem 0.4rem rgba(0, 0, 0, 0.48),
+    inset 0 0.1rem 0.12rem rgba(255, 224, 180, 0.24);
+  transition: transform 0.12s ease, border-color 0.18s ease, background 0.18s ease;
+}
+
+.month-nav-btn:hover {
+  border-color: #bb7d45;
+  background: linear-gradient(180deg, #60341c 0%, #3b2010 100%);
+  color: #ffffff;
+}
+
+.month-nav-btn.today-btn {
+  background: linear-gradient(180deg, #e4ae56 0%, #b67b2b 100%);
+  border: 0.12rem solid #ffe5a3;
+  color: #241105;
+  font-weight: 900;
+  flex: 1.15;
+  box-shadow:
+    0 0.2rem 0.5rem rgba(0, 0, 0, 0.4),
+    inset 0 0.1rem 0.2rem rgba(255, 255, 255, 0.65),
+    0 0 0.75rem rgba(223, 168, 81, 0.38);
+  text-shadow: 0 0.1rem 0 rgba(255, 240, 200, 0.7);
+}
+
+.month-nav-btn.today-btn:hover {
+  background: linear-gradient(180deg, #ecc271 0%, #c88a36 100%);
+}
+
+.month-nav-btn:active {
+  transform: scale(0.95);
+}
+
+/* ============================================================================
+   5. CHRONOMETER DIGITAL READOUT & RADIAL / LINEAR PROGRESS DISPLAY
+   ============================================================================ */
+
+.chronometer-readout-panel {
+  position: relative;
+  z-index: 2;
+  border-radius: 0.95rem;
+  border: 0.15rem solid #77492a;
+  background:
+    radial-gradient(ellipse at 50% 35%, rgba(62, 34, 17, 0.68) 0%, rgba(12, 6, 2, 0.97) 100%);
+  padding: 1.05rem 1.25rem 1rem;
+  box-shadow:
+    inset 0 0.38rem 0.95rem rgba(0, 0, 0, 0.9),
+    0 0.15rem 0.3rem rgba(255, 222, 175, 0.14);
+  display: flex;
+  flex-direction: column;
+  gap: 0.72rem;
+}
+
+.readout-top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 1.04rem;
+  font-weight: 700;
+  color: #c5a685;
+  letter-spacing: 0.06rem;
+  border-bottom: 0.08rem solid rgba(223, 168, 81, 0.16);
+  padding-bottom: 0.4rem;
+}
+
+.target-summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.target-summary strong {
+  color: #f6ce82;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.progress-pct {
+  font-family: 'JetBrains Mono', monospace;
+  color: #ebd39a;
+  background: rgba(223, 168, 81, 0.14);
+  border: 0.08rem solid rgba(223, 168, 81, 0.32);
+  padding: 0.1rem 0.55rem;
+  border-radius: 0.4rem;
+}
+
+.display-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.0rem;
+  position: relative;
+  padding: 0.15rem 0.1rem;
+  min-width: 0;
+}
+
+/* Intricate SVG Horological Escapement / Progress Ring */
+.radial-gauge {
+  width: 4.8rem;
+  height: 4.8rem;
+  flex-shrink: 0;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle, rgba(50, 27, 14, 0.8) 0%, rgba(15, 7, 3, 0.95) 100%);
+  border-radius: 50%;
+  border: 0.12rem solid rgba(195, 142, 82, 0.48);
+  box-shadow: inset 0 0.15rem 0.4rem rgba(0, 0, 0, 0.85), 0 0 0.8rem rgba(223, 168, 81, 0.15);
+}
+
+.radial-gauge svg {
+  width: 92%;
+  height: 92%;
+  transform: rotate(-90deg);
+}
+
+.gauge-track {
+  fill: none;
+  stroke: rgba(223, 168, 81, 0.22);
+  stroke-width: 3.4;
+}
+
+.gauge-Ticks {
+  fill: none;
+  stroke: rgba(235, 185, 105, 0.45);
+  stroke-width: 2.0;
+  stroke-dasharray: 1.4 3.31;
+}
+
+.gauge-fill {
+  fill: none;
+  stroke: #f2bc57;
+  stroke-width: 3.5;
+  stroke-linecap: round;
+  stroke-dasharray: 113.1;
+  stroke-dashoffset: 113.1;
+  filter: drop-shadow(0 0 0.35rem rgba(242, 188, 87, 0.7));
+  transition: stroke-dashoffset 0.08s linear, stroke 0.25s ease;
+}
+
+.timer.is-running .gauge-fill {
+  stroke: #4ade80;
+  filter: drop-shadow(0 0 0.45rem rgba(74, 222, 128, 0.8));
+}
+
+.timer.expired .gauge-fill,
+.timer.blink-border .gauge-fill {
+  stroke: #f87171;
+  stroke-dashoffset: 0 !important;
+  filter: drop-shadow(0 0 0.5rem rgba(248, 113, 113, 0.95));
+}
+
+.gauge-center-dot {
+  position: absolute;
+  width: 0.82rem;
+  height: 0.82rem;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fff5ca 0%, #d69a3e 100%);
+  box-shadow: 0 0 0.55rem rgba(245, 200, 110, 0.85);
+}
+
+/* Primary Digital Chronometer Display (.display preserved for script compatibility) */
+.display-stack {
+  flex: 1;
+  min-width: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
-  box-shadow: 0 0.3rem 0.6rem rgba(0, 0, 0, 0.1);
-}
-
-.timer.expired .display {
-  background-color: red;    /* 設定背景為紅色 */
-  color: white;             /* 設定文字為白色 */
+  background: rgba(8, 4, 2, 0.72);
+  border: 0.1rem solid rgba(175, 125, 70, 0.32);
+  border-radius: 0.65rem;
+  padding: 0.45rem 0.5rem 0.35rem;
+  box-shadow: inset 0 0.2rem 0.6rem rgba(0, 0, 0, 0.9);
+  position: relative;
 }
 
 .display {
-  font-size: 4rem;
-  font-family: monospace;
-  font-weight: bold;
-  color: hsl(0, 0%, 30%);
-  text-shadow: 0.2rem 0.2rem 0.2rem hsla(0, 0%, 0%, 0.3);
-  margin-bottom: 1.5rem;
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-size: clamp(2.15rem, 2.75rem, 2.95rem);
+  font-weight: 800;
+  letter-spacing: 0.1rem;
+  color: #fff6e0;
+  text-shadow:
+    0 0 1.15rem rgba(246, 198, 108, 0.62),
+    0 0.2rem 0.4rem rgba(0, 0, 0, 0.95);
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+  margin: 0;
+  padding: 0.1rem 0.2rem;
+  border-radius: 0.35rem;
+  transition: color 0.2s ease, text-shadow 0.2s ease;
+  white-space: nowrap;
 }
 
-.picker {
-  display: flex;
-  justify-content: center;
-  gap: 0.5rem;
-  margin-bottom: 1.5rem;
+.timer.is-running .display {
+  color: #ecfdf5;
+  text-shadow:
+    0 0 1.4rem rgba(52, 211, 153, 0.72),
+    0 0 0.4rem rgba(167, 243, 208, 0.45),
+    0 0.2rem 0.4rem rgba(0, 0, 0, 0.95);
 }
 
-.picker select {
-  font-size: 2.4rem;
-  padding: 0.5rem;
-  border-radius: 0.5rem;
-  border: 0.1rem solid #ccc;
+.timer.expired .display,
+.timer.blink-border .display {
+  background-color: rgba(185, 28, 28, 0.35);
+  color: #fecaca;
+  text-shadow:
+    0 0 1.4rem rgba(248, 113, 113, 0.95),
+    0 0.2rem 0.4rem rgba(0, 0, 0, 0.95);
 }
+
+.display-unit-sublabels {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  width: 100%;
+  text-align: center;
+  font-size: 0.86rem;
+  font-weight: 800;
+  letter-spacing: 0.12rem;
+  color: #b49270;
+  padding: 0 0.3rem;
+  margin-top: 0.15rem;
+}
+
+/* Linear Progress Bar with Glowing Ember Head */
+.chronometer-progress-track {
+  width: 100%;
+  height: 0.58rem;
+  border-radius: 99rem;
+  background: rgba(255, 230, 190, 0.08);
+  border: 0.08rem solid rgba(215, 165, 98, 0.25);
+  overflow: hidden;
+  position: relative;
+}
+
+.chronometer-progress-bar {
+  height: 100%;
+  width: 0%;
+  border-radius: 99rem;
+  background: linear-gradient(90deg, #b7792b 0%, #f0b954 65%, #fff3c4 100%);
+  box-shadow: 0 0 0.85rem rgba(240, 185, 84, 0.8);
+  transition: width 0.06s linear;
+}
+
+.timer.is-running .chronometer-progress-bar {
+  background: linear-gradient(90deg, #059669 0%, #34d399 70%, #d1fae5 100%);
+  box-shadow: 0 0 1rem rgba(52, 211, 153, 0.85);
+}
+
+.timer.expired .chronometer-progress-bar,
+.timer.blink-border .chronometer-progress-bar {
+  width: 100% !important;
+  background: linear-gradient(90deg, #991b1b 0%, #ef4444 50%, #fca5a5 100%);
+  box-shadow: 0 0 1rem rgba(239, 68, 68, 0.95);
+}
+
+/* ============================================================================
+   6. TACTILE MECHANICAL HOROLOGICAL PUSHERS (.controls, .startBtn, .stopBtn, .resetBtn)
+   ============================================================================ */
 
 .controls {
-  display: flex;
-  justify-content: center;
-  gap: 1rem;
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+  width: 100%;
 }
 
 .controls button {
-  font-size: 1.8rem;
-  font-weight: bold;
-  padding: 1rem 2rem;
-  min-width: 10rem;
-  border: none;
-  border-radius: 1rem;
+  position: relative;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 1.3rem;
+  font-weight: 800;
+  letter-spacing: 0.06rem;
+  text-transform: uppercase;
+  padding: 0.95rem 0.75rem;
+  min-width: 0;
+  border-radius: 0.75rem;
   cursor: pointer;
-  color: white;
-  transition: background-color 0.3s ease;
+  color: #fff9ed;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  transition: transform 0.14s ease, box-shadow 0.2s ease, filter 0.2s ease, border-color 0.2s ease;
+  text-shadow: 0 0.12rem 0.25rem rgba(0, 0, 0, 0.88);
+  overflow: hidden;
 }
 
+.controls button::before {
+  content: '';
+  position: absolute;
+  inset: 0.16rem;
+  border-radius: 0.55rem;
+  border: 0.08rem solid rgba(255, 255, 255, 0.22);
+  pointer-events: none;
+}
+
+/* Start Pusher - Emerald Jade & Brass */
 .startBtn {
-  background-color: hsl(115, 100%, 40%);
+  background: linear-gradient(180deg, #1f7d56 0%, #114d35 55%, #0a3322 100%);
+  border: 0.14rem solid #52c08f;
+  box-shadow:
+    0 0.38rem 0.75rem rgba(0, 0, 0, 0.58),
+    inset 0 0.12rem 0.2rem rgba(167, 243, 208, 0.38),
+    inset 0 -0.2rem 0.4rem rgba(0, 0, 0, 0.52);
 }
 
 .startBtn:hover {
-  background-color: hsl(115, 100%, 30%);
+  background: linear-gradient(180deg, #259668 0%, #165f42 55%, #0d402b 100%);
+  border-color: #6ee7b7;
+  box-shadow:
+    0 0.45rem 1rem rgba(0, 0, 0, 0.65),
+    0 0 1.15rem rgba(52, 211, 153, 0.42),
+    inset 0 0.12rem 0.2rem rgba(167, 243, 208, 0.48);
+  transform: translateY(-0.1rem);
 }
 
+/* Stop Pusher - Burnished Terracotta / Ruby & Brass */
 .stopBtn {
-  background-color: hsl(10, 90%, 50%);
+  background: linear-gradient(180deg, #a33127 0%, #6e1e17 55%, #4a120d 100%);
+  border: 0.14rem solid #e57263;
+  box-shadow:
+    0 0.38rem 0.75rem rgba(0, 0, 0, 0.58),
+    inset 0 0.12rem 0.2rem rgba(254, 202, 202, 0.35),
+    inset 0 -0.2rem 0.4rem rgba(0, 0, 0, 0.52);
 }
 
 .stopBtn:hover {
-  background-color: hsl(10, 90%, 30%);
+  background: linear-gradient(180deg, #bc392d 0%, #82241c 55%, #591610 100%);
+  border-color: #fca5a5;
+  box-shadow:
+    0 0.45rem 1rem rgba(0, 0, 0, 0.65),
+    0 0 1.15rem rgba(248, 113, 113, 0.42),
+    inset 0 0.12rem 0.2rem rgba(254, 202, 202, 0.45);
+  transform: translateY(-0.1rem);
 }
 
+/* Reset Pusher - Brushed Walnut Brass */
 .resetBtn {
-  background-color: hsl(205, 90%, 60%);
+  background: linear-gradient(180deg, #613d23 0%, #3d2414 55%, #26150a 100%);
+  border: 0.14rem solid #b57c4a;
+  box-shadow:
+    0 0.38rem 0.75rem rgba(0, 0, 0, 0.58),
+    inset 0 0.12rem 0.2rem rgba(255, 225, 180, 0.32),
+    inset 0 -0.2rem 0.4rem rgba(0, 0, 0, 0.52);
 }
 
 .resetBtn:hover {
-  background-color: hsl(205, 90%, 50%);
+  background: linear-gradient(180deg, #74492a 0%, #4c2d19 55%, #301b0d 100%);
+  border-color: #dfa851;
+  box-shadow:
+    0 0.45rem 1rem rgba(0, 0, 0, 0.65),
+    0 0 1.15rem rgba(223, 168, 81, 0.38),
+    inset 0 0.12rem 0.2rem rgba(255, 225, 180, 0.42);
+  transform: translateY(-0.1rem);
 }
 
+.controls button:active {
+  transform: translateY(0.1rem) scale(0.97);
+  box-shadow: inset 0 0.25rem 0.5rem rgba(0, 0, 0, 0.78);
+}
+
+/* ============================================================================
+   7. ALARM / EXPIRED BLINK BORDER & CURSOR TRAIL
+   ============================================================================ */
 
 @keyframes blinkRed {
-  0% { border-color: red; }
-  50% { border-color: transparent; }
-  100% { border-color: red; }
+  0%, 100% {
+    border-color: #ff4d4f;
+    box-shadow:
+      0 1.4rem 3rem rgba(0, 0, 0, 0.85),
+      0 0 2.6rem rgba(255, 77, 79, 0.82),
+      inset 0 0 1.4rem rgba(255, 77, 79, 0.38);
+  }
+  50% {
+    border-color: #dfa851;
+    box-shadow:
+      0 1.4rem 3rem rgba(0, 0, 0, 0.85),
+      0 0 0.8rem rgba(223, 168, 81, 0.28);
+  }
 }
 
 .blink-border {
-  animation: blinkRed 1s infinite;
+  animation: blinkRed 0.9s infinite ease-in-out;
+}
+
+/* Golden Spark Cursor Trail (inspired by ref/styles.css .trail) */
+.trail {
+  position: absolute;
+  width: 0.65rem;
+  height: 0.65rem;
+  background: radial-gradient(circle, #fff6d1 0%, #dfa851 60%, transparent 100%);
+  border-radius: 50%;
+  pointer-events: none;
+  animation: fadeOut 0.55s forwards;
+  z-index: 9999;
+  box-shadow: 0 0 0.6rem rgba(223, 168, 81, 0.8);
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 0.95;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(2.4);
+  }
+}
+
+/* ============================================================================
+   8. RESPONSIVE DESIGN
+   ============================================================================ */
+
+@media (max-width: 1120px) {
+  .atelier-header {
+    grid-template-columns: 1fr auto;
+  }
+  .studio-telemetry {
+    grid-column: 1 / -1;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding-top: 0.8rem;
+    border-top: 0.1rem solid rgba(223, 168, 81, 0.22);
+  }
+}
+
+@media (max-width: 768px) {
+  .atelier-shell {
+    padding: 1.0rem 1.0rem 3.5rem;
+    width: 100%;
+    max-width: 100vw;
+    overflow-x: hidden;
+  }
+  .atelier-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 1.3rem 1.1rem;
+    gap: 1.2rem;
+    width: 100%;
+  }
+  .brand-plaque {
+    flex-direction: column;
+    width: 100%;
+  }
+  .atelier-header h1 {
+    font-size: 2.2rem;
+  }
+  .atelier-eyebrow {
+    font-size: 0.92rem;
+    letter-spacing: 0.14rem;
+  }
+  .studio-telemetry {
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+  }
+  .telemetry-grid {
+    width: 100%;
+    justify-content: center;
+  }
+  .telemetry-card {
+    min-width: 0;
+    flex: 1;
+    padding: 0.4rem 0.6rem;
+  }
+  .studio-controls-row {
+    justify-content: center;
+    width: 100%;
+  }
+  .workbench-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 1.0rem 1.0rem;
+    width: 100%;
+  }
+  .filter-pills,
+  .toolbar-actions,
+  .batch-btns {
+    justify-content: center;
+    width: 100%;
+  }
+  .filter-pill {
+    font-size: 1.12rem;
+    padding: 0.5rem 0.85rem;
+  }
+  .jump-search-box,
+  #timerSearchInput {
+    width: 100%;
+  }
+  #timers-container {
+    grid-template-columns: minmax(0, 1fr);
+    width: 100%;
+  }
+  .timer {
+    padding: 1.35rem 1.15rem 1.45rem;
+    width: 100%;
+  }
+  .display {
+    font-size: 2.15rem;
+    letter-spacing: 0.05rem;
+  }
 }
