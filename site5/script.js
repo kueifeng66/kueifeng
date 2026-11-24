@@ -1277,11 +1277,25 @@ function initClockworkBackgroundCanvas() {
   requestAnimationFrame(renderFrame);
 }
 
+function initNoTextSelection() {
+  document.addEventListener("selectstart", (e) => {
+    e.preventDefault();
+  });
+
+  document.addEventListener("selectionchange", () => {
+    const selection = window.getSelection();
+    if (selection && !selection.isCollapsed) {
+      selection.removeAllRanges();
+    }
+  });
+}
+
 // ============================================================================
 // 6. BOOTSTRAP 100 CHRONOMETER MODULES
 // ============================================================================
 
 window.addEventListener("DOMContentLoaded", () => {
+  initNoTextSelection();
   updateMasterReferenceClock();
   setInterval(updateMasterReferenceClock, 1000);
 
