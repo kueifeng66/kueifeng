@@ -94,6 +94,10 @@ const dom = {
   tooltip: document.getElementById('tooltip'),
   header: document.getElementById('header'),
   bgMusic: document.getElementById('bgMusic'),
+  audioToggleBtn: document.getElementById('audioToggleBtn'),
+  audioToggleState: document.getElementById('audioToggleState'),
+  audioIconOff: document.getElementById('audioIconOff'),
+  audioIconOn: document.getElementById('audioIconOn'),
   body: document.body,
   defaultTitle: document.title,
 };
@@ -411,18 +415,68 @@ function copyToClipboard(text) {
 
 window.Clipboard = window.Clipboard || { copy: copyToClipboard };
 
-function toggleMusic() {
-  if (!dom.bgMusic) return;
-  const curTime = Date.now();
-  if (curTime - state.lastTouchTime < 300) return;
-  state.lastTouchTime = curTime;
+let musicFadeRaf = 0;
 
-  if (!state.isMusicPlaying) {
-    dom.bgMusic.play().catch((e) => console.log(e));
-    state.isMusicPlaying = true;
+function fadeMusicVolume(targetVol, durationMs, onDone) {
+  if (!dom.bgMusic) return;
+  if (musicFadeRaf) {
+    cancelAnimationFrame(musicFadeRaf);
+    musicFadeRaf = 0;
+  }
+  const startVol = dom.bgMusic.volume;
+  const startTime = performance.now();
+  const step = (nowTs) => {
+    if (!dom.bgMusic) return;
+    const t = Math.min(1, (nowTs - startTime) / Math.max(1, durationMs));
+    dom.bgMusic.volume = Math.max(0, Math.min(1, startVol + (targetVol - startVol) * t));
+    if (t < 1) {
+      musicFadeRaf = requestAnimationFrame(step);
+    } else {
+      musicFadeRaf = 0;
+      onDone?.();
+    }
+  };
+  musicFadeRaf = requestAnimationFrame(step);
+}
+
+function syncAudioButton(isPlaying) {
+  if (!dom.audioToggleBtn) return;
+  dom.audioToggleBtn.setAttribute('aria-pressed', String(isPlaying));
+  if (dom.audioToggleState) dom.audioToggleState.textContent = isPlaying ? 'On' : 'Off';
+  if (dom.audioIconOff && dom.audioIconOn) {
+    if (isPlaying) {
+      dom.audioIconOff.setAttribute('hidden', '');
+      dom.audioIconOn.removeAttribute('hidden');
+    } else {
+      dom.audioIconOff.removeAttribute('hidden');
+      dom.audioIconOn.setAttribute('hidden', '');
+    }
+  }
+}
+
+async function toggleMusic() {
+  if (!dom.bgMusic) return;
+  const wantOn = !state.isMusicPlaying;
+  state.isMusicPlaying = wantOn;
+
+  if (wantOn) {
+    if (dom.bgMusic.paused) dom.bgMusic.volume = 0;
+    syncAudioButton(true);
+    try {
+      await dom.bgMusic.play();
+      fadeMusicVolume(0.65, 500);
+    } catch (e) {
+      console.log(e);
+      state.isMusicPlaying = false;
+      syncAudioButton(false);
+    }
   } else {
-    dom.bgMusic.pause();
-    state.isMusicPlaying = false;
+    syncAudioButton(false);
+    fadeMusicVolume(0, 320, () => {
+      if (!state.isMusicPlaying && dom.bgMusic) {
+        dom.bgMusic.pause();
+      }
+    });
   }
 }
 
@@ -1726,15 +1780,12 @@ function fetchWeatherForecast() {
   };
 
   const init = () => {
-    if (dom.header) {
-      dom.header.addEventListener('click', toggleMusic);
-      dom.header.addEventListener('touchstart', toggleMusic);
+    if (dom.audioToggleBtn) {
+      dom.audioToggleBtn.addEventListener('click', toggleMusic);
     }
 
     const scrollToMeBtn = document.getElementById('scrollToMeButton');
     if (scrollToMeBtn) {
-      scrollToMeBtn.addEventListener('click', toggleMusic);
-      scrollToMeBtn.addEventListener('touchstart', toggleMusic);
       scrollToMeBtn.addEventListener('click', () => {
         const nameToUse = resolveName(resolveUserEmail()) || state.targetName || state.username || CONFIG.DEFAULT_STAFF;
         state.targetName = state.username = state.selectedStaff = nameToUse;
@@ -1827,7 +1878,7 @@ function fetchWeatherForecast() {
 
 // Dismiss mobile tooltip when tapping outside interactive elements
 document.addEventListener('touchstart', (e) => {
-  if (e.target.closest('.card, #tooltip, #header, .header-cell')) return;
+  if (e.target.closest('.card, #tooltip, #header, .header-cell, .audio-dock')) return;
 
   clearWeekdayHighlight();
   document.querySelectorAll('.card-face.day.active-day, .card.active-card').forEach((el) => {
