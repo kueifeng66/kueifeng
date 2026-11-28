@@ -559,6 +559,8 @@ class CylinderWheelColumn {
     this.velocity = 0;
     this.dragDistance = 0;
     this.animId = null;
+    this.targetIndex = null;
+    this.wheelAccum = 0;
     this.wheelTimer = null;
 
     this.render();
@@ -623,10 +625,13 @@ class CylinderWheelColumn {
   snapTo(targetIdx, duration = 220, forceNotify = false) {
     if (this.animId) cancelAnimationFrame(this.animId);
     targetIdx = clamp(targetIdx, 0, this.items.length - 1);
+    this.targetIndex = targetIdx;
     const startF = this.floatIndex;
     const change = targetIdx - startF;
 
     if (Math.abs(change) < 0.001) {
+      this.animId = null;
+      this.targetIndex = null;
       this.updateVisuals(targetIdx);
       this.floatIndex = targetIdx;
       this.currentIndex = targetIdx;
@@ -643,6 +648,8 @@ class CylinderWheelColumn {
       if (t < 1) {
         this.animId = requestAnimationFrame(step);
       } else {
+        this.animId = null;
+        this.targetIndex = null;
         this.updateVisuals(targetIdx);
         this.floatIndex = targetIdx;
         this.currentIndex = targetIdx;
@@ -655,6 +662,8 @@ class CylinderWheelColumn {
 
   setImmediate(idx, notify = false) {
     if (this.animId) cancelAnimationFrame(this.animId);
+    this.animId = null;
+    this.targetIndex = null;
     idx = clamp(idx, 0, this.items.length - 1);
     this.updateVisuals(idx);
     this.floatIndex = idx;
@@ -725,6 +734,9 @@ class CylinderWheelColumn {
 
     this.container.addEventListener('pointerdown', (e) => {
       if (this.animId) cancelAnimationFrame(this.animId);
+      this.animId = null;
+      this.targetIndex = null;
+      this.wheelAccum = 0;
       this.isDragging = true;
       const clientY = getClientY(e);
       this.startY = this.lastY = clientY;
@@ -743,18 +755,42 @@ class CylinderWheelColumn {
 
     this.container.addEventListener('wheel', (e) => {
       e.preventDefault();
-      if (this.animId) cancelAnimationFrame(this.animId);
-      const candidate = clamp(this.floatIndex + (e.deltaY / this.itemHeight) * 0.6, 0, this.items.length - 1);
-      this.updateVisuals(candidate);
+      if (!e.deltaY) return;
+
+      let step = 0;
+      if (e.deltaMode !== 0 || Math.abs(e.deltaY) >= 30) {
+        // Discrete mouse wheel notch: always move exactly 1 item per notch
+        step = Math.sign(e.deltaY);
+        this.wheelAccum = 0;
+      } else {
+        // Fine-grained trackpad / smooth scroll: accumulate until crossing 1 item threshold
+        if (this.wheelAccum !== 0 && Math.sign(e.deltaY) !== Math.sign(this.wheelAccum)) {
+          this.wheelAccum = 0;
+        }
+        this.wheelAccum += e.deltaY;
+        if (Math.abs(this.wheelAccum) >= 30) {
+          step = Math.sign(this.wheelAccum);
+          this.wheelAccum = 0;
+        }
+      }
+
       clearTimeout(this.wheelTimer);
-      this.wheelTimer = setTimeout(() => this.snapTo(Math.round(this.floatIndex), 160), 100);
+      this.wheelTimer = setTimeout(() => {
+        this.wheelAccum = 0;
+      }, 150);
+
+      if (step !== 0) {
+        const baseIndex = this.targetIndex ?? Math.round(this.floatIndex);
+        this.snapTo(baseIndex + step, 160);
+      }
     }, { passive: false });
 
     this.container.addEventListener('keydown', (e) => {
       const stepMap = { ArrowUp: -1, ArrowDown: 1, PageUp: -5, PageDown: 5 };
       if (e.key in stepMap) {
         e.preventDefault();
-        this.snapTo(this.currentIndex + stepMap[e.key], 180);
+        const baseIndex = this.targetIndex ?? this.currentIndex;
+        this.snapTo(baseIndex + stepMap[e.key], 180);
       }
     });
   }
